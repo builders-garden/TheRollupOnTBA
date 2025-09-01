@@ -5,7 +5,7 @@ import { createSecureHeaders } from "next-secure-headers";
 const jiti = createJiti(fileURLToPath(import.meta.url));
 
 // Import env here to validate during build. Using jiti@^1 we can import .ts files :)
-jiti("./src/lib/env");
+jiti("./lib/zod");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

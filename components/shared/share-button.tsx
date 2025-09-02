@@ -11,7 +11,9 @@ import { cn, copyToClipboard } from "@/lib/utils";
 
 interface ShareButtonProps {
   side?: "left" | "right" | "top" | "bottom" | undefined;
-  buttonSize?: "sm" | "default" | "lg" | "icon" | null | undefined;
+  buttonSize?: "sm" | "default" | "lg";
+  buttonClassName?: string;
+  showText?: boolean;
   navigatorTitle?: string;
   navigatorText?: string;
   miniappUrl: string;
@@ -22,7 +24,9 @@ interface ShareButtonProps {
 
 export const ShareButton = ({
   side = "top",
-  buttonSize = "sm",
+  buttonSize = "default",
+  buttonClassName,
+  showText = false,
   navigatorTitle = "Starter!",
   navigatorText = `Check out this app on @farcaster`,
   miniappUrl,
@@ -60,26 +64,66 @@ export const ShareButton = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className={cn("w-full", buttonSize === "icon" && "p-2")}
+          className={cn("w-full focus:outline-none", buttonClassName)}
           aria-label="Share options">
-          <Share2Icon className="size-4" />
-          {buttonSize === "icon" ? null : "Share"}
+          <Share2Icon
+            className={cn(
+              buttonSize === "sm"
+                ? "size-5"
+                : buttonSize === "default"
+                  ? "size-7"
+                  : "size-8",
+            )}
+          />
+          {showText ? "Share" : null}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side={side}>
         <DropdownMenuItem onClick={handleShareClick} className="gap-2">
-          <FarcasterIcon className="size-4" />
+          <FarcasterIcon
+            className={cn(
+              buttonSize === "sm"
+                ? "size-4"
+                : buttonSize === "default"
+                  ? "size-5"
+                  : "size-7",
+            )}
+          />
           Share via cast
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleShareNative} className="gap-2">
-          <Share2Icon className="size-4" />
+          <Share2Icon
+            className={cn(
+              buttonSize === "sm"
+                ? "size-4"
+                : buttonSize === "default"
+                  ? "size-5"
+                  : "size-7",
+            )}
+          />
           Share to...
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={handleCopyLink} className="gap-2">
           {linkCopied ? (
-            <CheckIcon className="size-4" />
+            <CheckIcon
+              className={cn(
+                buttonSize === "sm"
+                  ? "size-4"
+                  : buttonSize === "default"
+                    ? "size-5"
+                    : "size-7",
+              )}
+            />
           ) : (
-            <CopyIcon className="size-4" />
+            <CopyIcon
+              className={cn(
+                buttonSize === "sm"
+                  ? "size-4"
+                  : buttonSize === "default"
+                    ? "size-5"
+                    : "size-7",
+              )}
+            />
           )}
           Copy link
         </DropdownMenuItem>

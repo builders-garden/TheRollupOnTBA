@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Nunito_Sans } from "next/font/google";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import Providers from "@/app/providers";
 import { Toaster } from "@/components/shadcn-ui/sonner";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const nunitoSans = Nunito_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Farcaster Mini-app Starter by Builders Garden",
@@ -22,7 +22,8 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} size-full antialiased`}>
+      <body
+        className={`${nunitoSans.className} size-full antialiased bg-background`}>
         <Providers cookie={cookie}>
           {children}
           <Suspense>

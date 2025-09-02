@@ -27,6 +27,7 @@
     "@farcaster/quick-auth": "0.0.7",
     "@libsql/client": "^0.15.12",
     "@lifi/sdk": "^3.9.3",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-separator": "^1.1.7",
     "@reown/appkit": "^1.7.19",

@@ -1,19 +1,12 @@
-import { motion } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
+import { BottomNavbar } from "../mini-app/bottom-navbar";
+import { BuyTokenModal } from "../mini-app/buy-token-modal";
+import { NBButton } from "../mini-app/nb-button";
+import { NBCard } from "../mini-app/nb-card";
 import { Separator } from "../shadcn-ui/separator";
-import { NBButton } from "../shared/nb-button";
-import { NBCard } from "../shared/nb-card";
 import { ShareButton } from "../shared/share-button";
 
 export const StreamPage = () => {
-  const [isNavbarOpen, setIsNavbarOpen] = useState(false);
-
-  // Handle Navbar Open
-  const handleNavbarOpen = () => {
-    setIsNavbarOpen(!isNavbarOpen);
-  };
-
   return (
     <div className="relative flex flex-col justify-center items-start h-full w-full">
       <iframe
@@ -77,7 +70,7 @@ export const StreamPage = () => {
               ETH will flip BTC this cycle
             </h1>
             <div className="flex justify-start items-center gap-1.5">
-              <div className="size-4 bg-[#41CB6E] rounded-full" />
+              <div className="size-2 bg-[#41CB6E] rounded-full animate-pulse animate-infinite animate-ease-linear" />
               <p className="text-[14px] font-medium">4:05 left to vote</p>
             </div>
           </div>
@@ -96,86 +89,45 @@ export const StreamPage = () => {
         <div className="flex flex-col justify-center items-start w-full gap-2.5">
           <h1 className="text-[14px] font-bold">Featured Tokens</h1>
           <div className="grid grid-cols-2 gap-2.5 w-full">
-            <NBButton className="w-full py-2.5" onClick={() => {}}>
-              <div className="flex justify-center items-center w-full gap-1.5">
-                <div className="size-4 bg-yellow-500 rounded-full border border-black" />
-                <p className="text-[16px] font-extrabold">Buy $LIMòN</p>
-              </div>
-            </NBButton>
-            <NBButton className="w-full py-2.5" onClick={() => {}}>
-              <div className="flex justify-center items-center w-full gap-1.5">
-                <div className="size-4 bg-black rounded-full border border-black" />
-                <p className="text-[16px] font-extrabold">Buy $DRONE</p>
-              </div>
-            </NBButton>
-            <NBButton className="w-full py-2.5" onClick={() => {}}>
-              <div className="flex justify-center items-center w-full gap-1.5">
-                <div className="size-4 bg-gray-500 rounded-full border border-black" />
-                <p className="text-[16px] font-extrabold">Buy $CASO</p>
-              </div>
-            </NBButton>
+            <BuyTokenModal
+              trigger={
+                <NBButton className="w-full py-2.5">
+                  <div className="flex justify-center items-center w-full gap-1.5">
+                    <div className="size-4 bg-yellow-500 rounded-full border border-black" />
+                    <p className="text-[16px] font-extrabold">Buy $LIMòN</p>
+                  </div>
+                </NBButton>
+              }
+              tokenName="LIMòN"
+            />
+            <BuyTokenModal
+              trigger={
+                <NBButton className="w-full py-2.5">
+                  <div className="flex justify-center items-center w-full gap-1.5">
+                    <div className="size-4 bg-black rounded-full border border-black" />
+                    <p className="text-[16px] font-extrabold">Buy $DRONE</p>
+                  </div>
+                </NBButton>
+              }
+              tokenName="DRONE"
+            />
+            <BuyTokenModal
+              trigger={
+                <NBButton className="w-full py-2.5">
+                  <div className="flex justify-center items-center w-full gap-1.5">
+                    <div className="size-4 bg-gray-500 rounded-full border border-black" />
+                    <p className="text-[16px] font-extrabold">Buy $CASO</p>
+                  </div>
+                </NBButton>
+              }
+              tokenName="CASO"
+            />
           </div>
         </div>
       </div>
 
       {/* Floating Bottom Navbar */}
-      <nav className="fixed bottom-5 left-0 right-0 z-50 bg-transparent px-5">
-        <div className="flex justify-between items-center w-full">
-          <NBButton
-            className="rounded-full py-1 w-[106px] shrink-0"
-            onClick={handleNavbarOpen}>
-            <div className="flex justify-center items-center w-full gap-1.5">
-              <div className="size-[24px] bg-warning rounded-full border border-black" />
-              <p className="text-[20px] font-bold">$5.76</p>
-            </div>
-          </NBButton>
-          <div className="flex justify-center items-center w-full gap-1.5 flex-shrink-1">
-            <motion.div
-              animate={{ scale: isNavbarOpen ? 1 : 0 }}
-              transition={{ duration: 0.1, ease: "easeInOut" }}
-              className="size-1 bg-destructive rounded-full"
-            />
-            <motion.div
-              animate={{ scale: isNavbarOpen ? 1 : 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="size-1 bg-warning rounded-full"
-            />
-            <motion.div
-              animate={{ scale: isNavbarOpen ? 1 : 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="size-1 bg-accent rounded-full"
-            />
-            <motion.div
-              animate={{ scale: isNavbarOpen ? 1 : 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="size-1 bg-success rounded-full"
-            />
-          </div>
-
-          <div className="flex justify-center items-center gap-2.5 shrink-0">
-            <NBButton
-              animate={{
-                scale: isNavbarOpen ? 1 : 0,
-                transition: {
-                  default: { type: "tween", delay: 0.1 },
-                },
-              }}
-              className="w-full px-1.5">
-              <p className="text-[16px] font-extrabold">Withdraw</p>
-            </NBButton>
-            <NBButton
-              animate={{
-                scale: isNavbarOpen ? 1 : 0,
-                transition: {
-                  default: { type: "tween", delay: 0.2 },
-                },
-              }}
-              className="w-full px-1.5 bg-accent">
-              <p className="text-[16px] font-extrabold text-white">Top Up</p>
-            </NBButton>
-          </div>
-        </div>
-      </nav>
+      <BottomNavbar />
     </div>
   );
 };

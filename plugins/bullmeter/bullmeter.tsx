@@ -19,7 +19,7 @@ interface BullmeterProps {
 
 export const Bullmeter = ({
   showLabel = true,
-  label = "Sentiment poll",
+  label = "Bull-meter",
   className,
   cardClassName,
   title,

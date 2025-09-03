@@ -67,7 +67,6 @@ export const StreamPage = () => {
 
         {/* Tip Buttons */}
         <Tips
-          label="Tip creator"
           showLabel
           tips={[
             { amount: 0.5, onClick: () => {}, buttonColor: "blue" },

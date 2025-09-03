@@ -5,7 +5,7 @@ import { NBButton } from "@/components/shared/nb-button";
 import { cn } from "@/lib/utils";
 
 interface TipsProps {
-  label: string;
+  label?: string;
   showLabel?: boolean;
   className?: string;
   tips: {
@@ -24,7 +24,7 @@ interface TipsProps {
 }
 
 export const Tips = ({
-  label,
+  label = "Tip",
   showLabel = true,
   tips,
   customTipButton,

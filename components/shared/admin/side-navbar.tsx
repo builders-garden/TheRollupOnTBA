@@ -26,7 +26,8 @@ export const SideNavbar = ({
             src="/images/rollup_logo_white.png"
             alt="rollup whitelabel logo"
             width={160}
-            height={100}
+            height={33}
+            priority
             className="h-auto"
           />
           <ShieldUser className="size-6 text-white" />
@@ -36,7 +37,7 @@ export const SideNavbar = ({
         <div className="flex flex-col justify-center items-center w-full gap-2.5">
           <NBButton
             className="w-full"
-            ghost={isContentOverlay}
+            variant={isContentOverlay ? "ghost" : "default"}
             onClick={() => setSelectedPageContent(AdminPageContent.PLUGINS)}>
             <div
               className={cn(
@@ -49,7 +50,7 @@ export const SideNavbar = ({
           </NBButton>
           <NBButton
             className="w-full"
-            ghost={isContentPlugins}
+            variant={isContentPlugins ? "ghost" : "default"}
             onClick={() => setSelectedPageContent(AdminPageContent.OVERLAY)}>
             <div
               className={cn(

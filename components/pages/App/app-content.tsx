@@ -8,19 +8,19 @@ import LoadingPage from "../loading";
 import { StreamPage } from "../stream-page";
 
 export default function MainContent() {
-  const { isLoading, error } = useAuth();
+  //const { isLoading, error } = useAuth();
 
-  const debouncedIsLoading = useDebounce(isLoading, 1000);
+  //const debouncedIsLoading = useDebounce(isLoading, 1000);
 
   return (
     <div className="min-h-screen">
-      <AnimatePresence mode="wait">
+      {/* <AnimatePresence mode="wait">
         {debouncedIsLoading ? (
           <LoadingPage key="loading" />
-        ) : (
-          <StreamPage key="stream" />
-        )}
-      </AnimatePresence>
+        ) : ( */}
+      <StreamPage key="stream" />
+      {/* )}
+      </AnimatePresence> */}
     </div>
   );
 }

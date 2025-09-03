@@ -1,13 +1,26 @@
+"use client";
+
 import { motion } from "motion/react";
 import Image from "next/image";
+import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
 import { Tips } from "@/plugins/tips/tips";
 import { Separator } from "../shadcn-ui/separator";
 import { BottomNavbar } from "../shared/mini-app/bottom-navbar";
 import { ShareButton } from "../shared/share-button";
+import { useEffect } from "react";
 
 export const StreamPage = () => {
+  const { joinStream } = useSocketUtils();
+
+  useEffect(() => {
+    joinStream({
+      username: "John Doe",
+      profilePicture: "https://via.placeholder.com/150",
+    });
+  }, [joinStream]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}

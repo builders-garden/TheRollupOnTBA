@@ -8,7 +8,9 @@ import LoadingPage from "../loading";
 import { StreamPage } from "../stream-page";
 
 export default function MainContent() {
-  const { isLoading, error } = useAuth();
+  // const { isLoading, error } = useAuth();
+  const isLoading = false;
+  const error = null;
 
   const debouncedIsLoading = useDebounce(isLoading, 1000);
 

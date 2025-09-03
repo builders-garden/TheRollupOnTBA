@@ -1,10 +1,10 @@
 "use client";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { AuthProvider } from "@/contexts/auth-context";
 import { ConditionalWagmiProvider } from "@/contexts/conditional-wagmi-provider";
 import { ErudaProvider } from "@/contexts/eruda";
 import { FarcasterProvider } from "@/contexts/farcaster-context";
+import { SocketProvider } from "@/contexts/socket-context";
 
 export default function Providers({
   children,
@@ -17,9 +17,11 @@ export default function Providers({
     <ErudaProvider>
       <ConditionalWagmiProvider cookie={cookie}>
         <FarcasterProvider addMiniAppOnLoad={true}>
-          <AuthProvider>
+          {/* <AuthProvider> */}
+          <SocketProvider>
             <NuqsAdapter>{children}</NuqsAdapter>
-          </AuthProvider>
+          </SocketProvider>
+          {/* </AuthProvider> */}
         </FarcasterProvider>
       </ConditionalWagmiProvider>
     </ErudaProvider>

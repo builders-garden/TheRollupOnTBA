@@ -31,6 +31,8 @@ export const env = createEnv({
       .refine((s) => s === "true" || s === "false")
       .transform((s) => s === "false"),
     NEXT_PUBLIC_MAINTENANCE_END_TIME: z.string().optional(),
+    // socket
+    NEXT_PUBLIC_SOCKET_URL: z.string().min(1),
   },
   // For Next.js >= 13.4.4, you only need to destructure client variables:
   experimental__runtimeEnv: {
@@ -45,5 +47,6 @@ export const env = createEnv({
     NEXT_PUBLIC_IS_IN_MAINTENANCE: process.env.NEXT_PUBLIC_IS_IN_MAINTENANCE,
     NEXT_PUBLIC_MAINTENANCE_END_TIME:
       process.env.NEXT_PUBLIC_MAINTENANCE_END_TIME,
+    NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
   },
 });

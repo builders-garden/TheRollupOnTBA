@@ -2,6 +2,8 @@
 
 import { motion } from "motion/react";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
@@ -9,17 +11,19 @@ import { Tips } from "@/plugins/tips/tips";
 import { Separator } from "../shadcn-ui/separator";
 import { BottomNavbar } from "../shared/mini-app/bottom-navbar";
 import { ShareButton } from "../shared/share-button";
-import { useEffect } from "react";
 
 export const StreamPage = () => {
   const { joinStream } = useSocketUtils();
+  const { isConnected } = useSocket();
 
   useEffect(() => {
-    joinStream({
-      username: "John Doe",
-      profilePicture: "https://via.placeholder.com/150",
-    });
-  }, [joinStream]);
+    if (isConnected) {
+      joinStream({
+        username: "John Doe",
+        profilePicture: "https://via.placeholder.com/150",
+      });
+    }
+  }, [isConnected, joinStream]);
 
   return (
     <motion.div

@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useSocket } from "@/hooks/use-socket";
 import { ClientToServerSocketEvents } from "@/lib/enums";
 import {
@@ -10,12 +11,15 @@ import {
 export function useSocketUtils() {
   const { emit, disconnect } = useSocket();
 
-  const joinStream = ({ username, profilePicture }: JoinStreamEvent) => {
-    emit(ClientToServerSocketEvents.JOIN_STREAM, {
-      username,
-      profilePicture,
-    });
-  };
+  const joinStream = useCallback(
+    ({ username, profilePicture }: JoinStreamEvent) => {
+      emit(ClientToServerSocketEvents.JOIN_STREAM, {
+        username,
+        profilePicture,
+      });
+    },
+    [emit],
+  );
 
   const tipSent = ({ username, profilePicture, tipAmount }: TipSentEvent) => {
     emit(ClientToServerSocketEvents.TIP_SENT, {
@@ -25,7 +29,18 @@ export function useSocketUtils() {
     });
   };
 
-  const tokenTraded = ({ username, profilePicture, tokenInAmount, tokenInName, tokenInDecimals, tokenInImageUrl, tokenOutAmount, tokenOutDecimals, tokenOutName, tokenOutImageUrl }: TokenTradedEvent) => {
+  const tokenTraded = ({
+    username,
+    profilePicture,
+    tokenInAmount,
+    tokenInName,
+    tokenInDecimals,
+    tokenInImageUrl,
+    tokenOutAmount,
+    tokenOutDecimals,
+    tokenOutName,
+    tokenOutImageUrl,
+  }: TokenTradedEvent) => {
     emit(ClientToServerSocketEvents.TOKEN_TRADED, {
       username,
       profilePicture,
@@ -40,7 +55,13 @@ export function useSocketUtils() {
     });
   };
 
-  const voteCasted = ({ username, profilePicture, voteAmount, isBull, promptId }: VoteCastedEvent) => {
+  const voteCasted = ({
+    username,
+    profilePicture,
+    voteAmount,
+    isBull,
+    promptId,
+  }: VoteCastedEvent) => {
     emit(ClientToServerSocketEvents.VOTE_CASTED, {
       username,
       profilePicture,

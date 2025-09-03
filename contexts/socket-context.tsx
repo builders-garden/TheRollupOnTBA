@@ -67,12 +67,12 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     // If socket is connected, ensure we have a listener attached
     if (socket.current && socket.current.connected) {
-      const existingListeners = socket.current.listeners(event);
-      if (existingListeners.length === 0) {
-        socket.current.on(event as any, (data: any) => {
-          handleEvent(event as any, data);
-        });
-      }
+      // Remove any existing listeners for this event
+      socket.current.off(event as any);
+      // Add a single listener that will handle all callbacks
+      socket.current.on(event as any, (data: any) => {
+        handleEvent(event as any, data);
+      });
     }
   };
 
@@ -137,16 +137,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       (
         Object.keys(listeners.current) as Array<keyof ServerToClientEvents>
       ).forEach((event) => {
-        // Check if we already have listeners for this event to avoid duplicates
-        const existingListeners = socket.current!.listeners(event);
-        if (existingListeners.length === 0) {
-          socket.current!.on(event, ((
-            data: ServerToClientEvents[typeof event],
-          ) => {
-            console.log("[SOCKET EVENT]", event, data);
-            handleEvent(event, data);
-          }) as any);
-        }
+        // Remove any existing listeners and add a single new one
+        socket.current!.off(event);
+        socket.current!.on(event, ((
+          data: ServerToClientEvents[typeof event],
+        ) => {
+          console.log("[SOCKET EVENT]", event, data);
+          handleEvent(event, data);
+        }) as any);
       });
     }
   };

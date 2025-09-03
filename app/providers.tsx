@@ -4,6 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ConditionalWagmiProvider } from "@/contexts/conditional-wagmi-provider";
 import { ErudaProvider } from "@/contexts/eruda";
 import { FarcasterProvider } from "@/contexts/farcaster-context";
+import { NotificationQueueProvider } from "@/contexts/notification-queue-context";
 import { SocketProvider } from "@/contexts/socket-context";
 
 export default function Providers({
@@ -19,7 +20,9 @@ export default function Providers({
         <FarcasterProvider addMiniAppOnLoad={true}>
           {/* <AuthProvider> */}
           <SocketProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
+            <NotificationQueueProvider>
+              <NuqsAdapter>{children}</NuqsAdapter>
+            </NotificationQueueProvider>
           </SocketProvider>
           {/* </AuthProvider> */}
         </FarcasterProvider>

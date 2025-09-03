@@ -44,6 +44,7 @@ export const Tips = ({
       <div className="grid grid-cols-4 w-full gap-2.5">
         {tips.map((tip) => (
           <NBButton
+            key={tip.amount}
             buttonColor={tip.buttonColor}
             onClick={tip.onClick}
             className={cn("w-full", tip.buttonClassName)}>
@@ -69,13 +70,15 @@ export const Tips = ({
                 </p>
               </NBButton>
             }
+            isOpen={isCustomTipModalOpen}
+            setIsOpen={handleCustomTipModalOpen}
             contentClassName="p-2.5 rounded-[12px]">
             <h1 className="text-[24px] font-bold text-center">
               Choose custom tip
             </h1>
             <div className="flex flex-col justify-center items-center w-full gap-2.5">
               <Input
-                placeholder="Enter amount"
+                placeholder="e.g. $0.01"
                 className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px]"
                 type="number"
                 min={0}
@@ -95,7 +98,7 @@ export const Tips = ({
               />
             </div>
 
-            <div className="flex flex-col justify-center items-center w-full gap-5 mt-14">
+            <div className="flex flex-col justify-center items-center w-full gap-5">
               <NBButton key="confirm" className="w-full bg-accent">
                 <p className="text-[16px] font-extrabold text-white">Confirm</p>
               </NBButton>

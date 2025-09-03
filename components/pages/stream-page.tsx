@@ -1,17 +1,20 @@
+import { motion } from "motion/react";
 import Image from "next/image";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
 import { Tips } from "@/plugins/tips/tips";
 import { Separator } from "../shadcn-ui/separator";
 import { BottomNavbar } from "../shared/mini-app/bottom-navbar";
-import { BuyTokenModal } from "../shared/mini-app/buy-token-modal";
-import { NBButton } from "../shared/mini-app/nb-button";
-import { NBCard } from "../shared/mini-app/nb-card";
 import { ShareButton } from "../shared/share-button";
 
 export const StreamPage = () => {
   return (
-    <div className="relative flex flex-col justify-center items-start h-full w-full">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="relative flex flex-col justify-center items-start h-full w-full">
       <iframe
         width="100%"
         height="265px"
@@ -90,6 +93,6 @@ export const StreamPage = () => {
       </div>
       {/* Floating Bottom Navbar */}
       <BottomNavbar />
-    </div>
+    </motion.div>
   );
 };

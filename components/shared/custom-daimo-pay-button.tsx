@@ -149,7 +149,7 @@ export const CustomDaimoPayButton = ({
                 type="number"
                 min="0.1"
                 step="0.1"
-                placeholder="Enter custom amount"
+                placeholder="e.g. $0.01"
                 value={amountUSDC}
                 onChange={(e) => {
                   const value = Math.max(0, Number(e.target.value)); // Ensure non-negative

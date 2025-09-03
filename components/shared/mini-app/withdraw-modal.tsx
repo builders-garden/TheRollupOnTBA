@@ -77,7 +77,7 @@ export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
         <AnimatePresence mode="wait">
           {selectedMode === "custom" && (
             <Input
-              placeholder="Enter amount"
+              placeholder="e.g. $0.01"
               className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px]"
               type="number"
               min={0}

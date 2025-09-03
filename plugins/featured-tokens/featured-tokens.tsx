@@ -18,6 +18,7 @@ export const FeaturedTokens = ({ tokens }: FeaturedTokensProps) => {
       <div className="grid grid-cols-2 w-full gap-2.5">
         {tokens.map((token) => (
           <BuyTokenModal
+            key={token.name + token.color}
             trigger={
               <NBButton
                 className={cn("w-full py-2.5", token.buttonClassName)}

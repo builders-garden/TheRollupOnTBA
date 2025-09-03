@@ -71,7 +71,7 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
         <AnimatePresence mode="wait">
           {amountSelected === "custom" && (
             <Input
-              placeholder="Enter amount"
+              placeholder="e.g. $0.01"
               className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px]"
               type="number"
               min={0}

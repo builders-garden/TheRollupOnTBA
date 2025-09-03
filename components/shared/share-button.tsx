@@ -6,7 +6,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/shadcn-ui/dropdown-menu";
-import { FarcasterIcon } from "@/components/shared/icons/farcaster-icon";
 import { cn, copyToClipboard } from "@/lib/utils";
 
 interface ShareButtonProps {
@@ -79,9 +78,12 @@ export const ShareButton = ({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent side={side}>
-        <DropdownMenuItem onClick={handleShareClick} className="gap-2">
-          <FarcasterIcon
+        <DropdownMenuItem
+          onClick={handleShareClick}
+          className="gap-2 focus:bg-transparent">
+          <div
             className={cn(
+              "bg-blue-600 rounded-[3px]",
               buttonSize === "sm"
                 ? "size-4"
                 : buttonSize === "default"
@@ -89,9 +91,11 @@ export const ShareButton = ({
                   : "size-7",
             )}
           />
-          Share via cast
+          Share via base app
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleShareNative} className="gap-2">
+        <DropdownMenuItem
+          onClick={handleShareNative}
+          className="gap-2 focus:bg-transparent">
           <Share2Icon
             className={cn(
               buttonSize === "sm"
@@ -103,7 +107,9 @@ export const ShareButton = ({
           />
           Share to...
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={handleCopyLink} className="gap-2">
+        <DropdownMenuItem
+          onSelect={handleCopyLink}
+          className="gap-2 focus:bg-transparent">
           {linkCopied ? (
             <CheckIcon
               className={cn(

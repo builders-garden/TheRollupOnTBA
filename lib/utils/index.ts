@@ -161,3 +161,12 @@ export const userIsNotAdminAndIsNotProduction = (fid: number): boolean => {
 export const formatWalletAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4)}`;
 };
+
+/**
+ * Capitalize the first letter of a string
+ * @param string - The string to capitalize
+ * @returns The capitalized string
+ */
+export const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};

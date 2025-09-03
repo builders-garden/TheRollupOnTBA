@@ -52,7 +52,7 @@ export const StreamPage = () => {
           </div>
         </div>
 
-        <Separator className="w-full bg-[#C8C3AD]" />
+        <Separator className="w-full bg-border" />
 
         {/* Bullmeter Poll Card */}
         <Bullmeter

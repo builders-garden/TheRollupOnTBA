@@ -17,9 +17,9 @@ export default function Providers({
     <ErudaProvider>
       <ConditionalWagmiProvider cookie={cookie}>
         <FarcasterProvider addMiniAppOnLoad={true}>
-          <AuthProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
-          </AuthProvider>
+          {/* <AuthProvider> */}
+          <NuqsAdapter>{children}</NuqsAdapter>
+          {/* </AuthProvider> */}
         </FarcasterProvider>
       </ConditionalWagmiProvider>
     </ErudaProvider>

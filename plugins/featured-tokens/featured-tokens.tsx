@@ -1,5 +1,5 @@
 import { BuyTokenModal } from "@/components/shared/mini-app/buy-token-modal";
-import { NBButton } from "@/components/shared/mini-app/nb-button";
+import { NBButton } from "@/components/shared/nb-button";
 import { cn } from "@/lib/utils";
 
 interface FeaturedTokensProps {

@@ -12,8 +12,8 @@ import {
 interface NBModalProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  isOpen?: boolean;
+  setIsOpen?: Dispatch<SetStateAction<boolean>>;
   contentClassName?: string;
 }
 

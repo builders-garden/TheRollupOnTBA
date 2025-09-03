@@ -20,9 +20,12 @@ export const TopUpModal = ({ isNavbarOpen }: TopUpModalProps) => {
 
   // Handles Modal Open
   const handleModalOpen = () => {
-    setAmountSelected(undefined);
-    setCustomAmount("");
     setIsModalOpen(!isModalOpen);
+    // This prevents the values to reset before the modal closing animation is complete
+    setTimeout(() => {
+      setAmountSelected(undefined);
+      setCustomAmount("");
+    }, 300);
   };
 
   const selectableAmounts: SelectableAmount[] = ["1", "3", "5", "10"];

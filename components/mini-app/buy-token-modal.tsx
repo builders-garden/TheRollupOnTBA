@@ -21,9 +21,12 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
 
   // Handles Modal Open
   const handleModalOpen = () => {
-    setAmountSelected(undefined);
-    setCustomAmount("");
     setIsModalOpen(!isModalOpen);
+    // This prevents the values to reset before the modal closing animation is complete
+    setTimeout(() => {
+      setAmountSelected(undefined);
+      setCustomAmount("");
+    }, 300);
   };
 
   const selectableAmounts: SelectableAmount[] = ["1", "3", "5", "10"];
@@ -98,7 +101,7 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
                 You&apos;re getting 124,582 ${tokenName}
               </p>
               <NBButton key="confirm" className="w-full bg-accent">
-                <p className="text-[16px] font-extrabold">Confirm</p>
+                <p className="text-[16px] text-white font-extrabold">Confirm</p>
               </NBButton>
             </div>
           )}

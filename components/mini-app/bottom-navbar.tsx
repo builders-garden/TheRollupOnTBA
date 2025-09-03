@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { NBButton } from "./nb-button";
 import { NBModal } from "./nb-modal";
 import { TopUpModal } from "./top-up-modal";
@@ -7,7 +8,6 @@ import { WithdrawModal } from "./withdraw-modal";
 
 export const BottomNavbar = () => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
-  const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
 
   // Handle Navbar Open
   const handleNavbarOpen = () => {
@@ -15,7 +15,11 @@ export const BottomNavbar = () => {
   };
 
   return (
-    <nav className="fixed bottom-5 left-0 right-0 z-50 bg-transparent px-5">
+    <nav
+      className={cn(
+        "fixed bottom-0 left-0 right-0 z-50 bg-transparent px-5 pb-5 pt-3 transition-all duration-300",
+        isNavbarOpen && "bg-background/90",
+      )}>
       <div className="flex justify-between items-center w-full">
         <NBButton
           className="rounded-full py-1 w-[106px] shrink-0"

@@ -3,6 +3,13 @@ import { BottomNavbar } from "../mini-app/bottom-navbar";
 import { BuyTokenModal } from "../mini-app/buy-token-modal";
 import { NBButton } from "../mini-app/nb-button";
 import { NBCard } from "../mini-app/nb-card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../shadcn-ui/dialog";
 import { Separator } from "../shadcn-ui/separator";
 import { ShareButton } from "../shared/share-button";
 
@@ -20,7 +27,7 @@ export const StreamPage = () => {
       />
 
       {/* Bottom Section */}
-      <div className="flex flex-col justify-start items-center h-full w-full p-5 gap-5">
+      <div className="flex flex-col justify-start items-center h-full w-full px-5 py-5 pb-[82px] gap-5">
         {/* Title */}
         <div className="flex flex-col justify-center items-center w-full gap-0.5">
           <div className="flex justify-between items-center w-full">
@@ -94,11 +101,11 @@ export const StreamPage = () => {
                 <NBButton className="w-full py-2.5">
                   <div className="flex justify-center items-center w-full gap-1.5">
                     <div className="size-4 bg-yellow-500 rounded-full border border-black" />
-                    <p className="text-[16px] font-extrabold">Buy $LIMòN</p>
+                    <p className="text-[16px] font-extrabold">Buy $LIMONE</p>
                   </div>
                 </NBButton>
               }
-              tokenName="LIMòN"
+              tokenName="LIMONE"
             />
             <BuyTokenModal
               trigger={
@@ -125,7 +132,6 @@ export const StreamPage = () => {
           </div>
         </div>
       </div>
-
       {/* Floating Bottom Navbar */}
       <BottomNavbar />
     </div>

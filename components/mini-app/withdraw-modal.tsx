@@ -9,30 +9,21 @@ interface WithdrawModalProps {
   isNavbarOpen: boolean;
 }
 
+type SelectedMode = "all" | "custom" | undefined;
+
 export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAllSelected, setIsAllSelected] = useState(false);
-  const [isCustomSelected, setIsCustomSelected] = useState(false);
+  const [selectedMode, setSelectedMode] = useState<SelectedMode>(undefined);
   const [customAmount, setCustomAmount] = useState<string>("");
 
   // Handles Modal Open
   const handleModalOpen = () => {
-    setIsAllSelected(false);
-    setIsCustomSelected(false);
-    setCustomAmount("");
     setIsModalOpen(!isModalOpen);
-  };
-
-  // Handles All Selected
-  const handleAllSelected = () => {
-    setIsAllSelected(true);
-    setIsCustomSelected(false);
-  };
-
-  // Handles Custom Selected
-  const handleCustomSelected = () => {
-    setIsCustomSelected(true);
-    setIsAllSelected(false);
+    // This prevents the values to reset before the modal closing animation is complete
+    setTimeout(() => {
+      setSelectedMode(undefined);
+      setCustomAmount("");
+    }, 300);
   };
 
   return (
@@ -61,30 +52,30 @@ export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
       <div className="flex flex-col justify-center items-center w-full gap-2.5">
         <NBButton
           className="w-full"
-          buttonColor={isAllSelected ? "blue" : "black"}
-          onClick={handleAllSelected}>
+          buttonColor={selectedMode === "all" ? "blue" : "black"}
+          onClick={() => setSelectedMode("all")}>
           <p
             className={cn(
               "text-[16px] font-extrabold",
-              isAllSelected && "text-accent",
+              selectedMode === "all" && "text-accent",
             )}>
             All
           </p>
         </NBButton>
         <NBButton
           className="w-full"
-          buttonColor={isCustomSelected ? "blue" : "black"}
-          onClick={handleCustomSelected}>
+          buttonColor={selectedMode === "custom" ? "blue" : "black"}
+          onClick={() => setSelectedMode("custom")}>
           <p
             className={cn(
               "text-[16px] font-extrabold",
-              isCustomSelected && "text-accent",
+              selectedMode === "custom" && "text-accent",
             )}>
             Custom
           </p>
         </NBButton>
         <AnimatePresence mode="wait">
-          {isCustomSelected && (
+          {selectedMode === "custom" && (
             <Input
               placeholder="Enter amount"
               className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px]"
@@ -110,7 +101,7 @@ export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
 
       <div className="flex flex-col justify-center items-center w-full gap-5 mt-14">
         <AnimatePresence mode="wait">
-          {(isAllSelected || isCustomSelected) && (
+          {!!selectedMode && (
             <NBButton key="confirm" className="w-full bg-accent">
               <p className="text-[16px] font-extrabold text-white">
                 Confirm $5.50 Withdrawal

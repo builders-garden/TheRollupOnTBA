@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-org/account": "^2.0.2",
     "@coinbase/onchainkit": "^0.38.19",
     "@daimo/pay": "^1.15.0",
     "@daimo/pay-common": "^1.15.0",

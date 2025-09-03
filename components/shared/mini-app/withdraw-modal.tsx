@@ -1,22 +1,19 @@
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Input } from "../shadcn-ui/input";
+import { Input } from "../../shadcn-ui/input";
 import { NBButton } from "./nb-button";
 import { NBModal } from "./nb-modal";
 
-interface BuyTokenModalProps {
-  trigger: React.ReactNode;
-  tokenName: string;
+interface WithdrawModalProps {
+  isNavbarOpen: boolean;
 }
 
-type SelectableAmount = "1" | "3" | "5" | "10" | "custom";
+type SelectedMode = "all" | "custom" | undefined;
 
-export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
+export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [amountSelected, setAmountSelected] = useState<
-    SelectableAmount | undefined
-  >(undefined);
+  const [selectedMode, setSelectedMode] = useState<SelectedMode>(undefined);
   const [customAmount, setCustomAmount] = useState<string>("");
 
   // Handles Modal Open
@@ -24,52 +21,61 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
     setIsModalOpen(!isModalOpen);
     // This prevents the values to reset before the modal closing animation is complete
     setTimeout(() => {
-      setAmountSelected(undefined);
+      setSelectedMode(undefined);
       setCustomAmount("");
     }, 300);
   };
 
-  const selectableAmounts: SelectableAmount[] = ["1", "3", "5", "10"];
-
   return (
     <NBModal
-      trigger={trigger}
+      trigger={
+        <NBButton
+          initial={{
+            scale: 0,
+            boxShadow: "4px 4px 0px 0px #000000",
+          }}
+          animate={{
+            scale: isNavbarOpen ? 1 : 0,
+            boxShadow: "4px 4px 0px 0px #000000",
+            transition: {
+              default: { type: "tween", delay: 0.1 },
+            },
+          }}
+          className="w-full px-1.5">
+          <p className="text-[16px] font-extrabold">Withdraw</p>
+        </NBButton>
+      }
       isOpen={isModalOpen}
       setIsOpen={handleModalOpen}
       contentClassName="p-2.5 rounded-[12px]">
-      <h1 className="text-[24px] font-bold text-center">Buy ${tokenName}</h1>
+      <h1 className="text-[24px] font-bold text-center">Withdraw Balance</h1>
       <div className="flex flex-col justify-center items-center w-full gap-2.5">
-        <div className="grid grid-cols-2 gap-2.5 w-full">
-          {selectableAmounts.map((amount) => (
-            <NBButton
-              key={amount}
-              className="w-full"
-              buttonColor={amountSelected === amount ? "blue" : "black"}
-              onClick={() => setAmountSelected(amount)}>
-              <p
-                className={cn(
-                  "text-[16px] font-extrabold",
-                  amountSelected === amount && "text-accent",
-                )}>
-                ${amount}
-              </p>
-            </NBButton>
-          ))}
-        </div>
         <NBButton
           className="w-full"
-          buttonColor={amountSelected === "custom" ? "blue" : "black"}
-          onClick={() => setAmountSelected("custom")}>
+          buttonColor={selectedMode === "all" ? "blue" : "black"}
+          onClick={() => setSelectedMode("all")}>
           <p
             className={cn(
               "text-[16px] font-extrabold",
-              amountSelected === "custom" && "text-accent",
+              selectedMode === "all" && "text-accent",
+            )}>
+            All
+          </p>
+        </NBButton>
+        <NBButton
+          className="w-full"
+          buttonColor={selectedMode === "custom" ? "blue" : "black"}
+          onClick={() => setSelectedMode("custom")}>
+          <p
+            className={cn(
+              "text-[16px] font-extrabold",
+              selectedMode === "custom" && "text-accent",
             )}>
             Custom
           </p>
         </NBButton>
         <AnimatePresence mode="wait">
-          {amountSelected === "custom" && (
+          {selectedMode === "custom" && (
             <Input
               placeholder="Enter amount"
               className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px]"
@@ -95,15 +101,12 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
 
       <div className="flex flex-col justify-center items-center w-full gap-5 mt-14">
         <AnimatePresence mode="wait">
-          {!!amountSelected && (
-            <div className="flex flex-col justify-center items-center w-full gap-2.5">
-              <p className="text-[16px] font-bold text-black/25">
-                You&apos;re getting 124,582 ${tokenName}
+          {!!selectedMode && (
+            <NBButton key="confirm" className="w-full bg-accent">
+              <p className="text-[16px] font-extrabold text-white">
+                Confirm $5.50 Withdrawal
               </p>
-              <NBButton key="confirm" className="w-full bg-accent">
-                <p className="text-[16px] text-white font-extrabold">Confirm</p>
-              </NBButton>
-            </div>
+            </NBButton>
           )}
         </AnimatePresence>
         <button

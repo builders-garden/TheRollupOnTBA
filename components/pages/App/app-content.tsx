@@ -2,9 +2,9 @@
 
 import { AnimatePresence } from "motion/react";
 import Image from "next/image";
-import { NBButton } from "@/components/mini-app/nb-button";
-import { NBCard } from "@/components/mini-app/nb-card";
 import { Separator } from "@/components/shadcn-ui/separator";
+import { NBButton } from "@/components/shared/mini-app/nb-button";
+import { NBCard } from "@/components/shared/mini-app/nb-card";
 import { ShareButton } from "@/components/shared/share-button";
 import { useAuth } from "@/contexts/auth-context";
 import { useDebounce } from "@/hooks/use-debounce";

@@ -1,7 +1,7 @@
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Input } from "../shadcn-ui/input";
+import { Input } from "../../shadcn-ui/input";
 import { NBButton } from "./nb-button";
 import { NBModal } from "./nb-modal";
 

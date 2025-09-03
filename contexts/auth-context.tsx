@@ -95,6 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user: authUser,
     refetch: refetchUser,
     isLoading: isFetchingUser,
+    isFetched: isFetchedAuthUser,
     error: userError,
   } = useAuthCheck(); // Always fetch to check for existing token
 
@@ -289,6 +290,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (isInMiniApp && !isMiniAppReady) {
       return;
     }
+
+    // check user auth first
+    if (!isFetchedAuthUser) return;
 
     // If we have a user from the initial fetch, determine the auth method
     if (authUser && !authMethod) {

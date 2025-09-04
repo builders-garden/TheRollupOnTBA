@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import ky from "ky";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 import { ADMIN_FIDS } from "@/lib/constants";
 import { env } from "@/lib/zod";
@@ -96,18 +97,13 @@ export const formatAvatarSrc = (avatarSrc: string) => {
 /**
  * Copy text to clipboard
  * @param text - The text to copy
- * @param setIsCopied - The function to set the show copied state
  */
-export const copyToClipboard = async (
-  text: string | undefined,
-  setIsCopied: React.Dispatch<React.SetStateAction<boolean>>,
-) => {
+export const copyToClipboard = async (text: string | undefined) => {
   if (!text) return;
 
   try {
     await navigator.clipboard.writeText(text);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 750);
+    toast.success("Copied to clipboard");
   } catch (err) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
@@ -118,10 +114,9 @@ export const copyToClipboard = async (
     textArea.select();
     try {
       document.execCommand("copy");
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 750);
     } catch (err) {
       console.error("Failed to copy text: ", err);
+      toast.error("Failed to copy text");
     }
 
     document.body.removeChild(textArea);

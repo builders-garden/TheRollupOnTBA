@@ -71,7 +71,7 @@ export const PluginsContent = () => {
         </NBButton>
       </div>
 
-      {/* Tips Content */}
+      {/* Plugins Content */}
       <AnimatePresence mode="wait">
         {isTipsTab && <TipsContent key="tips" />}
         {isSentimentTab && <SentimentContent key="sentiment" />}

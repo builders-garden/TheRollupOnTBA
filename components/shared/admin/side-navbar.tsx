@@ -1,4 +1,4 @@
-import { Blocks, Images, LogOut, ShieldUser } from "lucide-react";
+import { Blocks, Images, LogOut, Palette, ShieldUser } from "lucide-react";
 import Image from "next/image";
 import { NBButton } from "@/components/shared/nb-button";
 import { NBCard } from "@/components/shared/nb-card";
@@ -6,16 +6,19 @@ import { AdminPageContent } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
 interface SideNavbarProps {
-  isContentOverlay: boolean;
-  isContentPlugins: boolean;
+  selectedPageContent: AdminPageContent;
   setSelectedPageContent: (pageContent: AdminPageContent) => void;
 }
 
 export const SideNavbar = ({
-  isContentOverlay,
-  isContentPlugins,
+  selectedPageContent,
   setSelectedPageContent,
 }: SideNavbarProps) => {
+  // Whether the page content is plugins, overlay or brand
+  const isContentPlugins = selectedPageContent === AdminPageContent.PLUGINS;
+  const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
+  const isContentBrand = selectedPageContent === AdminPageContent.BRAND;
+
   return (
     <NBCard className="flex flex-col justify-between items-center h-full w-[264px] bg-warning p-5">
       {/* Top section */}
@@ -37,12 +40,25 @@ export const SideNavbar = ({
         <div className="flex flex-col justify-center items-center w-full gap-2.5">
           <NBButton
             className="w-full"
-            variant={isContentOverlay ? "ghost" : "default"}
+            variant={isContentBrand ? "default" : "ghost"}
+            onClick={() => setSelectedPageContent(AdminPageContent.BRAND)}>
+            <div
+              className={cn(
+                "flex justify-start items-center w-full gap-2",
+                !isContentBrand && "text-white",
+              )}>
+              <Palette className="size-5" />
+              <p className="text-[20px] font-bold">Brand</p>
+            </div>
+          </NBButton>
+          <NBButton
+            className="w-full"
+            variant={isContentPlugins ? "default" : "ghost"}
             onClick={() => setSelectedPageContent(AdminPageContent.PLUGINS)}>
             <div
               className={cn(
                 "flex justify-start items-center w-full gap-2",
-                isContentOverlay && "text-white",
+                !isContentPlugins && "text-white",
               )}>
               <Blocks className="size-5" />
               <p className="text-[20px] font-bold">Plugins</p>
@@ -50,12 +66,12 @@ export const SideNavbar = ({
           </NBButton>
           <NBButton
             className="w-full"
-            variant={isContentPlugins ? "ghost" : "default"}
+            variant={isContentOverlay ? "default" : "ghost"}
             onClick={() => setSelectedPageContent(AdminPageContent.OVERLAY)}>
             <div
               className={cn(
                 "flex justify-start items-center w-full gap-2",
-                isContentPlugins && "text-white",
+                !isContentOverlay && "text-white",
               )}>
               <Images className="size-5" />
               <p className="text-[20px] font-bold">Overlay</p>

@@ -44,7 +44,7 @@
     "jiti": "1.21.7",
     "jose": "^6.0.12",
     "ky": "^1.8.2",
-    "lucide-react": "^0.539.0",
+    "lucide-react": "^0.542.0",
     "motion": "^12.23.12",
     "next": "15.5.0",
     "next-secure-headers": "^2.2.0",

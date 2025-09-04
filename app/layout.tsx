@@ -9,8 +9,8 @@ import "./globals.css";
 const nunitoSans = Nunito_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Farcaster Mini-app Starter by Builders Garden",
-  description: "A starter for Farcaster mini-apps by Builders Garden",
+  title: "The Rollup Streaming Service",
+  description: "A streaming service for The Rollup",
 };
 
 export default async function RootLayout({
@@ -27,7 +27,7 @@ export default async function RootLayout({
         <Providers cookie={cookie}>
           {children}
           <Suspense>
-            <Toaster />
+            <Toaster richColors position="top-right" />
           </Suspense>
         </Providers>
       </body>

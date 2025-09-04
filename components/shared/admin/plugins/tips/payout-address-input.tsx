@@ -1,6 +1,7 @@
 import { Copy, SquarePen, Wallet, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { CopyButton } from "@/components/shared/copy-button";
 import { NBButton } from "@/components/shared/nb-button";
 
 export const PayoutAddressInput = () => {
@@ -52,31 +53,27 @@ export const PayoutAddressInput = () => {
 
           <AnimatePresence mode="wait">
             {!isEditing && (
-              <motion.button
-                key={`Copy-button`}
+              <motion.div
+                key="not-editing"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="cursor-pointer shrink-0">
-                <Copy className="size-6 text-accent" />
-              </motion.button>
-            )}
-            {!isEditing && (
-              <motion.button
-                key={`SquarePen-button`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="cursor-pointer shrink-0"
-                onClick={handleEdit}>
-                <SquarePen className="size-6 text-success" />
-              </motion.button>
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="flex justify-center items-center gap-2.5">
+                <CopyButton key="copy-button" stringToCopy={payoutAddress} />
+                <motion.button
+                  key={`SquarePen-button`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="cursor-pointer shrink-0"
+                  onClick={handleEdit}>
+                  <SquarePen className="size-6 text-success" />
+                </motion.button>
+              </motion.div>
             )}
             {isEditing && (
               <motion.button

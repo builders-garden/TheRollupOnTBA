@@ -1,4 +1,5 @@
 export enum AdminPageContent {
+  BRAND = "brand",
   PLUGINS = "plugins",
   OVERLAY = "overlay",
 }

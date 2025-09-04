@@ -1,5 +1,5 @@
-import { NBButton } from "@/components/shared/mini-app/nb-button";
-import { NBCard } from "@/components/shared/mini-app/nb-card";
+import { NBButton } from "@/components/shared/nb-button";
+import { NBCard } from "@/components/shared/nb-card";
 import { cn } from "@/lib/utils";
 
 interface BullmeterProps {
@@ -19,7 +19,7 @@ interface BullmeterProps {
 
 export const Bullmeter = ({
   showLabel = true,
-  label = "Sentiment poll",
+  label = "Bull-meter",
   className,
   cardClassName,
   title,

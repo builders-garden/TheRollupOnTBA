@@ -69,7 +69,7 @@ export const StreamPage = () => {
           </div>
         </div>
 
-        <Separator className="w-full bg-[#C8C3AD]" />
+        <Separator className="w-full bg-border" />
 
         {/* Bullmeter Poll Card */}
         <Bullmeter
@@ -84,7 +84,6 @@ export const StreamPage = () => {
 
         {/* Tip Buttons */}
         <Tips
-          label="Tip creator"
           showLabel
           tips={[
             { amount: 0.5, onClick: () => {}, buttonColor: "blue" },

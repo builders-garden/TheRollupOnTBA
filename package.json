@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-org/account": "^2.0.2",
     "@coinbase/onchainkit": "^0.38.19",
     "@daimo/pay": "^1.15.0",
     "@daimo/pay-common": "^1.15.0",
@@ -43,7 +44,7 @@
     "jiti": "1.21.7",
     "jose": "^6.0.12",
     "ky": "^1.8.2",
-    "lucide-react": "^0.539.0",
+    "lucide-react": "^0.542.0",
     "motion": "^12.23.12",
     "next": "15.5.0",
     "next-secure-headers": "^2.2.0",

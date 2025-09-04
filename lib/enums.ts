@@ -1,12 +1,13 @@
-export enum PageContent {
-  HOME = "home",
-  PROFILE = "profile",
+export enum AdminPageContent {
+  BRAND = "brand",
+  PLUGINS = "plugins",
+  OVERLAY = "overlay",
 }
 
-export enum OverlayContent {
-  VIEW_PROFILE = "view-profile",
-  HELP = "help",
-  NONE = "none",
+export enum AdminPageTab {
+  TIPS = "tips",
+  TOKENS = "tokens",
+  SENTIMENT = "sentiment",
 }
 
 // client to server

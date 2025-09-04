@@ -5,6 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     NEYNAR_API_KEY: z.string().min(1),
+    ZERION_API_KEY: z.string().min(1),
     JWT_SECRET: z.string().min(1),
     NOTIFICATION_SECRET: z.string().min(1),
     TURSO_DATABASE_URL: z.string().min(1),

@@ -23,6 +23,8 @@ export const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
 // TODO update this address
 export const DESTINATION_ADDRESS = "0x0000000000000000000000000000000000000000";
+// Temporary bullmeter address on Base
+export const BULLMETER_ADDRESS = "0x1E9f6659B8Df87296D7DFf6b01ca08aB14CaA3d9";
 
 // List of Base App trade supported chains (name, symbol, chainId, logoUrl)
 export const BASE_APP_SUPPORTED_CHAINS = [

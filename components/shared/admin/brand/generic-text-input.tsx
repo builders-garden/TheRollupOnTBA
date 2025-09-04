@@ -63,7 +63,7 @@ export const GenericTextInput = ({
 
       <div
         className={cn(
-          "flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white",
+          "flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300",
           isEditing && "ring-[2px]",
           isDestructive && "border-destructive ring-destructive/40",
         )}>

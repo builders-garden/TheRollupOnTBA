@@ -11,7 +11,7 @@ import { AdminPageContent } from "@/lib/enums";
 
 export default function AdminPage() {
   const [selectedPageContent, setSelectedPageContent] =
-    useState<AdminPageContent>(AdminPageContent.BRAND);
+    useState<AdminPageContent>(AdminPageContent.PLUGINS);
 
   // Whether the page content is overlay or brand
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;

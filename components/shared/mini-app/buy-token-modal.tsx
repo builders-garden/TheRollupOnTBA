@@ -3,7 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "../../shadcn-ui/input";
 import { NBButton } from "../nb-button";
-import { NBModal } from "./nb-modal";
+import { NBModal } from "../nb-modal";
 
 interface BuyTokenModalProps {
   trigger: React.ReactNode;
@@ -72,7 +72,7 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
           {amountSelected === "custom" && (
             <Input
               placeholder="e.g. $0.01"
-              className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px]"
+              className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px] transition-all duration-300"
               type="number"
               min={0}
               value={customAmount}

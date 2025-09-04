@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/shadcn-ui/input";
-import { NBModal } from "@/components/shared/mini-app/nb-modal";
 import { NBButton } from "@/components/shared/nb-button";
+import { NBModal } from "@/components/shared/nb-modal";
 import { cn } from "@/lib/utils";
 
 interface TipsProps {
@@ -79,7 +79,7 @@ export const Tips = ({
             <div className="flex flex-col justify-center items-center w-full gap-2.5">
               <Input
                 placeholder="e.g. $0.01"
-                className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px]"
+                className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px] transition-all duration-300"
                 type="number"
                 min={0}
                 value={customAmount}

@@ -1,3 +1,5 @@
+import { ChainImages } from "./enums";
+
 export const MESSAGE_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30; // 30 day
 
 export const OG_IMAGE_SIZE = {
@@ -30,42 +32,42 @@ export const BASE_APP_SUPPORTED_CHAINS = [
     name: "Base",
     symbol: "BASE",
     chainId: "8453",
-    logoUrl: "/chains/base-logo.svg",
+    logoUrl: ChainImages.BASE,
   },
   {
     name: "Ethereum",
     symbol: "ETH",
     chainId: "1",
-    logoUrl: "/chains/ethereum-logo.svg",
+    logoUrl: ChainImages.ETHEREUM,
   },
   {
     name: "Polygon",
     symbol: "MATIC",
     chainId: "137",
-    logoUrl: "/chains/polygon-logo.svg",
+    logoUrl: ChainImages.POLYGON,
   },
   {
     name: "Optimism",
     symbol: "OP",
     chainId: "10",
-    logoUrl: "/chains/optimism-logo.svg",
+    logoUrl: ChainImages.OPTIMISM,
   },
   {
     name: "Arbitrum",
     symbol: "ARB",
     chainId: "42161",
-    logoUrl: "/chains/arbitrum-logo.svg",
+    logoUrl: ChainImages.ARBITRUM,
   },
   {
     name: "Avalanche",
     symbol: "AVAX",
     chainId: "43114",
-    logoUrl: "/chains/avalanche-logo.svg",
+    logoUrl: ChainImages.AVALANCHE,
   },
   {
     name: "BNB Chain",
     symbol: "BNB",
     chainId: "56",
-    logoUrl: "/chains/bnb-logo.svg",
+    logoUrl: ChainImages.BNB,
   },
 ];

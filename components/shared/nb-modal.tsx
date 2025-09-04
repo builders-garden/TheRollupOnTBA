@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../shadcn-ui/dialog";
+} from "../shadcn-ui/dialog";
 
 interface NBModalProps {
   trigger: React.ReactNode;

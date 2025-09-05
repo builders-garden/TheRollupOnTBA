@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { NBButton } from "../../nb-button";
 import { FileUpload } from "./file-upload";
-import { GenericTextInput } from "./generic-text-input";
+import { NBTextInput } from "./nb-text-input";
 import { TextDescriptionArea } from "./text-description-area";
 
 export const BrandContent = () => {
@@ -92,7 +92,7 @@ export const BrandContent = () => {
         </div>
         <div className="grid grid-cols-4 gap-5 w-full">
           {socialLinks.map((link) => (
-            <GenericTextInput
+            <NBTextInput
               key={link.label}
               label={link.label}
               inputColor={link.inputColor as "accent" | "destructive"}

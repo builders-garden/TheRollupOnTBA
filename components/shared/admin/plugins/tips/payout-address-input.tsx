@@ -1,4 +1,4 @@
-import { Copy, SquarePen, Wallet, X } from "lucide-react";
+import { Check, SquarePen, Wallet, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { CopyButton } from "@/components/shared/copy-button";
@@ -54,7 +54,7 @@ export const PayoutAddressInput = () => {
           <AnimatePresence mode="wait">
             {!isEditing && (
               <motion.div
-                key="not-editing"
+                key="not-editing-buttons"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -68,7 +68,7 @@ export const PayoutAddressInput = () => {
                   exit={{ opacity: 0 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}
                   className="cursor-pointer shrink-0"
                   onClick={handleEdit}>
                   <SquarePen className="size-6 text-success" />
@@ -76,18 +76,28 @@ export const PayoutAddressInput = () => {
               </motion.div>
             )}
             {isEditing && (
-              <motion.button
-                key={`X-button`}
+              <motion.div
+                key="editing-buttons"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="cursor-pointer shrink-0"
-                onClick={() => setEditingPayoutAddress("")}>
-                <X className="size-6 text-black" />
-              </motion.button>
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="flex justify-center items-center gap-1.5">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="cursor-pointer shrink-0"
+                  onClick={() => setEditingPayoutAddress("")}>
+                  <X className="size-6 text-black" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="cursor-pointer shrink-0"
+                  onClick={handleConfirm}>
+                  <Check className="size-6 text-success" />
+                </motion.button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
@@ -101,7 +111,9 @@ export const PayoutAddressInput = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}>
-              <NBButton className="bg-success w-fit shrink-0">
+              <NBButton
+                className="bg-success w-fit shrink-0"
+                onClick={() => setEditingPayoutAddress("pippo.base.eth")}>
                 <p className="text-[16px] font-extrabold text-white">
                   Set to connected account (pippo.base.eth)
                 </p>
@@ -110,28 +122,6 @@ export const PayoutAddressInput = () => {
           )}
         </AnimatePresence>
       </div>
-
-      {/* Confirm and Cancel buttons */}
-      <AnimatePresence mode="wait">
-        {isEditing && (
-          <motion.div
-            key={`Confirm-Cancel-buttons`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="flex justify-start items-center gap-2.5 w-full">
-            <NBButton className="bg-white w-[50%]" onClick={handleCancel}>
-              <p className="text-[16px] font-extrabold text-destructive">
-                Cancel
-              </p>
-            </NBButton>
-            <NBButton className="bg-accent w-[50%]" onClick={handleConfirm}>
-              <p className="text-[16px] font-extrabold text-white">Confirm</p>
-            </NBButton>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

@@ -26,12 +26,7 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.15, ease: "easeInOut" }}
-      className="flex justify-center items-center">
+    <div className="flex justify-center items-center">
       <AnimatePresence mode="wait">
         {isCopying && (
           <motion.div
@@ -68,6 +63,6 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
           </motion.button>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };

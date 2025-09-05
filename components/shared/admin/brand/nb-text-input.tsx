@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-interface GenericTextInputProps {
+interface NBTextInputProps {
   label: string;
   inputColor?: "accent" | "destructive";
   icon: React.ReactNode;
@@ -12,14 +12,14 @@ interface GenericTextInputProps {
   setValue: Dispatch<SetStateAction<string>>;
 }
 
-export const GenericTextInput = ({
+export const NBTextInput = ({
   label,
   inputColor = "accent",
   icon,
   placeholder,
   value,
   setValue,
-}: GenericTextInputProps) => {
+}: NBTextInputProps) => {
   const [editingValue, setEditingValue] = useState(value);
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

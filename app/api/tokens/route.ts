@@ -64,21 +64,35 @@ export const GET = async (req: NextRequest) => {
 
     // Transform the data to only include the required fields
     const transformedData: Token[] =
-      data.data?.map((token: any) => ({
-        name: token.attributes.name,
-        symbol: token.attributes.symbol,
-        iconUrl: token.attributes.icon?.url,
-        chainId: token.attributes.implementations?.[0]?.chain_id,
-        address: token.attributes.implementations?.[0]?.address,
-        decimals: token.attributes.implementations?.[0]?.decimals,
-      })) || [];
+      data.data?.map((token: any) => {
+        // If we filtered by chain, find the implementation for that specific chain
+        let implementation = token.attributes.implementations?.[0];
+
+        if (chainName && token.attributes.implementations) {
+          const chainImplementation = token.attributes.implementations.find(
+            (impl: any) => impl.chain_id === chainName,
+          );
+          if (chainImplementation) {
+            implementation = chainImplementation;
+          }
+        }
+
+        return {
+          name: token.attributes.name,
+          symbol: token.attributes.symbol,
+          iconUrl: token.attributes.icon?.url,
+          chainId: implementation?.chain_id,
+          address: implementation?.address,
+          decimals: implementation?.decimals,
+        };
+      }) || [];
 
     const result: TokensApiResponse = {
       success: true,
       data: transformedData,
     };
 
-    return NextResponse.json(result, data);
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Zerion API error:", error);
     const errorResponse: TokensApiError = {

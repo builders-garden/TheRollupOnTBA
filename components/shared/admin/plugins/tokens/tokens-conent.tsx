@@ -1,7 +1,11 @@
 import { motion } from "motion/react";
+import { useState } from "react";
+import { Token } from "@/lib/types/tokens.type";
 import { TokensSearchModal } from "./tokens-search-modal";
 
 export const TokensContent = () => {
+  const [addedTokens, setAddedTokens] = useState<Token[]>([]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -14,7 +18,10 @@ export const TokensContent = () => {
         in real time.
       </h1>
       <div className="flex flex-col justify-start items-start w-full gap-2.5">
-        <TokensSearchModal />
+        <TokensSearchModal
+          addedTokens={addedTokens}
+          setAddedTokens={setAddedTokens}
+        />
       </div>
     </motion.div>
   );

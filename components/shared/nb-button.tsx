@@ -53,6 +53,7 @@ export const NBButton = ({
               : buttonColor === "red"
                 ? "1px solid #cf5954"
                 : "1px solid #000000",
+          opacity: disabled ? 0.5 : 1,
         }
       }
       animate={
@@ -72,26 +73,30 @@ export const NBButton = ({
               : buttonColor === "red"
                 ? "1px solid #cf5954"
                 : "1px solid #000000",
+          opacity: disabled ? 0.5 : 1,
         }
       }
       exit={exit}
       whileTap={
-        whileTap ||
-        (isGhost || isOutline
-          ? {
-              scale: 0.98,
-            }
-          : {
-              x: 4,
-              y: 4,
-              boxShadow: "none",
-            })
+        disabled
+          ? undefined
+          : whileTap ||
+            (isGhost || isOutline
+              ? {
+                  scale: 0.98,
+                }
+              : {
+                  x: 4,
+                  y: 4,
+                  boxShadow: "none",
+                })
       }
-      whileHover={whileHover}
+      whileHover={disabled ? undefined : whileHover}
       transition={{ type: "spring", stiffness: 500, damping: 30 }}
       className={cn(
         "flex justify-center items-center w-[100px] py-2 px-3 rounded-[12px] transition-colors duration-300 cursor-pointer",
         isGhost || isOutline ? "bg-transparent" : "bg-background",
+        disabled && "cursor-default",
         className,
       )}
       onClick={onClick}

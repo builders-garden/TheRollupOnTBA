@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import ky from "ky";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
-import { ADMIN_FIDS } from "@/lib/constants";
+import { ADMIN_FIDS, BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
 import { env } from "@/lib/zod";
 
 /**
@@ -164,4 +164,14 @@ export const formatWalletAddress = (address: string) => {
  */
 export const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+/**
+ * Get the name of a chain by its chainId
+ * @param chainId - The chainId of the chain
+ * @returns The name of the chain
+ */
+export const getChainName = (chainId: string) => {
+  return BASE_APP_SUPPORTED_CHAINS.find((chain) => chain.chainId === chainId)
+    ?.name;
 };

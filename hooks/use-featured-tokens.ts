@@ -20,7 +20,7 @@ interface FeaturedTokenApiResponse {
 // Query hooks
 export const useFeaturedTokens = (params?: {
   brandId?: string;
-  chainId?: number;
+  chainName?: number;
   active?: boolean;
   withBrand?: boolean;
   search?: string;
@@ -29,7 +29,7 @@ export const useFeaturedTokens = (params?: {
 }) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
-  if (params?.chainId) searchParams.set("chainId", params.chainId.toString());
+  if (params?.chainName) searchParams.set("chainName", params.chainName.toString());
   if (params?.active !== undefined)
     searchParams.set("active", params.active.toString());
   if (params?.withBrand)

@@ -10,7 +10,7 @@ export const GET = async (req: NextRequest) => {
     const { searchParams } = new URL(req.url);
 
     // Get query parameters
-    const chainId = searchParams.get("chain_id");
+    const chainName = searchParams.get("chain_name");
     const searchQuery = searchParams.get("search_query");
     const tokenAddress = searchParams.get("token_address");
     const pageSize = searchParams.get("page_size") || "20";
@@ -26,8 +26,8 @@ export const GET = async (req: NextRequest) => {
     });
 
     // Add optional filters
-    if (chainId) {
-      params.append("filter[implementation_chain_id]", chainId);
+    if (chainName) {
+      params.append("filter[implementation_chain_id]", chainName);
     }
 
     if (searchQuery) {
@@ -60,6 +60,7 @@ export const GET = async (req: NextRequest) => {
     }
 
     const data = await response.json();
+    console.log("data", data);
 
     // Transform the data to only include the required fields
     const transformedData: Token[] =
@@ -77,7 +78,7 @@ export const GET = async (req: NextRequest) => {
       data: transformedData,
     };
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, data);
   } catch (error) {
     console.error("Zerion API error:", error);
     const errorResponse: TokensApiError = {

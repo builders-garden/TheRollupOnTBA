@@ -12,6 +12,7 @@ import { NBButton } from "@/components/shared/nb-button";
 import { NBModal } from "@/components/shared/nb-modal";
 import { BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { NewfoundToken } from "./newfound-token";
 
 export const TokensSearchModal = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -126,7 +127,9 @@ export const TokensSearchModal = () => {
           </SelectContent>
         </Select>
       </div>
-      <ScrollArea className="flex flex-col justify-start items-start w-full h-[300px]"></ScrollArea>
+      <ScrollArea className="flex flex-col justify-start items-start w-full h-[300px] mt-5">
+        <NewfoundToken />
+      </ScrollArea>
     </NBModal>
   );
 };

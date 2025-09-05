@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
 import {
   Token,
   TokensApiError,
@@ -60,7 +61,6 @@ export const GET = async (req: NextRequest) => {
     }
 
     const data = await response.json();
-    console.log("data", data);
 
     // Transform the data to only include the required fields
     const transformedData: Token[] =
@@ -81,7 +81,9 @@ export const GET = async (req: NextRequest) => {
           name: token.attributes.name,
           symbol: token.attributes.symbol,
           iconUrl: token.attributes.icon?.url,
-          chainId: implementation?.chain_id,
+          chainId: BASE_APP_SUPPORTED_CHAINS.find(
+            (chain) => chain.zerionName === implementation?.chain_id,
+          )?.chainId,
           address: implementation?.address,
           decimals: implementation?.decimals,
         };

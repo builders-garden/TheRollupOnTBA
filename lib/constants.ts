@@ -28,6 +28,17 @@ export const DESTINATION_ADDRESS = "0x0000000000000000000000000000000000000000";
 // Temporary bullmeter address on Base
 export const BULLMETER_ADDRESS = "0x1E9f6659B8Df87296D7DFf6b01ca08aB14CaA3d9";
 
+// Chain Explorer String URLs
+export const TokenNameToChainExplorerStringUrls = {
+  "1": "https://etherscan.io",
+  "10": "https://optimistic.etherscan.io",
+  "56": "https://bscscan.com",
+  "137": "https://polygonscan.com",
+  "8453": "https://basescan.org",
+  "42161": "https://arbiscan.io",
+  "43114": "https://snowtrace.io",
+};
+
 // List of Base App trade supported chains (name, symbol, chainId, logoUrl)
 export const BASE_APP_SUPPORTED_CHAINS = [
   {

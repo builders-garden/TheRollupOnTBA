@@ -99,12 +99,7 @@ export const PayoutAddressInput = () => {
               key={`Set-to-connected-account-button`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{
-                opacity: 0,
-                transition: {
-                  delay: 0.3,
-                },
-              }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}>
               <NBButton className="bg-success w-fit shrink-0">
                 <p className="text-[16px] font-extrabold text-white">
@@ -122,12 +117,7 @@ export const PayoutAddressInput = () => {
           <motion.div
             key={`Confirm-Cancel-buttons`}
             initial={{ opacity: 0 }}
-            animate={{
-              opacity: 1,
-              transition: {
-                delay: 0.3,
-              },
-            }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="flex justify-start items-center gap-2.5 w-full">

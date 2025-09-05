@@ -8,18 +8,20 @@ import { NBButton } from "@/components/shared/nb-button";
 import { NBModal } from "@/components/shared/nb-modal";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Token } from "@/lib/types/tokens.type";
-import { cn } from "@/lib/utils";
+import { cn, deepCompareTokens } from "@/lib/utils";
 import { ChainSelector } from "./chain-selector";
 import { NewfoundToken } from "./newfound-token";
 
 interface TokensSearchModalProps {
   addedTokens: Token[];
   setAddedTokens: Dispatch<SetStateAction<Token[]>>;
+  disabled: boolean;
 }
 
 export const TokensSearchModal = ({
   addedTokens,
   setAddedTokens,
+  disabled,
 }: TokensSearchModalProps) => {
   const [searchValue, setSearchValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -39,25 +41,12 @@ export const TokensSearchModal = ({
   // Disabled state for the tokens
   const isLimitReached = addedTokens.length + selectedTokens.length >= 6;
 
-  // Handles Modal Open
-  const handleModalOpen = () => {
-    setIsModalOpen(!isModalOpen);
-    // This prevents the values to reset before the modal closing animation is complete
-    setTimeout(() => {
-      setSelectedChainName(undefined);
-      setSearchValue("");
-      setSelectedTokens([]);
-      setFetchedTokens([]);
-      setFetchingError(null);
-      setIsFetchingTokens(false);
-      setHasFetchedOnce(false);
-    }, 300);
-  };
-
   // When the search changes or the chain changes, fetch the new tokens
   useEffect(() => {
     const fetchTokens = async () => {
       setIsFetchingTokens(true);
+      setFetchingError(null);
+      setSelectedTokens([]);
       try {
         let searchParams = "";
         if (debouncedSearchValue) {
@@ -71,12 +60,16 @@ export const TokensSearchModal = ({
           .get<{
             data: Token[];
             success: boolean;
-          }>(`/api/tokens?chain_id=${selectedChainName}${searchParams}`)
+          }>(`/api/tokens?chain_name=${selectedChainName}${searchParams}`)
           .json();
 
         if (tokens.success) {
-          console.log("TEST tokens", tokens);
-          setFetchedTokens(tokens.data);
+          // Filter out tokens that are already added
+          const cleanedTokens = tokens.data.filter(
+            (token) => !addedTokens.some((t) => deepCompareTokens(t, token)),
+          );
+          console.log("TEST tokens", cleanedTokens);
+          setFetchedTokens(cleanedTokens);
         } else {
           setFetchingError(
             new Error("An error occurred, please try again later."),
@@ -99,7 +92,7 @@ export const TokensSearchModal = ({
   return (
     <NBModal
       trigger={
-        <NBButton className="bg-accent w-[200px]">
+        <NBButton className="bg-accent w-[200px]" disabled={disabled}>
           <div className="flex justify-center items-center w-full gap-1.5 text-white">
             <Plus className="size-4.5" />
             <p className="text-[16px] font-extrabold text-nowrap">
@@ -109,7 +102,7 @@ export const TokensSearchModal = ({
         </NBButton>
       }
       isOpen={isModalOpen}
-      setIsOpen={handleModalOpen}
+      setIsOpen={setIsModalOpen}
       contentClassName="p-4 rounded-[12px] sm:max-w-2xl">
       <h1 className="text-[24px] font-bold text-center">Search for a token</h1>
 
@@ -132,16 +125,24 @@ export const TokensSearchModal = ({
               setSearchValue(e.target.value);
             }}
           />
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.15, ease: "easeInOut" }}
-            onClick={() => {
-              setSearchValue("");
-            }}
-            className="cursor-pointer">
-            <X className="size-5 shrink-0" />
-          </motion.button>
+          <AnimatePresence mode="wait" initial={false}>
+            {isEditing && (
+              <motion.button
+                key="x-button"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                onClick={() => {
+                  setSearchValue("");
+                }}
+                className="cursor-pointer">
+                <X className="size-5 shrink-0" />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
         <ChainSelector
           selectedChainName={selectedChainName}
@@ -185,6 +186,7 @@ export const TokensSearchModal = ({
               {fetchedTokens.map((token, index) => (
                 <NewfoundToken
                   key={index}
+                  index={index}
                   disabled={isLimitReached}
                   token={token}
                   selectedTokens={selectedTokens}
@@ -218,17 +220,38 @@ export const TokensSearchModal = ({
         </AnimatePresence>
       </ScrollArea>
 
+      {/* Selected tokens count */}
+      <div className="flex justify-end items-center w-full pb-2 pr-3 -mt-1">
+        <p className="text-[14px] font-bold">
+          Selected {selectedTokens.length}/{6 - addedTokens.length}
+        </p>
+      </div>
+
       {/* Bottom modal buttons */}
-      <div className="flex flex-col justify-center items-center w-full gap-5 mt-8">
+      <div className="flex flex-col justify-center items-center w-full gap-5">
         <NBButton
           key="confirm"
           className="w-full bg-accent"
-          disabled={selectedTokens.length === 0}>
+          disabled={selectedTokens.length === 0}
+          onClick={() => {
+            setAddedTokens([...addedTokens, ...selectedTokens]);
+            setIsModalOpen(false);
+            setTimeout(() => {
+              const oldSelectedTokens = selectedTokens;
+              setFetchedTokens(
+                fetchedTokens.filter(
+                  (t) =>
+                    !oldSelectedTokens.some((st) => deepCompareTokens(st, t)),
+                ),
+              );
+              setSelectedTokens([]);
+            }, 300);
+          }}>
           <p className="text-[16px] text-white font-extrabold">Confirm</p>
         </NBButton>
         <button
           className="text-[16px] font-bold text-black cursor-pointer"
-          onClick={handleModalOpen}>
+          onClick={() => setIsModalOpen(false)}>
           Cancel
         </button>
       </div>

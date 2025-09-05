@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 import { ADMIN_FIDS, BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
 import { env } from "@/lib/zod";
+import { Token } from "../types/tokens.type";
 
 /**
  * Merge class names
@@ -174,4 +175,21 @@ export const capitalizeFirstLetter = (string: string) => {
 export const getChainName = (chainId: string) => {
   return BASE_APP_SUPPORTED_CHAINS.find((chain) => chain.chainId === chainId)
     ?.name;
+};
+
+/**
+ * Deep compare two tokens
+ * @param token1 - The first token
+ * @param token2 - The second token
+ * @returns True if the tokens are equal, false otherwise
+ */
+export const deepCompareTokens = (token1: Token, token2: Token) => {
+  return (
+    token1.address === token2.address &&
+    token1.chainId === token2.chainId &&
+    token1.symbol === token2.symbol &&
+    token1.name === token2.name &&
+    token1.decimals === token2.decimals &&
+    token1.iconUrl === token2.iconUrl
+  );
 };

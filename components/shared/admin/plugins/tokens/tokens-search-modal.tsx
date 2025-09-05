@@ -182,8 +182,9 @@ export const TokensSearchModal = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex flex-col justify-start items-center w-full gap-2">
-              {fetchedTokens.map((token) => (
+              {fetchedTokens.map((token, index) => (
                 <NewfoundToken
+                  key={index}
                   disabled={isLimitReached}
                   token={token}
                   selectedTokens={selectedTokens}

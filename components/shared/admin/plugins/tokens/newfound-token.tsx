@@ -1,5 +1,6 @@
-import { SquareArrowOutUpRight } from "lucide-react";
+import { CircleQuestionMark, SquareArrowOutUpRight } from "lucide-react";
 import { motion } from "motion/react";
+import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Checkbox } from "@/components/shadcn-ui/checkbox";
 import { Token } from "@/lib/types/tokens.type";
@@ -52,7 +53,17 @@ export const NewfoundToken = ({
           }
           className="size-6 data-[state=checked]:bg-accent data-[state=checked]:border-accent mx-1.5"
         />
-        <div className="size-10 bg-success rounded-full" />
+        {token.iconUrl ? (
+          <Image
+            src={token.iconUrl ?? ""}
+            alt={token.name}
+            className="size-10 rounded-full"
+            width={40}
+            height={40}
+          />
+        ) : (
+          <CircleQuestionMark className="size-10 opacity-50 shrink-0" />
+        )}
         <div className="flex flex-col justify-start items-start gap-0.5">
           <h1 className="text-[18px] font-bold">{token.name}</h1>
           <p className="text-[14px] opacity-50 font-bold">{token.symbol}</p>

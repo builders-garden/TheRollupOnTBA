@@ -1,4 +1,4 @@
-import { MiniAppNotificationDetails } from "@farcaster/miniapp-sdk";
+import { MiniAppNotificationDetails } from "@farcaster/miniapp-core";
 import { and, eq, isNotNull } from "drizzle-orm";
 import { Address, getAddress, isAddressEqual } from "viem";
 import { db } from "@/lib/database";

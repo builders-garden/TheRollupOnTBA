@@ -1,41 +1,149 @@
 import { MiniAppNotificationDetails } from "@farcaster/miniapp-core";
 import { sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  numeric,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 import { ulid } from "ulid";
 import { Address } from "viem";
 
 /**
- * Farcaster User table
+ * Brands table
  */
-export const userTable = sqliteTable("user", {
+export const brandsTable = sqliteTable("brands", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => ulid()),
-  avatarUrl: text("avatar_url"),
-  username: text("username"),
-  // Farcaster
-  farcasterFid: integer("farcaster_fid").unique(),
-  farcasterUsername: text("farcaster_username"),
-  farcasterDisplayName: text("farcaster_display_name"),
-  farcasterAvatarUrl: text("farcaster_avatar_url"),
-  farcasterNotificationDetails: text("farcaster_notification_details", {
-    mode: "json",
-  }).$type<MiniAppNotificationDetails | null>(),
-  farcasterWallets: text("farcaster_wallets", { mode: "json" }).$type<
-    Address[]
-  >(),
-  farcasterReferrerFid: integer("farcaster_referrer_fid"),
-
+  name: text("name"),
+  logoUrl: text("logo_url"),
+  description: text("description"),
+  websiteUrl: text("website_url"),
+  activePlugins: text("active_plugins"),
+  socialMediaUrls: text("social_media_urls"),
+  walletAddresses: text("wallet_addresses").notNull(),
+  isActive: integer("is_active", { mode: "boolean" }).default(false),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
+
+export type Brand = typeof brandsTable.$inferSelect;
+export type CreateBrand = typeof brandsTable.$inferInsert;
+export type UpdateBrand = Partial<CreateBrand>;
+
+/**
+ * Bull Meters table
+ */
+export const bullMetersTable = sqliteTable(
+  "bull_meters",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    brandId: text("brand_id")
+      .notNull()
+      .references(() => brandsTable.id, { onDelete: "cascade" }),
+    prompt: text("prompt"),
+    votePrice: numeric("vote_price"),
+    duration: integer("duration"),
+    payoutAddresses: text("payout_addresses"),
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [index("idx_bull_meters_brand_id").on(t.brandId)],
+);
+
+export type BullMeter = typeof bullMetersTable.$inferSelect;
+export type CreateBullMeter = typeof bullMetersTable.$inferInsert;
+export type UpdateBullMeter = Partial<CreateBullMeter>;
+
+/**
+ * Tips table
+ */
+export const tipsTable = sqliteTable("tips", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => ulid()),
+  brandId: text("brand_id")
+    .notNull()
+    .references(() => brandsTable.id, { onDelete: "cascade" }),
+  payoutAddress: text("payout_address"),
+  payoutBaseName: text("payout_base_name"),
+  payoutEnsName: text("payout_ens_name"),
+  amounts: text("amounts"),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type Tip = typeof tipsTable.$inferSelect;
+export type CreateTip = typeof tipsTable.$inferInsert;
+export type UpdateTip = Partial<CreateTip>;
+
+/**
+ * Featured Tokens table
+ */
+export const featuredTokensTable = sqliteTable("featured_tokens", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => ulid()),
+  brandId: text("brand_id")
+    .notNull()
+    .references(() => brandsTable.id, { onDelete: "cascade" }),
+  name: text("name"),
+  symbol: text("symbol"),
+  decimals: integer("decimals"),
+  chainId: integer("chain_id"),
+  chainLogoUrl: text("chain_logo_url"),
+  address: text("address"),
+  logoUrl: text("logo_url"),
+  description: text("description"),
+  externalUrl: text("external_url"),
+  isActive: integer("is_active", { mode: "boolean" }).default(false),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type FeaturedToken = typeof featuredTokensTable.$inferSelect;
+export type CreateFeaturedToken = typeof featuredTokensTable.$inferInsert;
+export type UpdateFeaturedToken = Partial<CreateFeaturedToken>;
+
+/**
+ * Farcaster User table
+ */
+export const userTable = sqliteTable(
+  "user",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    avatarUrl: text("avatar_url"),
+    username: text("username"),
+    // Farcaster
+    farcasterFid: integer("farcaster_fid"),
+    farcasterUsername: text("farcaster_username"),
+    farcasterDisplayName: text("farcaster_display_name"),
+    farcasterAvatarUrl: text("farcaster_avatar_url"),
+    farcasterNotificationDetails: text("farcaster_notification_details", {
+      mode: "json",
+    }).$type<MiniAppNotificationDetails | null>(),
+    farcasterWallets: text("farcaster_wallets", { mode: "json" }).$type<
+      Address[]
+    >(),
+    farcasterReferrerFid: integer("farcaster_referrer_fid"),
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [uniqueIndex("user_farcaster_fid_unique").on(t.farcasterFid)],
+);
 
 export type User = typeof userTable.$inferSelect;
 export type CreateFarcasterUser = typeof userTable.$inferInsert;
 export type UpdateFarcasterUser = Partial<CreateFarcasterUser>;
 
+/**
+ * Wallet table
+ */
 export const walletTable = sqliteTable(
   "wallet",
   {
@@ -49,9 +157,7 @@ export const walletTable = sqliteTable(
       .references(() => userTable.id, { onDelete: "cascade" }),
     isPrimary: integer("is_primary", { mode: "boolean" }).default(false),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: text("updated_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
   },
   (t) => [index("idx_wallet_user_id").on(t.userId)],
 );

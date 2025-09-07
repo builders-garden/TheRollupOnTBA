@@ -37,10 +37,12 @@ export const TopUpModal = ({ isNavbarOpen }: TopUpModalProps) => {
           initial={{
             scale: 0,
             boxShadow: "4px 4px 0px 0px #000000",
+            border: "1px solid #000000",
           }}
           animate={{
             scale: isNavbarOpen ? 1 : 0,
             boxShadow: "4px 4px 0px 0px #000000",
+            border: "1px solid #000000",
             transition: {
               default: { type: "tween", delay: 0.2 },
             },

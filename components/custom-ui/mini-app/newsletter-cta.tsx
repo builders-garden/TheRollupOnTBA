@@ -1,0 +1,46 @@
+import { useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { NBButton } from "../nb-button";
+
+interface NewsletterCTAProps {
+  label: string;
+  onClick?: () => void;
+}
+
+export const NewsletterCTA = ({ label, onClick }: NewsletterCTAProps) => {
+  const [editingValue, setEditingValue] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="flex flex-col justify-center items-start w-full gap-2.5">
+      <h1 className="text-[14px] font-bold">{label}</h1>
+      <div className="flex justify-between items-center gap-2.5 w-full">
+        <div
+          className={cn(
+            "flex w-full justify-start items-center gap-2.5 rounded-[12px] border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300",
+            isEditing && "ring-[2px]",
+          )}>
+          <input
+            ref={inputRef}
+            type="text"
+            onFocus={() => setIsEditing(true)}
+            onBlur={() => setIsEditing(false)}
+            placeholder="johndoe@example.com"
+            className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-[16px]"
+            value={editingValue}
+            onChange={(e) => {
+              setEditingValue(e.target.value);
+            }}
+          />
+        </div>
+        <NBButton
+          className="bg-accent w-fit"
+          disabled={editingValue === ""}
+          onClick={onClick}>
+          <p className="text-[16px] font-extrabold text-white">Subscribe</p>
+        </NBButton>
+      </div>
+    </div>
+  );
+};

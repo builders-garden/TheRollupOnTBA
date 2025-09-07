@@ -1,5 +1,6 @@
 "use client";
 
+import { Globe, Twitch, Twitter, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
@@ -8,7 +9,9 @@ import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
 import { Tips } from "@/plugins/tips/tips";
+import { AboutSection } from "../custom-ui/mini-app/about-section";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
+import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
 import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
 
@@ -105,6 +108,19 @@ export const StreamPage = () => {
             { name: "CASO", color: "bg-gray-500" },
           ]}
         />
+
+        {/* About Section */}
+        <AboutSection
+          label="About"
+          text="Tune in as we unpack why Ethereum isn't just a blockchain it's a lifestyle. From dank memes to rollup wars, we're breaking down the culture, the tech, and why everything (yes, even your cat pics) should settle on Base."
+          youtubeUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+          twitchUrl="https://www.twitch.tv/rollup"
+          twitterUrl="https://x.com/rollup"
+          websiteUrl="https://rollup.com"
+        />
+
+        {/* Newsletter CTA */}
+        <NewsletterCTA label="Subscribe to newsletter" onClick={() => {}} />
       </div>
       {/* Floating Bottom Navbar */}
       <BottomNavbar />

@@ -10,7 +10,7 @@ import { TokensContent } from "./tokens/tokens-conent";
 
 export const PluginsContent = () => {
   const [selectedTab, setSelectedTab] = useState<AdminPageTab>(
-    AdminPageTab.TOKENS,
+    AdminPageTab.SENTIMENT,
   );
 
   // Whether the tab is tips, tokens, or sentiments

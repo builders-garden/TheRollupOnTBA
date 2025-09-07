@@ -18,14 +18,14 @@ export default function AdminPage() {
   const isContentBrand = selectedPageContent === AdminPageContent.BRAND;
 
   return (
-    <div className="flex justify-between items-center w-full h-screen">
-      <div className="h-full w-fit py-5 px-6">
+    <div className="flex justify-between items-stretch w-full min-h-screen">
+      <div className="w-fit py-5 px-6">
         <SideNavbar
           selectedPageContent={selectedPageContent}
           setSelectedPageContent={setSelectedPageContent}
         />
       </div>
-      <div className="flex flex-col justify-start items-center h-full w-full">
+      <div className="flex flex-col justify-start items-center w-full">
         {/* Banner */}
         <AdminBanner selectedPageContent={selectedPageContent} />
 

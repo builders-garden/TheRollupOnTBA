@@ -70,9 +70,9 @@ export const BrandContent = () => {
           className="rounded-full w-fit bg-accent"
           variant="default"
           onClick={() => {}}>
-          <div className="flex justify-start items-center w-full gap-2">
+          <div className="flex justify-start items-center w-full gap-2 text-white">
             <Sparkle className="size-6" />
-            <p className="text-[20px] font-bold">Hello</p>
+            <p className="text-[20px] font-bold">Info</p>
           </div>
         </NBButton>
       </div>

@@ -1,3 +1,4 @@
+import { Duration } from "@/lib/types/poll.type";
 import { ChainImages } from "./enums";
 
 export const MESSAGE_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30; // 30 day
@@ -90,4 +91,12 @@ export const BASE_APP_SUPPORTED_CHAINS = [
     chainId: "56",
     logoUrl: ChainImages.BNB,
   },
+];
+
+// Available durations for the sentiment poll
+export const AVAILABLE_DURATIONS: Duration[] = [
+  { label: "1 Minute", value: "1m", seconds: 60 },
+  { label: "3 Minutes", value: "3m", seconds: 180 },
+  { label: "5 Minutes", value: "5m", seconds: 300 },
+  { label: "10 Minutes", value: "10m", seconds: 600 },
 ];

@@ -17,12 +17,6 @@ export const PayoutAddressInput = () => {
     setIsEditing(!isEditing);
   };
 
-  // Handles the cancel button
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditingPayoutAddress(payoutAddress);
-  };
-
   // Handles the confirm button
   const handleConfirm = () => {
     setIsEditing(false);

@@ -1,7 +1,7 @@
 import { Sparkle } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { AdminPageTab } from "@/lib/enums";
+import { PluginsTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../../nb-button";
 import { SentimentContent } from "./sentiment/sentiment-content";
@@ -9,14 +9,14 @@ import { TipsContent } from "./tips/tips-content";
 import { TokensContent } from "./tokens/tokens-conent";
 
 export const PluginsContent = () => {
-  const [selectedTab, setSelectedTab] = useState<AdminPageTab>(
-    AdminPageTab.SENTIMENT,
+  const [selectedTab, setSelectedTab] = useState<PluginsTabs>(
+    PluginsTabs.SENTIMENT,
   );
 
   // Whether the tab is tips, tokens, or sentiments
-  const isTipsTab = selectedTab === AdminPageTab.TIPS;
-  const isTokensTab = selectedTab === AdminPageTab.TOKENS;
-  const isSentimentTab = selectedTab === AdminPageTab.SENTIMENT;
+  const isTipsTab = selectedTab === PluginsTabs.TIPS;
+  const isTokensTab = selectedTab === PluginsTabs.TOKENS;
+  const isSentimentTab = selectedTab === PluginsTabs.SENTIMENT;
 
   return (
     <motion.div
@@ -31,7 +31,7 @@ export const PluginsContent = () => {
           className={cn("rounded-full w-fit", isTipsTab && "bg-accent")}
           variant={isTipsTab ? "default" : "outline"}
           showShadow={isTipsTab}
-          onClick={() => setSelectedTab(AdminPageTab.TIPS)}>
+          onClick={() => setSelectedTab(PluginsTabs.TIPS)}>
           <div
             className={cn(
               "flex justify-start items-center w-full gap-2",
@@ -45,7 +45,7 @@ export const PluginsContent = () => {
           className={cn("rounded-full w-fit", isSentimentTab && "bg-accent")}
           variant={isSentimentTab ? "default" : "outline"}
           showShadow={isSentimentTab}
-          onClick={() => setSelectedTab(AdminPageTab.SENTIMENT)}>
+          onClick={() => setSelectedTab(PluginsTabs.SENTIMENT)}>
           <div
             className={cn(
               "flex justify-start items-center w-full gap-2",
@@ -59,7 +59,7 @@ export const PluginsContent = () => {
           className={cn("rounded-full w-fit", isTokensTab && "bg-accent")}
           variant={isTokensTab ? "default" : "outline"}
           showShadow={isTokensTab}
-          onClick={() => setSelectedTab(AdminPageTab.TOKENS)}>
+          onClick={() => setSelectedTab(PluginsTabs.TOKENS)}>
           <div
             className={cn(
               "flex justify-start items-center w-full gap-2",

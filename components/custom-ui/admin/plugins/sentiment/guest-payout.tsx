@@ -1,8 +1,8 @@
 import { Trash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction } from "react";
+import { NBButton } from "@/components/custom-ui/nb-button";
 import { Switch } from "@/components/shadcn-ui/switch";
-import { NBButton } from "@/components/shared/nb-button";
 import { Guest } from "@/lib/types/poll.type";
 import { cn } from "@/lib/utils";
 import { FormAmountInput } from "./form-amount-input";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { StreamNotification } from "@/components/shared/stream-notification";
+import { StreamNotification } from "@/components/custom-ui/stream-notification";
 import { useNotificationQueue } from "@/contexts/notification-queue-context";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";

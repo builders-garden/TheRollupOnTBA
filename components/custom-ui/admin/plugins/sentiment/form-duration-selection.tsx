@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
-import { NBButton } from "@/components/shared/nb-button";
+import { NBButton } from "@/components/custom-ui/nb-button";
 import { AVAILABLE_DURATIONS } from "@/lib/constants";
+import { Duration } from "@/lib/types/poll.type";
 import { cn } from "@/lib/utils";
-import { Duration } from "./sentiment-content";
 
 interface FormDurationSelectionProps {
   label?: string;

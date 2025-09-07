@@ -8,9 +8,9 @@ import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
 import { Tips } from "@/plugins/tips/tips";
+import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
+import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
-import { BottomNavbar } from "../shared/mini-app/bottom-navbar";
-import { ShareButton } from "../shared/share-button";
 
 export const StreamPage = () => {
   const { joinStream } = useSocketUtils();
@@ -53,7 +53,6 @@ export const StreamPage = () => {
             <ShareButton
               linkCopied
               miniappUrl="https://farcaster.miniapp.builders"
-              setLinkCopied={() => {}}
               buttonClassName="shrink-1 w-min"
             />
           </div>

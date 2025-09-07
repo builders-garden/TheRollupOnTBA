@@ -1,9 +1,9 @@
 import { CircleQuestionMark, Eye, EyeOff } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { NBButton } from "@/components/shared/nb-button";
-import { NBCard } from "@/components/shared/nb-card";
+import { Dispatch, SetStateAction, useState } from "react";
+import { NBButton } from "@/components/custom-ui/nb-button";
+import { NBCard } from "@/components/custom-ui/nb-card";
 import { Token } from "@/lib/types/tokens.type";
 import {
   cn,

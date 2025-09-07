@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { NBButton } from "@/components/shared/nb-button";
-import { NBCard } from "@/components/shared/nb-card";
+import { NBButton } from "@/components/custom-ui/nb-button";
+import { NBCard } from "@/components/custom-ui/nb-card";
 import { useTimer } from "@/hooks/use-timer";
 import { AVAILABLE_DURATIONS } from "@/lib/constants";
 import { Duration, Guest } from "@/lib/types/poll.type";

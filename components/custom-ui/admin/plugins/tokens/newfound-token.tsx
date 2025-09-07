@@ -1,7 +1,7 @@
 import { CircleQuestionMark, SquareArrowOutUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Checkbox } from "@/components/shadcn-ui/checkbox";
 import { TokenNameToChainExplorerStringUrls } from "@/lib/constants";
 import { Token } from "@/lib/types/tokens.type";

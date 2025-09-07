@@ -1,6 +1,3 @@
-import { NBCard } from "@/components/shared/nb-card";
-import { cn } from "@/lib/utils";
-
 interface HistoryItemProps {
   time: string;
   question: string;

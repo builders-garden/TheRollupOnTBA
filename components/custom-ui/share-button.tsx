@@ -1,5 +1,4 @@
 import { CheckIcon, CopyIcon, Share2Icon } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +16,6 @@ interface ShareButtonProps {
   navigatorText?: string;
   miniappUrl: string;
   linkCopied: boolean;
-  setLinkCopied: Dispatch<SetStateAction<boolean>>;
   handleShare?: () => void;
 }
 
@@ -30,7 +28,6 @@ export const ShareButton = ({
   navigatorText = `Check out this app on @farcaster`,
   miniappUrl,
   linkCopied,
-  setLinkCopied,
   handleShare,
 }: ShareButtonProps) => {
   const handleShareClick = () => {
@@ -48,15 +45,15 @@ export const ShareButton = ({
       } catch (err) {
         // User cancelled or error
         console.error("user cancelled or error", err);
-        await copyToClipboard(miniappUrl, setLinkCopied);
+        await copyToClipboard(miniappUrl);
       }
     } else {
-      await copyToClipboard(miniappUrl, setLinkCopied);
+      await copyToClipboard(miniappUrl);
     }
   };
 
   const handleCopyLink = async () => {
-    await copyToClipboard(miniappUrl, setLinkCopied);
+    await copyToClipboard(miniappUrl);
   };
 
   return (

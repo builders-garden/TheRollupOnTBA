@@ -1,4 +1,4 @@
-import { Globe, Sparkle, Twitch, Twitter, X, Youtube } from "lucide-react";
+import { Globe, Sparkle, Twitch, Twitter, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { NBButton } from "../../nb-button";

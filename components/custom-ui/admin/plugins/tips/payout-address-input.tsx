@@ -1,8 +1,8 @@
 import { Check, SquarePen, Wallet, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { CopyButton } from "@/components/shared/copy-button";
-import { NBButton } from "@/components/shared/nb-button";
+import { CopyButton } from "@/components/custom-ui/copy-button";
+import { NBButton } from "@/components/custom-ui/nb-button";
 
 export const PayoutAddressInput = () => {
   const [payoutAddress, setPayoutAddress] = useState(

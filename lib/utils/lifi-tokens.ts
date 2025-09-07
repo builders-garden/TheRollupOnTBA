@@ -1,4 +1,4 @@
-import { ChainId, ChainType, GetTokenRequest, getTokens } from "@lifi/sdk";
+import { ChainId, ChainType, getTokens } from "@lifi/sdk";
 import { BASE_APP_SUPPORTED_CHAINS } from "../constants";
 
 interface GetLifiTokensParams {

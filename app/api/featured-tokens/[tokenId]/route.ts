@@ -7,7 +7,7 @@ import {
 } from "@/lib/database/queries";
 
 export const GET = async (
-  req: NextRequest,
+  _: NextRequest,
   { params }: { params: { tokenId: string } },
 ) => {
   try {
@@ -74,7 +74,7 @@ export const PUT = async (
 };
 
 export const DELETE = async (
-  req: NextRequest,
+  _: NextRequest,
   { params }: { params: { tokenId: string } },
 ) => {
   try {

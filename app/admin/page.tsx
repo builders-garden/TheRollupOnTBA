@@ -2,16 +2,16 @@
 
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
-import { AdminBanner } from "@/components/shared/admin/admin-banner";
-import { BrandContent } from "@/components/shared/admin/brand/brand-content";
-import { OverlayContent } from "@/components/shared/admin/overlay/overlay-content";
-import { PluginsContent } from "@/components/shared/admin/plugins/plugins-content";
-import { SideNavbar } from "@/components/shared/admin/side-navbar";
+import { AdminBanner } from "@/components/custom-ui/admin/admin-banner";
+import { BrandContent } from "@/components/custom-ui/admin/brand/brand-content";
+import { OverlayContent } from "@/components/custom-ui/admin/overlay/overlay-content";
+import { PluginsContent } from "@/components/custom-ui/admin/plugins/plugins-content";
+import { SideNavbar } from "@/components/custom-ui/admin/side-navbar";
 import { AdminPageContent } from "@/lib/enums";
 
 export default function AdminPage() {
   const [selectedPageContent, setSelectedPageContent] =
-    useState<AdminPageContent>(AdminPageContent.PLUGINS);
+    useState<AdminPageContent>(AdminPageContent.OVERLAY);
 
   // Whether the page content is overlay or brand
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;

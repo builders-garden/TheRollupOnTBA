@@ -16,11 +16,27 @@ export enum AdminPageContent {
   OVERLAY = "overlay",
 }
 
-// Admin Page Tab
-export enum AdminPageTab {
+// Plugins Tabs
+export enum PluginsTabs {
   TIPS = "tips",
   TOKENS = "tokens",
   SENTIMENT = "sentiment",
+}
+
+// Overlay Tabs
+export enum OverlayTabs {
+  POPUPS = "popups",
+  SENTIMENT_RESULTS = "sentiment_results",
+}
+
+// Popup Positions
+export enum PopupPositions {
+  TOP_LEFT = "top_left",
+  TOP_CENTER = "top_center",
+  TOP_RIGHT = "top_right",
+  BOTTOM_LEFT = "bottom_left",
+  BOTTOM_CENTER = "bottom_center",
+  BOTTOM_RIGHT = "bottom_right",
 }
 
 // client to server

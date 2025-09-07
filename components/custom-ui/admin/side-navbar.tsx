@@ -1,7 +1,7 @@
 import { Blocks, Images, LogOut, Palette, ShieldUser } from "lucide-react";
 import Image from "next/image";
-import { NBButton } from "@/components/shared/nb-button";
-import { NBCard } from "@/components/shared/nb-card";
+import { NBButton } from "@/components/custom-ui/nb-button";
+import { NBCard } from "@/components/custom-ui/nb-card";
 import { AdminPageContent } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 

@@ -1,5 +1,5 @@
-import { NBButton } from "@/components/shared/nb-button";
-import { NBCard } from "@/components/shared/nb-card";
+import { NBButton } from "@/components/custom-ui/nb-button";
+import { NBCard } from "@/components/custom-ui/nb-card";
 import { cn } from "@/lib/utils";
 
 interface BullmeterProps {

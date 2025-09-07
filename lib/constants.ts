@@ -1,5 +1,5 @@
 import { Duration } from "@/lib/types/poll.type";
-import { ChainImages } from "./enums";
+import { ChainImages, PopupPositions } from "./enums";
 
 export const MESSAGE_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30; // 30 day
 
@@ -99,4 +99,35 @@ export const AVAILABLE_DURATIONS: Duration[] = [
   { label: "3 Minutes", value: "3m", seconds: 180 },
   { label: "5 Minutes", value: "5m", seconds: 300 },
   { label: "10 Minutes", value: "10m", seconds: 600 },
+];
+
+// Available popup positions
+export const AVAILABLE_POPUP_POSITIONS: {
+  label: string;
+  value: PopupPositions;
+}[] = [
+  {
+    label: "Top Left",
+    value: PopupPositions.TOP_LEFT,
+  },
+  {
+    label: "Top Center",
+    value: PopupPositions.TOP_CENTER,
+  },
+  {
+    label: "Top Right",
+    value: PopupPositions.TOP_RIGHT,
+  },
+  {
+    label: "Bottom Left",
+    value: PopupPositions.BOTTOM_LEFT,
+  },
+  {
+    label: "Bottom Center",
+    value: PopupPositions.BOTTOM_CENTER,
+  },
+  {
+    label: "Bottom Right",
+    value: PopupPositions.BOTTOM_RIGHT,
+  },
 ];

@@ -2,7 +2,6 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../nb-button";
-import { NBModal } from "./nb-modal";
 import { TopUpModal } from "./top-up-modal";
 import { WithdrawModal } from "./withdraw-modal";
 

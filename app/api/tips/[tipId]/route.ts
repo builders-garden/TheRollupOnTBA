@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { deleteTip, getTipById, updateTip } from "@/lib/database/queries";
 
 export const GET = async (
-  req: NextRequest,
+  _: NextRequest,
   { params }: { params: { tipId: string } },
 ) => {
   try {
@@ -69,7 +69,7 @@ export const PUT = async (
 };
 
 export const DELETE = async (
-  req: NextRequest,
+  _: NextRequest,
   { params }: { params: { tipId: string } },
 ) => {
   try {

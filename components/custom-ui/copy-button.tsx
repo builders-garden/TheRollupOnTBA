@@ -1,7 +1,6 @@
 import { Check, Copy, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { toast } from "sonner";
 import { copyToClipboard } from "@/lib/utils";
 
 interface CopyButtonProps {

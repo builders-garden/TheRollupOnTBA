@@ -1,4 +1,4 @@
-import { Image, PenBoxIcon, Upload, X } from "lucide-react";
+import { Image, PenBoxIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
 import { NBButton } from "../../nb-button";

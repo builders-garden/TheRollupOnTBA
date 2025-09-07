@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { NBButton } from "@/components/custom-ui/nb-button";
+import { NBModal } from "@/components/custom-ui/nb-modal";
 import { Input } from "@/components/shadcn-ui/input";
-import { NBButton } from "@/components/shared/nb-button";
-import { NBModal } from "@/components/shared/nb-modal";
 import { cn } from "@/lib/utils";
 
 interface TipsProps {

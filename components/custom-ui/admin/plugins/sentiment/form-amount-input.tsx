@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useState } from "react";
-import { NBButton } from "@/components/shared/nb-button";
+import { NBButton } from "@/components/custom-ui/nb-button";
 import { cn } from "@/lib/utils";
 
 interface FormAmountInputProps {

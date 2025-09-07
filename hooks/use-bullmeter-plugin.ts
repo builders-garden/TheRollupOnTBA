@@ -1,6 +1,6 @@
 import { createBaseAccountSDK } from "@base-org/account";
 import { useCallback, useState } from "react";
-import { encodeFunctionData, erc20Abi, parseUnits } from "viem";
+import { encodeFunctionData, parseUnits } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
 

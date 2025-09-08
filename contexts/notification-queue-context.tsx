@@ -5,6 +5,16 @@ export interface NotificationData {
   username: string;
   profilePicture: string;
   text?: string;
+  // Poll-specific fields
+  pollQuestion?: string;
+  options?: Array<{
+    emoji: string;
+    text: string;
+  }>;
+  timeLeft?: string;
+  votes?: number;
+  voters?: number;
+  qrCodeUrl?: string;
 }
 
 interface NotificationQueueContextType {

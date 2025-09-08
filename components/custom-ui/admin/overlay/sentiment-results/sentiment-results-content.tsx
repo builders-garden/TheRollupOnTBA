@@ -1,6 +1,7 @@
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { NBButton } from "@/components/custom-ui/nb-button";
+import { PollNotification } from "@/components/custom-ui/poll-notification";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
@@ -8,6 +9,11 @@ import { cn } from "@/lib/utils";
 export const SentimentResultsContent = () => {
   const [selectedPopupPosition, setSelectedPopupPosition] =
     useState<PopupPositions>(PopupPositions.TOP_LEFT);
+  const [showPoll, setShowPoll] = useState(false);
+
+  const handleTestPollNotification = () => {
+    setShowPoll((prev) => !prev);
+  };
 
   return (
     <motion.div
@@ -60,11 +66,36 @@ export const SentimentResultsContent = () => {
                 Reveal Results
               </p>
             </NBButton>
+            <NBButton
+              className="w-[64%] shrink-0"
+              onClick={handleTestPollNotification}>
+              <p className="text-[16px] font-extrabold text-accent">
+                Test Poll Notification
+              </p>
+            </NBButton>
           </div>
         </div>
 
         {/* Overlay Preview */}
-        <div className="flex flex-col justify-center items-start aspect-video h-full gap-2.5 border-border border-[2px]"></div>
+        <div className="flex flex-col justify-center items-start aspect-video h-full gap-2.5 border-border border-[2px] relative overflow-hidden">
+          <AnimatePresence mode="wait">
+            {showPoll && (
+              <PollNotification
+                slideOffset={100}
+                data={{
+                  id: "1",
+                  pollQuestion: "ETH will flip BTC this cycle",
+                  timeLeft: "4:27",
+                  votes: 10,
+                  voters: 10,
+                  qrCodeUrl: "https://example.com/poll",
+                }}
+                previousData={null}
+                isTransitioning={false}
+              />
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </motion.div>
   );

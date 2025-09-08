@@ -521,6 +521,34 @@ export const bullMeterAbi =
     "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "voteFor",
+    "inputs": [
+      {
+        "name": "_voter",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_pollId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "_isYes",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "_voteCount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
     "type": "event",
     "name": "DeadlineExtended",
     "inputs": [

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { CreateBullMeter } from "@/lib/database/db.schema";
 import {
   createBullMeter,
   getAllBullMetersWithBrand,
@@ -56,7 +57,7 @@ export const GET = async (req: NextRequest) => {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const data = await req.json();
+    const data: CreateBullMeter = await req.json();
 
     // Basic validation
     if (!data.brandId) {

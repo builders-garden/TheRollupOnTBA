@@ -52,6 +52,11 @@ export const SentimentResultsContent = () => {
             </p>
             <NBButton className="w-[64%] shrink-0">
               <p className="text-[16px] font-extrabold text-accent">
+                Show Prompt
+              </p>
+            </NBButton>
+            <NBButton className="w-[64%] shrink-0">
+              <p className="text-[16px] font-extrabold text-accent">
                 Reveal Results
               </p>
             </NBButton>

@@ -5,7 +5,6 @@ import { NBCard } from "@/components/custom-ui/nb-card";
 import { useTimer } from "@/hooks/use-timer";
 import { AVAILABLE_DURATIONS } from "@/lib/constants";
 import { Duration, Guest } from "@/lib/types/poll.type";
-import { FormAmountInput } from "./form-amount-input";
 import { FormDurationSelection } from "./form-duration-selection";
 import { FormTextInput } from "./form-text-input";
 import { GuestPayout } from "./guest-payout";
@@ -15,7 +14,6 @@ const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
 export const SentimentContent = () => {
   const [prompt, setPrompt] = useState("");
-  const [voteCost, setVoteCost] = useState("");
   const [duration, setDuration] = useState<Duration>(defaultDuration);
   const [isGuestPayoutActive, setIsGuestPayoutActive] = useState(false);
   const [isLive, setIsLive] = useState(false);
@@ -36,7 +34,6 @@ export const SentimentContent = () => {
   // Handles the reset button
   const handleReset = () => {
     setPrompt("");
-    setVoteCost("");
     setDuration(defaultDuration);
     setGuests([
       { owner: true, nameOrAddress: "limone.base.eth", splitPercent: "100" },
@@ -85,7 +82,6 @@ export const SentimentContent = () => {
   // Whether the confirm button should be disabled
   const isConfirmButtonDisabled =
     !prompt ||
-    !voteCost ||
     !duration ||
     (isGuestPayoutActive &&
       !guests.every(
@@ -141,13 +137,6 @@ export const SentimentContent = () => {
               sizeLimit={100}
               value={prompt}
               setValue={setPrompt}
-            />
-            <FormAmountInput
-              label="Vote Cost"
-              disabled={isLive}
-              placeholder="e.g. $0.01"
-              value={voteCost}
-              setValue={setVoteCost}
             />
             <FormDurationSelection
               label={isLive ? "Extend duration" : "Duration"}

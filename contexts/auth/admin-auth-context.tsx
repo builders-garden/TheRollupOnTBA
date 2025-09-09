@@ -1,5 +1,9 @@
 import { createBaseAccountSDK } from "@base-org/account";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  UseMutateFunction,
+} from "@tanstack/react-query";
 import {
   createContext,
   ReactNode,
@@ -10,7 +14,7 @@ import {
 } from "react";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
-import { useAuthCheck, useBaseSignIn } from "@/hooks/use-auth-hooks";
+import { useAuthCheck, useBaseSignIn, useLogout } from "@/hooks/use-auth-hooks";
 import { User } from "@/lib/types/user.type";
 
 interface AdminAuthContextType {
@@ -28,6 +32,7 @@ interface AdminAuthContextType {
     >;
   };
   signInWithBase: () => void;
+  userLogout: () => void;
   isLoading: boolean;
   error: Error | null;
 }
@@ -52,6 +57,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Single user query - this is the only place we fetch user data
   // Always try to fetch on load to check for existing valid token
@@ -79,6 +85,24 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
       setIsSigningIn(false);
     },
   });
+
+  // Logout mutation
+  const { mutate: logout } = useLogout({
+    onSuccess: () => {
+      setUser(undefined);
+      setIsLoggingOut(false);
+    },
+    onError: (error: Error) => {
+      console.error("Logout error:", error);
+      setIsLoggingOut(false);
+    },
+  });
+
+  // A function to logout the user
+  const userLogout = useCallback(() => {
+    setIsLoggingOut(true);
+    logout({});
+  }, [logout]);
 
   const signInWithBase = useCallback(async () => {
     if (isInMiniApp) return;
@@ -180,7 +204,8 @@ Issued At: ${new Date().toISOString()}`;
       refetch: refetchUser,
     },
     signInWithBase,
-    isLoading: isFetchingUser || isSigningIn,
+    userLogout,
+    isLoading: isFetchingUser || isSigningIn || isLoggingOut,
     error: error || userError,
   };
 

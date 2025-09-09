@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { ulid } from "ulid";
 import { Address } from "viem";
+import { ActivePlugins, SocialMediaUrls } from "../types/shared.type";
 
 /**
  * Brands table
@@ -21,9 +22,13 @@ export const brandsTable = sqliteTable("brands", {
   name: text("name"),
   logoUrl: text("logo_url"),
   description: text("description"),
+  activePlugins: text("active_plugins", { mode: "json" }).$type<
+    ActivePlugins[]
+  >(),
   websiteUrl: text("website_url"),
-  activePlugins: text("active_plugins"),
-  socialMediaUrls: text("social_media_urls"),
+  socialMediaUrls: text("social_media_urls", {
+    mode: "json",
+  }).$type<SocialMediaUrls>(),
   walletAddresses: text("wallet_addresses", { mode: "json" })
     .$type<Address[]>()
     .notNull(),
@@ -51,7 +56,12 @@ export const bullMetersTable = sqliteTable(
     prompt: text("prompt"),
     votePrice: numeric("vote_price"),
     duration: integer("duration"),
-    payoutAddresses: text("payout_addresses"),
+    payoutAddresses: text("payout_addresses", { mode: "json" }).$type<
+      Address[]
+    >(),
+    totalYesVotes: integer("total_yes_votes"),
+    totalNoVotes: integer("total_no_votes"),
+    deadline: integer("deadline"),
     createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
     updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
   },

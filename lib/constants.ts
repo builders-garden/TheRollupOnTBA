@@ -12,16 +12,6 @@ export const FARCASTER_EMBED_SIZE = {
   height: 1000,
 };
 
-export const ADMIN_FIDS = [
-  4461, // limone.eth
-  5698, // 0xcaso.eth
-  262800, // midena.eth
-  189636, // bianc8.eth
-  16286, // frankk
-  215293, // blackicon.eth
-  592677, // builders-garden
-];
-
 export const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
 // TODO update this address

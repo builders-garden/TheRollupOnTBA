@@ -26,7 +26,7 @@ export const GuestPayout = ({
   disabled,
 }: GuestPayoutProps) => {
   // Guest number
-  const isGuestCountAtLimit = guests.length >= 4;
+  const isGuestCountAtLimit = guests.length >= 2;
 
   // Handles the addition of a new guest
   const handleAddGuest = () => {

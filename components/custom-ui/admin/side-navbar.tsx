@@ -2,6 +2,7 @@ import { Blocks, Images, LogOut, Palette, ShieldUser } from "lucide-react";
 import Image from "next/image";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,8 @@ export const SideNavbar = ({
   selectedPageContent,
   setSelectedPageContent,
 }: SideNavbarProps) => {
+  const { userLogout } = useAdminAuth();
+
   // Whether the page content is plugins, overlay or brand
   const isContentPlugins = selectedPageContent === AdminPageContent.PLUGINS;
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
@@ -81,7 +84,7 @@ export const SideNavbar = ({
       </div>
 
       {/* Logout Button on footer */}
-      <NBButton buttonColor="red" className="w-full">
+      <NBButton buttonColor="red" className="w-full" onClick={userLogout}>
         <div className="flex justify-start items-center w-full gap-2">
           <LogOut className="size-5 text-destructive" />
           <p className="text-[20px] font-bold text-destructive">Logout</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { SignInWithBaseButton } from "@base-org/account-ui/react";
+import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { AdminBanner } from "@/components/custom-ui/admin/admin-banner";
@@ -13,8 +14,8 @@ import { AdminPageContent } from "@/lib/enums";
 
 export default function AdminPage() {
   const [selectedPageContent, setSelectedPageContent] =
-    useState<AdminPageContent>(AdminPageContent.OVERLAY);
-  const { user, signInWithBase } = useAdminAuth();
+    useState<AdminPageContent>(AdminPageContent.BRAND);
+  const { user, isLoading, signInWithBase } = useAdminAuth();
 
   // Whether the page content is overlay or brand
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
@@ -22,7 +23,17 @@ export default function AdminPage() {
 
   return (
     <AnimatePresence mode="wait">
-      {!user.data ? (
+      {isLoading ? (
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+          className="flex justify-center items-center w-full min-h-screen">
+          <Loader2 className="size-14 animate-spin" />
+        </motion.div>
+      ) : !user.data ? (
         <motion.div
           key="sign-in-with-base"
           initial={{ opacity: 0 }}

@@ -8,6 +8,7 @@ import { TextDescriptionArea } from "./text-description-area";
 
 export const BrandContent = () => {
   // Social links states
+  const [brandName, setBrandName] = useState("");
   const [youtubeLiveUrl, setYoutubeLiveUrl] = useState("");
   const [youtubeChannelUrl, setYoutubeChannelUrl] = useState("");
   const [twitchChannelUrl, setTwitchChannelUrl] = useState("");
@@ -84,11 +85,18 @@ export const BrandContent = () => {
           see during your stream
         </h1>
         <div className="grid grid-cols-4 gap-5 w-full">
-          <FileUpload />
+          <NBTextInput
+            label="Name"
+            icon={<Sparkle className="size-5" />}
+            placeholder="Your brand's name here..."
+            value={brandName}
+            setValue={setBrandName}
+          />
           <TextDescriptionArea
             description={description}
             setDescription={setDescription}
           />
+          <FileUpload />
         </div>
         <div className="grid grid-cols-4 gap-5 w-full">
           {socialLinks.map((link) => (

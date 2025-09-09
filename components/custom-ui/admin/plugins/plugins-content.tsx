@@ -9,9 +9,7 @@ import { TipsContent } from "./tips/tips-content";
 import { TokensContent } from "./tokens/tokens-conent";
 
 export const PluginsContent = () => {
-  const [selectedTab, setSelectedTab] = useState<PluginsTabs>(
-    PluginsTabs.SENTIMENT,
-  );
+  const [selectedTab, setSelectedTab] = useState<PluginsTabs>(PluginsTabs.TIPS);
 
   // Whether the tab is tips, tokens, or sentiments
   const isTipsTab = selectedTab === PluginsTabs.TIPS;

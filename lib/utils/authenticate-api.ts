@@ -4,7 +4,6 @@ import {
   getUserFromWalletAddress,
 } from "@/lib/database/queries";
 import { User } from "@/lib/types/user.type";
-import { userIsNotAdminAndIsNotProduction } from ".";
 
 /**
  * Authenticate the user using a private api endpoint using fid or wallet address in the headers
@@ -29,13 +28,6 @@ export const authenticateApi = async (
     if (isNaN(Number(fid))) {
       console.error("Invalid fid", fid);
       return { status: "nok", error: "Unauthorized", statusCode: 401 };
-    }
-    if (userIsNotAdminAndIsNotProduction(Number(fid))) {
-      console.error(
-        "User is not admin and this is not production for fid",
-        fid,
-      );
-      return { status: "nok", error: "Unauthorized env", statusCode: 401 };
     }
     authUser = await getUserFromFid(Number(fid));
   } else if (walletAddress) {

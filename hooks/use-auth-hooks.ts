@@ -41,26 +41,26 @@ export function useFarcasterSignIn(
     { success: boolean; error?: string; user?: User },
     { fid: number; referrerFid?: number; token: string }
   >({
-    url: "/api/auth/sign-in",
+    url: "/api/auth/farcaster/sign-in",
     method: "POST",
     body: (variables) => variables,
     ...options,
   });
 }
 
-export function useWalletSignIn(
+export function useBaseSignIn(
   options?: Partial<
     UseApiMutationOptions<
       { success: boolean; error?: string; user?: User },
-      { address: string; message: string; signature: string }
+      { address: string; message: string; signature: string; nonce: string }
     >
   >,
 ) {
   return useApiMutation<
     { success: boolean; error?: string; user?: User },
-    { address: string; message: string; signature: string }
+    { address: string; message: string; signature: string; nonce: string }
   >({
-    url: "/api/auth/wallet-sign-in",
+    url: "/api/auth/base/sign-in",
     method: "POST",
     body: (variables) => variables,
     ...options,

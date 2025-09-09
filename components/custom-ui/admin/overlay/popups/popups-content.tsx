@@ -84,7 +84,7 @@ export const PopupsContent = () => {
         </div>
 
         {/* Overlay Preview */}
-        <div className="relative flex flex-col justify-center items-start aspect-video h-full gap-2.5 border-border border-[2px] bg-gray-100/20">
+        <div className="relative flex flex-col justify-center items-start aspect-video h-full gap-2.5 border-border border-[2px] bg-gray-100/20 overflow-hidden">
           <div
             className={cn(
               "absolute w-full h-full",
@@ -101,7 +101,7 @@ export const PopupsContent = () => {
               selectedPopupPosition === PopupPositions.BOTTOM_RIGHT &&
                 "flex justify-end items-end p-4",
             )}>
-            <NotificationContainer position={selectedPopupPosition} />;
+            <NotificationContainer position={selectedPopupPosition} />
           </div>
         </div>
       </div>

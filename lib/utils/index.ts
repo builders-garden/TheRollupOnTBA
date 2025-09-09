@@ -138,18 +138,6 @@ export const createTwitterIntentUrl = (text: string, miniappUrl: string) => {
 };
 
 /**
- * Check if a user is not an admin and is not in production
- * @param fid - The Farcaster fid of the user
- * @returns True if the user is not an admin and is not in production, false otherwise
- */
-export const userIsNotAdminAndIsNotProduction = (fid: number): boolean => {
-  return (
-    env.NEXT_PUBLIC_URL !== "https://production.example.com" &&
-    !ADMIN_FIDS.includes(Number(fid))
-  );
-};
-
-/**
  * Format a wallet address to a more readable format
  * @param address - The wallet address
  * @returns The formatted wallet address

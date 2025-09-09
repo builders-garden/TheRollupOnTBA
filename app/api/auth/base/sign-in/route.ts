@@ -1,33 +1,52 @@
 import * as jose from "jose";
 import { NextRequest, NextResponse } from "next/server";
-import { verifyMessage } from "viem";
-import { getOrCreateUserFromWalletAddress } from "@/lib/database/queries";
+import { createPublicClient, http } from "viem";
+import { base } from "viem/chains";
+import { getOrCreateUserFromWalletAddress } from "@/lib/database/queries/user.query";
 import { fetchUserByAddress } from "@/lib/neynar";
 import { NeynarUser } from "@/lib/types/neynar.type";
 import { env } from "@/lib/zod";
 
-export const dynamic = "force-dynamic";
+const client = createPublicClient({
+  chain: base,
+  transport: http(),
+});
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { address, message, signature } = await req.json();
+    console.log("TEST req", JSON.stringify(req, null, 2));
+    const { address, message, signature, nonce } = await req.json();
 
-    if (!address || !message || !signature) {
+    // Parameters validation
+    if (!address || !message || !signature || !nonce) {
       return NextResponse.json(
         { success: false, error: "Missing required fields" },
         { status: 400 },
       );
     }
 
-    // Verify the signature
-    const isValidSignature = await verifyMessage({
-      address: address as `0x${string}`,
-      message,
-      signature: signature as `0x${string}`,
-    });
+    // Try to verify the signature using viem
+    let isValidSignature = false;
+    try {
+      console.log("Attempting signature verification...");
+      isValidSignature = await client.verifyMessage({
+        address: address as `0x${string}`,
+        message,
+        signature: signature as `0x${string}`,
+      });
+      console.log("Standard verification result:", isValidSignature);
+    } catch (standardError: any) {
+      console.log("Standard verification failed:", standardError.message);
+      console.log("Error name:", standardError.name);
+      console.log("Error cause:", standardError.cause);
+      return NextResponse.json(
+        { success: false, error: "Invalid attempt to verify signature" },
+        { status: 401 },
+      );
+    }
 
+    // If the signature is not valid, return an error
     if (!isValidSignature) {
-      console.error("Invalid signature", { address, message, signature });
       return NextResponse.json(
         { success: false, error: "Invalid signature" },
         { status: 401 },
@@ -76,7 +95,7 @@ export const POST = async (req: NextRequest) => {
 
     return response;
   } catch (error) {
-    console.error("Wallet sign-in error:", error);
+    console.error("Base sign-in error:", error);
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 },

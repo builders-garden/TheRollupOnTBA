@@ -52,27 +52,29 @@ export const SentimentResultsContent = () => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col justify-center items-start w-[70%] gap-2.5">
+          <div className="flex flex-col justify-center items-start w-[80%] gap-2.5">
             <p className="text-[16px] font-medium opacity-50">
               Test by clicking the button below
             </p>
-            <NBButton className="w-[64%] shrink-0">
-              <p className="text-[16px] font-extrabold text-accent">
-                Show Prompt
-              </p>
-            </NBButton>
-            <NBButton className="w-[64%] shrink-0">
-              <p className="text-[16px] font-extrabold text-accent">
-                Reveal Results
-              </p>
-            </NBButton>
-            <NBButton
-              className="w-[64%] shrink-0"
-              onClick={handleTestPollNotification}>
-              <p className="text-[16px] font-extrabold text-accent">
-                Test Poll Notification
-              </p>
-            </NBButton>
+            <div className="grid grid-cols-3 gap-2.5 w-full">
+              <NBButton className="w-full shrink-0">
+                <p className="text-[16px] font-extrabold text-accent">
+                  Show Prompt
+                </p>
+              </NBButton>
+              <NBButton className="w-full shrink-0">
+                <p className="text-[16px] font-extrabold text-accent">
+                  Reveal Results
+                </p>
+              </NBButton>
+              <NBButton
+                className="w-full shrink-0"
+                onClick={handleTestPollNotification}>
+                <p className="text-[16px] font-extrabold text-accent">
+                  Test Poll Notification
+                </p>
+              </NBButton>
+            </div>
           </div>
         </div>
 

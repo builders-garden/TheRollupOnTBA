@@ -1,7 +1,9 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { State } from "wagmi";
+import { AdminAuthProvider } from "@/contexts/auth/admin-auth-context";
 import { MiniAppAuthProvider } from "@/contexts/auth/mini-app-auth-context";
 import { ErudaProvider } from "@/contexts/eruda";
 import { useMiniApp } from "@/contexts/mini-app-context";
@@ -12,18 +14,18 @@ import { wagmiConfigMiniApp } from "@/lib/reown";
 
 interface ProvidersProps {
   children: React.ReactNode;
-  initialState: State | undefined;
+  initialState?: State;
 }
 
 export default function Providers({ children, initialState }: ProvidersProps) {
   const { isInMiniApp, isLoading: isCheckingMiniAppContext } = useMiniApp();
 
   // The current url path name
-  const pathName = document.location.pathname;
+  const pathName = usePathname();
 
-  // If we are checking the miniapp context, show a loading indicator
+  // TODO: If we are checking the miniapp context, show a loading indicator
   if (isCheckingMiniAppContext) {
-    return <div>Checking miniapp context...</div>;
+    return null;
   }
 
   // If we are not in a miniapp, and the url includes "overlay" apply the overlay wrapper
@@ -42,9 +44,11 @@ export default function Providers({ children, initialState }: ProvidersProps) {
         <CustomWagmiProvider
           config={wagmiConfigMiniApp}
           initialState={initialState}>
-          <SocketProvider>
-            <NotificationQueueProvider>{children}</NotificationQueueProvider>
-          </SocketProvider>
+          <AdminAuthProvider>
+            <SocketProvider>
+              <NotificationQueueProvider>{children}</NotificationQueueProvider>
+            </SocketProvider>
+          </AdminAuthProvider>
         </CustomWagmiProvider>
       </NuqsAdapter>
     );
@@ -54,22 +58,23 @@ export default function Providers({ children, initialState }: ProvidersProps) {
   if (isInMiniApp) {
     return (
       <NuqsAdapter>
-        <MiniAppAuthProvider>
-          <ErudaProvider>
-            <CustomWagmiProvider
-              config={wagmiConfigMiniApp}
-              initialState={initialState}>
+        <CustomWagmiProvider
+          config={wagmiConfigMiniApp}
+          initialState={initialState}>
+          <MiniAppAuthProvider>
+            <ErudaProvider>
               <SocketProvider>
                 <NotificationQueueProvider>
                   {children}
                 </NotificationQueueProvider>
               </SocketProvider>
-            </CustomWagmiProvider>
-          </ErudaProvider>
-        </MiniAppAuthProvider>
+            </ErudaProvider>
+          </MiniAppAuthProvider>
+        </CustomWagmiProvider>
       </NuqsAdapter>
     );
   }
 
+  // TODO: Add a page that describes the app and the fact that it should be used in a client app
   return null;
 }

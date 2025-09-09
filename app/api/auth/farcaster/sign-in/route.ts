@@ -2,7 +2,6 @@ import { createClient, Errors } from "@farcaster/quick-auth";
 import * as jose from "jose";
 import { NextRequest, NextResponse } from "next/server";
 import { getOrCreateUserFromFid } from "@/lib/database/queries";
-import { userIsNotAdminAndIsNotProduction } from "@/lib/utils";
 import { env } from "@/lib/zod";
 
 const quickAuthClient = createClient();
@@ -31,16 +30,6 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json(
         { success: false, error: "Invalid" },
         { status: 401 },
-      );
-    }
-
-    if (userIsNotAdminAndIsNotProduction(Number(fid))) {
-      console.error("User is not admin and this is not production", {
-        fid,
-      });
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 403 },
       );
     }
 

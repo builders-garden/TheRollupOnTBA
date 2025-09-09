@@ -77,7 +77,7 @@ export function MiniAppProvider({
         }
         return null;
       } catch (error) {
-        console.error("[error] adding miniapp", error);
+        console.log("[error] adding miniapp", error);
         return null;
       }
     },

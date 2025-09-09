@@ -24,7 +24,7 @@ export default async function RootLayout({
       <body
         className={`${nunitoSans.className} size-full antialiased bg-background`}>
         <MiniAppProvider addMiniAppOnLoad={true}>
-          <Providers initialState={undefined}>
+          <Providers>
             {children}
             <Suspense>
               <Toaster richColors position="top-right" />

@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
-import { Notification } from "@/components/custom-ui/toast/notification";
+import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ export const PopupsContent = () => {
       | "bottom-right";
 
     toast.custom(
-      () => <Notification data={testData} slideOffset={slideOffset} />,
+      () => <ToastNotification data={testData} slideOffset={slideOffset} />,
       {
         duration: 2000,
         position,
@@ -47,14 +47,14 @@ export const PopupsContent = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: "easeInOut" }}
       className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-2.5">
-      <h1 className="font-bold text-[24px]">
+      <h1 className="font-bold text-2xl">
         Display animated popups on stream whenever viewers tip, trade, or vote
       </h1>
       <div className="flex flex-col justify-start items-start w-full h-full gap-5">
         {/* Buttons */}
         <div className="flex flex-col md:flex-row justify-start items-start w-full gap-10">
           <div className="flex flex-col justify-center items-start w-full gap-2.5">
-            <p className="text-[16px] font-medium opacity-50">
+            <p className="text-base font-medium opacity-50">
               Choose where popups appear by selecting a screen position.
             </p>
             <div className="grid grid-cols-3 gap-2.5 w-full">
@@ -68,7 +68,7 @@ export const PopupsContent = () => {
                   onClick={() => setSelectedPopupPosition(position.value)}>
                   <p
                     className={cn(
-                      "text-[16px] font-extrabold text-success",
+                      "text-base font-extrabold text-success",
                       selectedPopupPosition === position.value && "text-white",
                     )}>
                     {position.label}
@@ -78,24 +78,24 @@ export const PopupsContent = () => {
             </div>
           </div>
           <div className="flex flex-col justify-center items-start w-[70%] gap-2.5">
-            <p className="text-[16px] font-medium opacity-50">
+            <p className="text-base font-medium opacity-50">
               Test popups by clicking the buttons below
             </p>
             <div className="grid grid-cols-3 gap-2.5 w-full">
               <NBButton
                 className="w-full shrink-0"
                 onClick={() => handleTestNotification("tip")}>
-                <p className="text-[16px] font-extrabold text-accent">Tip</p>
+                <p className="text-base font-extrabold text-accent">Tip</p>
               </NBButton>
               <NBButton
                 className="w-full shrink-0"
                 onClick={() => handleTestNotification("trade")}>
-                <p className="text-[16px] font-extrabold text-accent">Trade</p>
+                <p className="text-base font-extrabold text-accent">Trade</p>
               </NBButton>
               <NBButton
                 className="w-full shrink-0"
                 onClick={() => handleTestNotification("vote")}>
-                <p className="text-[16px] font-extrabold text-accent">Vote</p>
+                <p className="text-base font-extrabold text-accent">Vote</p>
               </NBButton>
             </div>
           </div>

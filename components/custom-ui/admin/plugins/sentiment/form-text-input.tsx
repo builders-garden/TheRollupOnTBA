@@ -39,7 +39,7 @@ export const FormTextInput = ({
       {/* Label */}
       {label && (
         <div className="flex justify-start items-center gap-2.5">
-          <p className="text-[16px] font-bold">{label}</p>
+          <p className="text-base font-bold">{label}</p>
         </div>
       )}
 
@@ -54,7 +54,7 @@ export const FormTextInput = ({
           disabled={disabled}
           onFocus={() => setIsEditing(true)}
           onBlur={() => setIsEditing(false)}
-          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-[16px]"
+          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
           value={value}
           onChange={(e) => {
             if (sizeLimit && e.target.value.length > sizeLimit) {

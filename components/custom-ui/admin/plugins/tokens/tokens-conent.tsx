@@ -17,7 +17,7 @@ export const TokensContent = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: "easeInOut" }}
       className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-5">
-      <h1 className="font-bold text-[24px]">
+      <h1 className="font-bold text-2xl">
         Feature up to 6 tokens during your livestream so viewers can trade them
         in real time.
       </h1>

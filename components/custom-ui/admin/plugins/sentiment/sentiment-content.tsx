@@ -95,7 +95,7 @@ export const SentimentContent = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: "easeInOut" }}
       className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-5">
-      <h1 className="font-bold text-[24px]">
+      <h1 className="font-bold text-2xl">
         Create quick bull/bear polls where viewers pay to vote on a statement
         and see live sentiment results.
       </h1>
@@ -123,7 +123,7 @@ export const SentimentContent = () => {
           transition={{ duration: 0.25, ease: "easeInOut" }}
           className="flex justify-center items-center w-full">
           <NBCard className="w-full bg-success rounded-full py-0.5">
-            <p className="text-[24px] font-bold text-white">
+            <p className="text-2xl font-bold text-white">
               LIVE • {timeString} LEFT TO VOTE
             </p>
           </NBCard>
@@ -165,7 +165,7 @@ export const SentimentContent = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}
-                  className="text-[16px] font-extrabold text-success">
+                  className="text-base font-extrabold text-success">
                   Extend
                 </motion.p>
               ) : (
@@ -175,7 +175,7 @@ export const SentimentContent = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}
                   key="not-live-left-text"
-                  className="text-[16px] font-extrabold text-destructive">
+                  className="text-base font-extrabold text-destructive">
                   Reset
                 </motion.p>
               )}
@@ -193,7 +193,7 @@ export const SentimentContent = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}
                   key="live-right-text"
-                  className="text-[16px] font-extrabold text-white">
+                  className="text-base font-extrabold text-white">
                   End voting
                 </motion.p>
               ) : (
@@ -203,7 +203,7 @@ export const SentimentContent = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}
                   key="not-live-right-text"
-                  className="text-[16px] font-extrabold text-white">
+                  className="text-base font-extrabold text-white">
                   Confirm
                 </motion.p>
               )}
@@ -214,7 +214,7 @@ export const SentimentContent = () => {
 
       {/* Polls history */}
       <div className="flex flex-col justify-start items-start w-full gap-5">
-        <p className="text-[20px] font-bold">History</p>
+        <p className="text-xl font-bold">History</p>
         <HistoryItem
           time="March 7th 4:09PM"
           question="ETH will flip BTC by the end of the year"

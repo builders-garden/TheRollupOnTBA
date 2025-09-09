@@ -84,21 +84,21 @@ export const NewfoundToken = ({
           <CircleQuestionMark className="size-10 opacity-50 shrink-0" />
         )}
         <div className="flex flex-col justify-start items-start gap-0.5">
-          <h1 className="text-[18px] font-bold">{token.name}</h1>
-          <p className="text-[14px] opacity-50 font-bold">{token.symbol}</p>
+          <h1 className="text-lg font-bold">{token.name}</h1>
+          <p className="text-sm opacity-50 font-bold">{token.symbol}</p>
         </div>
       </div>
       <div className="flex justify-end items-center gap-5">
         <div className="flex flex-col justify-start items-end gap-0.5">
-          <p className="text-[14px] opacity-50 font-bold">
+          <p className="text-sm opacity-50 font-bold">
             {getChainName(token.chainId!)}
           </p>
           {token.address ? (
-            <p className="text-[14px] opacity-50 font-bold">
+            <p className="text-sm opacity-50 font-bold">
               {formatWalletAddress(token.address!)}
             </p>
           ) : (
-            <p className="text-[14px] opacity-50 font-bold">No Address</p>
+            <p className="text-sm opacity-50 font-bold">No Address</p>
           )}
         </div>
         {token.address ? (

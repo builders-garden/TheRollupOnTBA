@@ -44,7 +44,7 @@ export const TextDescriptionArea = ({
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center gap-2.5">
           <Text className="size-5" />
-          <p className="text-[16px] font-bold">Description (200 chars)</p>
+          <p className="text-base font-bold">Description (200 chars)</p>
         </div>
         <AnimatePresence mode="wait">
           {!isEditing ? (
@@ -97,9 +97,9 @@ export const TextDescriptionArea = ({
           onChange={(e) => {
             setEditingDescription(e.target.value.slice(0, 200));
           }}
-          className="w-full h-[155px] rounded-[12px] border-[1px] border-accent p-2.5 bg-white text-[16px] focus-visible:ring-accent/40 focus-visible:ring-[2px] disabled:opacity-100 disabled:cursor-default resize-none transition-all duration-300"
+          className="w-full h-[155px] rounded-[12px] border-[1px] border-accent p-2.5 bg-white text-base focus-visible:ring-accent/40 focus-visible:ring-[2px] disabled:opacity-100 disabled:cursor-default resize-none transition-all duration-300"
         />
-        <p className="text-[13px] text-muted-foreground mt-[1px] ml-1">
+        <p className="text-xs text-muted-foreground mt-[1px] ml-1">
           {editingDescription.length}/200 characters
         </p>
       </div>

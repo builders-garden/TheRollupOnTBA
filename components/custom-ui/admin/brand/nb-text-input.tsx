@@ -58,7 +58,7 @@ export const NBTextInput = ({
           isDestructive && "text-destructive",
         )}>
         {icon}
-        <p className="text-[16px] font-bold">{label}</p>
+        <p className="text-base font-bold">{label}</p>
       </div>
 
       <div
@@ -72,7 +72,7 @@ export const NBTextInput = ({
           type="text"
           placeholder={placeholder}
           disabled={!isEditing}
-          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-[16px]"
+          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
           value={editingValue}
           onChange={(e) => {
             setEditingValue(e.target.value);

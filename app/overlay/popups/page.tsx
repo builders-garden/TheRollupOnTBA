@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
-import { ToastNotification } from "@/components/custom-ui/toast-notification";
+import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { ServerToClientSocketEvents } from "@/lib/enums";

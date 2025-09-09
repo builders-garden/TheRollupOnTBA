@@ -95,7 +95,7 @@ export const TokensSearchModal = ({
         <NBButton className="bg-accent w-[200px]" disabled={disabled}>
           <div className="flex justify-center items-center w-full gap-1.5 text-white">
             <Plus className="size-4.5" />
-            <p className="text-[16px] font-extrabold text-nowrap">
+            <p className="text-base font-extrabold text-nowrap">
               Add more tokens
             </p>
           </div>
@@ -104,7 +104,7 @@ export const TokensSearchModal = ({
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
       contentClassName="p-4 rounded-[12px] sm:max-w-2xl">
-      <h1 className="text-[24px] font-bold text-center">Search for a token</h1>
+      <h1 className="text-2xl font-bold text-center">Search for a token</h1>
 
       {/* Search and filter by chain */}
       <div className="flex justify-between items-center w-full gap-2.5">
@@ -161,7 +161,7 @@ export const TokensSearchModal = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
-              <p className="text-[18px] font-bold text-destructive">
+              <p className="text-lg font-bold text-destructive">
                 An error occurred, please try again later.
               </p>
             </motion.div>
@@ -202,7 +202,7 @@ export const TokensSearchModal = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
-              <p className="text-[18px] font-bold">No tokens found</p>
+              <p className="text-lg font-bold">No tokens found</p>
             </motion.div>
           ) : (
             <motion.div
@@ -212,7 +212,7 @@ export const TokensSearchModal = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
-              <p className="text-[18px] font-bold">
+              <p className="text-lg font-bold">
                 Select a chain and start typing to search for new tokens
               </p>
             </motion.div>
@@ -222,7 +222,7 @@ export const TokensSearchModal = ({
 
       {/* Selected tokens count */}
       <div className="flex justify-end items-center w-full pb-2 pr-3 -mt-1">
-        <p className="text-[14px] font-bold">
+        <p className="text-sm font-bold">
           Selected {selectedTokens.length}/{6 - addedTokens.length}
         </p>
       </div>
@@ -247,10 +247,10 @@ export const TokensSearchModal = ({
               setSelectedTokens([]);
             }, 300);
           }}>
-          <p className="text-[16px] text-white font-extrabold">Confirm</p>
+          <p className="text-base text-white font-extrabold">Confirm</p>
         </NBButton>
         <button
-          className="text-[16px] font-bold text-black cursor-pointer"
+          className="text-base font-bold text-black cursor-pointer"
           onClick={() => setIsModalOpen(false)}>
           Cancel
         </button>

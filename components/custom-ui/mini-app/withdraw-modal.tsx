@@ -44,13 +44,13 @@ export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
             },
           }}
           className="w-full px-1.5">
-          <p className="text-[16px] font-extrabold">Withdraw</p>
+          <p className="text-base font-extrabold">Withdraw</p>
         </NBButton>
       }
       isOpen={isModalOpen}
       setIsOpen={handleModalOpen}
       contentClassName="p-2.5 rounded-[12px]">
-      <h1 className="text-[24px] font-bold text-center">Withdraw Balance</h1>
+      <h1 className="text-2xl font-bold text-center">Withdraw Balance</h1>
       <div className="flex flex-col justify-center items-center w-full gap-2.5">
         <NBButton
           className="w-full"
@@ -58,7 +58,7 @@ export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
           onClick={() => setSelectedMode("all")}>
           <p
             className={cn(
-              "text-[16px] font-extrabold",
+              "text-base font-extrabold",
               selectedMode === "all" && "text-accent",
             )}>
             All
@@ -70,7 +70,7 @@ export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
           onClick={() => setSelectedMode("custom")}>
           <p
             className={cn(
-              "text-[16px] font-extrabold",
+              "text-base font-extrabold",
               selectedMode === "custom" && "text-accent",
             )}>
             Custom
@@ -105,14 +105,14 @@ export const WithdrawModal = ({ isNavbarOpen }: WithdrawModalProps) => {
         <AnimatePresence mode="wait">
           {!!selectedMode && (
             <NBButton key="confirm" className="w-full bg-accent">
-              <p className="text-[16px] font-extrabold text-white">
+              <p className="text-base font-extrabold text-white">
                 Confirm $5.50 Withdrawal
               </p>
             </NBButton>
           )}
         </AnimatePresence>
         <button
-          className="text-[16px] font-bold text-black"
+          className="text-base font-bold text-black"
           onClick={handleModalOpen}>
           Cancel
         </button>

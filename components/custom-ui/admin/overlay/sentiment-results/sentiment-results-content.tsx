@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
-import { PollNotification } from "@/components/custom-ui/toast/poll-notification";
+import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
@@ -35,8 +35,8 @@ export const SentimentResultsContent = () => {
       },
     };
 
-    toast.custom(() => <PollNotification data={data} />, {
-      duration: 60_000,
+    toast.custom(() => <ToastPollNotification data={data} />, {
+      duration: Infinity,
       position,
     });
   };
@@ -48,14 +48,14 @@ export const SentimentResultsContent = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: "easeInOut" }}
       className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-2.5">
-      <h1 className="font-bold text-[24px]">
+      <h1 className="font-bold text-2xl">
         Reveal results from bull-meter sentiment polls
       </h1>
       <div className="flex flex-col justify-start items-start w-full h-full gap-5">
         {/* Buttons */}
         <div className="flex flex-col md:flex-row justify-start items-start w-full gap-10">
           <div className="flex flex-col justify-center items-start w-full gap-2.5">
-            <p className="text-[16px] font-medium opacity-50">
+            <p className="text-base font-medium opacity-50">
               Choose where popups appear by selecting a screen position.
             </p>
             <div className="grid grid-cols-3 gap-2.5 w-full">
@@ -69,7 +69,7 @@ export const SentimentResultsContent = () => {
                   onClick={() => setSelectedPopupPosition(position.value)}>
                   <p
                     className={cn(
-                      "text-[16px] font-extrabold text-success",
+                      "text-base font-extrabold text-success",
                       selectedPopupPosition === position.value && "text-white",
                     )}>
                     {position.label}
@@ -79,13 +79,11 @@ export const SentimentResultsContent = () => {
             </div>
           </div>
           <div className="flex flex-col justify-center items-start w-full gap-2.5">
-            <p className="text-[16px] font-medium opacity-50">
+            <p className="text-base font-medium opacity-50">
               Test by clicking the button below
             </p>
             <NBButton className="w-fit" onClick={handleTestPollNotification}>
-              <p className="text-[16px] font-extrabold text-accent">
-                Test Poll
-              </p>
+              <p className="text-base font-extrabold text-accent">Test Poll</p>
             </NBButton>
           </div>
         </div>

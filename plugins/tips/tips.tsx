@@ -40,7 +40,7 @@ export const Tips = ({
 
   return (
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
-      {showLabel && <h1 className="text-[14px] font-bold">{label}</h1>}
+      {showLabel && <h1 className="text-sm font-bold">{label}</h1>}
       <div className="grid grid-cols-4 w-full gap-2.5">
         {tips.map((tip) => (
           <NBButton
@@ -48,7 +48,7 @@ export const Tips = ({
             buttonColor={tip.buttonColor}
             onClick={tip.onClick}
             className={cn("w-full", tip.buttonClassName)}>
-            <p className={cn("text-[16px] font-extrabold", tip.textClassName)}>
+            <p className={cn("text-base font-extrabold", tip.textClassName)}>
               ${tip.amount}
             </p>
           </NBButton>
@@ -63,7 +63,7 @@ export const Tips = ({
                 className={cn("w-full", customTipButton.buttonClassName)}>
                 <p
                   className={cn(
-                    "text-[16px] font-extrabold",
+                    "text-base font-extrabold",
                     customTipButton.textClassName,
                   )}>
                   {customTipButton.text}
@@ -73,7 +73,7 @@ export const Tips = ({
             isOpen={isCustomTipModalOpen}
             setIsOpen={handleCustomTipModalOpen}
             contentClassName="p-2.5 rounded-[12px]">
-            <h1 className="text-[24px] font-bold text-center">
+            <h1 className="text-2xl font-bold text-center">
               Choose custom tip
             </h1>
             <div className="flex flex-col justify-center items-center w-full gap-2.5">
@@ -100,11 +100,11 @@ export const Tips = ({
 
             <div className="flex flex-col justify-center items-center w-full gap-5">
               <NBButton key="confirm" className="w-full bg-accent">
-                <p className="text-[16px] font-extrabold text-white">Confirm</p>
+                <p className="text-base font-extrabold text-white">Confirm</p>
               </NBButton>
 
               <button
-                className="text-[16px] font-bold text-black"
+                className="text-base font-bold text-black"
                 onClick={handleCustomTipModalOpen}>
                 Cancel
               </button>

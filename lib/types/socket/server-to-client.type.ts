@@ -37,11 +37,42 @@ export type ErrorEvent = {
   message: string;
 };
 
+export type PollNotificationEvent = {
+  id: string;
+  pollQuestion: string;
+  endTime: Date;
+  votes: number;
+  voters: number;
+  qrCodeUrl: string;
+  position: string;
+  results?: {
+    bullPercent: number;
+    bearPercent: number;
+  };
+};
+
+export type EndPollNotificationEvent = {
+  id: string;
+};
+
+export type UpdatePollNotificationEvent = {
+  id: string;
+  voters: number;
+  votes: number;
+  results?: {
+    bullPercent: number;
+    bearPercent: number;
+  };
+};
+
 export type ServerToClientEvents = {
   [ServerToClientSocketEvents.STREAM_JOINED]: StreamJoinedEvent;
   [ServerToClientSocketEvents.ERROR]: ErrorEvent;
   [ServerToClientSocketEvents.TIP_RECEIVED]: TipReceivedEvent;
   [ServerToClientSocketEvents.TOKEN_TRADED]: TokenTradeEvent;
   [ServerToClientSocketEvents.VOTE_RECEIVED]: VoteReceivedEvent;
+  [ServerToClientSocketEvents.START_SENTIMENT_POLL]: PollNotificationEvent;
+  [ServerToClientSocketEvents.END_SENTIMENT_POLL]: EndPollNotificationEvent;
+  [ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL]: UpdatePollNotificationEvent;
   [ServerToClientSocketEvents.ERROR]: ErrorEvent;
 };

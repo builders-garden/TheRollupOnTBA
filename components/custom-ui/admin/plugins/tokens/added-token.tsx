@@ -54,7 +54,7 @@ export const AddedToken = ({
           )}
           <p
             className={cn(
-              "text-[14px] opacity-50 font-bold",
+              "text-sm opacity-50 font-bold",
               isVisible && "text-accent opacity-100",
             )}>
             {isVisible ? "Visible" : "Hidden"}
@@ -76,20 +76,20 @@ export const AddedToken = ({
               <CircleQuestionMark className="size-10 opacity-50 shrink-0" />
             )}
             <div className="flex flex-col justify-start items-start gap-0.5">
-              <h1 className="text-[18px] font-bold">{token.name}</h1>
-              <p className="text-[14px] opacity-50 font-bold">{token.symbol}</p>
+              <h1 className="text-lg font-bold">{token.name}</h1>
+              <p className="text-sm opacity-50 font-bold">{token.symbol}</p>
             </div>
           </div>
           <div className="flex flex-col justify-start items-end gap-0.5">
-            <p className="text-[14px] opacity-50 font-bold">
+            <p className="text-sm opacity-50 font-bold">
               {getChainName(token.chainId!)}
             </p>
             {token.address ? (
-              <p className="text-[14px] opacity-50 font-bold">
+              <p className="text-sm opacity-50 font-bold">
                 {formatWalletAddress(token.address!)}
               </p>
             ) : (
-              <p className="text-[14px] opacity-50 font-bold">No Address</p>
+              <p className="text-sm opacity-50 font-bold">No Address</p>
             )}
           </div>
         </div>
@@ -99,12 +99,12 @@ export const AddedToken = ({
           <NBButton
             className="w-full bg-destructive"
             onClick={handleDeleteToken}>
-            <p className="text-[16px] font-extrabold text-white">Remove</p>
+            <p className="text-base font-extrabold text-white">Remove</p>
           </NBButton>
           <NBButton
             className="w-full bg-accent"
             onClick={() => setIsVisible(!isVisible)}>
-            <p className="text-[16px] font-extrabold text-white">
+            <p className="text-base font-extrabold text-white">
               {isVisible ? "Hide" : "Show"}
             </p>
           </NBButton>

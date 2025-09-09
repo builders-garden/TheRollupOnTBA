@@ -40,7 +40,7 @@ export const FormAmountInput = ({
       {/* Label */}
       {label && (
         <div className="flex justify-start items-center gap-2.5 w-full">
-          <p className="text-[16px] font-bold shrink-0 w-fit">{label}</p>
+          <p className="text-base font-bold shrink-0 w-fit">{label}</p>
           <NBButton
             variant="outline"
             disabled={disabled}
@@ -49,7 +49,7 @@ export const FormAmountInput = ({
             }}
             showShadow={false}
             className="w-fit px-2.5 py-0.5 rounded-full">
-            <p className="text-[12px] font-extrabold">Default $0.01</p>
+            <p className="text-xs font-extrabold">Default $0.01</p>
           </NBButton>
         </div>
       )}
@@ -66,7 +66,7 @@ export const FormAmountInput = ({
           placeholder={placeholder}
           onFocus={() => setIsEditing(true)}
           onBlur={() => setIsEditing(false)}
-          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-[16px]"
+          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
           value={value}
           onChange={(e) => {
             setValue(e.target.value);

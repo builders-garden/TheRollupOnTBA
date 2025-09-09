@@ -21,7 +21,7 @@ export const AboutSection = ({
   return (
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
       <div className="flex justify-between items-center w-full">
-        <h1 className="text-[14px] font-bold">{label}</h1>
+        <h1 className="text-sm font-bold">{label}</h1>
         <div className="flex justify-end items-center gap-2.5">
           {youtubeUrl && (
             <motion.button
@@ -57,7 +57,7 @@ export const AboutSection = ({
           )}
         </div>
       </div>
-      <p className="text-[13px]">{text}</p>
+      <p className="text-xs">{text}</p>
     </div>
   );
 };

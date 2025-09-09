@@ -25,7 +25,7 @@ export const BottomNavbar = () => {
           onClick={handleNavbarOpen}>
           <div className="flex justify-center items-center w-full gap-1.5">
             <div className="size-[24px] bg-warning rounded-full border border-black" />
-            <p className="text-[20px] font-bold">$5.76</p>
+            <p className="text-xl font-bold">$5.76</p>
           </div>
         </NBButton>
         <div className="flex justify-center items-center w-full gap-1.5 flex-shrink-1">

@@ -38,7 +38,7 @@ export const OverlayContent = () => {
                 isPopupsTab && "text-white",
               )}>
               <Sparkle className="size-6" />
-              <p className="text-[20px] font-bold">Popups</p>
+              <p className="text-xl font-bold">Popups</p>
             </div>
           </NBButton>
           <NBButton
@@ -55,7 +55,7 @@ export const OverlayContent = () => {
                 isSentimentResultsTab && "text-white",
               )}>
               <Sparkle className="size-6" />
-              <p className="text-[20px] font-bold">Sentiment Results</p>
+              <p className="text-xl font-bold">Sentiment Results</p>
             </div>
           </NBButton>
         </div>
@@ -63,7 +63,7 @@ export const OverlayContent = () => {
         <Link
           href="https://google.com/"
           target="_blank"
-          className="text-[24px] font-bold underline shrink-0">
+          className="text-2xl font-bold underline shrink-0">
           How to setup the Overlay on OBS?
         </Link>
       </div>

@@ -87,8 +87,8 @@ export const GuestPayout = ({
       <div className="flex justify-between items-center gap-2.5 w-full">
         <div className="flex justify-start items-center gap-2.5 w-full">
           <div className="flex flex-col justify-start items-start">
-            <p className="text-[16px] font-bold">{label}</p>
-            <p className="text-[12px] opacity-50 font-bold">
+            <p className="text-base font-bold">{label}</p>
+            <p className="text-xs opacity-50 font-bold">
               Split vote earnings with guests.
             </p>
           </div>
@@ -110,7 +110,7 @@ export const GuestPayout = ({
               <NBButton
                 onClick={handleAddGuest}
                 disabled={isGuestCountAtLimit || disabled}>
-                <p className="text-[14px] font-extrabold">Add guest</p>
+                <p className="text-sm font-extrabold">Add guest</p>
               </NBButton>
             </motion.div>
           )}
@@ -126,7 +126,7 @@ export const GuestPayout = ({
             className="flex flex-col justify-start items-start gap-2.5">
             <div className="flex justify-between items-center gap-2.5 mr-[34px]">
               <div className="flex w-[250px] shrink-0 justify-start items-center gap-2.5 rounded-full border-accent border-[1px] px-5 py-2.5 bg-white">
-                <p className="text-[14px] font-medium">
+                <p className="text-sm font-medium">
                   (You){" "}
                   <span className="font-bold h-[21px]">
                     {guests[0].nameOrAddress}

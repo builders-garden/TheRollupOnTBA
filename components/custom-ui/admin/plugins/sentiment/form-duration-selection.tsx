@@ -20,7 +20,7 @@ export const FormDurationSelection = ({
       {/* Label */}
       {label && (
         <div className="flex justify-start items-center gap-2.5">
-          <p className="text-[16px] font-bold">{label}</p>
+          <p className="text-base font-bold">{label}</p>
         </div>
       )}
 
@@ -37,7 +37,7 @@ export const FormDurationSelection = ({
             variant={selectedDuration === duration ? "default" : "outline"}>
             <p
               className={cn(
-                "text-[16px] font-bold",
+                "text-base font-bold",
                 selectedDuration === duration && "text-white",
               )}>
               {duration.label}

@@ -32,7 +32,7 @@ export const FileUpload = () => {
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center gap-2.5">
           <Image className="size-5" />
-          <p className="text-[16px] font-bold">Logo</p>
+          <p className="text-base font-bold">Logo</p>
         </div>
         <AnimatePresence mode="wait">
           {previewUrl && (
@@ -66,7 +66,7 @@ export const FileUpload = () => {
         {/* Upload button or image preview */}
         {!previewUrl ? (
           <NBButton onClick={handleFileUpload} className="w-full bg-accent">
-            <p className="text-[16px] font-bold text-white">Upload</p>
+            <p className="text-base font-bold text-white">Upload</p>
           </NBButton>
         ) : (
           <img

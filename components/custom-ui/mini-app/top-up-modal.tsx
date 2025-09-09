@@ -48,13 +48,13 @@ export const TopUpModal = ({ isNavbarOpen }: TopUpModalProps) => {
             },
           }}
           className="w-full px-1.5 bg-accent">
-          <p className="text-[16px] font-extrabold text-white">Top Up</p>
+          <p className="text-base font-extrabold text-white">Top Up</p>
         </NBButton>
       }
       isOpen={isModalOpen}
       setIsOpen={handleModalOpen}
       contentClassName="p-2.5 rounded-[12px]">
-      <h1 className="text-[24px] font-bold text-center">Top Up your account</h1>
+      <h1 className="text-2xl font-bold text-center">Top Up your account</h1>
       <div className="flex flex-col justify-center items-center w-full gap-2.5">
         <div className="grid grid-cols-2 gap-2.5 w-full">
           {selectableAmounts.map((amount) => (
@@ -65,7 +65,7 @@ export const TopUpModal = ({ isNavbarOpen }: TopUpModalProps) => {
               onClick={() => setAmountSelected(amount)}>
               <p
                 className={cn(
-                  "text-[16px] font-extrabold",
+                  "text-base font-extrabold",
                   amountSelected === amount && "text-accent",
                 )}>
                 ${amount}
@@ -79,7 +79,7 @@ export const TopUpModal = ({ isNavbarOpen }: TopUpModalProps) => {
           onClick={() => setAmountSelected("custom")}>
           <p
             className={cn(
-              "text-[16px] font-extrabold",
+              "text-base font-extrabold",
               amountSelected === "custom" && "text-accent",
             )}>
             Custom
@@ -114,12 +114,12 @@ export const TopUpModal = ({ isNavbarOpen }: TopUpModalProps) => {
         <AnimatePresence mode="wait">
           {!!amountSelected && (
             <NBButton key="confirm" className="w-full bg-accent">
-              <p className="text-[16px] font-extrabold text-white">Confirm</p>
+              <p className="text-base font-extrabold text-white">Confirm</p>
             </NBButton>
           )}
         </AnimatePresence>
         <button
-          className="text-[16px] font-bold text-black"
+          className="text-base font-bold text-black"
           onClick={handleModalOpen}>
           Cancel
         </button>

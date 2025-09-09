@@ -68,7 +68,7 @@ export const StreamPage = () => {
         {/* Title */}
         <div className="flex flex-col justify-center items-center w-full gap-0.5">
           <div className="flex justify-between items-center w-full">
-            <h1 className="shrink-0 font-extrabold text-[20px]">
+            <h1 className="shrink-0 font-extrabold text-xl">
               The Memecoin Rug Problems
             </h1>
             <ShareButton
@@ -142,14 +142,14 @@ export const StreamPage = () => {
 
         {/* USDC Approval Section */}
         <div className="flex flex-col justify-center items-center w-full gap-3">
-          <h2 className="text-[16px] font-bold">Vote on ETH vs BTC</h2>
+          <h2 className="text-base font-bold">Vote on ETH vs BTC</h2>
 
           {!isApproved ? (
             <NBButton
               className="bg-green-600 w-fit"
               disabled={isApproving}
               onClick={approve}>
-              <p className="text-[16px] font-extrabold text-white">
+              <p className="text-base font-extrabold text-white">
                 {isApproving ? "Approving..." : "APPROVE USDC"}
               </p>
             </NBButton>
@@ -165,7 +165,7 @@ export const StreamPage = () => {
                     "1",
                   )
                 }>
-                <p className="text-[16px] font-extrabold text-white">
+                <p className="text-base font-extrabold text-white">
                   {isVoting ? "Voting..." : "BEAR"}
                 </p>
               </NBButton>
@@ -179,7 +179,7 @@ export const StreamPage = () => {
                     "1",
                   )
                 }>
-                <p className="text-[16px] font-extrabold text-white">
+                <p className="text-base font-extrabold text-white">
                   {isVoting ? "Voting..." : "BULL"}
                 </p>
               </NBButton>

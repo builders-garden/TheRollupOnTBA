@@ -36,7 +36,7 @@ export const PluginsContent = () => {
               isTipsTab && "text-white",
             )}>
             <Sparkle className="size-6" />
-            <p className="text-[20px] font-bold">Tips</p>
+            <p className="text-xl font-bold">Tips</p>
           </div>
         </NBButton>
         <NBButton
@@ -50,7 +50,7 @@ export const PluginsContent = () => {
               isSentimentTab && "text-white",
             )}>
             <Sparkle className="size-6" />
-            <p className="text-[20px] font-bold">Sentiment</p>
+            <p className="text-xl font-bold">Sentiment</p>
           </div>
         </NBButton>
         <NBButton
@@ -64,7 +64,7 @@ export const PluginsContent = () => {
               isTokensTab && "text-white",
             )}>
             <Sparkle className="size-6" />
-            <p className="text-[20px] font-bold">Tokens</p>
+            <p className="text-xl font-bold">Tokens</p>
           </div>
         </NBButton>
       </div>

@@ -37,7 +37,7 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
       isOpen={isModalOpen}
       setIsOpen={handleModalOpen}
       contentClassName="p-2.5 rounded-[12px]">
-      <h1 className="text-[24px] font-bold text-center">Buy ${tokenName}</h1>
+      <h1 className="text-2xl font-bold text-center">Buy ${tokenName}</h1>
       <div className="flex flex-col justify-center items-center w-full gap-2.5">
         <div className="grid grid-cols-2 gap-2.5 w-full">
           {selectableAmounts.map((amount) => (
@@ -48,7 +48,7 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
               onClick={() => setAmountSelected(amount)}>
               <p
                 className={cn(
-                  "text-[16px] font-extrabold",
+                  "text-base font-extrabold",
                   amountSelected === amount && "text-accent",
                 )}>
                 ${amount}
@@ -62,7 +62,7 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
           onClick={() => setAmountSelected("custom")}>
           <p
             className={cn(
-              "text-[16px] font-extrabold",
+              "text-base font-extrabold",
               amountSelected === "custom" && "text-accent",
             )}>
             Custom
@@ -97,17 +97,17 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
         <AnimatePresence mode="wait">
           {!!amountSelected && (
             <div className="flex flex-col justify-center items-center w-full gap-2.5">
-              <p className="text-[16px] font-bold text-black/25">
+              <p className="text-base font-bold text-black/25">
                 You&apos;re getting 124,582 ${tokenName}
               </p>
               <NBButton key="confirm" className="w-full bg-accent">
-                <p className="text-[16px] text-white font-extrabold">Confirm</p>
+                <p className="text-base text-white font-extrabold">Confirm</p>
               </NBButton>
             </div>
           )}
         </AnimatePresence>
         <button
-          className="text-[16px] font-bold text-black"
+          className="text-base font-bold text-black"
           onClick={handleModalOpen}>
           Cancel
         </button>

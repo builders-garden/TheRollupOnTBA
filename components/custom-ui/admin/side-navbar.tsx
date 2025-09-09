@@ -51,7 +51,7 @@ export const SideNavbar = ({
                 !isContentBrand && "text-white",
               )}>
               <Palette className="size-5" />
-              <p className="text-[20px] font-bold">Brand</p>
+              <p className="text-xl font-bold">Brand</p>
             </div>
           </NBButton>
           <NBButton
@@ -64,7 +64,7 @@ export const SideNavbar = ({
                 !isContentPlugins && "text-white",
               )}>
               <Blocks className="size-5" />
-              <p className="text-[20px] font-bold">Plugins</p>
+              <p className="text-xl font-bold">Plugins</p>
             </div>
           </NBButton>
           <NBButton
@@ -77,7 +77,7 @@ export const SideNavbar = ({
                 !isContentOverlay && "text-white",
               )}>
               <Images className="size-5" />
-              <p className="text-[20px] font-bold">Overlay</p>
+              <p className="text-xl font-bold">Overlay</p>
             </div>
           </NBButton>
         </div>
@@ -87,7 +87,7 @@ export const SideNavbar = ({
       <NBButton buttonColor="red" className="w-full" onClick={userLogout}>
         <div className="flex justify-start items-center w-full gap-2">
           <LogOut className="size-5 text-destructive" />
-          <p className="text-[20px] font-bold text-destructive">Logout</p>
+          <p className="text-xl font-bold text-destructive">Logout</p>
         </div>
       </NBButton>
     </NBCard>

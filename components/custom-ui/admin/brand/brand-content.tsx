@@ -80,14 +80,14 @@ export const BrandContent = () => {
           onClick={() => {}}>
           <div className="flex justify-start items-center w-full gap-2 text-white">
             <Sparkle className="size-6" />
-            <p className="text-[20px] font-bold">Info</p>
+            <p className="text-xl font-bold">Info</p>
           </div>
         </NBButton>
       </div>
 
       {/* Brand Content */}
       <div className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-5">
-        <h1 className="font-bold text-[24px]">
+        <h1 className="font-bold text-2xl">
           Set up your brand identity with a logo and social links for viewers to
           see during your stream
         </h1>

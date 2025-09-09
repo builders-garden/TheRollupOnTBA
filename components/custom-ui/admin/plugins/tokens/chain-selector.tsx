@@ -46,7 +46,7 @@ export const ChainSelector = ({
                   alt={selectedChain.name}
                   className="size-[19px] rounded-full"
                 />
-                <p className="text-[16px]">{selectedChain?.name}</p>
+                <p className="text-base">{selectedChain?.name}</p>
               </motion.div>
             ) : (
               <motion.div
@@ -57,14 +57,14 @@ export const ChainSelector = ({
                 transition={{ duration: 0.1, ease: "easeInOut" }}
                 className="flex justify-start items-center w-full h-full gap-2.5 px-1">
                 <Filter className="size-4.5 text-black" />
-                <p className="text-[16px] opacity-50">Filter by chain</p>
+                <p className="text-base opacity-50">Filter by chain</p>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="No Chain" className="text-[16px]">
+        <SelectItem value="No Chain" className="text-base">
           No Chain
         </SelectItem>
         {BASE_APP_SUPPORTED_CHAINS.map((chain) => (
@@ -77,7 +77,7 @@ export const ChainSelector = ({
               alt={chain.name}
               className="size-[19px] rounded-full"
             />
-            <p className="text-[16px]">{chain.name}</p>
+            <p className="text-base">{chain.name}</p>
           </SelectItem>
         ))}
       </SelectContent>

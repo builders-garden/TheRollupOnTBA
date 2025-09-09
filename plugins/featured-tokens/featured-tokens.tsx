@@ -14,7 +14,7 @@ interface FeaturedTokensProps {
 export const FeaturedTokens = ({ tokens }: FeaturedTokensProps) => {
   return (
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
-      <h1 className="text-[14px] font-bold">Featured Tokens</h1>
+      <h1 className="text-sm font-bold">Featured Tokens</h1>
       <div className="grid grid-cols-2 w-full gap-2.5">
         {tokens.map((token) => (
           <BuyTokenModal
@@ -30,7 +30,7 @@ export const FeaturedTokens = ({ tokens }: FeaturedTokensProps) => {
                       token.color,
                     )}
                   />
-                  <p className="text-[16px] font-extrabold text-nowrap">
+                  <p className="text-base font-extrabold text-nowrap">
                     Buy ${token.name}
                   </p>
                 </div>

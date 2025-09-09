@@ -14,7 +14,7 @@ export const NewsletterCTA = ({ label, onClick }: NewsletterCTAProps) => {
 
   return (
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
-      <h1 className="text-[14px] font-bold">{label}</h1>
+      <h1 className="text-sm font-bold">{label}</h1>
       <div className="flex justify-between items-center gap-2.5 w-full">
         <div
           className={cn(
@@ -27,7 +27,7 @@ export const NewsletterCTA = ({ label, onClick }: NewsletterCTAProps) => {
             onFocus={() => setIsEditing(true)}
             onBlur={() => setIsEditing(false)}
             placeholder="johndoe@example.com"
-            className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-[16px]"
+            className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
             value={editingValue}
             onChange={(e) => {
               setEditingValue(e.target.value);
@@ -38,7 +38,7 @@ export const NewsletterCTA = ({ label, onClick }: NewsletterCTAProps) => {
           className="bg-accent w-fit"
           disabled={editingValue === ""}
           onClick={onClick}>
-          <p className="text-[16px] font-extrabold text-white">Subscribe</p>
+          <p className="text-base font-extrabold text-white">Subscribe</p>
         </NBButton>
       </div>
     </div>

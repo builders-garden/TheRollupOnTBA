@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { NotificationContainer } from "@/components/custom-ui/notification-container";
-import { useNotificationQueue } from "@/contexts/notification-queue-context";
+import { toast } from "sonner";
+import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
+import { ServerToClientSocketEvents } from "@/lib/enums";
 import {
   StreamJoinedEvent,
   TipReceivedEvent,
@@ -15,14 +15,16 @@ import {
 export default function OverlayPage() {
   const { subscribe, unsubscribe } = useSocket();
   const { joinStream } = useSocketUtils();
-  const { addToQueue } = useNotificationQueue();
 
   const showPopupCallback = useCallback(
     (data: { username: string; profilePicture: string; text?: string }) => {
-      console.log("showPopupCallback", data);
-      addToQueue(data);
+      const slideOffset = 100; // overlay defaults to top-right in Toaster
+      toast.custom(
+        () => <ToastNotification data={data} slideOffset={slideOffset} />,
+        { duration: 2000 },
+      );
     },
-    [addToQueue],
+    [],
   );
 
   useEffect(() => {
@@ -70,5 +72,5 @@ export default function OverlayPage() {
     };
   }, [subscribe, unsubscribe, joinStream, showPopupCallback]);
 
-  return <NotificationContainer position={PopupPositions.TOP_RIGHT} />;
+  return null;
 }

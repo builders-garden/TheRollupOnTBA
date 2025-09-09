@@ -25,7 +25,7 @@ export const AdminBanner = ({ selectedPageContent }: AdminBannerProps) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
           key={selectedPageContent}
-          className="font-bold text-[36px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          className="font-bold text-4xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           {capitalizeFirstLetter(selectedPageContent)}
         </motion.h1>
       </AnimatePresence>

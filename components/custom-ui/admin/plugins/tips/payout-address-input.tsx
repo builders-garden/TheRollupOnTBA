@@ -27,7 +27,7 @@ export const PayoutAddressInput = () => {
     <div className="flex flex-col justify-start items-start gap-5 w-fit">
       <div className="flex justify-start items-center gap-2.5">
         <Wallet className="size-4" />
-        <p className="text-[16px] font-bold">Payout Address</p>
+        <p className="text-base font-bold">Payout Address</p>
       </div>
       <div className="flex w-fit justify-start items-center gap-5">
         {/* Input field */}
@@ -35,7 +35,7 @@ export const PayoutAddressInput = () => {
           <input
             type="text"
             disabled={!isEditing}
-            className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-[20px] font-bold"
+            className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-xl font-bold"
             value={editingPayoutAddress}
             onChange={(e) => {
               if (e.target.value.length > 41) {
@@ -108,7 +108,7 @@ export const PayoutAddressInput = () => {
               <NBButton
                 className="bg-success w-fit shrink-0"
                 onClick={() => setEditingPayoutAddress("pippo.base.eth")}>
-                <p className="text-[16px] font-extrabold text-white">
+                <p className="text-base font-extrabold text-white">
                   Set to connected account (pippo.base.eth)
                 </p>
               </NBButton>

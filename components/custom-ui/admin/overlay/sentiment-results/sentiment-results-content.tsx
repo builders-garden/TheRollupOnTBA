@@ -1,7 +1,9 @@
-import { AnimatePresence, motion } from "motion/react";
+import { addSeconds } from "date-fns";
+import { motion } from "motion/react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
-import { PollNotification } from "@/components/custom-ui/poll-notification";
+import { PollNotification } from "@/components/custom-ui/toast/poll-notification";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
@@ -9,10 +11,34 @@ import { cn } from "@/lib/utils";
 export const SentimentResultsContent = () => {
   const [selectedPopupPosition, setSelectedPopupPosition] =
     useState<PopupPositions>(PopupPositions.TOP_LEFT);
-  const [showPoll, setShowPoll] = useState(false);
 
   const handleTestPollNotification = () => {
-    setShowPoll((prev) => !prev);
+    const position = selectedPopupPosition.replace("_", "-") as
+      | "top-left"
+      | "top-center"
+      | "top-right"
+      | "bottom-left"
+      | "bottom-center"
+      | "bottom-right";
+
+    const data = {
+      id: "1",
+      pollQuestion: "ETH will flip BTC this cycle",
+      endTime: addSeconds(new Date(), 5),
+      votes: 10,
+      voters: 10,
+      qrCodeUrl: "https://example.com/poll",
+      position,
+      results: {
+        bullPercent: 70,
+        bearPercent: 30,
+      },
+    };
+
+    toast.custom(() => <PollNotification data={data} />, {
+      duration: 60_000,
+      position,
+    });
   };
 
   return (
@@ -25,9 +51,9 @@ export const SentimentResultsContent = () => {
       <h1 className="font-bold text-[24px]">
         Reveal results from bull-meter sentiment polls
       </h1>
-      <div className="flex flex-col justify-center items-start w-full h-full gap-5">
+      <div className="flex flex-col justify-start items-start w-full h-full gap-5">
         {/* Buttons */}
-        <div className="flex justify-start items-start w-[60%] gap-10">
+        <div className="flex flex-col md:flex-row justify-start items-start w-full gap-10">
           <div className="flex flex-col justify-center items-start w-full gap-2.5">
             <p className="text-[16px] font-medium opacity-50">
               Choose where popups appear by selecting a screen position.
@@ -52,49 +78,18 @@ export const SentimentResultsContent = () => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col justify-center items-start w-[80%] gap-2.5">
+          <div className="flex flex-col justify-center items-start w-full gap-2.5">
             <p className="text-[16px] font-medium opacity-50">
               Test by clicking the button below
             </p>
-            <div className="grid grid-cols-3 gap-2.5 w-full">
-              <NBButton className="w-full shrink-0">
-                <p className="text-[16px] font-extrabold text-accent">
-                  Show Prompt
-                </p>
-              </NBButton>
-              <NBButton className="w-full shrink-0">
-                <p className="text-[16px] font-extrabold text-accent">
-                  Reveal Results
-                </p>
-              </NBButton>
-              <NBButton
-                className="w-full shrink-0"
-                onClick={handleTestPollNotification}>
-                <p className="text-[16px] font-extrabold text-accent">
-                  Test Poll Notification
-                </p>
-              </NBButton>
-            </div>
+            <NBButton className="w-fit" onClick={handleTestPollNotification}>
+              <p className="text-[16px] font-extrabold text-accent">
+                Test Poll
+              </p>
+            </NBButton>
           </div>
         </div>
-
-        {/* Overlay Preview */}
-        <div className="flex flex-col justify-center items-start aspect-video h-full gap-2.5 border-border border-[2px] relative overflow-hidden">
-          <AnimatePresence mode="wait">
-            {showPoll && (
-              <PollNotification
-                data={{
-                  id: "1",
-                  pollQuestion: "ETH will flip BTC this cycle",
-                  timeLeft: "4:27",
-                  votes: 10,
-                  voters: 10,
-                  qrCodeUrl: "https://example.com/poll",
-                }}
-              />
-            )}
-          </AnimatePresence>
-        </div>
+        {/* Note: Toasts render at the viewport edge using Sonner. Use buttons above to test. */}
       </div>
     </motion.div>
   );

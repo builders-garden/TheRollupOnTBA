@@ -63,7 +63,7 @@ export const OverlayContent = () => {
         <Link
           href="https://google.com/"
           target="_blank"
-          className="text-[24px] font-bold underline shrink-0">
+          className="text-xl font-bold underline shrink-0">
           How to setup the Overlay on OBS?
         </Link>
       </div>

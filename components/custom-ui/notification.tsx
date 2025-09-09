@@ -3,13 +3,9 @@ import { NotificationData } from "@/contexts/notification-queue-context";
 
 const NotificationContent = ({
   notificationData,
-  isExiting = false,
-  isTransitioning = false,
   slideOffset = 0,
 }: {
   notificationData: NotificationData;
-  isExiting?: boolean;
-  isTransitioning?: boolean;
   slideOffset?: number;
 }) => {
   const motionProps = {
@@ -67,13 +63,9 @@ const NotificationContent = ({
 export const Notification = ({
   slideOffset,
   data,
-  previousData,
-  isTransitioning,
 }: {
   slideOffset: number;
   data?: NotificationData | null;
-  previousData?: NotificationData | null;
-  isTransitioning?: boolean;
 }) => {
   return (
     <AnimatePresence mode="popLayout" initial={false}>
@@ -81,7 +73,6 @@ export const Notification = ({
         <NotificationContent
           key={data.id}
           notificationData={data}
-          isTransitioning={isTransitioning}
           slideOffset={slideOffset}
         />
       )}

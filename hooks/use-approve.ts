@@ -1,4 +1,4 @@
-import { getCapabilities, sendCalls } from "@wagmi/core";
+import { sendCalls } from "@wagmi/core";
 import { useState } from "react";
 import { encodeFunctionData, erc20Abi, parseUnits } from "viem";
 import { BASE_USDC_ADDRESS, BULLMETER_ADDRESS } from "@/lib/constants";
@@ -48,8 +48,7 @@ export const useApprove = ({
         ],
         capabilities: {
           paymasterService: {
-            url:
-              process.env.NEXT_PUBLIC_PAYMASTER_URL || "",
+            url: process.env.NEXT_PUBLIC_PAYMASTER_URL || "",
           },
         },
       });

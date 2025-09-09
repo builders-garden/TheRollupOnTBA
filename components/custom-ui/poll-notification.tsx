@@ -12,46 +12,36 @@ export interface PollNotificationData {
 
 const PollNotificationContent = ({
   notificationData,
-  isExiting = false,
-  isTransitioning = false,
-  slideOffset = 0,
 }: {
   notificationData: PollNotificationData;
-  isExiting?: boolean;
-  isTransitioning?: boolean;
-  slideOffset?: number;
 }) => {
-  const motionProps = {
-    initial: { opacity: 0, y: -100, scale: 0.8 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      scale: [0.8, 1.15, 1],
-      transition: {
-        duration: 0.8,
-        ease: [0.19, 1.0, 0.22, 1.0], // Custom easing
-        opacity: { duration: 0.4 },
-        scale: {
-          times: [0, 0.6, 1],
-          duration: 0.8,
-        },
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: 50,
-      scale: 0.8,
-      transition: {
-        duration: 0.4,
-        ease: easeIn,
-      },
-    },
-  };
-
   return (
     <motion.div
       key={notificationData.id}
-      {...motionProps}
+      initial={{ opacity: 0, y: -100, scale: 0.8 }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: [0.8, 1.15, 1],
+        transition: {
+          duration: 0.8,
+          ease: [0.19, 1.0, 0.22, 1.0], // Custom easing
+          opacity: { duration: 0.4 },
+          scale: {
+            times: [0, 0.6, 1],
+            duration: 0.8,
+          },
+        },
+      }}
+      exit={{
+        opacity: 0,
+        y: 50,
+        scale: 0.8,
+        transition: {
+          duration: 0.4,
+          ease: easeIn,
+        },
+      }}
       whileHover={{
         scale: 1.02,
         transition: { duration: 0.2 },
@@ -89,26 +79,15 @@ const PollNotificationContent = ({
 };
 
 export const PollNotification = ({
-  slideOffset,
   data,
-  previousData,
-  isTransitioning,
 }: {
-  slideOffset: number;
   data?: PollNotificationData | null;
-  previousData?: PollNotificationData | null;
-  isTransitioning?: boolean;
 }) => {
   return (
     <div className="absolute top-4 left-4 z-50">
       <AnimatePresence mode="wait" initial={true}>
         {data && (
-          <PollNotificationContent
-            key={data.id}
-            notificationData={data}
-            isTransitioning={isTransitioning}
-            slideOffset={slideOffset}
-          />
+          <PollNotificationContent key={data.id} notificationData={data} />
         )}
       </AnimatePresence>
     </div>

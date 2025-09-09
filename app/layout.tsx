@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
-import { headers } from "next/headers";
 import { Suspense } from "react";
 import Providers from "@/app/providers";
 import { Toaster } from "@/components/shadcn-ui/sonner";

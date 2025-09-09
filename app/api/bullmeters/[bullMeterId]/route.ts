@@ -7,10 +7,11 @@ import {
 
 export const GET = async (
   _: NextRequest,
-  { params }: { params: { bullMeterId: string } },
+  { params }: { params: Promise<{ bullMeterId: string }> },
 ) => {
   try {
-    const bullMeter = await getBullMeterById(params.bullMeterId);
+    const { bullMeterId } = await params;
+    const bullMeter = await getBullMeterById(bullMeterId);
 
     if (!bullMeter) {
       return NextResponse.json(
@@ -40,11 +41,12 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { bullMeterId: string } },
+  { params }: { params: Promise<{ bullMeterId: string }> },
 ) => {
   try {
     const data = await req.json();
-    const bullMeter = await updateBullMeter(params.bullMeterId, data);
+    const { bullMeterId } = await params;
+    const bullMeter = await updateBullMeter(bullMeterId, data);
 
     if (!bullMeter) {
       return NextResponse.json(
@@ -74,10 +76,11 @@ export const PUT = async (
 
 export const DELETE = async (
   _: NextRequest,
-  { params }: { params: { bullMeterId: string } },
+  { params }: { params: Promise<{ bullMeterId: string }> },
 ) => {
   try {
-    const deleted = await deleteBullMeter(params.bullMeterId);
+    const { bullMeterId } = await params;
+    const deleted = await deleteBullMeter(bullMeterId);
 
     if (!deleted) {
       return NextResponse.json(

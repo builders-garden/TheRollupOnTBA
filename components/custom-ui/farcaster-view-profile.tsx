@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
-import { useFarcaster } from "@/contexts/mini-app-context";
 import { openFarcasterProfile } from "@/lib/utils/farcaster";
+import { useMiniApp } from "@/contexts/mini-app-context";
 
 interface FarcasterViewProfileProps {
   text?: string;
@@ -14,7 +14,7 @@ export const FarcasterViewProfile = ({
   farcasterFid,
   farcasterUsername,
 }: FarcasterViewProfileProps) => {
-  const { context } = useFarcaster();
+  const { context } = useMiniApp();
 
   return (
     <div className="w-full flex items-center justify-start">

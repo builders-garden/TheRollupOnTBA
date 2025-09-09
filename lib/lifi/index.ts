@@ -17,13 +17,19 @@ import {
 import { wagmiConfigMiniApp as wagmiConfig } from "@/lib/reown";
 
 createConfig({
-  integrator: "Starter",
+  integrator: "Imagine",
   // apiKey: env.LIFI_API_KEY,
   providers: [
     EVM({
       getWalletClient: async () => await getWalletClient(wagmiConfig),
-      switchChain: async (chainId) => {
-        const chain = await switchChain(wagmiConfig, { chainId });
+      switchChain: async (_chainId) => {
+        let chainId = _chainId;
+        if (![8453].includes(chainId)) {
+          chainId = 8453;
+        }
+        const chain = await switchChain(wagmiConfig, {
+          chainId: chainId as 8453,
+        });
         return getWalletClient(wagmiConfig, { chainId: chain.id });
       },
     }),

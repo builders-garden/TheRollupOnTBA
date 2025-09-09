@@ -3,10 +3,11 @@ import { deleteTip, getTipById, updateTip } from "@/lib/database/queries";
 
 export const GET = async (
   _: NextRequest,
-  { params }: { params: { tipId: string } },
+  { params }: { params: Promise<{ tipId: string }> },
 ) => {
   try {
-    const tip = await getTipById(params.tipId);
+    const { tipId } = await params;
+    const tip = await getTipById(tipId);
 
     if (!tip) {
       return NextResponse.json(
@@ -36,11 +37,12 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { tipId: string } },
+  { params }: { params: Promise<{ tipId: string }> },
 ) => {
   try {
     const data = await req.json();
-    const tip = await updateTip(params.tipId, data);
+    const { tipId } = await params;
+    const tip = await updateTip(tipId, data);
 
     if (!tip) {
       return NextResponse.json(
@@ -70,10 +72,11 @@ export const PUT = async (
 
 export const DELETE = async (
   _: NextRequest,
-  { params }: { params: { tipId: string } },
+  { params }: { params: Promise<{ tipId: string }> },
 ) => {
   try {
-    const deleted = await deleteTip(params.tipId);
+    const { tipId } = await params;
+    const deleted = await deleteTip(tipId);
 
     if (!deleted) {
       return NextResponse.json(

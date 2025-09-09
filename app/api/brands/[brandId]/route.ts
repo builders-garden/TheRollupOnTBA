@@ -8,10 +8,11 @@ import {
 
 export const GET = async (
   _: NextRequest,
-  { params }: { params: { brandId: string } },
+  { params }: { params: Promise<{ brandId: string }> },
 ) => {
   try {
-    const brand = await getBrandById(params.brandId);
+    const { brandId } = await params;
+    const brand = await getBrandById(brandId);
 
     if (!brand) {
       return NextResponse.json(
@@ -41,11 +42,13 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { brandId: string } },
+  { params }: { params: Promise<{ brandId: string }> },
 ) => {
   try {
     const data = await req.json();
-    const brand = await updateBrand(params.brandId, data);
+
+    const { brandId } = await params;
+    const brand = await updateBrand(brandId, data);
 
     if (!brand) {
       return NextResponse.json(
@@ -75,10 +78,11 @@ export const PUT = async (
 
 export const DELETE = async (
   _: NextRequest,
-  { params }: { params: { brandId: string } },
+  { params }: { params: Promise<{ brandId: string }> },
 ) => {
   try {
-    const deleted = await deleteBrand(params.brandId);
+    const { brandId } = await params;
+    const deleted = await deleteBrand(brandId);
 
     if (!deleted) {
       return NextResponse.json(
@@ -108,13 +112,14 @@ export const DELETE = async (
 
 export const PATCH = async (
   req: NextRequest,
-  { params }: { params: { brandId: string } },
+  { params }: { params: Promise<{ brandId: string }> },
 ) => {
   try {
     const { action } = await req.json();
+    const { brandId } = await params;
 
     if (action === "toggle-active") {
-      const brand = await toggleBrandActiveStatus(params.brandId);
+      const brand = await toggleBrandActiveStatus(brandId);
 
       if (!brand) {
         return NextResponse.json(

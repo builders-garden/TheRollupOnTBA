@@ -25,8 +25,6 @@ export const env = createEnv({
     NEXT_PUBLIC_FARCASTER_SIGNATURE: z.string().min(1),
     // reown
     NEXT_PUBLIC_REOWN_PROJECT_ID: z.string().min(1),
-    // daimo
-    NEXT_PUBLIC_DAIMO_PAY_ID: z.string().min(1),
     // maintenance
     NEXT_PUBLIC_IS_IN_MAINTENANCE: z
       .string()
@@ -47,7 +45,6 @@ export const env = createEnv({
     NEXT_PUBLIC_FARCASTER_SIGNATURE:
       process.env.NEXT_PUBLIC_FARCASTER_SIGNATURE,
     NEXT_PUBLIC_REOWN_PROJECT_ID: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID,
-    NEXT_PUBLIC_DAIMO_PAY_ID: process.env.NEXT_PUBLIC_DAIMO_PAY_ID,
     NEXT_PUBLIC_IS_IN_MAINTENANCE: process.env.NEXT_PUBLIC_IS_IN_MAINTENANCE,
     NEXT_PUBLIC_MAINTENANCE_END_TIME:
       process.env.NEXT_PUBLIC_MAINTENANCE_END_TIME,

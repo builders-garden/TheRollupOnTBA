@@ -83,7 +83,6 @@ export const SentimentResultsContent = () => {
           <AnimatePresence mode="wait">
             {showPoll && (
               <PollNotification
-                slideOffset={100}
                 data={{
                   id: "1",
                   pollQuestion: "ETH will flip BTC this cycle",
@@ -92,8 +91,6 @@ export const SentimentResultsContent = () => {
                   voters: 10,
                   qrCodeUrl: "https://example.com/poll",
                 }}
-                previousData={null}
-                isTransitioning={false}
               />
             )}
           </AnimatePresence>

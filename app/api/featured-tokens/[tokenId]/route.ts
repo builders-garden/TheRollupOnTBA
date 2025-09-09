@@ -8,10 +8,11 @@ import {
 
 export const GET = async (
   _: NextRequest,
-  { params }: { params: { tokenId: string } },
+  { params }: { params: Promise<{ tokenId: string }> },
 ) => {
   try {
-    const token = await getFeaturedTokenById(params.tokenId);
+    const { tokenId } = await params;
+    const token = await getFeaturedTokenById(tokenId);
 
     if (!token) {
       return NextResponse.json(
@@ -41,11 +42,12 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { tokenId: string } },
+  { params }: { params: Promise<{ tokenId: string }> },
 ) => {
   try {
     const data = await req.json();
-    const token = await updateFeaturedToken(params.tokenId, data);
+    const { tokenId } = await params;
+    const token = await updateFeaturedToken(tokenId, data);
 
     if (!token) {
       return NextResponse.json(
@@ -75,10 +77,11 @@ export const PUT = async (
 
 export const DELETE = async (
   _: NextRequest,
-  { params }: { params: { tokenId: string } },
+  { params }: { params: Promise<{ tokenId: string }> },
 ) => {
   try {
-    const deleted = await deleteFeaturedToken(params.tokenId);
+    const { tokenId } = await params;
+    const deleted = await deleteFeaturedToken(tokenId);
 
     if (!deleted) {
       return NextResponse.json(
@@ -108,13 +111,14 @@ export const DELETE = async (
 
 export const PATCH = async (
   req: NextRequest,
-  { params }: { params: { tokenId: string } },
+  { params }: { params: Promise<{ tokenId: string }> },
 ) => {
   try {
     const { action } = await req.json();
 
     if (action === "toggle-active") {
-      const token = await toggleFeaturedTokenActiveStatus(params.tokenId);
+      const { tokenId } = await params;
+      const token = await toggleFeaturedTokenActiveStatus(tokenId);
 
       if (!token) {
         return NextResponse.json(

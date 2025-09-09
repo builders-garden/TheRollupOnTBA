@@ -2,8 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import ky from "ky";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
-import { ADMIN_FIDS, BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
-import { env } from "@/lib/zod";
+import { BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
 import { Token } from "../types/tokens.type";
 
 /**

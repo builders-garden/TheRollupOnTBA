@@ -19,8 +19,6 @@
     "@base-org/account": "^2.0.2",
     "@base-org/account-ui": "^1.0.1",
     "@coinbase/onchainkit": "^0.38.19",
-    "@daimo/pay": "^1.15.0",
-    "@daimo/pay-common": "^1.15.0",
     "@farcaster/auth-client": "^0.7.0",
     "@farcaster/miniapp-core": "^0.3.8",
     "@farcaster/miniapp-node": "^0.1.8",

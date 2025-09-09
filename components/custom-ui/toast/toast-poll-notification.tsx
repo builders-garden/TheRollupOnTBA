@@ -47,11 +47,12 @@ const ResultsBar = ({
   return (
     <motion.div
       className="flex items-center w-full min-w-[1000px] rounded-xl overflow-hidden border-4 border-[#E6B45E]"
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, scale: 0, rotate: -6 }}
+      animate={{ opacity: 1, scale: 1, rotate: 0 }}
       transition={{
         duration: 0.4,
         scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+        rotate: { type: "spring", visualDuration: 0.45, bounce: 0.3 },
       }}>
       <motion.div
         className="h-14 flex items-center justify-center bg-[#C56E6E]/85 px-4"

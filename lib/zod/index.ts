@@ -6,6 +6,7 @@ export const env = createEnv({
   server: {
     NEYNAR_API_KEY: z.string().min(1),
     ZERION_API_KEY: z.string().min(1),
+    BACKEND_PRIVATE_KEY: z.string().min(1),
     JWT_SECRET: z.string().min(1),
     NOTIFICATION_SECRET: z.string().min(1),
     TURSO_DATABASE_URL: z.string().min(1),
@@ -34,6 +35,8 @@ export const env = createEnv({
     NEXT_PUBLIC_MAINTENANCE_END_TIME: z.string().optional(),
     // socket
     NEXT_PUBLIC_SOCKET_URL: z.string().min(1),
+    // cdp paymaster
+    NEXT_PUBLIC_PAYMASTER_URL: z.string().min(1),
   },
   // For Next.js >= 13.4.4, you only need to destructure client variables:
   experimental__runtimeEnv: {
@@ -49,5 +52,6 @@ export const env = createEnv({
     NEXT_PUBLIC_MAINTENANCE_END_TIME:
       process.env.NEXT_PUBLIC_MAINTENANCE_END_TIME,
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
+    NEXT_PUBLIC_PAYMASTER_URL: process.env.NEXT_PUBLIC_PAYMASTER_URL,
   },
 });

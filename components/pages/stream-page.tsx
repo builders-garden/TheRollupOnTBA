@@ -1,9 +1,10 @@
 "use client";
 
-import { Globe, Twitch, Twitter, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
+import { useApprove } from "@/hooks/use-approve";
+import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
@@ -12,12 +13,29 @@ import { Tips } from "@/plugins/tips/tips";
 import { AboutSection } from "../custom-ui/mini-app/about-section";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
 import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
+import { NBButton } from "../custom-ui/nb-button";
 import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
 
 export const StreamPage = () => {
   const { joinStream } = useSocketUtils();
   const { isConnected } = useSocket();
+
+  // USDC approval hook
+  const {
+    approve,
+    isLoading: isApproving,
+    isSuccess: isApproved,
+    hasError: approveError,
+  } = useApprove({ amount: "1" });
+
+  // BullMeter voting hook
+  const {
+    submitVote,
+    isPending: isVoting,
+    isSuccess: voteSuccess,
+    isError: voteError,
+  } = useBullmeterApprove();
 
   useEffect(() => {
     if (isConnected) {
@@ -121,6 +139,69 @@ export const StreamPage = () => {
 
         {/* Newsletter CTA */}
         <NewsletterCTA label="Subscribe to newsletter" onClick={() => {}} />
+
+        {/* USDC Approval Section */}
+        <div className="flex flex-col justify-center items-center w-full gap-3">
+          <h2 className="text-[16px] font-bold">Vote on ETH vs BTC</h2>
+
+          {!isApproved ? (
+            <NBButton
+              className="bg-green-600 w-fit"
+              disabled={isApproving}
+              onClick={approve}>
+              <p className="text-[16px] font-extrabold text-white">
+                {isApproving ? "Approving..." : "APPROVE USDC"}
+              </p>
+            </NBButton>
+          ) : (
+            <div className="flex gap-3 w-full">
+              <NBButton
+                className="bg-red-600 flex-1"
+                disabled={isVoting}
+                onClick={() =>
+                  submitVote(
+                    "0xcff2903becf1ed83be5948521afdb292794c1f82c074ec4648129f4e5159a584", //TODO: Update this
+                    false,
+                    "1",
+                  )
+                }>
+                <p className="text-[16px] font-extrabold text-white">
+                  {isVoting ? "Voting..." : "BEAR"}
+                </p>
+              </NBButton>
+              <NBButton
+                className="bg-green-600 flex-1"
+                disabled={isVoting}
+                onClick={() =>
+                  submitVote(
+                    "0xcff2903becf1ed83be5948521afdb292794c1f82c074ec4648129f4e5159a584", //TODO: Update this
+                    true,
+                    "1",
+                  )
+                }>
+                <p className="text-[16px] font-extrabold text-white">
+                  {isVoting ? "Voting..." : "BULL"}
+                </p>
+              </NBButton>
+            </div>
+          )}
+
+          {approveError && (
+            <p className="text-red-500 text-sm">
+              Approval failed. Please try again.
+            </p>
+          )}
+          {voteError && (
+            <p className="text-red-500 text-sm">
+              Vote failed. Please try again.
+            </p>
+          )}
+          {voteSuccess && (
+            <p className="text-green-500 text-sm">
+              Vote submitted successfully!
+            </p>
+          )}
+        </div>
       </div>
       {/* Floating Bottom Navbar */}
       <BottomNavbar />

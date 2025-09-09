@@ -24,7 +24,9 @@ export const brandsTable = sqliteTable("brands", {
   websiteUrl: text("website_url"),
   activePlugins: text("active_plugins"),
   socialMediaUrls: text("social_media_urls"),
-  walletAddresses: text("wallet_addresses").notNull(),
+  walletAddresses: text("wallet_addresses", { mode: "json" })
+    .$type<Address[]>()
+    .notNull(),
   isActive: integer("is_active", { mode: "boolean" }).default(false),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),

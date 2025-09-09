@@ -1,9 +1,5 @@
 import { createBaseAccountSDK } from "@base-org/account";
-import {
-  QueryObserverResult,
-  RefetchOptions,
-  UseMutateFunction,
-} from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import {
   createContext,
   ReactNode,

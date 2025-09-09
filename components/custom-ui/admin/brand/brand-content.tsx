@@ -1,4 +1,11 @@
-import { Globe, Sparkle, Twitch, Twitter, Youtube } from "lucide-react";
+import {
+  Globe,
+  Signature,
+  Sparkle,
+  Twitch,
+  Twitter,
+  Youtube,
+} from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { NBButton } from "../../nb-button";
@@ -87,7 +94,7 @@ export const BrandContent = () => {
         <div className="grid grid-cols-4 gap-5 w-full">
           <NBTextInput
             label="Name"
-            icon={<Sparkle className="size-5" />}
+            icon={<Signature className="size-5" />}
             placeholder="Your brand's name here..."
             value={brandName}
             setValue={setBrandName}

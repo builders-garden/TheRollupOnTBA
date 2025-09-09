@@ -1,4 +1,4 @@
-import { and, eq, like } from "drizzle-orm";
+import { and, eq, like, sql } from "drizzle-orm";
 import { db } from "@/lib/database";
 import {
   brandsTable,
@@ -28,6 +28,25 @@ export const getBrandById = async (brandId: string): Promise<Brand | null> => {
     .select()
     .from(brandsTable)
     .where(eq(brandsTable.id, brandId))
+    .limit(1);
+
+  return brand[0] || null;
+};
+
+/**
+ * Get a brand by wallet address
+ * @param address - The wallet address
+ * @returns The brand or null if not found
+ */
+export const getBrandByAddress = async (
+  address: string,
+): Promise<Brand | null> => {
+  const brand = await db
+    .select()
+    .from(brandsTable)
+    .where(
+      sql`JSON_EXTRACT(${brandsTable.walletAddresses}, '$') LIKE ${`%"${address}"%`}`,
+    )
     .limit(1);
 
   return brand[0] || null;

@@ -35,11 +35,20 @@ export const useBrands = (params?: {
   });
 };
 
-export const useBrand = (brandId: string) => {
+export const useBrandById = (brandId: string) => {
   return useApiQuery<BrandApiResponse>({
     queryKey: ["brands", brandId],
     url: `/api/brands/${brandId}`,
     enabled: !!brandId,
+    isProtected: true,
+  });
+};
+
+export const useBrandByAddress = (address?: string) => {
+  return useApiQuery<BrandApiResponse>({
+    queryKey: ["brands", address],
+    url: `/api/brands/addresses/${address}`,
+    enabled: !!address,
     isProtected: true,
   });
 };

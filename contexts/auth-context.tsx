@@ -11,7 +11,7 @@ import {
 } from "react";
 // hooks
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
-import { useFarcaster } from "@/contexts/farcaster-context";
+import { useMiniApp } from "@/contexts/mini-app-context";
 import {
   useAuthCheck,
   useFarcasterSignIn,
@@ -63,10 +63,12 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Environment context (single source of truth for isMiniApp)
-  const { isInMiniApp, isLoading: isEnvironmentLoading } = useFarcaster();
-
-  // Miniapp context
-  const { context: miniAppContext, isMiniAppReady } = useFarcaster();
+  const {
+    isInMiniApp,
+    isLoading: isEnvironmentLoading,
+    context: miniAppContext,
+    isMiniAppReady,
+  } = useMiniApp();
 
   // Query client for cache invalidation
   const queryClient = useQueryClient();

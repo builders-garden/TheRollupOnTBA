@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import Providers from "@/app/providers";
 import { Toaster } from "@/components/shadcn-ui/sonner";
 import "./globals.css";
+import { MiniAppProvider } from "@/contexts/mini-app-context";
 
 const nunitoSans = Nunito_Sans({ subsets: ["latin"] });
 
@@ -24,12 +25,14 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${nunitoSans.className} size-full antialiased bg-background`}>
-        <Providers cookie={cookie}>
-          {children}
-          <Suspense>
-            <Toaster richColors position="top-right" />
-          </Suspense>
-        </Providers>
+        <MiniAppProvider addMiniAppOnLoad={true}>
+          <Providers cookie={cookie}>
+            {children}
+            <Suspense>
+              <Toaster richColors position="top-right" />
+            </Suspense>
+          </Providers>
+        </MiniAppProvider>
       </body>
     </html>
   );

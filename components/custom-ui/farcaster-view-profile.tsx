@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
-import { useFarcaster } from "@/contexts/farcaster-context";
+import { useFarcaster } from "@/contexts/mini-app-context";
 import { openFarcasterProfile } from "@/lib/utils/farcaster";
 
 interface FarcasterViewProfileProps {

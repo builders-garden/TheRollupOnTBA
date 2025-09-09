@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { base } from "viem/chains";
 import { useAccount } from "wagmi";
 import { useAuth } from "@/contexts/auth-context";
-import { useFarcaster } from "@/contexts/farcaster-context";
+import { useFarcaster } from "@/contexts/mini-app-context";
 import { useWalletBalance } from "@/hooks/use-wallet-balance";
 import { BASE_USDC_ADDRESS, DESTINATION_ADDRESS } from "@/lib/constants";
 import { formatUSDAmount } from "@/lib/lifi/utils";

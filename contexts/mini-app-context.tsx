@@ -1,7 +1,8 @@
 "use client";
 
+import { AddMiniAppResult } from "@farcaster/miniapp-core/dist/actions/AddMiniApp";
 import {
-  MiniAppContext,
+  MiniAppContext as MiniAppCoreContext,
   SafeAreaInsets,
 } from "@farcaster/miniapp-core/dist/context";
 import {
@@ -18,29 +19,30 @@ import {
   type ReactNode,
 } from "react";
 
-interface FarcasterContextType {
+interface MiniAppContextType {
   isMiniAppReady: boolean;
   isInMiniApp: boolean;
   isLoading: boolean;
-  context: MiniAppContext | null;
-  capabilities: MiniAppHostCapability[] | null;
+  context: MiniAppCoreContext | undefined;
+  capabilities: MiniAppHostCapability[] | undefined;
   safeAreaInsets: SafeAreaInsets;
-  error: string | null;
+  addMiniApp: () => Promise<AddMiniAppResult | null | undefined>;
+  error: string | undefined;
 }
 
-export const FarcasterContext = createContext<FarcasterContextType | undefined>(
+export const MiniAppContext = createContext<MiniAppContextType | undefined>(
   undefined,
 );
 
-export function useFarcaster() {
-  const context = useContext(FarcasterContext);
+export function useMiniApp() {
+  const context = useContext(MiniAppContext);
   if (context === undefined) {
-    throw new Error("useFarcaster must be used within a FarcasterProvider");
+    throw new Error("useMiniApp must be used within a MiniAppProvider");
   }
   return context;
 }
 
-export function FarcasterProvider({
+export function MiniAppProvider({
   addMiniAppOnLoad,
   children,
 }: {
@@ -49,13 +51,12 @@ export function FarcasterProvider({
 }) {
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [context, setContext] = useState<MiniAppContext | null>(null);
+  const [context, setContext] = useState<MiniAppCoreContext>();
   const [isMiniAppReady, setIsMiniAppReady] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [capabilities, setCapabilities] = useState<
-    MiniAppHostCapability[] | null
-  >(null);
+  const [error, setError] = useState<string>();
+  const [capabilities, setCapabilities] = useState<MiniAppHostCapability[]>();
 
+  // Declaring a basic set of safe area insets
   const [safeAreaInsets, setSafeAreaInsets] = useState<SafeAreaInsets>({
     top: 0,
     bottom: 0,
@@ -63,34 +64,57 @@ export function FarcasterProvider({
     right: 0,
   });
 
+  // A simple function to add a mini app to the client
+  const handleAddMiniApp = useCallback(
+    async (passedContext: MiniAppCoreContext | undefined = undefined) => {
+      const usedContext = passedContext || context;
+      // If the mini app was already added or the context is not set, return
+      if (!usedContext || usedContext.client.added) return;
+      try {
+        const result = await miniappSdk.actions.addMiniApp();
+        if (result) {
+          return result;
+        }
+        return null;
+      } catch (error) {
+        console.error("[error] adding miniapp", error);
+        return null;
+      }
+    },
+    [context],
+  );
+
+  // The function to load the mini app
   const loadMiniApp = useCallback(async () => {
     try {
       // Set loading to true
       setIsLoading(true);
 
-      // first thing first, call ready on the miniapp sdk
+      // first things first, call ready on the miniapp sdk
       await miniappSdk.actions.ready();
 
       // check if the app is in the miniapp
       const tmpIsInMiniApp = await miniappSdk.isInMiniApp();
       setIsInMiniApp(tmpIsInMiniApp);
 
-      // then get the context
-      const tmpContext = await miniappSdk.context;
+      // then get the context if we are in the miniapp
+      const tmpContext = tmpIsInMiniApp ? await miniappSdk.context : null;
 
       // if the context is not null, set the context
       if (tmpContext) {
-        setContext(tmpContext as MiniAppContext);
+        setContext(tmpContext);
         // then get the safe area insets
         if (tmpContext.client.safeAreaInsets) {
           setSafeAreaInsets(tmpContext.client.safeAreaInsets);
         }
         setIsMiniAppReady(true);
 
+        // If is is flagged, try to add the mini app on load
         if (addMiniAppOnLoad) {
-          await miniappSdk.actions.addMiniApp();
+          await handleAddMiniApp(tmpContext);
         }
 
+        // Try to get the capabilities of the mini app client
         try {
           const tmpCapabilities = await miniappSdk.getCapabilities();
           setCapabilities(tmpCapabilities);
@@ -110,39 +134,9 @@ export function FarcasterProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [addMiniAppOnLoad]);
+  }, [addMiniAppOnLoad, handleAddMiniApp]);
 
-  const handleAddMiniApp = useCallback(async () => {
-    try {
-      const result = await miniappSdk.actions.addMiniApp();
-      if (result) {
-        return result;
-      }
-      return null;
-    } catch (error) {
-      console.error("[error] adding miniapp", error);
-      return null;
-    }
-  }, []);
-
-  useEffect(() => {
-    // on load, add the miniapp
-    if (
-      isMiniAppReady &&
-      context &&
-      !context?.client?.added &&
-      addMiniAppOnLoad
-    ) {
-      handleAddMiniApp();
-    }
-  }, [
-    isMiniAppReady,
-    context?.client?.added,
-    handleAddMiniApp,
-    addMiniAppOnLoad,
-    context,
-  ]);
-
+  // Until the mini app is not ready, try to load it
   useEffect(() => {
     if (!isMiniAppReady) {
       loadMiniApp().then(() => {
@@ -160,6 +154,7 @@ export function FarcasterProvider({
       capabilities,
       safeAreaInsets,
       error,
+      addMiniApp: handleAddMiniApp,
     }),
     [
       isInMiniApp,
@@ -169,12 +164,11 @@ export function FarcasterProvider({
       capabilities,
       safeAreaInsets,
       error,
+      handleAddMiniApp,
     ],
   );
 
   return (
-    <FarcasterContext.Provider value={value}>
-      {children}
-    </FarcasterContext.Provider>
+    <MiniAppContext.Provider value={value}>{children}</MiniAppContext.Provider>
   );
 }

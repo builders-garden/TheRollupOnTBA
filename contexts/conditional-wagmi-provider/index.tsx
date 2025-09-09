@@ -1,8 +1,8 @@
 "use client";
 
-import { sdk as miniappSdk } from "@farcaster/miniapp-sdk";
-import { ReactNode, useLayoutEffect, useState } from "react";
+import { ReactNode } from "react";
 import { wagmiConfigMiniApp, wagmiConfigReown } from "@/lib/reown";
+import { useMiniApp } from "../mini-app-context";
 import { CustomWagmiProvider } from "./wagmi-provider";
 
 interface ConditionalWagmiProviderProps {
@@ -14,20 +14,10 @@ export const ConditionalWagmiProvider = ({
   children,
   cookie,
 }: ConditionalWagmiProviderProps) => {
-  const [isInMiniApp, setIsInMiniApp] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isInMiniApp, isLoading: isCheckingMiniAppContext } = useMiniApp();
 
-  useLayoutEffect(() => {
-    const checkIsInMiniApp = async () => {
-      const tmpIsInMiniApp = await miniappSdk.isInMiniApp();
-      setIsInMiniApp(tmpIsInMiniApp);
-      setIsLoading(false);
-    };
-    checkIsInMiniApp();
-  }, []);
-
-  if (isLoading) {
-    // Show loading while detecting environment
+  if (isCheckingMiniAppContext) {
+    // Show nothing while detecting environment
     return null;
   }
 

@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { StreamNotification } from "@/components/custom-ui/stream-notification";
+import { NotificationContainer } from "@/components/custom-ui/notification-container";
 import { useNotificationQueue } from "@/contexts/notification-queue-context";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { ServerToClientSocketEvents } from "@/lib/enums";
+import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 import {
   StreamJoinedEvent,
   TipReceivedEvent,
@@ -70,9 +70,5 @@ export default function OverlayPage() {
     };
   }, [subscribe, unsubscribe, joinStream, showPopupCallback]);
 
-  return (
-    <div>
-      <StreamNotification />
-    </div>
-  );
+  return <NotificationContainer position={PopupPositions.TOP_RIGHT} />;
 }

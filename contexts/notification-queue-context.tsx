@@ -1,16 +1,27 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-interface NotificationData {
+export interface NotificationData {
   id: string;
   username: string;
   profilePicture: string;
   text?: string;
+  // Poll-specific fields
+  pollQuestion?: string;
+  options?: Array<{
+    emoji: string;
+    text: string;
+  }>;
+  timeLeft?: string;
+  votes?: number;
+  voters?: number;
+  qrCodeUrl?: string;
 }
 
 interface NotificationQueueContextType {
   addToQueue: (notification: Omit<NotificationData, "id">) => void;
   removeFromQueue: (id: string) => void;
   activeNotification: NotificationData | null;
+  isTransitioning: boolean;
 }
 
 const NotificationQueueContext =
@@ -24,6 +35,7 @@ export function NotificationQueueProvider({
   const [queue, setQueue] = useState<NotificationData[]>([]);
   const [activeNotification, setActiveNotification] =
     useState<NotificationData | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const addToQueue = (notification: Omit<NotificationData, "id">) => {
     const newNotification = {
@@ -34,36 +46,30 @@ export function NotificationQueueProvider({
   };
 
   const removeFromQueue = (id: string) => {
-    console.log("removeFromQueue called with id:", id);
-    console.log("Current queue:", queue);
-    console.log("Current activeNotification:", activeNotification);
-
-    setQueue((prev) => {
-      const newQueue = prev.filter((n) => n.id !== id);
-      console.log("New queue after removal:", newQueue);
-      return newQueue;
-    });
-
     if (activeNotification?.id === id) {
-      console.log("Setting activeNotification to null");
-      setActiveNotification(null);
+      if (queue.length > 0) {
+        // If there's a next notification, trigger transition
+        setIsTransitioning(true);
+        setActiveNotification(null);
+
+        // Reset transition state after animation completes
+        setTimeout(() => {
+          setIsTransitioning(false);
+        }, 300); // This should match the exit animation duration
+      } else {
+        // If no next notification, just remove current
+        setActiveNotification(null);
+      }
     }
+
+    setQueue((prev) => prev.filter((n) => n.id !== id));
   };
 
   useEffect(() => {
-    console.log("Queue processing effect running");
-    console.log("Current queue:", queue);
-    console.log("Current activeNotification:", activeNotification);
-
     if (!activeNotification && queue.length > 0) {
-      console.log("Processing next notification from queue");
       const nextNotification = queue[0];
       setActiveNotification(nextNotification);
-      setQueue((prev) => {
-        const newQueue = prev.slice(1);
-        console.log("New queue after processing:", newQueue);
-        return newQueue;
-      });
+      setQueue((prev) => prev.slice(1));
     }
   }, [queue, activeNotification]);
 
@@ -73,6 +79,7 @@ export function NotificationQueueProvider({
         addToQueue,
         removeFromQueue,
         activeNotification,
+        isTransitioning,
       }}>
       {children}
     </NotificationQueueContext.Provider>

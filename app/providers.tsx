@@ -1,20 +1,21 @@
 "use client";
 
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { State } from "wagmi";
 import { MiniAppAuthProvider } from "@/contexts/auth/mini-app-auth-context";
-import { ConditionalWagmiProvider } from "@/contexts/conditional-wagmi-provider";
 import { ErudaProvider } from "@/contexts/eruda";
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { NotificationQueueProvider } from "@/contexts/notification-queue-context";
 import { SocketProvider } from "@/contexts/socket-context";
+import { CustomWagmiProvider } from "@/contexts/wagmi-provider";
+import { wagmiConfigMiniApp } from "@/lib/reown";
 
-export default function Providers({
-  children,
-  cookie,
-}: {
+interface ProvidersProps {
   children: React.ReactNode;
-  cookie: string | null;
-}) {
+  initialState: State | undefined;
+}
+
+export default function Providers({ children, initialState }: ProvidersProps) {
   const { isInMiniApp, isLoading: isCheckingMiniAppContext } = useMiniApp();
 
   // The current url path name
@@ -38,11 +39,13 @@ export default function Providers({
   if (!isInMiniApp && pathName.includes("admin")) {
     return (
       <NuqsAdapter>
-        <ConditionalWagmiProvider cookie={cookie}>
+        <CustomWagmiProvider
+          config={wagmiConfigMiniApp}
+          initialState={initialState}>
           <SocketProvider>
             <NotificationQueueProvider>{children}</NotificationQueueProvider>
           </SocketProvider>
-        </ConditionalWagmiProvider>
+        </CustomWagmiProvider>
       </NuqsAdapter>
     );
   }
@@ -53,13 +56,15 @@ export default function Providers({
       <NuqsAdapter>
         <MiniAppAuthProvider>
           <ErudaProvider>
-            <ConditionalWagmiProvider cookie={cookie}>
+            <CustomWagmiProvider
+              config={wagmiConfigMiniApp}
+              initialState={initialState}>
               <SocketProvider>
                 <NotificationQueueProvider>
                   {children}
                 </NotificationQueueProvider>
               </SocketProvider>
-            </ConditionalWagmiProvider>
+            </CustomWagmiProvider>
           </ErudaProvider>
         </MiniAppAuthProvider>
       </NuqsAdapter>

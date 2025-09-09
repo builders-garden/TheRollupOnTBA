@@ -19,14 +19,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookie = (await headers()).get("cookie");
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${nunitoSans.className} size-full antialiased bg-background`}>
         <MiniAppProvider addMiniAppOnLoad={true}>
-          <Providers cookie={cookie}>
+          <Providers initialState={undefined}>
             {children}
             <Suspense>
               <Toaster richColors position="top-right" />

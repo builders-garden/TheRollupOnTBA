@@ -41,13 +41,13 @@ export const getBrandById = async (brandId: string): Promise<Brand | null> => {
 export const getBrandByAddress = async (
   address: string,
 ): Promise<Brand | null> => {
-  const brand = await db
+  const [brand] = await db
     .select()
     .from(brandsTable)
     .where(sql`${brandsTable.walletAddresses} LIKE '%' || ${address} || '%'`)
     .limit(1);
 
-  return brand[0] || null;
+  return brand || null;
 };
 
 /**

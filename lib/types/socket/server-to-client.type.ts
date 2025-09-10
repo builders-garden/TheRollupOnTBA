@@ -1,4 +1,4 @@
-import { ServerToClientSocketEvents } from "@/lib/enums";
+import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 
 export type StreamJoinedEvent = {
   username: string;
@@ -6,12 +6,14 @@ export type StreamJoinedEvent = {
 };
 
 export type TipReceivedEvent = {
+  position: PopupPositions;
   username: string;
   profilePicture: string;
   tipAmount: string;
 };
 
 export type TokenTradeEvent = {
+  position: PopupPositions;
   username: string;
   profilePicture: string;
   tokenInAmount: string;
@@ -25,6 +27,7 @@ export type TokenTradeEvent = {
 };
 
 export type VoteReceivedEvent = {
+  position: PopupPositions;
   username: string;
   profilePicture: string;
   voteAmount: string;
@@ -44,7 +47,7 @@ export type PollNotificationEvent = {
   votes: number;
   voters: number;
   qrCodeUrl: string;
-  position: string;
+  position: PopupPositions;
   results?: {
     bullPercent: number;
     bearPercent: number;
@@ -58,7 +61,7 @@ export type EndPollNotificationEvent = {
   votes: number;
   voters: number;
   qrCodeUrl: string;
-  position: string;
+  position: PopupPositions;
   results?: {
     bullPercent: number;
     bearPercent: number;
@@ -66,6 +69,7 @@ export type EndPollNotificationEvent = {
 };
 export type UpdatePollNotificationEvent = {
   id: string;
+  position: PopupPositions;
   voters: number;
   votes: number;
   results?: {

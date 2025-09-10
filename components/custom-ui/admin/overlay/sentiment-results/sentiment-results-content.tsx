@@ -1,26 +1,24 @@
 import { addSeconds } from "date-fns";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
+import { useSocket } from "@/hooks/use-socket";
+import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
 export const SentimentResultsContent = () => {
+  useSocket();
+  const { joinStream, adminStartSentimentPoll, adminEndSentimentPoll } =
+    useSocketUtils();
+
   const [selectedPopupPosition, setSelectedPopupPosition] =
     useState<PopupPositions>(PopupPositions.TOP_LEFT);
 
   const handleTestPollNotification = () => {
-    const position = selectedPopupPosition.replace("_", "-") as
-      | "top-left"
-      | "top-center"
-      | "top-right"
-      | "bottom-left"
-      | "bottom-center"
-      | "bottom-right";
-
     const data = {
       id: "1",
       pollQuestion: "ETH will flip BTC this cycle",
@@ -28,18 +26,43 @@ export const SentimentResultsContent = () => {
       votes: 10,
       voters: 10,
       qrCodeUrl: "https://example.com/poll",
-      position,
+      position: selectedPopupPosition,
       results: {
         bullPercent: 70,
         bearPercent: 30,
       },
     };
 
+    adminStartSentimentPoll({
+      username: "Admin",
+      profilePicture: "https://via.placeholder.com/150",
+      pollQuestion: "ETH will flip BTC this cycle",
+      endTime: addSeconds(new Date(), 5),
+      position: selectedPopupPosition,
+      guests: [],
+      results: {
+        bullPercent: 70,
+        bearPercent: 30,
+      },
+    });
+
     toast.custom(() => <ToastPollNotification data={data} />, {
       duration: Infinity,
-      position,
+      position: selectedPopupPosition,
+      onDismiss: () => {
+        adminEndSentimentPoll({
+          id: "1",
+        });
+      },
     });
   };
+
+  useEffect(() => {
+    joinStream({
+      username: "Admin",
+      profilePicture: "https://via.placeholder.com/150",
+    });
+  }, [joinStream]);
 
   return (
     <motion.div

@@ -14,93 +14,36 @@ export function useSocketUtils() {
   const { emit, disconnect } = useSocket();
 
   const adminStartSentimentPoll = useCallback(
-    ({
-      username,
-      profilePicture,
-      pollQuestion,
-      endTime,
-      guests,
-      results,
-    }: StartSentimentPollEvent) => {
-      emit(ClientToServerSocketEvents.START_SENTIMENT_POLL, {
-        username,
-        profilePicture,
-        pollQuestion,
-        endTime,
-        guests,
-        results,
-      });
+    (data: StartSentimentPollEvent) => {
+      emit(ClientToServerSocketEvents.START_SENTIMENT_POLL, data);
     },
     [emit],
   );
 
   const adminEndSentimentPoll = useCallback(
-    ({ id }: EndSentimentPollEvent) => {
-      emit(ClientToServerSocketEvents.END_SENTIMENT_POLL, {
-        id,
-      });
+    (data: EndSentimentPollEvent) => {
+      emit(ClientToServerSocketEvents.END_SENTIMENT_POLL, data);
     },
     [emit],
   );
 
   const joinStream = useCallback(
-    ({ username, profilePicture }: JoinStreamEvent) => {
-      emit(ClientToServerSocketEvents.JOIN_STREAM, {
-        username,
-        profilePicture,
-      });
+    (data: JoinStreamEvent) => {
+      emit(ClientToServerSocketEvents.JOIN_STREAM, data);
     },
     [emit],
   );
 
-  const tipSent = ({ username, profilePicture, tipAmount }: TipSentEvent) => {
-    emit(ClientToServerSocketEvents.TIP_SENT, {
-      username,
-      profilePicture,
-      tipAmount,
-    });
+  const tipSent = (data: TipSentEvent) => {
+    emit(ClientToServerSocketEvents.TIP_SENT, data);
   };
 
-  const tokenTraded = ({
-    username,
-    profilePicture,
-    tokenInAmount,
-    tokenInName,
-    tokenInDecimals,
-    tokenInImageUrl,
-    tokenOutAmount,
-    tokenOutDecimals,
-    tokenOutName,
-    tokenOutImageUrl,
-  }: TokenTradedEvent) => {
-    emit(ClientToServerSocketEvents.TOKEN_TRADED, {
-      username,
-      profilePicture,
-      tokenInAmount,
-      tokenInName,
-      tokenInDecimals,
-      tokenInImageUrl,
-      tokenOutAmount,
-      tokenOutDecimals,
-      tokenOutName,
-      tokenOutImageUrl,
-    });
+  const tokenTraded = (data: TokenTradedEvent) => {
+    emit(ClientToServerSocketEvents.TOKEN_TRADED, data);
   };
 
-  const voteCasted = ({
-    username,
-    profilePicture,
-    voteAmount,
-    isBull,
-    promptId,
-  }: VoteCastedEvent) => {
-    emit(ClientToServerSocketEvents.VOTE_CASTED, {
-      username,
-      profilePicture,
-      voteAmount,
-      isBull,
-      promptId,
-    });
+  const voteCasted = (data: VoteCastedEvent) => {
+    emit(ClientToServerSocketEvents.VOTE_CASTED, data);
   };
 
   return {

@@ -1,4 +1,4 @@
-import { ClientToServerSocketEvents } from "@/lib/enums";
+import { ClientToServerSocketEvents, PopupPositions } from "@/lib/enums";
 import { Guest } from "../poll.type";
 
 export type JoinStreamEvent = {
@@ -7,12 +7,14 @@ export type JoinStreamEvent = {
 };
 
 export type TipSentEvent = {
+  position: PopupPositions;
   username: string;
   profilePicture: string;
   tipAmount: string;
 };
 
 export type TokenTradedEvent = {
+  position: PopupPositions;
   username: string;
   profilePicture: string;
   tokenInAmount: string;
@@ -26,6 +28,7 @@ export type TokenTradedEvent = {
 };
 
 export type VoteCastedEvent = {
+  position: PopupPositions;
   username: string;
   profilePicture: string;
   voteAmount: string;
@@ -34,6 +37,7 @@ export type VoteCastedEvent = {
 };
 
 export type StartSentimentPollEvent = {
+  position: PopupPositions;
   username: string;
   profilePicture: string;
   pollQuestion: string;

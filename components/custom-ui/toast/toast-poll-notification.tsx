@@ -231,7 +231,7 @@ export const ToastPollNotification = ({
           />
         ) : null}
 
-        <div className="bg-gradient-to-b from-[#1B2541]/85 to-[#102E50]/85 rounded-xl shadow-lg px-6 py-2 flex items-center justify-between gap-6 min-w-[1000px] border-4 border-[#E6B45E] font-grotesk text-white">
+        <div className="bg-gradient-to-b from-[#1B2541]/85 to-[#102E50]/85 rounded-xl shadow-lg px-6 py-2 flex items-center justify-between gap-6 min-w-[1000px] min-h-[130px] border-4 border-[#E6B45E] font-grotesk text-white">
           <p className="flex items-center gap-1 text-xl">
             <BullIcon className="w-8 h-8 fill-[#4CAF50]" /> or{" "}
             <BearIcon className="w-8 h-8 fill-[#CF5953]" />?

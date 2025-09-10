@@ -31,12 +31,12 @@ export enum OverlayTabs {
 
 // Popup Positions
 export enum PopupPositions {
-  TOP_LEFT = "top_left",
-  TOP_CENTER = "top_center",
-  TOP_RIGHT = "top_right",
-  BOTTOM_LEFT = "bottom_left",
-  BOTTOM_CENTER = "bottom_center",
-  BOTTOM_RIGHT = "bottom_right",
+  TOP_LEFT = "top-left",
+  TOP_RIGHT = "top-right",
+  BOTTOM_LEFT = "bottom-left",
+  BOTTOM_RIGHT = "bottom-right",
+  TOP_CENTER = "top-center",
+  BOTTOM_CENTER = "bottom-center",
 }
 
 // client to server

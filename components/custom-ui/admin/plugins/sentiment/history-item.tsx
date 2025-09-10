@@ -1,21 +1,33 @@
 interface HistoryItemProps {
-  time: string;
+  deadline: string;
   question: string;
   bullPercent: number;
   bearPercent: number;
+  totalVotes: number;
+  usdcCollected: number;
 }
 
 export const HistoryItem = ({
-  time,
+  deadline,
   question,
   bullPercent,
   bearPercent,
+  totalVotes,
+  usdcCollected,
 }: HistoryItemProps) => {
   return (
     <div className="flex flex-col lg:flex-row justify-start items-start lg:justify-between lg:items-center w-full pl-10 pr-4">
       <div className="flex flex-col justify-start items-start gap-1">
-        <p className="text-base italic shrink-0">{time}</p>
-        <p className="text-xl font-medium italic truncate">“{question}”</p>
+        <p className="text-sm italic text-gray-500 shrink-0">
+          Deadline: {deadline}
+        </p>
+        <p className="text-xl font-medium italic truncate">
+          &ldquo;{question}&rdquo;
+        </p>
+        <div className="flex gap-4 text-sm text-gray-600">
+          <span>Votes: {totalVotes}</span>
+          <span>USDC: {usdcCollected.toFixed(2)}</span>
+        </div>
       </div>
 
       <div className="flex justify-between items-center gap-2.5 w-[38%] shrink-0">

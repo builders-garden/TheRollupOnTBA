@@ -47,7 +47,7 @@ export default function OverlayPage() {
       showPopupCallback({
         username: data.username,
         profilePicture: data.profilePicture,
-        text: `sent a ${data.tipAmount} tip`,
+        text: `sent a $${data.tipAmount} tip`,
       });
     };
 

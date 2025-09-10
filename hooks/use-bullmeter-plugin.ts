@@ -1,8 +1,13 @@
 import { createBaseAccountSDK } from "@base-org/account";
 import { useCallback, useState } from "react";
-import { encodeFunctionData, parseUnits } from "viem";
+import { decodeFunctionResult, encodeFunctionData, parseUnits } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
+import {
+  GetAllPollsByCreatorResponse,
+  PollData,
+  ReadPollData,
+} from "@/lib/types/bullmeter.type";
 
 // Types for wallet_sendCalls
 interface SendCallsCall {
@@ -161,7 +166,7 @@ export const useBullmeterPlugin = () => {
           functionName: "createPoll",
           args: [
             question, // string calldata _question
-            parseUnits(votePrice, 18), // uint256 _votePrice (assuming 18 decimals)
+            BigInt(votePrice), // uint256 _votePrice (assuming 18 decimals)
             BigInt(startTime), // uint256 _startTime
             BigInt(duration), // uint256 _duration
             BigInt(maxVotePerUser), // uint256 _maxVotePerUser
@@ -259,10 +264,61 @@ export const useBullmeterPlugin = () => {
     [executeBatch],
   );
 
+  // Bullmeter read history from an address function calls
+  const getAllPollsByCreator =
+    useCallback(async (): Promise<GetAllPollsByCreatorResponse> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const { provider, address } = await getWalletConnection();
+
+        // Encode the function call
+        const encodedFunctionCall = encodeFunctionData({
+          abi: bullMeterAbi,
+          functionName: "getAllPollsByCreator",
+          args: [address as `0x${string}`],
+        });
+
+        // Call the contract function
+        const result = await provider.request({
+          method: "eth_call",
+          params: [
+            {
+              to: BULLMETER_ADDRESS,
+              data: encodedFunctionCall,
+            },
+            "latest",
+          ],
+        });
+
+        console.log("getAllPollsByCreator raw result:", result);
+
+        // Decode the result using the contract ABI
+        const decodedResult = decodeFunctionResult({
+          abi: bullMeterAbi,
+          functionName: "getAllPollsByCreator",
+          data: result as `0x${string}`,
+        });
+
+        console.log("getAllPollsByCreator decoded result:", decodedResult);
+
+        return { success: true, result: decodedResult as ReadPollData[] };
+      } catch (err: any) {
+        console.error("getAllPollsByCreator error:", err);
+        const errorMessage = err.message || "Failed to get polls by creator";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally {
+        setIsLoading(false);
+      }
+    }, [getWalletConnection]);
+
   return {
     createBullmeter,
     extendBullmeter,
     terminateAndClaimBullmeter,
+    getAllPollsByCreator,
     isLoading,
     error,
     clearError: () => setError(null),

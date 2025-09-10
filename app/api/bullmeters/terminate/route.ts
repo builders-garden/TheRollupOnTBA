@@ -5,7 +5,7 @@ import { bullMetersTable } from "@/lib/database/db.schema";
 
 export const PATCH = async (req: NextRequest) => {
   try {
-    const { pollId } = await req.json();
+    const { pollId, newDeadline } = await req.json();
 
     // Basic validation
     if (!pollId) {
@@ -35,13 +35,12 @@ export const PATCH = async (req: NextRequest) => {
       );
     }
 
-    // Update the poll to mark it as terminated
-    // We can add a status field or use the existing fields to indicate termination
+    // Update the deadline on database
     const updatedPoll = await db
       .update(bullMetersTable)
       .set({
         // Set deadline to current time to mark as ended
-        deadline: Math.floor(Date.now() / 1000),
+        deadline: newDeadline,
         updatedAt: sql`CURRENT_TIMESTAMP`,
       })
       .where(like(bullMetersTable.prompt, `%$$$${pollId}`))

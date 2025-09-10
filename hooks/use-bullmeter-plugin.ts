@@ -340,7 +340,6 @@ export const useBullmeterPlugin = () => {
               data: updatedLastPollResult as `0x${string}`,
             });
 
-            const updatedLastPollId = updatedDecodedLastPoll[0];
             const updatedLastPollDeadline = updatedDecodedLastPoll[6];
 
             const response = await fetch("/api/bullmeters/extend", {
@@ -349,7 +348,7 @@ export const useBullmeterPlugin = () => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                pollId: updatedLastPollId,
+                pollId: pollId,
                 newDuration: newDuration,
                 newDeadline: Number(updatedLastPollDeadline),
               }),
@@ -415,6 +414,37 @@ export const useBullmeterPlugin = () => {
 
           // Update the database to mark poll as terminated
           try {
+            // Wait a moment for the transaction to be fully processed
+            await new Promise((resolve) => setTimeout(resolve, 4000));
+
+            const { provider, address } = await getWalletConnection();
+
+            const pollStateEncodedCall = encodeFunctionData({
+              abi: bullMeterAbi,
+              functionName: "getPollState",
+              args: [pollId as `0x${string}`],
+            });
+
+            // Read the last active poll again to verify the change
+            const updatedPollStateResult = await provider.request({
+              method: "eth_call",
+              params: [
+                {
+                  to: BULLMETER_ADDRESS,
+                  data: pollStateEncodedCall,
+                },
+                "latest",
+              ],
+            });
+
+            const updatedDecodedLastPoll = decodeFunctionResult({
+              abi: bullMeterAbi,
+              functionName: "getPollState",
+              data: updatedPollStateResult as `0x${string}`,
+            });
+
+            const updatedPollState = updatedDecodedLastPoll[5];
+
             const response = await fetch("/api/bullmeters/terminate", {
               method: "PATCH",
               headers: {
@@ -422,6 +452,7 @@ export const useBullmeterPlugin = () => {
               },
               body: JSON.stringify({
                 pollId: pollId,
+                newDeadline: Number(updatedPollState),
               }),
             });
 

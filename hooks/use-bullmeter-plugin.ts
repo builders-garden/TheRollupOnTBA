@@ -1,6 +1,6 @@
 import { createBaseAccountSDK } from "@base-org/account";
 import { useCallback, useState } from "react";
-import { decodeFunctionResult, encodeFunctionData, parseUnits } from "viem";
+import { decodeFunctionResult, encodeFunctionData, numberToHex, parseUnits } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
 import { CreateBullMeter } from "@/lib/database/db.schema";
@@ -22,6 +22,11 @@ interface SendCallsParams {
   chainId: string;
   atomicRequired: boolean;
   calls: SendCallsCall[];
+  capabilities: {
+    paymasterService: {
+      url: string;
+    }
+  }
 }
 
 // Helper function to create wallet_sendCalls parameters
@@ -37,6 +42,11 @@ const createSendCallsParams = (
     chainId,
     atomicRequired,
     calls,
+    capabilities: {
+      paymasterService: {
+        url: process.env.NEXT_PUBLIC_PAYMASTER_URL || ""
+      }
+    }
   };
 };
 

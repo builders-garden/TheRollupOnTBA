@@ -25,7 +25,6 @@ import { FormDurationSelection } from "./form-duration-selection";
 import { FormTextInput } from "./form-text-input";
 import { GuestPayout } from "./guest-payout";
 import { HistoryItem } from "./history-item";
-import { base } from "viem/chains";
 
 const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
@@ -54,6 +53,9 @@ export const SentimentContent = () => {
   ]);
   const [pollHistory, setPollHistory] = useState<ReadPollData[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentLivePoll, setCurrentLivePoll] = useState<ReadPollData | null>(
+    null,
+  );
   const itemsPerPage = 3;
   const { timeString, addSeconds, startTimer, stopTimer } = useTimer({
     initialSeconds: duration.seconds,
@@ -74,6 +76,8 @@ export const SentimentContent = () => {
       },
     ]);
     setIsGuestPayoutActive(false);
+    setIsLive(false);
+    setCurrentLivePoll(null);
     adminEndSentimentPoll({
       id: "1",
     });
@@ -136,9 +140,7 @@ export const SentimentContent = () => {
               ownerGuest.nameOrAddress as Address,
             )) ||
             "";
-        splitPercent = guestAddress
-          ? Number(ownerGuest.splitPercent) * 100
-          : 0;
+        splitPercent = guestAddress ? Number(ownerGuest.splitPercent) * 100 : 0;
       }
 
       const result = await createBullmeter(
@@ -153,6 +155,19 @@ export const SentimentContent = () => {
 
       if (result.success) {
         toast.success("Bullmeter poll created successfully!");
+
+        // Refetch history to get the new poll and check for live status
+        const historyResponse = await getAllPollsByCreator();
+        if (historyResponse.success && historyResponse.result) {
+          console.log(
+            `🔄 Refetched ${historyResponse.result.length} polls after creation`,
+          );
+          setPollHistory(historyResponse.result);
+          setCurrentPage(1); // Reset to first page
+
+          // Check for live polls with the updated data
+          checkForLivePoll(historyResponse.result);
+        }
 
         // Now proceed with the existing UI poll logic
         toast.loading("Starting poll...", {
@@ -187,31 +202,118 @@ export const SentimentContent = () => {
     });
   };
 
-  // Load poll history on component mount
+  // Load poll history on component mount and check for live polls
   useEffect(() => {
+    console.log(
+      "🚀 SentimentContent component mounted - Loading poll history...",
+    );
+
     const loadHistory = async () => {
       try {
         const response = await getAllPollsByCreator();
 
         if (response.success && response.result) {
+          console.log(`📊 Loaded ${response.result.length} polls from history`);
           setPollHistory(response.result);
           setCurrentPage(1); // Reset to first page when new data is loaded
+
+          // Check for live polls
+          checkForLivePoll(response.result);
         } else {
-          console.error(`Failed to fetch history: ${response.error}`);
+          console.error(`❌ Failed to fetch history: ${response.error}`);
         }
       } catch (error) {
-        console.error("History fetch error:", error);
+        console.error("❌ History fetch error:", error);
       }
     };
 
     loadHistory();
   }, []);
 
-  // Pagination logic
-  const totalPages = Math.ceil(pollHistory.length / itemsPerPage);
+  // Periodic check for live poll status (every 30 seconds)
+  useEffect(() => {
+    if (!currentLivePoll) return;
+
+    const interval = setInterval(() => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const deadline = Number(currentLivePoll.deadline);
+
+      console.log("=== Periodic Live Poll Check ===");
+      console.log("Current time:", new Date(currentTime * 1000).toUTCString());
+      console.log("Deadline:", new Date(deadline * 1000).toUTCString());
+      console.log("Time remaining:", deadline - currentTime, "seconds");
+
+      if (currentTime >= deadline) {
+        // Poll has ended
+        setIsLive(false);
+        setCurrentLivePoll(null);
+        console.log("❌ LIVE POLL HAS ENDED - Deadline reached");
+      } else {
+        console.log("✅ POLL STILL LIVE");
+      }
+      console.log("=================================");
+    }, 30000); // Check every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [currentLivePoll]);
+
+  // Function to check if there's a live poll based on the most recent poll
+  const checkForLivePoll = (polls: ReadPollData[]) => {
+    if (polls.length === 0) {
+      console.log("No polls found in history");
+      return;
+    }
+
+    // Get the most recent poll (assuming they're ordered by creation time)
+    const mostRecentPoll = polls[polls.length - 1];
+
+    // Check if the deadline has passed
+    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+    const deadline = Number(mostRecentPoll.deadline);
+
+    console.log("=== Poll Status Check ===");
+    console.log("Most recent poll:", mostRecentPoll.question);
+    console.log(
+      "Current time (UTC):",
+      new Date(currentTime * 1000).toUTCString(),
+    );
+    console.log("Deadline (UTC):", new Date(deadline * 1000).toUTCString());
+    console.log("Current timestamp:", currentTime);
+    console.log("Deadline timestamp:", deadline);
+    console.log("Time difference (seconds):", deadline - currentTime);
+
+    if (currentTime < deadline) {
+      // Poll is still live
+      setIsLive(true);
+      setCurrentLivePoll(mostRecentPoll);
+
+      // Calculate remaining time
+      const remainingSeconds = deadline - currentTime;
+
+      console.log("✅ POLL IS LIVE!");
+      console.log(
+        `Remaining time: ${remainingSeconds} seconds (${Math.floor(remainingSeconds / 60)} minutes)`,
+      );
+
+      // Update the prompt to show the live poll question
+      setPrompt(mostRecentPoll.question);
+
+      // Start the timer with the remaining time
+      startTimer(remainingSeconds);
+    } else {
+      setIsLive(false);
+      setCurrentLivePoll(null);
+      console.log("❌ POLL IS NOT LIVE - Deadline has passed");
+    }
+    console.log("========================");
+  };
+
+  // Pagination logic - reverse order to show most recent first
+  const reversedPollHistory = [...pollHistory].reverse();
+  const totalPages = Math.ceil(reversedPollHistory.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPageData = pollHistory.slice(startIndex, endIndex);
+  const currentPageData = reversedPollHistory.slice(startIndex, endIndex);
 
   // Pagination handlers
   const handlePreviousPage = () => {
@@ -457,15 +559,10 @@ export const SentimentContent = () => {
       <div className="flex flex-col justify-start items-start w-full gap-5">
         <div className="flex justify-between items-center w-full">
           <p className="text-xl font-bold">History</p>
-          {pollHistory.length > 0 && (
-            <p className="text-sm text-gray-500">
-              Showing {startIndex + 1}-{Math.min(endIndex, pollHistory.length)}{" "}
-              of {pollHistory.length} polls
-            </p>
-          )}
+          {reversedPollHistory.length > 0}
         </div>
 
-        {pollHistory.length > 0 ? (
+        {reversedPollHistory.length > 0 ? (
           <>
             <div className="flex flex-col gap-3 w-full">
               {currentPageData.map((poll, index) => {

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import QRCode from "react-qr-code";
 import { NumberTicker } from "@/components/shadcn-ui/number-ticker";
 import { useSocket } from "@/hooks/use-socket";
+import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { UpdatePollNotificationEvent } from "@/lib/types/socket";
 import { BearIcon } from "../icons/bear-icon";
@@ -108,6 +109,7 @@ export const ToastPollNotification = ({
   data: PollNotificationData;
 }) => {
   const { subscribe, unsubscribe } = useSocket();
+  const { joinStream } = useSocketUtils();
   const [voters, setVoters] = useState<number>(data.voters);
   const [votes, setVotes] = useState<number>(data.votes);
   const [results, setResults] = useState<{
@@ -130,6 +132,11 @@ export const ToastPollNotification = ({
   };
 
   useEffect(() => {
+    // Join the stream
+    joinStream({
+      username: "Poll",
+      profilePicture: "https://via.placeholder.com/150",
+    });
     subscribe(
       ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL,
       handleUpdateSentimentPoll,

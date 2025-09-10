@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
+import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
 import { AVAILABLE_DURATIONS } from "@/lib/constants";
 import { ServerToClientSocketEvents } from "@/lib/enums";
+import { ReadPollData } from "@/lib/types/bullmeter.type";
 import { Duration, Guest } from "@/lib/types/poll.type";
 import {
   EndPollNotificationEvent,
@@ -24,6 +26,12 @@ export const SentimentContent = () => {
   const { subscribe, unsubscribe } = useSocket();
   const { joinStream, adminStartSentimentPoll, adminEndSentimentPoll } =
     useSocketUtils();
+  const {
+    createBullmeter,
+    getAllPollsByCreator,
+    isLoading: isCreatingBullmeter,
+    error: bullmeterError,
+  } = useBullmeterPlugin();
 
   const [prompt, setPrompt] = useState("");
   const [duration, setDuration] = useState<Duration>(defaultDuration);
@@ -36,6 +44,7 @@ export const SentimentContent = () => {
       splitPercent: "100",
     },
   ]);
+  const [pollHistory, setPollHistory] = useState<ReadPollData[]>([]);
   const { timeString, addSeconds, startTimer, stopTimer } = useTimer({
     initialSeconds: duration.seconds,
     onEnd: async () => {
@@ -105,6 +114,76 @@ export const SentimentContent = () => {
     adminEndSentimentPoll({
       id: "1",
     });
+  };
+
+  // Handles the history button click
+  const handleHistory = async () => {
+    try {
+      toast.loading("Fetching poll history...", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+        duration: 10,
+      });
+
+      const response = await getAllPollsByCreator();
+
+      if (response.success && response.result) {
+        setPollHistory(response.result);
+        toast.success("Poll history fetched successfully!");
+        console.log("Poll history:", response.result);
+      } else {
+        toast.error(`Failed to fetch history: ${response.error}`);
+      }
+    } catch (error) {
+      console.error("History fetch error:", error);
+      toast.error("Failed to fetch poll history. Please try again.");
+    }
+  };
+
+  // Load poll history on component mount
+  useEffect(() => {
+    handleHistory();
+  }, []);
+
+  // Helper function to format poll data for display
+  const formatPollForDisplay = (poll: ReadPollData) => {
+    const totalVotes = Number(poll.totalYesVotes) + Number(poll.totalNoVotes);
+    // Always show 50/50 split when no votes to display animations
+    const bullPercent =
+      totalVotes > 0
+        ? Math.round((Number(poll.totalYesVotes) / totalVotes) * 100)
+        : 50;
+    const bearPercent =
+      totalVotes > 0
+        ? Math.round((Number(poll.totalNoVotes) / totalVotes) * 100)
+        : 50;
+
+    // Convert startTime to UTC date string
+    const startDate = new Date(Number(poll.startTime) * 1000);
+    const startUtcString = startDate.toUTCString();
+
+    // Convert deadline to UTC date string
+    const deadlineDate = new Date(Number(poll.deadline) * 1000);
+    const deadlineUtcString = deadlineDate.toUTCString();
+
+    // Format USDC collected (convert from wei to USDC)
+    const usdcCollected = Number(poll.totalUsdcCollected) / 1e6; // Assuming 6 decimals for USDC
+
+    return {
+      time: startUtcString,
+      deadline: deadlineUtcString,
+      question: poll.question,
+      bullPercent,
+      bearPercent,
+      totalVotes,
+      usdcCollected,
+      state: poll.state,
+      result: poll.result,
+    };
   };
 
   // Whether the confirm button should be disabled
@@ -302,18 +381,26 @@ export const SentimentContent = () => {
       {/* Polls history */}
       <div className="flex flex-col justify-start items-start w-full gap-5">
         <p className="text-xl font-bold">History</p>
-        <HistoryItem
-          time="March 7th 4:09PM"
-          question="ETH will flip BTC by the end of the year"
-          bullPercent={66}
-          bearPercent={34}
-        />
-        <HistoryItem
-          time="August 15th 10:09AM"
-          question="Pippo Baudo will die this year"
-          bullPercent={43}
-          bearPercent={57}
-        />
+        {pollHistory.length > 0 ? (
+          pollHistory.map((poll, index) => {
+            const formattedPoll = formatPollForDisplay(poll);
+            return (
+              <HistoryItem
+                key={poll.pollId}
+                deadline={formattedPoll.deadline}
+                question={formattedPoll.question}
+                bullPercent={formattedPoll.bullPercent}
+                bearPercent={formattedPoll.bearPercent}
+                totalVotes={formattedPoll.totalVotes}
+                usdcCollected={formattedPoll.usdcCollected}
+              />
+            );
+          })
+        ) : (
+          <p className="text-gray-500">
+            No poll history available. Create your first poll!
+          </p>
+        )}
       </div>
     </motion.div>
   );

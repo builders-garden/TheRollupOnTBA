@@ -12,11 +12,10 @@ export const HistoryItem = ({
   bearPercent,
 }: HistoryItemProps) => {
   return (
-    <div className="flex justify-between items-center w-full gap-48 pl-10 pr-4">
-      <div className="flex justify-start items-center gap-3">
-        <p className="text-xl font-medium shrink-0">{time}</p>
-        <p className="text-xl font-extrabold">•</p>
-        <p className="text-xl font-medium italic">“{question}”</p>
+    <div className="flex flex-col lg:flex-row justify-start items-start lg:justify-between lg:items-center w-full pl-10 pr-4">
+      <div className="flex flex-col justify-start items-start gap-1">
+        <p className="text-base italic shrink-0">{time}</p>
+        <p className="text-xl font-medium italic truncate">“{question}”</p>
       </div>
 
       <div className="flex justify-between items-center gap-2.5 w-[38%] shrink-0">

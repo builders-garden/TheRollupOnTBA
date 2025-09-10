@@ -45,6 +45,8 @@ export enum ClientToServerSocketEvents {
   TOKEN_TRADED = "token_traded",
   VOTE_CASTED = "vote_casted",
   JOIN_STREAM = "stream_joined",
+  START_SENTIMENT_POLL = "start_sentiment_poll",
+  END_SENTIMENT_POLL = "end_sentiment_poll",
 }
 
 // server to client

@@ -2,7 +2,9 @@ import { useCallback } from "react";
 import { useSocket } from "@/hooks/use-socket";
 import { ClientToServerSocketEvents } from "@/lib/enums";
 import {
+  EndSentimentPollEvent,
   JoinStreamEvent,
+  StartSentimentPollEvent,
   TipSentEvent,
   TokenTradedEvent,
   VoteCastedEvent,
@@ -10,6 +12,36 @@ import {
 
 export function useSocketUtils() {
   const { emit, disconnect } = useSocket();
+
+  const adminStartSentimentPoll = useCallback(
+    ({
+      username,
+      profilePicture,
+      pollQuestion,
+      endTime,
+      guests,
+      results,
+    }: StartSentimentPollEvent) => {
+      emit(ClientToServerSocketEvents.START_SENTIMENT_POLL, {
+        username,
+        profilePicture,
+        pollQuestion,
+        endTime,
+        guests,
+        results,
+      });
+    },
+    [emit],
+  );
+
+  const adminEndSentimentPoll = useCallback(
+    ({ id }: EndSentimentPollEvent) => {
+      emit(ClientToServerSocketEvents.END_SENTIMENT_POLL, {
+        id,
+      });
+    },
+    [emit],
+  );
 
   const joinStream = useCallback(
     ({ username, profilePicture }: JoinStreamEvent) => {
@@ -76,6 +108,8 @@ export function useSocketUtils() {
     tipSent,
     tokenTraded,
     voteCasted,
+    adminStartSentimentPoll,
+    adminEndSentimentPoll,
     disconnect,
   };
 }

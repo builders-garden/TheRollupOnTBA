@@ -65,15 +65,19 @@ export const FormTextInput = ({
         />
 
         <AnimatePresence mode="wait">
-          {!disabled && (
+          {!disabled && value.length > 0 ? (
             <motion.button
+              key="x-button"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="cursor-pointer"
               onClick={handleCancel}>
               <X className="size-5" />
             </motion.button>
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
     </div>

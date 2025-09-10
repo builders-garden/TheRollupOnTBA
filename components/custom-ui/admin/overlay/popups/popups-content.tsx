@@ -28,7 +28,11 @@ export const PopupsContent = () => {
       username: "TestUser",
       profilePicture: "https://picsum.photos/200",
       text:
-        type === "tip" ? "$5 tip" : type === "trade" ? "$100 trade" : "vote",
+        type === "tip"
+          ? "sent a $5 tip"
+          : type === "trade"
+            ? "bought 100 $HIGHER"
+            : "is bullish",
     };
     const isRightSide =
       selectedPopupPosition === PopupPositions.TOP_RIGHT ||

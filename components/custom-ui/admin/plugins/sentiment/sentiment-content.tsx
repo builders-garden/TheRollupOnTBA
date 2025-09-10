@@ -145,7 +145,7 @@ export const SentimentContent = () => {
         adminStartSentimentPoll({
           username: "Admin",
           position: PopupPositions.TOP_LEFT,
-      profilePicture: "https://via.placeholder.com/150",
+          profilePicture: "https://via.placeholder.com/150",
           pollQuestion: prompt,
           endTime: new Date(Date.now() + duration.seconds * 1000),
           guests,
@@ -308,18 +308,16 @@ export const SentimentContent = () => {
         <motion.div
           transition={{ duration: 0.25, ease: "easeInOut" }}
           className="flex flex-col gap-3 justify-center items-center w-full h-full p-2.5"
-          initial={{ opacity: 0, y: -20, scale: 0.9, rotate: -3 }}
+          initial={{ opacity: 0, y: -20, scale: 0.9 }}
           animate={{
             opacity: 1,
             y: 0,
             scale: [0.9, 1.03, 1],
-            rotate: [-3, 2, 0],
             transition: {
               duration: 0.6,
               ease: [0.19, 1.0, 0.22, 1.0],
               opacity: { duration: 0.3 },
               scale: { times: [0, 0.6, 1], duration: 0.6 },
-              rotate: { times: [0, 0.6, 1], duration: 0.6 },
             },
           }}>
           <motion.div

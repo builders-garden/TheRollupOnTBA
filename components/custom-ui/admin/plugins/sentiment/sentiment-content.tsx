@@ -7,7 +7,7 @@ import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
-import { AVAILABLE_DURATIONS } from "@/lib/constants";
+import { AVAILABLE_DURATIONS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { ReadPollData } from "@/lib/types/bullmeter.type";
 import { Duration, Guest } from "@/lib/types/poll.type";
@@ -69,7 +69,7 @@ export const SentimentContent = () => {
   };
 
   // Handles the start and stop of the live poll
-  const startLive = () => {
+  const startLive = async () => {
     // If we are going live we need to check if the split amounts add up to 100
     const sumOfAllGuestsPercentages = guests.reduce(
       (acc, guest) => acc + parseFloat(guest.splitPercent),
@@ -90,23 +90,66 @@ export const SentimentContent = () => {
         ...guests.slice(1),
       ]);
     }
-    toast.loading("Starting poll...", {
-      action: {
-        label: "Close",
-        onClick: () => {
-          toast.dismiss();
+
+    try {
+      // First create the Bullmeter poll on-chain
+      toast.loading("Creating Bullmeter poll...", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
         },
-      },
-      duration: 5,
-    });
-    adminStartSentimentPoll({
-      username: "Admin",
-      profilePicture: "https://via.placeholder.com/150",
-      pollQuestion: prompt,
-      endTime: new Date(Date.now() + duration.seconds * 1000),
-      guests,
-      results: { bullPercent: 0, bearPercent: 0 },
-    });
+        duration: 10,
+      });
+
+      // Get the first guest (owner) for the guest address and split percent
+      const ownerGuest = guests.find((guest) => guest.owner);
+      const guestAddress = ownerGuest?.nameOrAddress.startsWith("0x")
+        ? ownerGuest.nameOrAddress
+        : "0x0000000000000000000000000000000000000000"; // fallback to zero address if not a valid address
+
+      const splitPercent =
+        guestAddress !== "0x0000000000000000000000000000000000000000"
+          ? Number(ownerGuest?.splitPercent) * 100
+          : 0;
+
+      const result = await createBullmeter(
+        prompt, // question
+        "10000", // votePrice (0.01 USDC)
+        0, // startTime (current timestamp)
+        duration.seconds, // duration in seconds
+        10000, // maxVotePerUser
+        guestAddress, // guest address from UI
+        splitPercent, // guestSplitPercent from UI
+      );
+
+      if (result.success) {
+        toast.success("Bullmeter poll created successfully!");
+
+        // Now proceed with the existing UI poll logic
+        toast.loading("Starting poll...", {
+          action: {
+            label: "Close",
+            onClick: () => {
+              toast.dismiss();
+            },
+          },
+          duration: 5,
+        });
+        adminStartSentimentPoll({
+          username: "Admin",
+          profilePicture: "https://via.placeholder.com/150",
+          pollQuestion: prompt,
+          endTime: new Date(Date.now() + duration.seconds * 1000),
+          guests,
+          results: { bullPercent: 0, bearPercent: 0 },
+        });
+      }
+    } catch (error) {
+      console.error("Failed to create Bullmeter poll:", error);
+      toast.error("Failed to create Bullmeter poll. Please try again.");
+    }
   };
 
   // Handles the end of the live poll
@@ -347,8 +390,21 @@ export const SentimentContent = () => {
               </AnimatePresence>
             </NBButton>
             <NBButton
+              className="w-full bg-blue-500 hover:bg-blue-600"
+              onClick={handleHistory}
+              disabled={isCreatingBullmeter}>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="text-base font-extrabold text-white">
+                History
+              </motion.p>
+            </NBButton>
+            <NBButton
               className="w-full bg-accent"
-              disabled={isConfirmButtonDisabled}
+              disabled={isConfirmButtonDisabled || isCreatingBullmeter}
               onClick={isLive ? endLive : startLive}>
               <AnimatePresence mode="wait">
                 {isLive ? (
@@ -369,7 +425,7 @@ export const SentimentContent = () => {
                     transition={{ duration: 0.15, ease: "easeInOut" }}
                     key="not-live-right-text"
                     className="text-base font-extrabold text-white">
-                    Confirm
+                    {isCreatingBullmeter ? "Creating..." : "Confirm"}
                   </motion.p>
                 )}
               </AnimatePresence>

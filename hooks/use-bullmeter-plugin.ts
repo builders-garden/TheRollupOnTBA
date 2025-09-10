@@ -5,6 +5,7 @@ import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
 import {
   GetAllPollsByCreatorResponse,
+  PollData,
   ReadPollData,
 } from "@/lib/types/bullmeter.type";
 
@@ -165,7 +166,7 @@ export const useBullmeterPlugin = () => {
           functionName: "createPoll",
           args: [
             question, // string calldata _question
-            parseUnits(votePrice, 18), // uint256 _votePrice (assuming 18 decimals)
+            BigInt(votePrice), // uint256 _votePrice (assuming 18 decimals)
             BigInt(startTime), // uint256 _startTime
             BigInt(duration), // uint256 _duration
             BigInt(maxVotePerUser), // uint256 _maxVotePerUser

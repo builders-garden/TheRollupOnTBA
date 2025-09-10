@@ -19,6 +19,11 @@ import { FormDurationSelection } from "./form-duration-selection";
 import { FormTextInput } from "./form-text-input";
 import { GuestPayout } from "./guest-payout";
 import { HistoryItem } from "./history-item";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
+import { Address, isAddress } from 'viem'
+import { getAddressFromBaseName, getAddressFromEnsName, getBasenameName, getEnsName } from "@/lib/ens/client";
+
+
 
 const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
@@ -32,6 +37,8 @@ export const SentimentContent = () => {
     isLoading: isCreatingBullmeter,
     error: bullmeterError,
   } = useBullmeterPlugin();
+  const { admin } = useAdminAuth();
+
 
   const [prompt, setPrompt] = useState("");
   const [duration, setDuration] = useState<Duration>(defaultDuration);
@@ -40,7 +47,7 @@ export const SentimentContent = () => {
   const [guests, setGuests] = useState<Guest[]>([
     {
       owner: true,
-      nameOrAddress: "limone.base.eth",
+      nameOrAddress: admin.baseName || admin.ensName || admin.address || "",
       splitPercent: "100",
     },
   ]);
@@ -59,7 +66,7 @@ export const SentimentContent = () => {
     setPrompt("");
     setDuration(defaultDuration);
     setGuests([
-      { owner: true, nameOrAddress: "limone.base.eth", splitPercent: "100" },
+      { owner: true, nameOrAddress: admin.baseName || admin.ensName || admin.address || "", splitPercent: "100" },
     ]);
     setIsGuestPayoutActive(false);
     adminEndSentimentPoll({
@@ -109,23 +116,23 @@ export const SentimentContent = () => {
       });
 
       // Get the first guest (owner) for the guest address and split percent
-      const ownerGuest = guests.find((guest) => guest.owner);
-      const guestAddress = ownerGuest?.nameOrAddress.startsWith("0x")
-        ? ownerGuest.nameOrAddress
-        : "0x0000000000000000000000000000000000000000"; // fallback to zero address if not a valid address
-
-      const splitPercent =
-        guestAddress !== "0x0000000000000000000000000000000000000000"
-          ? Number(ownerGuest?.splitPercent) * 100
-          : 0;
-
+      const ownerGuest = guests.find((guest) => !guest.owner);
+    
+      const guestAddress = isAddress(ownerGuest?.nameOrAddress!)
+        ? ownerGuest?.nameOrAddress
+        : (
+            (await getAddressFromBaseName(ownerGuest?.nameOrAddress as Address)) ||
+            (await getAddressFromEnsName(ownerGuest?.nameOrAddress as Address)) ||
+            ""
+          );
+      const splitPercent = guestAddress ? Number(ownerGuest?.splitPercent) * 100 : 0;
       const result = await createBullmeter(
         prompt, // question
         "10000", // votePrice (0.01 USDC)
         0, // startTime (current timestamp)
         duration.seconds, // duration in seconds
         10000, // maxVotePerUser
-        guestAddress, // guest address from UI
+        guestAddress!, // guest address from UI
         splitPercent, // guestSplitPercent from UI
       );
 
@@ -174,7 +181,6 @@ export const SentimentContent = () => {
         if (response.success && response.result) {
           setPollHistory(response.result);
           setCurrentPage(1); // Reset to first page when new data is loaded
-          console.log("Poll history:", response.result);
         } else {
           console.error(`Failed to fetch history: ${response.error}`);
         }

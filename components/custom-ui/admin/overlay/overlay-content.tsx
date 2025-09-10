@@ -41,7 +41,7 @@ export const OverlayContent = () => {
               <p className="text-xl font-bold">Popups</p>
             </div>
           </NBButton>
-          <NBButton
+          {/* <NBButton
             className={cn(
               "rounded-full w-fit",
               isSentimentResultsTab && "bg-accent",
@@ -57,15 +57,8 @@ export const OverlayContent = () => {
               <Sparkle className="size-6" />
               <p className="text-xl font-bold">Sentiment Results</p>
             </div>
-          </NBButton>
+          </NBButton> */}
         </div>
-        {/* TODO: Add proper docs link */}
-        <Link
-          href="https://google.com/"
-          target="_blank"
-          className="text-2xl font-bold underline shrink-0">
-          How to setup the Overlay on OBS?
-        </Link>
       </div>
 
       {/* Plugins Content */}

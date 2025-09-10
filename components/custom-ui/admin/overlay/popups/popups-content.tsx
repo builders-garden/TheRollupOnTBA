@@ -1,17 +1,25 @@
+import { addSeconds } from "date-fns";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { CopyButton } from "@/components/custom-ui/copy-button";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
+import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
-import { cn } from "@/lib/utils";
 
 export const PopupsContent = () => {
   useSocket();
-  const { joinStream, tipSent, tokenTraded, voteCasted } = useSocketUtils();
+  const {
+    joinStream,
+    tipSent,
+    tokenTraded,
+    voteCasted,
+    adminStartSentimentPoll,
+    adminEndSentimentPoll,
+  } = useSocketUtils();
   const [selectedPopupPosition, setSelectedPopupPosition] =
     useState<PopupPositions>(PopupPositions.TOP_LEFT);
 
@@ -67,6 +75,45 @@ export const PopupsContent = () => {
     }
   };
 
+  const handleTestPollNotification = () => {
+    const data = {
+      id: "1",
+      pollQuestion: "ETH will flip BTC this cycle",
+      endTime: addSeconds(new Date(), 5),
+      votes: 10,
+      voters: 10,
+      qrCodeUrl: "https://example.com/poll",
+      position: selectedPopupPosition,
+      results: {
+        bullPercent: 70,
+        bearPercent: 30,
+      },
+    };
+
+    adminStartSentimentPoll({
+      username: "Admin",
+      profilePicture: "https://via.placeholder.com/150",
+      pollQuestion: "ETH will flip BTC this cycle",
+      endTime: addSeconds(new Date(), 5),
+      position: selectedPopupPosition,
+      guests: [],
+      results: {
+        bullPercent: 70,
+        bearPercent: 30,
+      },
+    });
+
+    toast.custom(() => <ToastPollNotification data={data} />, {
+      duration: 10000,
+      position: selectedPopupPosition,
+      onDismiss: () => {
+        adminEndSentimentPoll({
+          id: "1",
+        });
+      },
+    });
+  };
+
   useEffect(() => {
     joinStream({
       username: "Admin",
@@ -80,62 +127,103 @@ export const PopupsContent = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: "easeInOut" }}
-      className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-2.5">
-      <h1 className="font-bold text-2xl">
-        Display animated popups on stream whenever viewers tip, trade, or vote
-      </h1>
-      <div className="flex flex-col justify-start items-start w-full h-full gap-5">
-        {/* Buttons */}
-        <div className="flex flex-col md:flex-row justify-start items-start w-full gap-10">
-          <div className="flex flex-col justify-center items-start w-full gap-2.5">
-            <p className="text-base font-medium opacity-50">
-              Choose where popups appear by selecting a screen position.
-            </p>
-            <div className="grid grid-cols-3 gap-2.5 w-full">
-              {AVAILABLE_POPUP_POSITIONS.map((position) => (
+      className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-16">
+      <div className="flex flex-col justify-start items-start w-full h-fit gap-5">
+        <h1 className="font-bold text-2xl">
+          Display animated popups on stream whenever viewers tip, trade, or vote
+        </h1>
+        <div className="flex flex-col justify-start items-start w-full h-full gap-5">
+          {/* Buttons */}
+          <div className="flex flex-col md:flex-row justify-start items-start w-full gap-10">
+            <div className="flex flex-col justify-center items-start w-[70%] gap-2.5">
+              <p className="text-base font-medium opacity-50">
+                Test popups by clicking the buttons below
+              </p>
+              <div className="grid grid-cols-4 gap-2.5 w-full">
                 <NBButton
-                  key={position.value}
-                  className={cn(
-                    "w-full shrink-0",
-                    selectedPopupPosition === position.value && "bg-success",
-                  )}
-                  onClick={() => setSelectedPopupPosition(position.value)}>
-                  <p
-                    className={cn(
-                      "text-base font-extrabold text-success",
-                      selectedPopupPosition === position.value && "text-white",
-                    )}>
-                    {position.label}
+                  className="w-full shrink-0"
+                  onClick={() => handleTestNotification("tip")}>
+                  <p className="text-base font-extrabold text-accent">Tip</p>
+                </NBButton>
+                <NBButton
+                  className="w-full shrink-0"
+                  onClick={() => handleTestNotification("trade")}>
+                  <p className="text-base font-extrabold text-accent">Trade</p>
+                </NBButton>
+                <NBButton
+                  className="w-full shrink-0"
+                  onClick={() => handleTestNotification("vote")}>
+                  <p className="text-base font-extrabold text-accent">Vote</p>
+                </NBButton>
+                <NBButton
+                  className="w-full shrink-0"
+                  onClick={handleTestPollNotification}>
+                  <p className="text-base font-extrabold text-accent">
+                    Bull-Meter Poll
                   </p>
                 </NBButton>
-              ))}
+              </div>
             </div>
           </div>
-          <div className="flex flex-col justify-center items-start w-[70%] gap-2.5">
-            <p className="text-base font-medium opacity-50">
-              Test popups by clicking the buttons below
-            </p>
-            <div className="grid grid-cols-3 gap-2.5 w-full">
-              <NBButton
-                className="w-full shrink-0"
-                onClick={() => handleTestNotification("tip")}>
-                <p className="text-base font-extrabold text-accent">Tip</p>
-              </NBButton>
-              <NBButton
-                className="w-full shrink-0"
-                onClick={() => handleTestNotification("trade")}>
-                <p className="text-base font-extrabold text-accent">Trade</p>
-              </NBButton>
-              <NBButton
-                className="w-full shrink-0"
-                onClick={() => handleTestNotification("vote")}>
-                <p className="text-base font-extrabold text-accent">Vote</p>
-              </NBButton>
+          {/* Note: Toasts render at the viewport edge using Sonner. Use buttons above to test. */}
+        </div>
+      </div>
+      <div className="flex flex-col justify-start items-start w-full h-full gap-5">
+        <h1 className="font-bold text-2xl">
+          How to setup the Overlay on your stream?
+        </h1>
+        <div className="flex flex-col justify-start items-start gap-1">
+          <p className="text-black font-medium">
+            <span className="font-bold">1.</span> Copy the URLs below and add
+            two Browser Sources to your setup
+          </p>
+          <div className="flex flex-row justify-start items-start w-full gap-2.5">
+            <div className="flex flex-col gap-1">
+              <p className="font-medium opacity-50 text-sm">Popups URL</p>
+              <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
+                {`${window.location.origin}/overlay/popups`}
+                <CopyButton
+                  key="copy-button"
+                  stringToCopy={`${window.location.origin}/overlay/popups`}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="font-medium opacity-50 text-sm">
+                Bull-meter Poll URL
+              </p>
+              <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
+                {`${window.location.origin}/overlay/sentiment`}
+                <CopyButton
+                  key="copy-button"
+                  stringToCopy={`${window.location.origin}/overlay/sentiment`}
+                />
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Note: Toasts render at the viewport edge using Sonner. Use buttons above to test. */}
+        <div className="flex flex-col justify-start items-start gap-1">
+          <p className="text-black font-medium">
+            <span className="font-bold">2.</span> Set width and height to
+            600x150 for popups and 1100x300 for bull-meter poll
+          </p>
+          <p className="text-sm opacity-50">
+            These are suggested sizes, feel free to adjust them to your liking.
+          </p>
+        </div>
+        <div className="flex flex-col justify-start items-start gap-1">
+          <p className="text-black font-medium">
+            <span className="font-bold">3.</span> Position the source at the top
+            of your Sources list
+          </p>
+        </div>
+        <div className="flex flex-col justify-start items-start gap-1">
+          <p className="text-black font-medium">
+            <span className="font-bold">4.</span> For testing purposes, click
+            the test buttons above and check the popups appear correctly on your
+            stream
+          </p>
+        </div>
       </div>
     </motion.div>
   );

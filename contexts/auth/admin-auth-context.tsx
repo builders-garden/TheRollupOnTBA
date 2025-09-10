@@ -86,7 +86,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     isFetched: isFetchedAuthTipSettings,
     error: tipSettingsError,
-  } = useTips({ brandId: brand?.id });
+  } = useTips({ brandId: brand?.id, enabled: !!brand?.id });
 
   // Farcaster sign-in mutation
   const { mutate: baseSignIn } = useBaseSignIn({

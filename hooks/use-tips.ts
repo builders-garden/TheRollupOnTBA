@@ -13,6 +13,7 @@ export const useTips = (params?: {
   payoutAddress?: string;
   ensName?: string;
   baseName?: string;
+  enabled?: boolean;
 }) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
@@ -28,6 +29,7 @@ export const useTips = (params?: {
     queryKey: ["tips", params],
     url,
     isProtected: true,
+    enabled: params?.enabled || false,
   });
 };
 

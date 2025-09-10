@@ -6,9 +6,9 @@ import { parseUnits } from "viem";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
 import { Input } from "@/components/shadcn-ui/input";
-import { BASE_USDC_ADDRESS, FARCASTER_CLIENT_FID } from "@/lib/constants";
+import { useUsdcTransfer } from "@/hooks/use-usdc-transfer";
+import { FARCASTER_CLIENT_FID } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { formatSingleToken } from "@/lib/utils/farcaster-tokens";
 
 interface TipsProps {
   label?: string;
@@ -39,6 +39,19 @@ export const Tips = ({
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Usa il tuo hook con parametri fissi
+  const {
+    transfer: transferUsdc,
+    txHash,
+    isLoading: isTransferLoading,
+    isSuccess: isTransferSuccess,
+    hasError: isTransferError,
+    error: transferError,
+  } = useUsdcTransfer({
+    amount: "1", // Valore di default
+    receiver: "0x4110c5B6D9fAbf629c43a7B0279b9969CB698971", // Valore di default
+  });
+
   // Handles Custom Tip Modal Open
   const handleCustomTipModalOpen = () => {
     setIsCustomTipModalOpen(!isCustomTipModalOpen);
@@ -56,20 +69,26 @@ export const Tips = ({
       if (
         (await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster
       ) {
-        // Farcaster payment flow
-        console.log("Using Farcaster sendToken for payment");
+        // Farcaster payment flow - use your USDC transfer hook
+        console.log("Using Farcaster USDC transfer for payment");
 
         try {
-          await sdk.actions.sendToken({
-            token: formatSingleToken(BASE_USDC_ADDRESS),
-            amount: BigInt(parseUnits(amount.toString(), 6)).toString(),
-            recipientFid: 16286, // TODO: change to the recipient fid
-          });
+          // Execute the transfer using your hook with dynamic parameters
+          await transferUsdc(
+            amount.toString(),
+            "0x4110c5B6D9fAbf629c43a7B0279b9969CB698971",
+          );
 
-          console.log("🎉 Farcaster payment completed successfully!");
-          // You can add success notification here
+          if (isTransferSuccess) {
+            console.log("🎉 Farcaster USDC transfer completed successfully!");
+            console.log("Transaction hash:", txHash);
+            // You can add success notification here
+          } else if (isTransferError) {
+            console.error("Farcaster USDC transfer failed:", transferError);
+            throw transferError;
+          }
         } catch (farcasterError) {
-          console.error("Farcaster payment failed:", farcasterError);
+          console.error("Farcaster USDC transfer failed:", farcasterError);
           throw farcasterError; // Re-throw to be caught by outer catch
         }
 
@@ -131,7 +150,7 @@ export const Tips = ({
             key={tip.amount}
             buttonColor={tip.buttonColor}
             onClick={() => handleTipPayment(tip.amount)}
-            disabled={isProcessing}
+            disabled={isProcessing || isTransferLoading}
             className={cn("w-full", tip.buttonClassName)}>
             <p className={cn("text-base font-extrabold", tip.textClassName)}>
               ${tip.amount}
@@ -189,10 +208,15 @@ export const Tips = ({
                 className="w-full bg-accent"
                 onClick={handleCustomTipPayment}
                 disabled={
-                  isProcessing || !customAmount || parseFloat(customAmount) <= 0
+                  isProcessing ||
+                  isTransferLoading ||
+                  !customAmount ||
+                  parseFloat(customAmount) <= 0
                 }>
                 <p className="text-base font-extrabold text-white">
-                  {isProcessing ? "Processing..." : "Confirm"}
+                  {isProcessing || isTransferLoading
+                    ? "Processing..."
+                    : "Confirm"}
                 </p>
               </NBButton>
 

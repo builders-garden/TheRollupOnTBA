@@ -22,7 +22,7 @@ export const NATIVE_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000"
 // TODO update this address
 export const DESTINATION_ADDRESS = "0x0000000000000000000000000000000000000000";
 // Temporary bullmeter address on Base
-export const BULLMETER_ADDRESS = "0xd864E550864AEBC2af521Acc8F2E396dA7eaD60A";
+export const BULLMETER_ADDRESS = "0x9750d30E573b7b869aD207e9fc0760f166720C28";
 
 // Chain Explorer String URLs
 export const TokenNameToChainExplorerStringUrls = {

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
+import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,8 @@ export const PopupsContent = () => {
   const [selectedPopupPosition, setSelectedPopupPosition] =
     useState<PopupPositions>(PopupPositions.TOP_LEFT);
 
+  const { tipSent } = useSocketUtils();
+
   const handleTestNotification = (type: "tip" | "trade" | "vote") => {
     const testData = {
       username: "TestUser",
@@ -18,6 +21,11 @@ export const PopupsContent = () => {
       text:
         type === "tip" ? "$5 tip" : type === "trade" ? "$100 trade" : "vote",
     };
+    tipSent({
+      username: "TestUser",
+      profilePicture: "https://picsum.photos/200",
+      tipAmount: "5",
+    });
     const isRightSide =
       selectedPopupPosition === PopupPositions.TOP_RIGHT ||
       selectedPopupPosition === PopupPositions.BOTTOM_RIGHT;

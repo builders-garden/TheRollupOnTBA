@@ -1,18 +1,19 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
+import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
 export const PopupsContent = () => {
+  useSocket();
+  const { joinStream, tipSent, tokenTraded, voteCasted } = useSocketUtils();
   const [selectedPopupPosition, setSelectedPopupPosition] =
     useState<PopupPositions>(PopupPositions.TOP_LEFT);
-
-  const { tipSent } = useSocketUtils();
 
   const handleTestNotification = (type: "tip" | "trade" | "vote") => {
     const testData = {
@@ -21,32 +22,57 @@ export const PopupsContent = () => {
       text:
         type === "tip" ? "$5 tip" : type === "trade" ? "$100 trade" : "vote",
     };
-    tipSent({
-      username: "TestUser",
-      profilePicture: "https://picsum.photos/200",
-      tipAmount: "5",
-    });
     const isRightSide =
       selectedPopupPosition === PopupPositions.TOP_RIGHT ||
       selectedPopupPosition === PopupPositions.BOTTOM_RIGHT;
     const slideOffset = isRightSide ? 100 : -100;
 
-    const position = selectedPopupPosition.replace("_", "-") as
-      | "top-left"
-      | "top-center"
-      | "top-right"
-      | "bottom-left"
-      | "bottom-center"
-      | "bottom-right";
-
     toast.custom(
       () => <ToastNotification data={testData} slideOffset={slideOffset} />,
       {
         duration: 2000,
-        position,
+        position: selectedPopupPosition,
       },
     );
+    if (type === "tip") {
+      tipSent({
+        position: selectedPopupPosition,
+        username: testData.username,
+        profilePicture: testData.profilePicture,
+        tipAmount: "5",
+      });
+    } else if (type === "trade") {
+      tokenTraded({
+        position: selectedPopupPosition,
+        username: testData.username,
+        profilePicture: testData.profilePicture,
+        tokenInAmount: "5",
+        tokenInName: "ETH",
+        tokenInDecimals: 18,
+        tokenInImageUrl: "https://via.placeholder.com/150",
+        tokenOutAmount: "100",
+        tokenOutDecimals: 18,
+        tokenOutName: "BTC",
+        tokenOutImageUrl: "https://via.placeholder.com/150",
+      });
+    } else if (type === "vote") {
+      voteCasted({
+        position: selectedPopupPosition,
+        username: testData.username,
+        profilePicture: testData.profilePicture,
+        voteAmount: "5",
+        isBull: true,
+        promptId: "1",
+      });
+    }
   };
+
+  useEffect(() => {
+    joinStream({
+      username: "Admin",
+      profilePicture: "https://via.placeholder.com/150",
+    });
+  }, [joinStream]);
 
   return (
     <motion.div

@@ -7,7 +7,7 @@ import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
 import { AVAILABLE_DURATIONS } from "@/lib/constants";
-import { ServerToClientSocketEvents } from "@/lib/enums";
+import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 import { Duration, Guest } from "@/lib/types/poll.type";
 import {
   EndPollNotificationEvent,
@@ -51,6 +51,9 @@ export const SentimentContent = () => {
       { owner: true, nameOrAddress: "limone.base.eth", splitPercent: "100" },
     ]);
     setIsGuestPayoutActive(false);
+    adminEndSentimentPoll({
+      id: "1",
+    });
   };
 
   // Handles the extension of the live poll
@@ -92,6 +95,7 @@ export const SentimentContent = () => {
     });
     adminStartSentimentPoll({
       username: "Admin",
+      position: PopupPositions.TOP_LEFT,
       profilePicture: "https://via.placeholder.com/150",
       pollQuestion: prompt,
       endTime: new Date(Date.now() + duration.seconds * 1000),

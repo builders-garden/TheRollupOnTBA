@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { ServerToClientSocketEvents } from "@/lib/enums";
+import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 import { PollNotificationEvent } from "@/lib/types/socket";
 
 export default function OverlayPage() {
@@ -20,19 +20,12 @@ export default function OverlayPage() {
       votes: number;
       voters: number;
       qrCodeUrl: string;
-      position: string;
+      position: PopupPositions;
       results: { bullPercent: number; bearPercent: number };
     }) => {
-      const position = data.position.replace("_", "-") as
-        | "top-left"
-        | "top-center"
-        | "top-right"
-        | "bottom-left"
-        | "bottom-center"
-        | "bottom-right";
       toast.custom(() => <ToastPollNotification data={data} />, {
         duration: Infinity,
-        position,
+        position: data.position,
       });
     },
     [],
@@ -86,5 +79,9 @@ export default function OverlayPage() {
     };
   }, [subscribe, unsubscribe, joinStream, showPollNotificationCallback]);
 
-  return null;
+  return (
+    <div className="flex h-screen w-[100vw]">
+      <div className="flex h-full w-full"> </div>
+    </div>
+  );
 }

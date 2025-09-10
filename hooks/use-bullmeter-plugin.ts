@@ -3,9 +3,9 @@ import { useCallback, useState } from "react";
 import { decodeFunctionResult, encodeFunctionData, parseUnits } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
+import { CreateBullMeter } from "@/lib/database/db.schema";
 import {
   GetAllPollsByCreatorResponse,
-  PollData,
   ReadPollData,
 } from "@/lib/types/bullmeter.type";
 
@@ -161,6 +161,8 @@ export const useBullmeterPlugin = () => {
       setError(null);
 
       try {
+        const { provider, address } = await getWalletConnection();
+
         const encodedFunctionCall = encodeFunctionData({
           abi: bullMeterAbi,
           functionName: "createPoll",
@@ -183,7 +185,87 @@ export const useBullmeterPlugin = () => {
           },
         ];
 
-        return await executeBatch(calls, "Bullmeter create");
+        const createResult = await executeBatch(calls, "Bullmeter create");
+
+        if (createResult.success) {
+          console.log(
+            "✅ Poll creation transaction confirmed, reading updated last active poll...",
+          );
+
+          // Wait a moment for the transaction to be fully processed
+          await new Promise((resolve) => setTimeout(resolve, 4000));
+
+          console.log("Address:", address);
+
+          const lastPollEncodedCall = encodeFunctionData({
+            abi: bullMeterAbi,
+            functionName: "getLastActivePollForCreator",
+            args: [address as `0x${string}`],
+          });
+          console.log("Last poll encoded call:", lastPollEncodedCall);
+
+          // Read the last active poll again to verify the change
+          const updatedLastPollResult = await provider.request({
+            method: "eth_call",
+            params: [
+              {
+                to: BULLMETER_ADDRESS,
+                data: lastPollEncodedCall,
+              },
+              "latest",
+            ],
+          });
+
+          const updatedDecodedLastPoll = decodeFunctionResult({
+            abi: bullMeterAbi,
+            functionName: "getLastActivePollForCreator",
+            data: updatedLastPollResult as `0x${string}`,
+          });
+
+          const updatedLastPollId = updatedDecodedLastPoll[0];
+
+          console.log("Updated last poll id:", updatedLastPollId);
+
+          // Store the poll data in the database
+          try {
+            const pollData: CreateBullMeter = {
+              brandId: "417440a1a8ab42d0370a2e62817586db", //todo
+              prompt: question + " " + "$$$" + updatedLastPollId,
+              votePrice: votePrice,
+              duration: duration,
+              payoutAddresses: [guest as `0x${string}`],
+              totalYesVotes: 0,
+              totalNoVotes: 0,
+              deadline: startTime + duration,
+            };
+
+            console.log("Poll data:", pollData);
+
+            const response = await fetch("/api/bullmeters", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(pollData),
+            });
+            console.log("Response:", response);
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log("✅ Poll data stored in database:", result);
+            } else {
+              const errorData = await response.json();
+              console.error(
+                "❌ Failed to store poll data in database:",
+                errorData,
+              );
+            }
+          } catch (dbError) {
+            console.error("Database storage error:", dbError);
+          }
+        }
+
+        return createResult;
       } catch (err: any) {
         console.error("Bullmeter create error:", err);
         setError(err.message || "Bullmeter create failed");

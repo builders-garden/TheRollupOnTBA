@@ -7,7 +7,7 @@ import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
-import { AVAILABLE_DURATIONS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
+import { AVAILABLE_DURATIONS } from "@/lib/constants";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { ReadPollData } from "@/lib/types/bullmeter.type";
 import { Duration, Guest } from "@/lib/types/poll.type";
@@ -45,6 +45,8 @@ export const SentimentContent = () => {
     },
   ]);
   const [pollHistory, setPollHistory] = useState<ReadPollData[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   const { timeString, addSeconds, startTimer, stopTimer } = useTimer({
     initialSeconds: duration.seconds,
     onEnd: async () => {
@@ -159,38 +161,45 @@ export const SentimentContent = () => {
     });
   };
 
-  // Handles the history button click
-  const handleHistory = async () => {
-    try {
-      toast.loading("Fetching poll history...", {
-        action: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-        duration: 10,
-      });
+  // Load poll history on component mount
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const response = await getAllPollsByCreator();
 
-      const response = await getAllPollsByCreator();
-
-      if (response.success && response.result) {
-        setPollHistory(response.result);
-        toast.success("Poll history fetched successfully!");
-        console.log("Poll history:", response.result);
-      } else {
-        toast.error(`Failed to fetch history: ${response.error}`);
+        if (response.success && response.result) {
+          setPollHistory(response.result);
+          setCurrentPage(1); // Reset to first page when new data is loaded
+          console.log("Poll history:", response.result);
+        } else {
+          console.error(`Failed to fetch history: ${response.error}`);
+        }
+      } catch (error) {
+        console.error("History fetch error:", error);
       }
-    } catch (error) {
-      console.error("History fetch error:", error);
-      toast.error("Failed to fetch poll history. Please try again.");
+    };
+
+    loadHistory();
+  }, []);
+
+  // Pagination logic
+  const totalPages = Math.ceil(pollHistory.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPageData = pollHistory.slice(startIndex, endIndex);
+
+  // Pagination handlers
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
-  // Load poll history on component mount
-  useEffect(() => {
-    handleHistory();
-  }, []);
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   // Helper function to format poll data for display
   const formatPollForDisplay = (poll: ReadPollData) => {
@@ -390,19 +399,6 @@ export const SentimentContent = () => {
               </AnimatePresence>
             </NBButton>
             <NBButton
-              className="w-full bg-blue-500 hover:bg-blue-600"
-              onClick={handleHistory}
-              disabled={isCreatingBullmeter}>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15, ease: "easeInOut" }}
-                className="text-base font-extrabold text-white">
-                History
-              </motion.p>
-            </NBButton>
-            <NBButton
               className="w-full bg-accent"
               disabled={isConfirmButtonDisabled || isCreatingBullmeter}
               onClick={isLive ? endLive : startLive}>
@@ -436,22 +432,54 @@ export const SentimentContent = () => {
 
       {/* Polls history */}
       <div className="flex flex-col justify-start items-start w-full gap-5">
-        <p className="text-xl font-bold">History</p>
+        <div className="flex justify-between items-center w-full">
+          <p className="text-xl font-bold">History</p>
+          {pollHistory.length > 0 && (
+            <p className="text-sm text-gray-500">
+              Showing {startIndex + 1}-{Math.min(endIndex, pollHistory.length)}{" "}
+              of {pollHistory.length} polls
+            </p>
+          )}
+        </div>
+
         {pollHistory.length > 0 ? (
-          pollHistory.map((poll, index) => {
-            const formattedPoll = formatPollForDisplay(poll);
-            return (
-              <HistoryItem
-                key={poll.pollId}
-                deadline={formattedPoll.deadline}
-                question={formattedPoll.question}
-                bullPercent={formattedPoll.bullPercent}
-                bearPercent={formattedPoll.bearPercent}
-                totalVotes={formattedPoll.totalVotes}
-                usdcCollected={formattedPoll.usdcCollected}
-              />
-            );
-          })
+          <>
+            <div className="flex flex-col gap-3 w-full">
+              {currentPageData.map((poll, index) => {
+                const formattedPoll = formatPollForDisplay(poll);
+                return (
+                  <HistoryItem
+                    key={poll.pollId}
+                    deadline={formattedPoll.deadline}
+                    question={formattedPoll.question}
+                    bullPercent={formattedPoll.bullPercent}
+                    bearPercent={formattedPoll.bearPercent}
+                    totalVotes={formattedPoll.totalVotes}
+                    usdcCollected={formattedPoll.usdcCollected}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-4">
+                <NBButton
+                  className="px-4 py-2 text-sm"
+                  disabled={currentPage === 1}
+                  onClick={handlePreviousPage}>
+                  Previous
+                </NBButton>
+
+                <NBButton
+                  className="px-4 py-2 text-sm"
+                  disabled={currentPage === totalPages}
+                  onClick={handleNextPage}>
+                  Next
+                </NBButton>
+              </div>
+            )}
+          </>
         ) : (
           <p className="text-gray-500">
             No poll history available. Create your first poll!

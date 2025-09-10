@@ -6,10 +6,7 @@ import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-n
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { ServerToClientSocketEvents } from "@/lib/enums";
-import {
-  EndPollNotificationEvent,
-  PollNotificationEvent,
-} from "@/lib/types/socket";
+import { PollNotificationEvent } from "@/lib/types/socket";
 
 export default function OverlayPage() {
   const { subscribe, unsubscribe } = useSocket();
@@ -62,7 +59,7 @@ export default function OverlayPage() {
       });
     };
 
-    const handleEndPollNotification = (data: EndPollNotificationEvent) => {
+    const handleEndPollNotification = () => {
       toast.dismiss();
     };
 

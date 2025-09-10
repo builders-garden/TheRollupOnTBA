@@ -1,3 +1,4 @@
+import { Brand } from "@/lib/database/db.schema";
 import { User } from "@/lib/types/user.type";
 import { useApiMutation, UseApiMutationOptions } from "./use-api-mutation";
 import { useApiQuery } from "./use-api-query";
@@ -7,6 +8,7 @@ export function useAuthCheck(enabled: boolean = true) {
   const { data, isPending, isLoading, isFetched, refetch, error } =
     useApiQuery<{
       user?: User;
+      brand?: Brand;
       status: "ok" | "nok";
       error?: string;
     }>({
@@ -19,7 +21,7 @@ export function useAuthCheck(enabled: boolean = true) {
 
   return {
     user: data?.user,
-    isAuthenticated: data?.status === "ok",
+    brand: data?.brand,
     error: error || (data?.error ? new Error(data.error) : null),
     isLoading,
     isFetched,
@@ -51,13 +53,13 @@ export function useFarcasterSignIn(
 export function useBaseSignIn(
   options?: Partial<
     UseApiMutationOptions<
-      { success: boolean; error?: string; user?: User },
+      { success: boolean; error?: string; brand?: Brand },
       { address: string; message: string; signature: string; nonce: string }
     >
   >,
 ) {
   return useApiMutation<
-    { success: boolean; error?: string; user?: User },
+    { success: boolean; error?: string; brand?: Brand },
     { address: string; message: string; signature: string; nonce: string }
   >({
     url: "/api/auth/base/sign-in",

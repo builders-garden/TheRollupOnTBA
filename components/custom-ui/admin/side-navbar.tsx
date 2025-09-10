@@ -15,7 +15,7 @@ export const SideNavbar = ({
   selectedPageContent,
   setSelectedPageContent,
 }: SideNavbarProps) => {
-  const { userLogout } = useAdminAuth();
+  const { executeLogout } = useAdminAuth();
 
   // Whether the page content is plugins, overlay or brand
   const isContentPlugins = selectedPageContent === AdminPageContent.PLUGINS;
@@ -84,7 +84,7 @@ export const SideNavbar = ({
       </div>
 
       {/* Logout Button on footer */}
-      <NBButton buttonColor="red" className="w-full" onClick={userLogout}>
+      <NBButton buttonColor="red" className="w-full" onClick={executeLogout}>
         <div className="flex justify-start items-center w-full gap-2">
           <LogOut className="size-5 text-destructive" />
           <p className="text-xl font-bold text-destructive">Logout</p>

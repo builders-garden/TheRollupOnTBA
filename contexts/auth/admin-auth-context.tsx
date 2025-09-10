@@ -11,24 +11,26 @@ import {
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useBaseSignIn, useLogout } from "@/hooks/use-auth-hooks";
-import { User } from "@/lib/types/user.type";
+import { Brand } from "@/lib/database/db.schema";
 
 interface AdminAuthContextType {
-  user: {
-    data: User | undefined;
+  brand: {
+    data: Brand | undefined;
     refetch: (options?: RefetchOptions) => Promise<
       QueryObserverResult<
         {
-          user?: User;
+          brand?: Brand;
           status: "ok" | "nok";
           error?: string;
         },
         Error
       >
     >;
+    brandNotFound: boolean;
+    isFetched: boolean;
   };
   signInWithBase: () => void;
-  userLogout: () => void;
+  executeLogout: () => void;
   isLoading: boolean;
   error: Error | null;
 }
@@ -50,18 +52,19 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   const { isInMiniApp } = useMiniApp();
 
   // Local state
-  const [user, setUser] = useState<User>();
+  const [brand, setBrand] = useState<Brand>();
+  const [brandNotFound, setBrandNotFound] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Single user query - this is the only place we fetch user data
+  // Single brand query - this is the only place we fetch brand data
   // Always try to fetch on load to check for existing valid token
   const {
-    user: authUser,
-    refetch: refetchUser,
-    isLoading: isFetchingUser,
-    isFetched: isFetchedAuthUser,
+    brand: authBrand,
+    refetch: refetchBrand,
+    isLoading: isFetchingBrand,
+    isFetched: isFetchedAuthBrand,
     error: userError,
   } = useAuthCheck(); // Always fetch to check for existing token
 
@@ -69,11 +72,14 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   const { mutate: baseSignIn } = useBaseSignIn({
     onSuccess: (data) => {
       console.log("Base sign-in success:", data);
-      if (data.success && data.user) {
-        setIsSigningIn(false);
+      if (!data.brand) {
+        setBrandNotFound(true);
+      } else if (data.success && data.brand) {
+        setBrandNotFound(false);
         setError(null);
-        setUser(data.user);
+        setBrand(data.brand);
       }
+      setIsSigningIn(false);
     },
     onError: (error: Error) => {
       console.error("Farcaster sign-in error:", error);
@@ -85,7 +91,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   // Logout mutation
   const { mutate: logout } = useLogout({
     onSuccess: () => {
-      setUser(undefined);
+      setBrand(undefined);
       setIsLoggingOut(false);
     },
     onError: (error: Error) => {
@@ -94,8 +100,8 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  // A function to logout the user
-  const userLogout = useCallback(() => {
+  // A function to logout
+  const executeLogout = useCallback(() => {
     setIsLoggingOut(true);
     logout({});
   }, [logout]);
@@ -109,13 +115,11 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Initialize the Base Account SDK
       const provider = createBaseAccountSDK({}).getProvider();
-      console.log("Base provider initialized:", provider);
 
       // Step 1: Request account access
       const addresses = await provider.request({
         method: "eth_requestAccounts",
       });
-      console.log("Connected addresses:", addresses);
 
       if (!addresses) {
         throw new Error("No accounts available");
@@ -132,7 +136,6 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: "0x2105" }], // Base mainnet
       });
-      console.log("Switched to Base chain");
 
       // Step 3: Get nonce from backend
       const nonceResponse = await fetch(
@@ -144,7 +147,6 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const { nonce } = await nonceResponse.json();
-      console.log("Generated nonce:", nonce);
 
       // Step 4: Create SIWE message
       const message = `${window.location.host} wants you to sign in with your Ethereum account:
@@ -158,14 +160,11 @@ Chain ID: "8453"
 Nonce: ${nonce}
 Issued At: ${new Date().toISOString()}`;
 
-      console.log("SIWE message:", message);
-
       // Step 5: Sign the message
       const signature = (await provider.request({
         method: "personal_sign",
         params: [message, address],
       })) as string;
-      console.log("Signature:", signature);
 
       // Step 6: Verify signature with backend and sign in
       baseSignIn({
@@ -179,29 +178,31 @@ Issued At: ${new Date().toISOString()}`;
       setError(err.message || "Sign in with Base failed");
       setIsSigningIn(false);
     }
-  }, [refetchUser]);
+  }, [refetchBrand]);
 
-  // Auto set user logic
+  // Auto set brand logic
   useEffect(() => {
-    // Wait for the user to be fetched
-    if (!isFetchedAuthUser) {
+    // Wait for the brand to be fetched
+    if (!isFetchedAuthBrand) {
       return;
     }
 
-    // If we have a user from the initial fetch, set the user
-    if (authUser) {
-      setUser(authUser);
+    // If we have a brand from the initial fetch, set the brand
+    if (authBrand) {
+      setBrand(authBrand);
     }
-  }, [isFetchedAuthUser]);
+  }, [isFetchedAuthBrand]);
 
   const value: AdminAuthContextType = {
-    user: {
-      data: user,
-      refetch: refetchUser,
+    brand: {
+      data: brand,
+      refetch: refetchBrand,
+      isFetched: isFetchedAuthBrand,
+      brandNotFound,
     },
     signInWithBase,
-    userLogout,
-    isLoading: isFetchingUser || isSigningIn || isLoggingOut,
+    executeLogout,
+    isLoading: isFetchingBrand || isSigningIn || isLoggingOut,
     error: error || userError,
   };
 

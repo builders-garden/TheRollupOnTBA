@@ -2,9 +2,7 @@ import * as jose from "jose";
 import { NextRequest, NextResponse } from "next/server";
 import { createPublicClient, http } from "viem";
 import { base } from "viem/chains";
-import { getOrCreateUserFromWalletAddress } from "@/lib/database/queries/user.query";
-import { fetchUserByAddress } from "@/lib/neynar";
-import { NeynarUser } from "@/lib/types/neynar.type";
+import { getBrandByAddress } from "@/lib/database/queries";
 import { env } from "@/lib/zod";
 
 const client = createPublicClient({
@@ -53,16 +51,10 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    // Check if this wallet address has a Farcaster account
-    let farcasterUser: NeynarUser | undefined = undefined;
-    try {
-      farcasterUser = await fetchUserByAddress(address);
-    } catch (error) {
-      // No Farcaster user found for this address, which is fine
-    }
+    // Get the brand from the database
+    const brand = await getBrandByAddress(address);
 
-    // Create or update user in database
-    const user = await getOrCreateUserFromWalletAddress(address, farcasterUser);
+    console.log("TEST brand", JSON.stringify(brand, null, 2));
 
     // Generate JWT token
     const secret = new TextEncoder().encode(env.JWT_SECRET);
@@ -70,7 +62,6 @@ export const POST = async (req: NextRequest) => {
     const expirationTime = new Date(Date.now() + monthInMs);
 
     const token = await new jose.SignJWT({
-      fid: farcasterUser?.fid || null,
       walletAddress: address,
       timestamp: Date.now(),
     })
@@ -80,7 +71,7 @@ export const POST = async (req: NextRequest) => {
       .sign(secret);
 
     // Create the response
-    const response = NextResponse.json({ success: true, user });
+    const response = NextResponse.json({ success: true, brand });
 
     // Set the auth cookie with the JWT token
     response.cookies.set({

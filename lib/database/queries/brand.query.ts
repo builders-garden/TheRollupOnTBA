@@ -44,9 +44,7 @@ export const getBrandByAddress = async (
   const brand = await db
     .select()
     .from(brandsTable)
-    .where(
-      sql`JSON_EXTRACT(${brandsTable.walletAddresses}, '$') LIKE ${`%"${address}"%`}`,
-    )
+    .where(sql`${brandsTable.walletAddresses} LIKE '%' || ${address} || '%'`)
     .limit(1);
 
   return brand[0] || null;

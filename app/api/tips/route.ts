@@ -1,53 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   createTip,
-  getAllTipsWithBrand,
-  getRecentTips,
-  getTipsByBaseName,
-  getTipsByBrand,
-  getTipsByEnsName,
-  getTipsByPayoutAddress,
+  getTipByBaseName,
+  getTipByBrand,
+  getTipByEnsName,
+  getTipByPayoutAddress,
 } from "@/lib/database/queries";
 
 export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const brandId = searchParams.get("brandId");
-    const withBrand = searchParams.get("withBrand") === "true";
-    const recent = searchParams.get("recent");
     const payoutAddress = searchParams.get("payoutAddress");
     const ensName = searchParams.get("ensName");
     const baseName = searchParams.get("baseName");
-    const limit = searchParams.get("limit");
 
-    let tips;
+    let tip;
 
     if (payoutAddress) {
-      tips = await getTipsByPayoutAddress(payoutAddress);
+      tip = await getTipByPayoutAddress(payoutAddress);
     } else if (ensName) {
-      tips = await getTipsByEnsName(ensName);
+      tip = await getTipByEnsName(ensName);
     } else if (baseName) {
-      tips = await getTipsByBaseName(baseName);
+      tip = await getTipByBaseName(baseName);
     } else if (brandId) {
-      tips = await getTipsByBrand(brandId);
-    } else if (recent) {
-      tips = await getRecentTips(parseInt(recent));
-    } else if (withBrand) {
-      tips = await getAllTipsWithBrand(limit ? parseInt(limit) : undefined);
+      tip = await getTipByBrand(brandId);
     } else {
-      tips = await getRecentTips(limit ? parseInt(limit) : undefined);
+      throw new Error("No tip identifier found");
     }
 
     return NextResponse.json({
       success: true,
-      data: tips,
+      data: tip,
     });
   } catch (error) {
-    console.error("Get tips error:", error);
+    console.error("Get tip settings error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to fetch tips",
+        error: "Failed to fetch tip settings",
       },
       { status: 500 },
     );

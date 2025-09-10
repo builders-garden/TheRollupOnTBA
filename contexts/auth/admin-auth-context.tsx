@@ -7,10 +7,13 @@ import {
   useEffect,
   useState,
 } from "react";
+import { Address } from "viem";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useBaseSignIn, useLogout } from "@/hooks/use-auth-hooks";
-import { Brand } from "@/lib/database/db.schema";
+import { useTips } from "@/hooks/use-tips";
+import { Brand, Tip } from "@/lib/database/db.schema";
+import { getBasenameName, getEnsName } from "@/lib/ens/client";
 
 interface AdminAuthContextType {
   brand: {
@@ -18,6 +21,17 @@ interface AdminAuthContextType {
     refetch: () => Promise<void>;
     brandNotFound: boolean;
     isFetched: boolean;
+  };
+  tipSettings: {
+    data: Tip | undefined;
+    refetch: () => Promise<void>;
+    tipSettingsNotFound: boolean;
+    isFetched: boolean;
+  };
+  admin: {
+    address?: string;
+    baseName?: string;
+    ensName?: string;
   };
   signInWithBase: () => void;
   executeLogout: () => void;
@@ -43,8 +57,15 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Local state
   const [brand, setBrand] = useState<Brand>();
+  const [tipSettings, setTipSettings] = useState<Tip>();
+  const [admin, setAdmin] = useState<{
+    address?: string;
+    baseName?: string;
+    ensName?: string;
+  }>();
   const [brandNotFound, setBrandNotFound] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isFetchingAdmin, setIsFetchingAdmin] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -55,8 +76,17 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     refetch: refetchBrand,
     isLoading: isFetchingBrand,
     isFetched: isFetchedAuthBrand,
-    error: userError,
+    error: brandError,
   } = useAuthCheck(); // Always fetch to check for existing token
+
+  // Single tip settings query
+  const {
+    data: tipSettingsData,
+    refetch: refetchTipSettings,
+    isLoading: isFetchingTipSettings,
+    isFetched: isFetchedAuthTipSettings,
+    error: tipSettingsError,
+  } = useTips({ brandId: brand?.id });
 
   // Farcaster sign-in mutation
   const { mutate: baseSignIn } = useBaseSignIn({
@@ -103,6 +133,14 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
       setBrand(newBrand.data.brand);
     }
   }, [refetchBrand]);
+
+  // A function to refetch the tip settings
+  const executeRefetchTipSettings = useCallback(async () => {
+    const newTipSettings = await refetchTipSettings();
+    if (newTipSettings.isSuccess && newTipSettings.data?.data) {
+      setTipSettings(newTipSettings.data.data);
+    }
+  }, [refetchTipSettings]);
 
   const signInWithBase = useCallback(async () => {
     if (isInMiniApp) return;
@@ -191,6 +229,56 @@ Issued At: ${new Date().toISOString()}`;
     }
   }, [isFetchedAuthBrand]);
 
+  // Auto set tip settings logic
+  useEffect(() => {
+    // Wait for the brand to be fetched
+    if (!isFetchedAuthTipSettings) {
+      return;
+    }
+
+    // If we have a tip settings from the initial fetch, set the tip settings
+    if (tipSettingsData) {
+      setTipSettings(tipSettingsData.data);
+    }
+  }, [isFetchedAuthTipSettings]);
+
+  // Auto fetch admin logic, only works if brand is fetched
+  useEffect(() => {
+    const getAdmin = async () => {
+      if (!brand) {
+        return;
+      }
+
+      setIsFetchingAdmin(true);
+
+      const provider = createBaseAccountSDK({}).getProvider();
+      const addresses = await provider.request({
+        method: "eth_requestAccounts",
+      });
+
+      if (!addresses || !Array.isArray(addresses) || addresses.length === 0) {
+        console.log("No accounts available");
+        return;
+      }
+
+      const address: string = addresses[0];
+
+      const baseName = await getBasenameName(address as Address);
+      const ensName = await getEnsName(address as Address);
+
+      setAdmin({
+        ...admin,
+        address,
+        baseName: baseName?.normalize(),
+        ensName: ensName?.normalize(),
+      });
+
+      setIsFetchingAdmin(false);
+    };
+
+    getAdmin();
+  }, [brand]);
+
   const value: AdminAuthContextType = {
     brand: {
       data: brand,
@@ -198,10 +286,26 @@ Issued At: ${new Date().toISOString()}`;
       isFetched: isFetchedAuthBrand,
       brandNotFound,
     },
+    tipSettings: {
+      data: tipSettings,
+      refetch: executeRefetchTipSettings,
+      tipSettingsNotFound: tipSettingsData?.success === false,
+      isFetched: isFetchedAuthTipSettings,
+    },
+    admin: {
+      address: admin?.address,
+      baseName: admin?.baseName,
+      ensName: admin?.ensName,
+    },
     signInWithBase,
     executeLogout,
-    isLoading: isFetchingBrand || isSigningIn || isLoggingOut,
-    error: error || userError,
+    isLoading:
+      isFetchingBrand ||
+      isFetchingTipSettings ||
+      isSigningIn ||
+      isLoggingOut ||
+      isFetchingAdmin,
+    error: error || brandError || tipSettingsError,
   };
 
   return (

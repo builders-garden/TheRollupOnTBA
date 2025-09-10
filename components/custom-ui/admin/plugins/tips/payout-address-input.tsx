@@ -3,10 +3,13 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { CopyButton } from "@/components/custom-ui/copy-button";
 import { NBButton } from "@/components/custom-ui/nb-button";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 
 export const PayoutAddressInput = () => {
+  const { tipSettings } = useAdminAuth();
+
   const [payoutAddress, setPayoutAddress] = useState(
-    "0x55a458f46e319F99e4983c70B179b316507F0d86",
+    tipSettings?.data?.payoutAddress || "",
   );
   const [editingPayoutAddress, setEditingPayoutAddress] =
     useState(payoutAddress);

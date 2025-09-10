@@ -1,7 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/database";
 import {
-  brandsTable,
   tipsTable,
   type CreateTip,
   type Tip,
@@ -20,9 +19,9 @@ export const createTip = async (tipData: CreateTip): Promise<Tip> => {
 };
 
 /**
- * Get a tip by ID
- * @param tipId - The tip ID
- * @returns The tip or null if not found
+ * Get tip settings by ID
+ * @param tipId - The tip settings ID
+ * @returns The tip settings or null if not found
  */
 export const getTipById = async (tipId: string): Promise<Tip | null> => {
   const tip = await db
@@ -35,82 +34,74 @@ export const getTipById = async (tipId: string): Promise<Tip | null> => {
 };
 
 /**
- * Get all tips for a brand
+ * Get the tip settings for a brand
  * @param brandId - The brand ID
- * @returns Array of tips for the brand
+ * @returns The tip settings for the brand or null if not found
  */
-export const getTipsByBrand = async (brandId: string): Promise<Tip[]> => {
-  return await db
+export const getTipByBrand = async (brandId: string): Promise<Tip | null> => {
+  const tip = await db
     .select()
     .from(tipsTable)
     .where(eq(tipsTable.brandId, brandId))
-    .orderBy(desc(tipsTable.createdAt));
+    .limit(1);
+
+  return tip[0] || null;
 };
 
 /**
- * Get all tips with brand information
- * @param limit - Optional limit for results
- * @returns Array of tips with brand data
- */
-export const getAllTipsWithBrand = async (limit?: number) => {
-  const query = db
-    .select({
-      tip: tipsTable,
-      brand: brandsTable,
-    })
-    .from(tipsTable)
-    .innerJoin(brandsTable, eq(tipsTable.brandId, brandsTable.id))
-    .orderBy(desc(tipsTable.createdAt));
-
-  return limit ? await query.limit(limit) : await query;
-};
-
-/**
- * Get tips by payout address
+ * Get tip settings by payout address
  * @param payoutAddress - The payout address to search for
- * @returns Array of tips with the specified payout address
+ * @returns The tip settings with the specified payout address or null if not found
  */
-export const getTipsByPayoutAddress = async (
+export const getTipByPayoutAddress = async (
   payoutAddress: string,
-): Promise<Tip[]> => {
-  return await db
+): Promise<Tip | null> => {
+  const tip = await db
     .select()
     .from(tipsTable)
     .where(eq(tipsTable.payoutAddress, payoutAddress))
-    .orderBy(desc(tipsTable.createdAt));
+    .limit(1);
+
+  return tip[0] || null;
 };
 
 /**
- * Get tips by ENS name
+ * Get tip settings by ENS name
  * @param ensName - The ENS name to search for
- * @returns Array of tips with the specified ENS name
+ * @returns The tip settings with the specified ENS name or null if not found
  */
-export const getTipsByEnsName = async (ensName: string): Promise<Tip[]> => {
-  return await db
+export const getTipByEnsName = async (ensName: string): Promise<Tip | null> => {
+  const tip = await db
     .select()
     .from(tipsTable)
     .where(eq(tipsTable.payoutEnsName, ensName))
-    .orderBy(desc(tipsTable.createdAt));
+    .limit(1);
+
+  return tip[0] || null;
 };
 
 /**
- * Get tips by Base name
+ * Get tip settings by Base name
  * @param baseName - The Base name to search for
- * @returns Array of tips with the specified Base name
+ * @returns The tip settings with the specified Base name or null if not found
  */
-export const getTipsByBaseName = async (baseName: string): Promise<Tip[]> => {
-  return await db
+export const getTipByBaseName = async (
+  baseName: string,
+): Promise<Tip | null> => {
+  const tip = await db
     .select()
     .from(tipsTable)
     .where(eq(tipsTable.payoutBaseName, baseName))
-    .orderBy(desc(tipsTable.createdAt));
+    .limit(1);
+
+  return tip[0] || null;
 };
 
 /**
- * Update a tip
+ * Update a tip settings
  * @param tipId - The tip ID
  * @param updateData - The data to update
- * @returns The updated tip or null if not found
+ * @returns The updated tip settings or null if not found
  */
 export const updateTip = async (
   tipId: string,
@@ -126,39 +117,12 @@ export const updateTip = async (
 };
 
 /**
- * Delete a tip
+ * Delete a tip settings
  * @param tipId - The tip ID
- * @returns Whether the tip was deleted
+ * @returns Whether the tip settings was deleted
  */
 export const deleteTip = async (tipId: string): Promise<boolean> => {
   const result = await db.delete(tipsTable).where(eq(tipsTable.id, tipId));
 
   return result.rowsAffected > 0;
-};
-
-/**
- * Get recent tips
- * @param limit - Number of recent tips to get (default: 10)
- * @returns Array of recent tips
- */
-export const getRecentTips = async (limit = 10): Promise<Tip[]> => {
-  return await db
-    .select()
-    .from(tipsTable)
-    .orderBy(desc(tipsTable.createdAt))
-    .limit(limit);
-};
-
-/**
- * Count tips by brand
- * @param brandId - The brand ID
- * @returns Number of tips for the brand
- */
-export const countTipsByBrand = async (brandId: string): Promise<number> => {
-  const result = await db
-    .select()
-    .from(tipsTable)
-    .where(eq(tipsTable.brandId, brandId));
-
-  return result.length;
 };

@@ -7,23 +7,38 @@ import {
   Youtube,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
+import { useUpdateBrand } from "@/hooks/use-brands";
+import { UpdateBrand } from "@/lib/database/db.schema";
+import { SocialMedias, SocialMediaUrls } from "@/lib/types/shared.type";
 import { NBButton } from "../../nb-button";
 import { FileUpload } from "./file-upload";
 import { NBTextInput } from "./nb-text-input";
 import { TextDescriptionArea } from "./text-description-area";
 
 export const BrandContent = () => {
+  const { brand } = useAdminAuth();
+  const brandData = useMemo(() => brand.data, [brand.data]);
+  const { mutate: updateBrand, isPending: isUpdatingBrand } = useUpdateBrand();
+
   // Social links states
-  const [brandName, setBrandName] = useState("");
-  const [youtubeLiveUrl, setYoutubeLiveUrl] = useState("");
-  const [youtubeChannelUrl, setYoutubeChannelUrl] = useState("");
-  const [twitchChannelUrl, setTwitchChannelUrl] = useState("");
-  const [xUrl, setXUrl] = useState("");
-  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [brandName, setBrandName] = useState(brandData?.name || "");
+  const [youtubeLiveUrl, setYoutubeLiveUrl] = useState(
+    brandData?.youtubeLiveUrl || "",
+  );
+  const [youtubeChannelUrl, setYoutubeChannelUrl] = useState(
+    brandData?.socialMediaUrls?.youtube || "",
+  );
+  const [twitchChannelUrl, setTwitchChannelUrl] = useState(
+    brandData?.socialMediaUrls?.twitch || "",
+  );
+  const [xUrl, setXUrl] = useState(brandData?.socialMediaUrls?.x || "");
+  const [websiteUrl, setWebsiteUrl] = useState(brandData?.websiteUrl || "");
 
   // Text area description state
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(brandData?.description || "");
 
   // A list of all the social links
   const socialLinks = [
@@ -65,6 +80,47 @@ export const BrandContent = () => {
     },
   ];
 
+  // A generic function to update a brand field
+  const handleUpdateBrandField = useCallback(
+    (field: keyof UpdateBrand, socialType?: SocialMedias) => {
+      return (
+        updateData: string,
+        onSuccess?: () => void,
+        onError?: () => void,
+      ) => {
+        if (!brandData || !brandData?.id) return;
+        let dataToUpdate: string | SocialMediaUrls = updateData;
+        if (field === "socialMediaUrls" && !!socialType) {
+          dataToUpdate = {
+            youtube: brandData.socialMediaUrls?.youtube || "",
+            twitch: brandData.socialMediaUrls?.twitch || "",
+            x: brandData.socialMediaUrls?.x || "",
+            [socialType]: updateData,
+          };
+        }
+        try {
+          updateBrand(
+            { brandId: brandData.id, [field]: dataToUpdate },
+            {
+              onSuccess: async () => {
+                await brand.refetch();
+                toast.success("Field updated successfully");
+                onSuccess?.();
+              },
+              onError: () => {
+                toast.error("Error while updating brand information");
+                onError?.();
+              },
+            },
+          );
+        } catch (error) {
+          toast.error("Error while updating brand information");
+        }
+      };
+    },
+    [brandData],
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -98,12 +154,20 @@ export const BrandContent = () => {
             placeholder="Your brand's name here..."
             value={brandName}
             setValue={setBrandName}
+            onConfirm={handleUpdateBrandField("name")}
+            isUpdating={isUpdatingBrand}
           />
           <TextDescriptionArea
             description={description}
             setDescription={setDescription}
+            onConfirm={handleUpdateBrandField("description")}
+            isUpdating={isUpdatingBrand}
           />
-          <FileUpload />
+          <FileUpload
+            brandLogoUrl={brandData?.logoUrl}
+            handleUpdateDatabase={handleUpdateBrandField("logoUrl")}
+            isUpdatingDatabase={isUpdatingBrand}
+          />
         </div>
         <div className="grid grid-cols-4 gap-5 w-full">
           {socialLinks.map((link) => (
@@ -115,6 +179,18 @@ export const BrandContent = () => {
               placeholder={link.placeholder}
               value={link.value}
               setValue={link.setValue}
+              isUpdating={isUpdatingBrand}
+              onConfirm={
+                link.label === "Youtube"
+                  ? handleUpdateBrandField("socialMediaUrls", "youtube")
+                  : link.label === "Twitch"
+                    ? handleUpdateBrandField("socialMediaUrls", "twitch")
+                    : link.label === "X"
+                      ? handleUpdateBrandField("socialMediaUrls", "x")
+                      : link.label === "Website"
+                        ? handleUpdateBrandField("websiteUrl")
+                        : handleUpdateBrandField("youtubeLiveUrl")
+              }
             />
           ))}
         </div>

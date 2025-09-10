@@ -22,13 +22,16 @@ export const brandsTable = sqliteTable("brands", {
   name: text("name"),
   logoUrl: text("logo_url"),
   description: text("description"),
+  youtubeLiveUrl: text("youtube_live_url"),
   activePlugins: text("active_plugins", { mode: "json" }).$type<
     ActivePlugins[]
   >(),
   websiteUrl: text("website_url"),
   socialMediaUrls: text("social_media_urls", {
     mode: "json",
-  }).$type<SocialMediaUrls>(),
+  })
+    .$type<SocialMediaUrls>()
+    .default({ youtube: "", twitch: "", x: "" }),
   walletAddresses: text("wallet_addresses", { mode: "json" })
     .$type<Address[]>()
     .notNull(),

@@ -1,29 +1,78 @@
-import { Image, PenBoxIcon } from "lucide-react";
+import { Loader2, Image as LucideImage, PenBoxIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { usePinataIpfsUpload } from "@/hooks/use-pinata-ipfs";
 import { NBButton } from "../../nb-button";
 
-export const FileUpload = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+interface FileUploadProps {
+  brandLogoUrl?: string | null;
+  handleUpdateDatabase: (
+    data?: any,
+    onSuccess?: () => void,
+    onError?: () => void,
+  ) => void;
+  isUpdatingDatabase: boolean;
+}
 
-  // Handles the file upload
-  const handleFileUpload = () => {
+export const FileUpload = ({
+  brandLogoUrl,
+  handleUpdateDatabase,
+  isUpdatingDatabase,
+}: FileUploadProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null | undefined>(
+    brandLogoUrl || null,
+  );
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const { mutate: uploadFileToIPFS } = usePinataIpfsUpload();
+
+  // Handles the file upload trigger
+  const handleFileUploadTrigger = () => {
     fileInputRef.current?.click();
   };
 
-  // Handles the file change
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      console.log("Selected file:", file.name);
-
-      // Create preview URL
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-
-      // TODO: Handle file upload logic here
+  // Handles clearing the file upload input
+  const handleClearFileUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
+  };
+
+  // Handles the file upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsUploadingFile(true);
+    const file = event.target.files?.[0];
+    if (!file) {
+      toast.error("File format is not supported");
+      return;
+    }
+    console.log("Selected file:", file.name);
+
+    // First of all, upload the file to IPFS
+    uploadFileToIPFS(
+      { file },
+      {
+        onSuccess: (data) => {
+          handleUpdateDatabase(
+            data.url!,
+            () => {
+              setIsUploadingFile(false);
+              setPreviewUrl(data.url!);
+            },
+            () => {
+              setIsUploadingFile(false);
+              handleClearFileUpload();
+            },
+          );
+        },
+        onError: () => {
+          toast.error("Failed to upload file to IPFS");
+          setIsUploadingFile(false);
+        },
+      },
+    );
   };
 
   return (
@@ -31,7 +80,7 @@ export const FileUpload = () => {
       {/* Label and edit button */}
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center gap-2.5">
-          <Image className="size-5" />
+          <LucideImage className="size-5" />
           <p className="text-base font-bold">Logo</p>
         </div>
         <AnimatePresence mode="wait">
@@ -44,7 +93,7 @@ export const FileUpload = () => {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleFileUpload}
+              onClick={handleFileUploadTrigger}
               className="cursor-pointer shrink-0">
               <PenBoxIcon className="size-5" />
             </motion.button>
@@ -53,28 +102,61 @@ export const FileUpload = () => {
       </div>
 
       {/* Upload button or image preview */}
-      <div className="flex flex-col justify-start items-start gap-5 w-full">
+      <div className="flex flex-col justify-start items-start gap-5 w-full h-full">
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          onChange={handleFileChange}
+          onChange={handleFileUpload}
           className="hidden"
+          disabled={isUpdatingDatabase || isUploadingFile}
         />
 
         {/* Upload button or image preview */}
-        {!previewUrl ? (
-          <NBButton onClick={handleFileUpload} className="w-full bg-accent">
-            <p className="text-base font-bold text-white">Upload</p>
-          </NBButton>
-        ) : (
-          <img
-            src={previewUrl}
-            alt="Logo preview"
-            className="w-fit h-[155px] object-contain bg-gray-50"
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {isUploadingFile ? (
+            <motion.div
+              key="loader"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex justify-center items-center w-full h-[86%]">
+              <Loader2 className="size-7 animate-spin" />
+            </motion.div>
+          ) : !previewUrl ? (
+            <motion.div
+              key="upload-button"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex justify-start items-center w-full">
+              <NBButton
+                onClick={handleFileUploadTrigger}
+                className="w-full bg-accent">
+                <p className="text-base font-bold text-white">Upload</p>
+              </NBButton>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="image-preview"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex justify-start items-center w-fit">
+              <Image
+                src={previewUrl}
+                alt="Logo preview"
+                width={100}
+                height={100}
+                className="w-fit h-[155px] object-contain"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

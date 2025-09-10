@@ -1,5 +1,4 @@
 import { createBaseAccountSDK } from "@base-org/account";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import {
   createContext,
   ReactNode,
@@ -16,16 +15,7 @@ import { Brand } from "@/lib/database/db.schema";
 interface AdminAuthContextType {
   brand: {
     data: Brand | undefined;
-    refetch: (options?: RefetchOptions) => Promise<
-      QueryObserverResult<
-        {
-          brand?: Brand;
-          status: "ok" | "nok";
-          error?: string;
-        },
-        Error
-      >
-    >;
+    refetch: () => Promise<void>;
     brandNotFound: boolean;
     isFetched: boolean;
   };
@@ -105,6 +95,14 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoggingOut(true);
     logout({});
   }, [logout]);
+
+  // A function to refetch the brand
+  const executeRefetchBrand = useCallback(async () => {
+    const newBrand = await refetchBrand();
+    if (newBrand.isSuccess && newBrand.data?.brand) {
+      setBrand(newBrand.data.brand);
+    }
+  }, [refetchBrand]);
 
   const signInWithBase = useCallback(async () => {
     if (isInMiniApp) return;
@@ -196,7 +194,7 @@ Issued At: ${new Date().toISOString()}`;
   const value: AdminAuthContextType = {
     brand: {
       data: brand,
-      refetch: refetchBrand,
+      refetch: executeRefetchBrand,
       isFetched: isFetchedAuthBrand,
       brandNotFound,
     },

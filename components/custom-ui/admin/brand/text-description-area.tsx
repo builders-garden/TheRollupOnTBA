@@ -2,15 +2,20 @@ import { Check, SquarePen, Text, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Textarea } from "@/components/shadcn-ui/textarea";
+import { cn } from "@/lib/utils";
 
 interface TextDescriptionAreaProps {
   description: string;
   setDescription: Dispatch<SetStateAction<string>>;
+  onConfirm: (data?: any, onSuccess?: () => void, onError?: () => void) => void;
+  isUpdating: boolean;
 }
 
 export const TextDescriptionArea = ({
   description,
   setDescription,
+  onConfirm,
+  isUpdating,
 }: TextDescriptionAreaProps) => {
   const [editingDescription, setEditingDescription] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -36,6 +41,15 @@ export const TextDescriptionArea = ({
   const handleConfirm = () => {
     setIsEditing(false);
     setDescription(editingDescription);
+    onConfirm(
+      editingDescription,
+      () => {
+        setIsEditing(false);
+      },
+      () => {
+        setIsEditing(false);
+      },
+    );
   };
 
   return (
@@ -53,12 +67,15 @@ export const TextDescriptionArea = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              disabled={isUpdating}
+              whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+              whileTap={{ scale: isUpdating ? 1 : 0.95 }}
               transition={{ duration: 0.15, ease: "easeInOut" }}
               className="shrink-0 cursor-pointer"
               onClick={handleEdit}>
-              <SquarePen className="size-5" />
+              <SquarePen
+                className={cn("size-5", isUpdating && "animate-pulse")}
+              />
             </motion.button>
           ) : (
             <motion.div
@@ -69,18 +86,25 @@ export const TextDescriptionArea = ({
               transition={{ duration: 0.15, ease: "easeInOut" }}
               className="flex justify-center items-center gap-1.5">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                disabled={isUpdating}
+                whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                whileTap={{ scale: isUpdating ? 1 : 0.95 }}
                 className="cursor-pointer"
                 onClick={handleCancel}>
-                <X className="size-5" />
+                <X className={cn("size-5", isUpdating && "animate-pulse")} />
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                disabled={isUpdating}
+                whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                whileTap={{ scale: isUpdating ? 1 : 0.95 }}
                 className="cursor-pointer"
                 onClick={handleConfirm}>
-                <Check className="size-5 text-success" />
+                <Check
+                  className={cn(
+                    "size-5 text-success",
+                    isUpdating && "animate-pulse",
+                  )}
+                />
               </motion.button>
             </motion.div>
           )}
@@ -92,7 +116,7 @@ export const TextDescriptionArea = ({
         <Textarea
           ref={textareaRef}
           placeholder="Your livestream description here..."
-          disabled={!isEditing}
+          disabled={!isEditing || isUpdating}
           value={editingDescription}
           onChange={(e) => {
             setEditingDescription(e.target.value.slice(0, 200));

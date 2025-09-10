@@ -1,6 +1,6 @@
 import { Check, SquarePen, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface NBTextInputProps {
@@ -10,6 +10,12 @@ interface NBTextInputProps {
   placeholder: string;
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
+  onConfirm?: (
+    data?: any,
+    onSuccess?: () => void,
+    onError?: () => void,
+  ) => void;
+  isUpdating: boolean;
 }
 
 export const NBTextInput = ({
@@ -19,6 +25,8 @@ export const NBTextInput = ({
   placeholder,
   value,
   setValue,
+  onConfirm = () => {},
+  isUpdating = false,
 }: NBTextInputProps) => {
   const [editingValue, setEditingValue] = useState(value);
   const [isEditing, setIsEditing] = useState(false);
@@ -29,6 +37,7 @@ export const NBTextInput = ({
 
   // Handles the edit button
   const handleEdit = () => {
+    if (isUpdating) return;
     setIsEditing(!isEditing);
     // Focus the input after enabling edit mode
     setTimeout(() => {
@@ -38,6 +47,7 @@ export const NBTextInput = ({
 
   // Handle the cancel button
   const handleCancel = () => {
+    if (isUpdating) return;
     setIsEditing(false);
     setValue(value);
     setEditingValue(value);
@@ -45,8 +55,18 @@ export const NBTextInput = ({
 
   // Handle the confirm button
   const handleConfirm = () => {
-    setIsEditing(false);
+    if (isUpdating) return;
+    if (editingValue === value) return;
     setValue(editingValue);
+    onConfirm(
+      editingValue,
+      () => {
+        setIsEditing(false);
+      },
+      () => {
+        setIsEditing(false);
+      },
+    );
   };
 
   return (
@@ -71,7 +91,7 @@ export const NBTextInput = ({
           ref={inputRef}
           type="text"
           placeholder={placeholder}
-          disabled={!isEditing}
+          disabled={!isEditing || isUpdating}
           className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
           value={editingValue}
           onChange={(e) => {
@@ -86,12 +106,15 @@ export const NBTextInput = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              disabled={isUpdating}
+              whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+              whileTap={{ scale: isUpdating ? 1 : 0.95 }}
               transition={{ duration: 0.15, ease: "easeInOut" }}
               className="shrink-0 cursor-pointer"
               onClick={handleEdit}>
-              <SquarePen className="size-5" />
+              <SquarePen
+                className={cn("size-5", isUpdating && "animate-pulse")}
+              />
             </motion.button>
           ) : (
             <motion.div
@@ -102,18 +125,25 @@ export const NBTextInput = ({
               transition={{ duration: 0.15, ease: "easeInOut" }}
               className="flex justify-center items-center gap-1.5">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                disabled={isUpdating}
+                whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                whileTap={{ scale: isUpdating ? 1 : 0.95 }}
                 className="cursor-pointer"
                 onClick={handleCancel}>
-                <X className="size-5" />
+                <X className={cn("size-5", isUpdating && "animate-pulse")} />
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                disabled={isUpdating}
+                whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                whileTap={{ scale: isUpdating ? 1 : 0.95 }}
                 className="cursor-pointer"
                 onClick={handleConfirm}>
-                <Check className="size-5 text-success" />
+                <Check
+                  className={cn(
+                    "size-5 text-success",
+                    isUpdating && "animate-pulse",
+                  )}
+                />
               </motion.button>
             </motion.div>
           )}

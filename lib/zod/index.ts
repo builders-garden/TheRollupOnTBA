@@ -11,6 +11,7 @@ export const env = createEnv({
     NOTIFICATION_SECRET: z.string().min(1),
     TURSO_DATABASE_URL: z.string().min(1),
     TURSO_DATABASE_TOKEN: z.string().min(1),
+    PINATA_JWT_SECRET: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_ENV: z
@@ -34,6 +35,8 @@ export const env = createEnv({
     NEXT_PUBLIC_SOCKET_URL: z.string().min(1),
     // cdp paymaster
     NEXT_PUBLIC_PAYMASTER_URL: z.string().min(1),
+    //PINATA
+    NEXT_PUBLIC_GATEWAY_URL: z.string().min(1),
   },
   // For Next.js >= 13.4.4, you only need to destructure client variables:
   experimental__runtimeEnv: {
@@ -49,5 +52,6 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_MAINTENANCE_END_TIME,
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
     NEXT_PUBLIC_PAYMASTER_URL: process.env.NEXT_PUBLIC_PAYMASTER_URL,
+    NEXT_PUBLIC_GATEWAY_URL: process.env.NEXT_PUBLIC_GATEWAY_URL,
   },
 });

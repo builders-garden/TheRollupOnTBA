@@ -1,13 +1,19 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Address, isAddress } from "viem";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
-import { AVAILABLE_DURATIONS } from "@/lib/constants";
+import { AVAILABLE_DURATIONS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
+import {
+  getAddressFromBaseName,
+  getAddressFromEnsName,
+} from "@/lib/ens/client";
 import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 import { ReadPollData } from "@/lib/types/bullmeter.type";
 import { Duration, Guest } from "@/lib/types/poll.type";
@@ -19,11 +25,7 @@ import { FormDurationSelection } from "./form-duration-selection";
 import { FormTextInput } from "./form-text-input";
 import { GuestPayout } from "./guest-payout";
 import { HistoryItem } from "./history-item";
-import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
-import { Address, isAddress } from 'viem'
-import { getAddressFromBaseName, getAddressFromEnsName, getBasenameName, getEnsName } from "@/lib/ens/client";
-
-
+import { base } from "viem/chains";
 
 const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
@@ -38,7 +40,6 @@ export const SentimentContent = () => {
     error: bullmeterError,
   } = useBullmeterPlugin();
   const { admin } = useAdminAuth();
-
 
   const [prompt, setPrompt] = useState("");
   const [duration, setDuration] = useState<Duration>(defaultDuration);
@@ -66,7 +67,11 @@ export const SentimentContent = () => {
     setPrompt("");
     setDuration(defaultDuration);
     setGuests([
-      { owner: true, nameOrAddress: admin.baseName || admin.ensName || admin.address || "", splitPercent: "100" },
+      {
+        owner: true,
+        nameOrAddress: admin.baseName || admin.ensName || admin.address || "",
+        splitPercent: "100",
+      },
     ]);
     setIsGuestPayoutActive(false);
     adminEndSentimentPoll({
@@ -117,15 +122,25 @@ export const SentimentContent = () => {
 
       // Get the first guest (owner) for the guest address and split percent
       const ownerGuest = guests.find((guest) => !guest.owner);
-    
-      const guestAddress = isAddress(ownerGuest?.nameOrAddress!)
-        ? ownerGuest?.nameOrAddress
-        : (
-            (await getAddressFromBaseName(ownerGuest?.nameOrAddress as Address)) ||
-            (await getAddressFromEnsName(ownerGuest?.nameOrAddress as Address)) ||
-            ""
-          );
-      const splitPercent = guestAddress ? Number(ownerGuest?.splitPercent) * 100 : 0;
+
+      let guestAddress = NATIVE_TOKEN_ADDRESS;
+      let splitPercent = 0;
+
+      if (ownerGuest) {
+        guestAddress = isAddress(ownerGuest.nameOrAddress!)
+          ? ownerGuest.nameOrAddress
+          : (await getAddressFromBaseName(
+              ownerGuest.nameOrAddress as Address,
+            )) ||
+            (await getAddressFromEnsName(
+              ownerGuest.nameOrAddress as Address,
+            )) ||
+            "";
+        splitPercent = guestAddress
+          ? Number(ownerGuest.splitPercent) * 100
+          : 0;
+      }
+
       const result = await createBullmeter(
         prompt, // question
         "10000", // votePrice (0.01 USDC)

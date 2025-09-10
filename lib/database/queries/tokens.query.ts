@@ -66,14 +66,22 @@ export const getFeaturedTokensByBrand = async (
 
 /**
  * Get all active featured tokens
+ * @param limit - Optional limit for number of tokens to return
  * @returns Array of active featured tokens
  */
-export const getActiveFeaturedTokens = async (): Promise<FeaturedToken[]> => {
-  return await db
+export const getActiveFeaturedTokens = async (
+  limit?: number,
+): Promise<FeaturedToken[]> => {
+  const query = db
     .select()
     .from(featuredTokensTable)
-    .where(eq(featuredTokensTable.isActive, true))
-    .orderBy(desc(featuredTokensTable.createdAt));
+    .where(eq(featuredTokensTable.isActive, true));
+
+  if (limit) {
+    return await query.orderBy(featuredTokensTable.name).limit(limit);
+  }
+
+  return await query.orderBy(desc(featuredTokensTable.createdAt));
 };
 
 /**

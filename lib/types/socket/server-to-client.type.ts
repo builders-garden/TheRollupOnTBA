@@ -53,8 +53,17 @@ export type PollNotificationEvent = {
 
 export type EndPollNotificationEvent = {
   id: string;
+  pollQuestion: string;
+  endTime: Date;
+  votes: number;
+  voters: number;
+  qrCodeUrl: string;
+  position: string;
+  results?: {
+    bullPercent: number;
+    bearPercent: number;
+  };
 };
-
 export type UpdatePollNotificationEvent = {
   id: string;
   voters: number;

@@ -106,11 +106,11 @@ export const StreamPage = () => {
         <Tips
           showLabel
           tips={[
-            { amount: 0.5, onClick: () => {}, buttonColor: "blue" },
-            { amount: 1, onClick: () => {}, buttonColor: "blue" },
-            { amount: 3, onClick: () => {}, buttonColor: "blue" },
-            { amount: 5, onClick: () => {}, buttonColor: "blue" },
-            { amount: 10, onClick: () => {}, buttonColor: "blue" },
+            { amount: 0.5, buttonColor: "blue" },
+            { amount: 1, buttonColor: "blue" },
+            { amount: 3, buttonColor: "blue" },
+            { amount: 5, buttonColor: "blue" },
+            { amount: 10, buttonColor: "blue" },
           ]}
           customTipButton={{
             color: "blue",

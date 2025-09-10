@@ -4,6 +4,8 @@ import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
+import { authenticateApi } from "@/lib/utils/authenticate-api";
+import { env } from "@/lib/zod";
 
 interface VoteRequest {
   voter: string;
@@ -13,10 +15,13 @@ interface VoteRequest {
 }
 
 export const POST = async (req: NextRequest) => {
+  const fid = req.headers.get("x-user-fid");
+  const walletAddress = req.headers.get("x-user-wallet-address");
+
   try {
     const { voter, pollId, isYes, voteCount }: VoteRequest = await req.json();
 
-    // Validation
+    // 0. Body validation
     if (!voter || !pollId || typeof isYes !== "boolean" || !voteCount) {
       return NextResponse.json(
         {
@@ -33,9 +38,29 @@ export const POST = async (req: NextRequest) => {
       voteCountBigInt = BigInt(1);
     }
 
+    // 1. check if the user is authenticated
+    const {
+      status,
+      user: authUser,
+      statusCode,
+      error,
+    } = await authenticateApi(fid, walletAddress);
+
+    if (status === "nok" || error || !authUser) {
+      console.error(`[api/lyrics] Authentication failed`, {
+        status,
+        error,
+        authUser,
+      });
+      return NextResponse.json(
+        { success: false, error: error || "Authentication failed" },
+        { status: statusCode },
+      );
+    }
+
     // Create account from private key
     const account = privateKeyToAccount(
-      process.env.BACKEND_PRIVATE_KEY as `0x${string}`,
+      env.BACKEND_PRIVATE_KEY as `0x${string}`,
     );
 
     // Create wallet client

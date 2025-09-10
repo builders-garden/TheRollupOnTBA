@@ -5,8 +5,11 @@ import { useEffect, useMemo, useState } from "react";
 import QRCode from "react-qr-code";
 import { NumberTicker } from "@/components/shadcn-ui/number-ticker";
 import { useSocket } from "@/hooks/use-socket";
+import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { UpdatePollNotificationEvent } from "@/lib/types/socket";
+import { BearIcon } from "../icons/bear-icon";
+import { BullIcon } from "../icons/bull-icon";
 
 export interface PollNotificationData {
   id: string;
@@ -47,14 +50,15 @@ const ResultsBar = ({
   return (
     <motion.div
       className="flex items-center w-full min-w-[1000px] rounded-xl overflow-hidden border-4 border-[#E6B45E]"
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, scale: 0, rotate: -6 }}
+      animate={{ opacity: 1, scale: 1, rotate: 0 }}
       transition={{
         duration: 0.4,
         scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+        rotate: { type: "spring", visualDuration: 0.45, bounce: 0.3 },
       }}>
       <motion.div
-        className="h-14 flex items-center justify-center bg-[#C56E6E]/85 px-4"
+        className="h-14 flex items-center justify-center bg-[#CF5953]/85 px-4"
         initial={{ width: "50%" }}
         animate={{ width: `${normalizedBear}%` }}
         transition={{
@@ -63,8 +67,8 @@ const ResultsBar = ({
           damping: 60,
           delay: 0.45,
         }}>
-        <span className="text-white font-overused-grotesk font-black text-2xl">
-          🐻{" "}
+        <span className="flex items-center gap-1 text-white font-overused-grotesk font-black text-2xl">
+          <BearIcon className="w-8 h-8" />{" "}
           <NumberTicker
             value={normalizedBear}
             startValue={50}
@@ -75,7 +79,7 @@ const ResultsBar = ({
         </span>
       </motion.div>
       <motion.div
-        className="h-14 flex items-center justify-center bg-[#5FAF63]/85 px-4"
+        className="h-14 flex items-center justify-center bg-[#4CAF50]/85 px-4"
         initial={{ width: "50%" }}
         animate={{ width: `${normalizedBull}%` }}
         transition={{
@@ -84,8 +88,8 @@ const ResultsBar = ({
           damping: 60,
           delay: 0.45,
         }}>
-        <span className="text-white font-overused-grotesk font-black text-2xl">
-          🐂{" "}
+        <span className="flex items-center gap-1 text-white font-overused-grotesk font-black text-2xl">
+          <BullIcon className="w-8 h-8 fill-white" />{" "}
           <NumberTicker
             value={normalizedBull}
             startValue={50}
@@ -105,6 +109,7 @@ export const ToastPollNotification = ({
   data: PollNotificationData;
 }) => {
   const { subscribe, unsubscribe } = useSocket();
+  const { joinStream } = useSocketUtils();
   const [voters, setVoters] = useState<number>(data.voters);
   const [votes, setVotes] = useState<number>(data.votes);
   const [results, setResults] = useState<{
@@ -127,6 +132,11 @@ export const ToastPollNotification = ({
   };
 
   useEffect(() => {
+    // Join the stream
+    joinStream({
+      username: "Poll",
+      profilePicture: "https://via.placeholder.com/150",
+    });
     subscribe(
       ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL,
       handleUpdateSentimentPoll,
@@ -185,17 +195,25 @@ export const ToastPollNotification = ({
     <AnimatePresence mode="wait" initial={true}>
       <motion.div
         key={data.id}
-        initial={{ opacity: 0, x: xOffset, y: yOffset, scale: 0.8 }}
+        initial={{
+          opacity: 0,
+          x: xOffset,
+          y: yOffset,
+          scale: 0.75,
+          rotate: -6,
+        }}
         animate={{
           opacity: 1,
           y: 0,
           x: 0,
-          scale: [0.8, 1.15, 1],
+          scale: [0.75, 1.2, 1],
+          rotate: [-6, 4, 0],
           transition: {
-            duration: 0.8,
+            duration: 0.9,
             ease: [0.19, 1.0, 0.22, 1.0],
-            opacity: { duration: 0.4 },
-            scale: { times: [0, 0.6, 1], duration: 0.8 },
+            opacity: { duration: 0.3 },
+            scale: { times: [0, 0.6, 1], duration: 0.9 },
+            rotate: { times: [0, 0.6, 1], duration: 0.9 },
           },
         }}
         exit={{
@@ -214,9 +232,10 @@ export const ToastPollNotification = ({
         ) : null}
 
         <div className="bg-gradient-to-b from-[#1B2541]/85 to-[#102E50]/85 rounded-xl shadow-lg px-6 py-2 flex items-center justify-between gap-6 min-w-[1000px] border-4 border-[#E6B45E] font-grotesk text-white">
-          <div className="flex items-center gap-4">
-            <p className="text-xl">🐂 or 🐻?</p>
-          </div>
+          <p className="flex items-center gap-1 text-xl">
+            <BullIcon className="w-8 h-8 fill-[#4CAF50]" /> or{" "}
+            <BearIcon className="w-8 h-8 fill-[#CF5953]" />?
+          </p>
           <span className="text-3xl font-black">{data.pollQuestion}</span>
           <div className="flex flex-col items-center gap-0">
             <span className="text-[#E6B45E] font-bold text-2xl">

@@ -1,4 +1,5 @@
 import { ClientToServerSocketEvents } from "@/lib/enums";
+import { Guest } from "../poll.type";
 
 export type JoinStreamEvent = {
   username: string;
@@ -32,9 +33,24 @@ export type VoteCastedEvent = {
   promptId: string;
 };
 
+export type StartSentimentPollEvent = {
+  username: string;
+  profilePicture: string;
+  pollQuestion: string;
+  endTime: Date;
+  guests: Guest[];
+  results: { bullPercent: number; bearPercent: number };
+};
+
+export type EndSentimentPollEvent = {
+  id: string;
+};
+
 export type ClientToServerEvents = {
   [ClientToServerSocketEvents.JOIN_STREAM]: JoinStreamEvent;
   [ClientToServerSocketEvents.TIP_SENT]: TipSentEvent;
   [ClientToServerSocketEvents.TOKEN_TRADED]: TokenTradedEvent;
   [ClientToServerSocketEvents.VOTE_CASTED]: VoteCastedEvent;
+  [ClientToServerSocketEvents.START_SENTIMENT_POLL]: StartSentimentPollEvent;
+  [ClientToServerSocketEvents.END_SENTIMENT_POLL]: EndSentimentPollEvent;
 };

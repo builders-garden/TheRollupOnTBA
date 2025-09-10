@@ -21,7 +21,9 @@ export const HistoryItem = ({
         <p className="text-sm italic text-gray-500 shrink-0">
           Deadline: {deadline}
         </p>
-        <p className="text-xl font-medium italic truncate">"{question}"</p>
+        <p className="text-xl font-medium italic truncate">
+          &ldquo;{question}&rdquo;
+        </p>
         <div className="flex gap-4 text-sm text-gray-600">
           <span>Votes: {totalVotes}</span>
           <span>USDC: {usdcCollected.toFixed(2)}</span>

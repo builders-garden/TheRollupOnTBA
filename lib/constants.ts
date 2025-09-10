@@ -12,12 +12,17 @@ export const FARCASTER_EMBED_SIZE = {
   height: 1000,
 };
 
-export const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+export const FARCASTER_CLIENT_FID = {
+  farcaster: 9152, // farcaster web/mobile client fid
+  base: 309857, // base mobile client fid
+};
 
+export const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+export const NATIVE_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000"
 // TODO update this address
 export const DESTINATION_ADDRESS = "0x0000000000000000000000000000000000000000";
 // Temporary bullmeter address on Base
-export const BULLMETER_ADDRESS = "0xbacD8925A2Bb2391eb22f2166933ace80bdd7B32";
+export const BULLMETER_ADDRESS = "0xd864E550864AEBC2af521Acc8F2E396dA7eaD60A";
 
 // Chain Explorer String URLs
 export const TokenNameToChainExplorerStringUrls = {

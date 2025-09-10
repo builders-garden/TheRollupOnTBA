@@ -70,12 +70,6 @@ export const POST = async (req: NextRequest) => {
       transport: http("https://mainnet-preconf.base.org"), //flashbot rpc
     });
 
-    console.log("pollId:", pollId);
-    console.log("voter:", voter);
-    console.log("isYes:", isYes);
-    console.log("voteCount:", voteCount);
-    console.log("voteCountBigInt:", voteCountBigInt);
-
     // Encode the vote function call
     const data = encodeFunctionData({
       abi: bullMeterAbi,

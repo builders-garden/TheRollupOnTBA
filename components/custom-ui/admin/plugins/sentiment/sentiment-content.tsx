@@ -34,6 +34,8 @@ export const SentimentContent = () => {
     useSocketUtils();
   const {
     createBullmeter,
+    extendBullmeter,
+    terminateAndClaimBullmeter,
     getAllPollsByCreator,
     isLoading: isCreatingBullmeter,
     error: bullmeterError,
@@ -65,7 +67,41 @@ export const SentimentContent = () => {
   });
 
   // Handles the reset button
-  const handleReset = () => {
+  const handleReset = async () => {
+    // If there's a live poll, terminate and claim it first
+    if (currentLivePoll) {
+      try {
+        toast.loading("Terminating poll...", {
+          action: {
+            label: "Close",
+            onClick: () => {
+              toast.dismiss();
+            },
+          },
+          duration: 10,
+        });
+
+        const result = await terminateAndClaimBullmeter(currentLivePoll.pollId);
+
+        if (result.success) {
+          toast.success("Poll terminated and funds claimed!");
+
+          // Refetch history to get updated poll data
+          const historyResponse = await getAllPollsByCreator();
+          if (historyResponse.success && historyResponse.result) {
+            setPollHistory(historyResponse.result);
+            checkForLivePoll(historyResponse.result);
+          }
+        } else {
+          toast.error("Failed to terminate poll. Please try again.");
+        }
+      } catch (error) {
+        console.error("Failed to terminate poll:", error);
+        toast.error("Failed to terminate poll. Please try again.");
+      }
+    }
+
+    // Reset the UI state
     setPrompt("");
     setDuration(defaultDuration);
     setGuests([
@@ -84,9 +120,46 @@ export const SentimentContent = () => {
   };
 
   // Handles the extension of the live poll
-  const handleExtendLivePoll = () => {
-    const secondsToAdd = duration.seconds;
-    addSeconds(secondsToAdd);
+  const handleExtendLivePoll = async () => {
+    if (!currentLivePoll) {
+      console.error("No live poll to extend");
+      return;
+    }
+
+    try {
+      const newDuration = 600; // Hardcoded 60 seconds
+
+      toast.loading("Extending poll...", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+        duration: 10,
+      });
+
+      const result = await extendBullmeter(currentLivePoll.pollId, newDuration);
+
+      if (result.success) {
+        toast.success("Poll extended successfully!");
+
+        // Add the extension time to the current timer
+        addSeconds(newDuration);
+
+        // Refetch history to get updated poll data
+        const historyResponse = await getAllPollsByCreator();
+        if (historyResponse.success && historyResponse.result) {
+          setPollHistory(historyResponse.result);
+          checkForLivePoll(historyResponse.result);
+        }
+      } else {
+        toast.error("Failed to extend poll. Please try again.");
+      }
+    } catch (error) {
+      console.error("Failed to extend poll:", error);
+      toast.error("Failed to extend poll. Please try again.");
+    }
   };
 
   // Handles the start and stop of the live poll
@@ -238,20 +311,13 @@ export const SentimentContent = () => {
       const currentTime = Math.floor(Date.now() / 1000);
       const deadline = Number(currentLivePoll.deadline);
 
-      console.log("=== Periodic Live Poll Check ===");
-      console.log("Current time:", new Date(currentTime * 1000).toUTCString());
-      console.log("Deadline:", new Date(deadline * 1000).toUTCString());
-      console.log("Time remaining:", deadline - currentTime, "seconds");
-
       if (currentTime >= deadline) {
         // Poll has ended
         setIsLive(false);
         setCurrentLivePoll(null);
-        console.log("❌ LIVE POLL HAS ENDED - Deadline reached");
       } else {
         console.log("✅ POLL STILL LIVE");
       }
-      console.log("=================================");
     }, 30000); // Check every 30 seconds
 
     return () => clearInterval(interval);
@@ -270,17 +336,6 @@ export const SentimentContent = () => {
     // Check if the deadline has passed
     const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
     const deadline = Number(mostRecentPoll.deadline);
-
-    console.log("=== Poll Status Check ===");
-    console.log("Most recent poll:", mostRecentPoll.question);
-    console.log(
-      "Current time (UTC):",
-      new Date(currentTime * 1000).toUTCString(),
-    );
-    console.log("Deadline (UTC):", new Date(deadline * 1000).toUTCString());
-    console.log("Current timestamp:", currentTime);
-    console.log("Deadline timestamp:", deadline);
-    console.log("Time difference (seconds):", deadline - currentTime);
 
     if (currentTime < deadline) {
       // Poll is still live
@@ -305,7 +360,6 @@ export const SentimentContent = () => {
       setCurrentLivePoll(null);
       console.log("❌ POLL IS NOT LIVE - Deadline has passed");
     }
-    console.log("========================");
   };
 
   // Pagination logic - reverse order to show most recent first

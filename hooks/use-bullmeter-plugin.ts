@@ -90,7 +90,6 @@ export const useBullmeterPlugin = () => {
   // Helper function to get wallet connection and switch to Base
   const getWalletConnection = useCallback(async () => {
     const provider = createBaseAccountSDK({}).getProvider();
-    console.log("provider:", provider);
 
     // Request account access
     const addresses = await provider.request({
@@ -113,8 +112,6 @@ export const useBullmeterPlugin = () => {
       method: "wallet_switchEthereumChain",
       params: [{ chainId: "0x2105" }],
     });
-
-    console.log("Switched to Base chain");
 
     return { provider, address };
   }, []);
@@ -195,14 +192,11 @@ export const useBullmeterPlugin = () => {
           // Wait a moment for the transaction to be fully processed
           await new Promise((resolve) => setTimeout(resolve, 4000));
 
-          console.log("Address:", address);
-
           const lastPollEncodedCall = encodeFunctionData({
             abi: bullMeterAbi,
             functionName: "getLastActivePollForCreator",
             args: [address as `0x${string}`],
           });
-          console.log("Last poll encoded call:", lastPollEncodedCall);
 
           // Read the last active poll again to verify the change
           const updatedLastPollResult = await provider.request({
@@ -223,23 +217,21 @@ export const useBullmeterPlugin = () => {
           });
 
           const updatedLastPollId = updatedDecodedLastPoll[0];
-
-          console.log("Updated last poll id:", updatedLastPollId);
+          const updatedLastPollVotePrice = updatedDecodedLastPoll[4];
+          const updatedLastPollDeadline = updatedDecodedLastPoll[6];
 
           // Store the poll data in the database
           try {
             const pollData: CreateBullMeter = {
               brandId: "417440a1a8ab42d0370a2e62817586db", //todo
               prompt: question + " " + "$$$" + updatedLastPollId,
-              votePrice: votePrice,
+              votePrice: updatedLastPollVotePrice.toString(),
               duration: duration,
               payoutAddresses: [guest as `0x${string}`],
               totalYesVotes: 0,
               totalNoVotes: 0,
-              deadline: startTime + duration,
+              deadline: Number(updatedLastPollDeadline),
             };
-
-            console.log("Poll data:", pollData);
 
             const response = await fetch("/api/bullmeters", {
               method: "POST",
@@ -248,7 +240,6 @@ export const useBullmeterPlugin = () => {
               },
               body: JSON.stringify(pollData),
             });
-            console.log("Response:", response);
 
             if (response.ok) {
               const result = await response.json();
@@ -301,7 +292,75 @@ export const useBullmeterPlugin = () => {
           },
         ];
 
-        return await executeBatch(calls, "Bullmeter extend");
+        const extendResult = await executeBatch(calls, "Bullmeter extend");
+
+        if (extendResult.success) {
+          console.log(
+            "✅ Poll extension transaction confirmed, updating database...",
+          );
+
+          // Update the database with new duration and deadline
+          try {
+            // Wait a moment for the transaction to be fully processed
+            await new Promise((resolve) => setTimeout(resolve, 4000));
+
+            const { provider, address } = await getWalletConnection();
+
+            const lastPollEncodedCall = encodeFunctionData({
+              abi: bullMeterAbi,
+              functionName: "getLastActivePollForCreator",
+              args: [address as `0x${string}`],
+            });
+
+            // Read the last active poll again to verify the change
+            const updatedLastPollResult = await provider.request({
+              method: "eth_call",
+              params: [
+                {
+                  to: BULLMETER_ADDRESS,
+                  data: lastPollEncodedCall,
+                },
+                "latest",
+              ],
+            });
+
+            const updatedDecodedLastPoll = decodeFunctionResult({
+              abi: bullMeterAbi,
+              functionName: "getLastActivePollForCreator",
+              data: updatedLastPollResult as `0x${string}`,
+            });
+
+            const updatedLastPollId = updatedDecodedLastPoll[0];
+            const updatedLastPollDeadline = updatedDecodedLastPoll[6];
+
+            const response = await fetch("/api/bullmeters/extend", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                pollId: updatedLastPollId,
+                newDuration: newDuration,
+                newDeadline: Number(updatedLastPollDeadline),
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log("✅ Poll duration updated in database:", result);
+            } else {
+              const errorData = await response.json();
+              console.error(
+                "❌ Failed to update poll duration in database:",
+                errorData,
+              );
+            }
+          } catch (dbError) {
+            console.error("Database update error:", dbError);
+          }
+        }
+
+        return extendResult;
       } catch (err: any) {
         console.error("Bullmeter extend error:", err);
         setError(err.message || "Bullmeter extend failed");
@@ -334,7 +393,44 @@ export const useBullmeterPlugin = () => {
           },
         ];
 
-        return await executeBatch(calls, "Bullmeter terminate");
+        const terminateResult = await executeBatch(
+          calls,
+          "Bullmeter terminate",
+        );
+
+        if (terminateResult.success) {
+          console.log(
+            "✅ Poll termination transaction confirmed, updating database...",
+          );
+
+          // Update the database to mark poll as terminated
+          try {
+            const response = await fetch("/api/bullmeters/terminate", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                pollId: pollId,
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log("✅ Poll marked as terminated in database:", result);
+            } else {
+              const errorData = await response.json();
+              console.error(
+                "❌ Failed to update poll status in database:",
+                errorData,
+              );
+            }
+          } catch (dbError) {
+            console.error("Database update error:", dbError);
+          }
+        }
+
+        return terminateResult;
       } catch (err: any) {
         console.error("Bullmeter terminate error:", err);
         setError(err.message || "Bullmeter terminate failed");
@@ -374,16 +470,12 @@ export const useBullmeterPlugin = () => {
           ],
         });
 
-        console.log("getAllPollsByCreator raw result:", result);
-
         // Decode the result using the contract ABI
         const decodedResult = decodeFunctionResult({
           abi: bullMeterAbi,
           functionName: "getAllPollsByCreator",
           data: result as `0x${string}`,
         });
-
-        console.log("getAllPollsByCreator decoded result:", decodedResult);
 
         return { success: true, result: decodedResult as ReadPollData[] };
       } catch (err: any) {

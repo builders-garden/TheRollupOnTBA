@@ -1,4 +1,4 @@
-import { getAvatar, getName } from "@coinbase/onchainkit/identity";
+import { getAddress, getAvatar, getName } from "@coinbase/onchainkit/identity";
 import { Address, createPublicClient, http } from "viem";
 import { base, mainnet } from "viem/chains";
 
@@ -25,4 +25,14 @@ export async function getBasenameAvatar(baseName: string) {
 export async function getBasenameName(address: Address) {
   const baseName = await getName({ address, chain: base });
   return baseName;
+}
+
+export async function getAddressFromBaseName(baseName: string) {
+  const address = await getAddress({ name: baseName, chain: base });
+  return address;
+}
+
+export async function getAddressFromEnsName(ensName: string) {
+  const address = await mainnetClient.getEnsAddress({ name: ensName });
+  return address;
 }

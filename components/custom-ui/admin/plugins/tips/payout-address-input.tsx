@@ -1,19 +1,43 @@
 import { Check, SquarePen, Wallet, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { Address, isAddress } from "viem";
 import { CopyButton } from "@/components/custom-ui/copy-button";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
+import { useUpdateTip } from "@/hooks/use-tips";
+import {
+  getAddressFromBaseName,
+  getAddressFromEnsName,
+  getBasenameName,
+  getEnsName,
+} from "@/lib/ens/client";
+import { cn } from "@/lib/utils";
 
 export const PayoutAddressInput = () => {
-  const { tipSettings } = useAdminAuth();
+  const { tipSettings, admin } = useAdminAuth();
+  const { mutate: updateTip } = useUpdateTip();
 
-  const [payoutAddress, setPayoutAddress] = useState(
-    tipSettings?.data?.payoutAddress || "",
+  const [textFieldValue, setTextFieldValue] = useState(
+    tipSettings?.data?.payoutBaseName ||
+      tipSettings?.data?.payoutEnsName ||
+      tipSettings?.data?.payoutAddress ||
+      "",
   );
-  const [editingPayoutAddress, setEditingPayoutAddress] =
-    useState(payoutAddress);
+  const [editingTextFieldValue, setEditingTextFieldValue] =
+    useState(textFieldValue);
   const [isEditing, setIsEditing] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Whether the input text is an address
+  const isPayoutAddressAnAddress = isAddress(editingTextFieldValue);
+
+  // Whether the input text is an ENS name
+  const isPayoutAddressAnEnsName = editingTextFieldValue.endsWith(".eth");
+
+  // Whether the input text is a Base name
+  const isPayoutAddressABaseName = editingTextFieldValue.endsWith(".base.eth");
 
   // Switches the editing state
   const handleEdit = () => {
@@ -21,9 +45,71 @@ export const PayoutAddressInput = () => {
   };
 
   // Handles the confirm button
-  const handleConfirm = () => {
-    setIsEditing(false);
-    setPayoutAddress(editingPayoutAddress);
+  const handleConfirm = async () => {
+    if (editingTextFieldValue === textFieldValue) {
+      setIsEditing(false);
+      return;
+    }
+    if (
+      !isPayoutAddressAnAddress &&
+      !isPayoutAddressABaseName &&
+      !isPayoutAddressAnEnsName
+    ) {
+      toast.error("Invalid payout address");
+      return;
+    }
+
+    setIsUpdating(true);
+    if (tipSettings?.data?.id) {
+      let payoutAddress = isPayoutAddressAnAddress
+        ? editingTextFieldValue
+        : undefined;
+      let payoutBaseName = isPayoutAddressABaseName
+        ? editingTextFieldValue
+        : undefined;
+      let payoutEnsName = isPayoutAddressAnEnsName
+        ? editingTextFieldValue
+        : undefined;
+
+      if (isPayoutAddressAnAddress) {
+        payoutBaseName = (await getBasenameName(
+          editingTextFieldValue,
+        )) as string;
+        payoutEnsName = (await getEnsName(editingTextFieldValue)) as string;
+      } else if (isPayoutAddressABaseName) {
+        payoutAddress = (await getAddressFromBaseName(
+          editingTextFieldValue,
+        )) as Address;
+        payoutEnsName = (await getEnsName(payoutAddress)) as string;
+      } else if (isPayoutAddressAnEnsName) {
+        payoutAddress = (await getAddressFromEnsName(
+          editingTextFieldValue,
+        )) as Address;
+        payoutBaseName = (await getBasenameName(payoutAddress)) as string;
+      }
+
+      updateTip(
+        {
+          tipId: tipSettings?.data?.id,
+          payoutAddress,
+          payoutBaseName,
+          payoutEnsName,
+        },
+        {
+          onSuccess: () => {
+            setIsEditing(false);
+            setIsUpdating(false);
+            setTextFieldValue(editingTextFieldValue);
+            toast.success("Payout address updated successfully");
+          },
+          onError: () => {
+            setIsEditing(false);
+            setIsUpdating(false);
+            toast.error("Error while updating payout address");
+          },
+        },
+      );
+    }
   };
 
   return (
@@ -39,12 +125,12 @@ export const PayoutAddressInput = () => {
             type="text"
             disabled={!isEditing}
             className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-xl font-bold"
-            value={editingPayoutAddress}
+            value={editingTextFieldValue}
             onChange={(e) => {
-              if (e.target.value.length > 41) {
+              if (e.target.value.length > 42) {
                 return;
               }
-              setEditingPayoutAddress(e.target.value);
+              setEditingTextFieldValue(e.target.value);
             }}
           />
 
@@ -57,16 +143,20 @@ export const PayoutAddressInput = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}
                 className="flex justify-center items-center gap-2.5">
-                <CopyButton key="copy-button" stringToCopy={payoutAddress} />
+                <CopyButton key="copy-button" stringToCopy={textFieldValue} />
                 <motion.button
                   key={`SquarePen-button`}
+                  disabled={isUpdating}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                  whileTap={{ scale: isUpdating ? 1 : 0.95 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}
-                  className="cursor-pointer shrink-0"
+                  className={cn(
+                    "cursor-pointer shrink-0",
+                    isUpdating && "animate-pulse cursor-default",
+                  )}
                   onClick={handleEdit}>
                   <SquarePen className="size-6 text-success" />
                 </motion.button>
@@ -81,16 +171,24 @@ export const PayoutAddressInput = () => {
                 transition={{ duration: 0.15, ease: "easeInOut" }}
                 className="flex justify-center items-center gap-1.5">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="cursor-pointer shrink-0"
-                  onClick={() => setEditingPayoutAddress("")}>
+                  disabled={isUpdating}
+                  whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                  whileTap={{ scale: isUpdating ? 1 : 0.95 }}
+                  className={cn(
+                    "cursor-pointer shrink-0",
+                    isUpdating && "animate-pulse cursor-default",
+                  )}
+                  onClick={() => setEditingTextFieldValue("")}>
                   <X className="size-6 text-black" />
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="cursor-pointer shrink-0"
+                  disabled={isUpdating}
+                  whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                  whileTap={{ scale: isUpdating ? 1 : 0.95 }}
+                  className={cn(
+                    "cursor-pointer shrink-0",
+                    isUpdating && "animate-pulse cursor-default",
+                  )}
                   onClick={handleConfirm}>
                   <Check className="size-6 text-success" />
                 </motion.button>
@@ -101,7 +199,7 @@ export const PayoutAddressInput = () => {
 
         {/* Connected wallet button */}
         <AnimatePresence mode="wait">
-          {isEditing && (
+          {isEditing && admin.baseName && (
             <motion.div
               key={`Set-to-connected-account-button`}
               initial={{ opacity: 0 }}
@@ -110,9 +208,10 @@ export const PayoutAddressInput = () => {
               transition={{ duration: 0.3, ease: "easeInOut" }}>
               <NBButton
                 className="bg-success w-fit shrink-0"
-                onClick={() => setEditingPayoutAddress("pippo.base.eth")}>
+                disabled={isUpdating}
+                onClick={() => setEditingTextFieldValue(admin.baseName || "")}>
                 <p className="text-base font-extrabold text-white">
-                  Set to connected account (pippo.base.eth)
+                  Set to connected account ({admin.baseName})
                 </p>
               </NBButton>
             </motion.div>

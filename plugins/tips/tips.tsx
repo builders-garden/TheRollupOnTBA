@@ -1,8 +1,14 @@
+import { getPaymentStatus, pay } from "@base-org/account";
+import { Context } from "@farcaster/miniapp-core";
+import { sdk } from "@farcaster/miniapp-sdk";
 import { useState } from "react";
+import { parseUnits } from "viem";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
 import { Input } from "@/components/shadcn-ui/input";
+import { BASE_USDC_ADDRESS, FARCASTER_CLIENT_FID } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { formatSingleToken } from "@/lib/utils/farcaster-tokens";
 
 interface TipsProps {
   label?: string;
@@ -10,7 +16,7 @@ interface TipsProps {
   className?: string;
   tips: {
     amount: number;
-    onClick: () => void;
+    onClick?: () => void; // Made optional since we handle payment internally
     textClassName?: string;
     buttonColor?: "blue" | "black";
     buttonClassName?: string;
@@ -31,10 +37,88 @@ export const Tips = ({
 }: TipsProps) => {
   const [isCustomTipModalOpen, setIsCustomTipModalOpen] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Handles Custom Tip Modal Open
   const handleCustomTipModalOpen = () => {
     setIsCustomTipModalOpen(!isCustomTipModalOpen);
+    setCustomAmount("");
+  };
+
+  // Handle tip payment
+  const handleTipPayment = async (amount: number) => {
+    try {
+      setIsProcessing(true);
+
+      console.log("amount:", amount);
+      console.log("context client fid:", (await sdk.context).client.clientFid);
+
+      if (
+        (await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster
+      ) {
+        // Farcaster payment flow
+        console.log("Using Farcaster sendToken for payment");
+
+        try {
+          await sdk.actions.sendToken({
+            token: formatSingleToken(BASE_USDC_ADDRESS),
+            amount: BigInt(parseUnits(amount.toString(), 6)).toString(),
+            recipientFid: 16286, // TODO: change to the recipient fid
+          });
+
+          console.log("🎉 Farcaster payment completed successfully!");
+          // You can add success notification here
+        } catch (farcasterError) {
+          console.error("Farcaster payment failed:", farcasterError);
+          throw farcasterError; // Re-throw to be caught by outer catch
+        }
+
+        return; // Exit early for Farcaster payments
+      }
+
+      // Base payment flow for non-Farcaster environments
+      console.log("Using Base payment SDK");
+
+      const payment = await pay({
+        amount: amount.toFixed(2), // USD amount (USDC used internally)
+        to: "0x4110c5B6D9fAbf629c43a7B0279b9969CB698971", // TODO: change to the recipient address
+        testnet: false, // set false for Mainnet
+      });
+
+      console.log("payment:", payment);
+
+      // Poll until mined
+      const { status } = await getPaymentStatus({
+        id: payment.id,
+        testnet: false, // MUST match the testnet setting used in pay()
+      });
+
+      if (status === "completed") {
+        console.log("🎉 Base payment settled");
+        // You can add success notification here
+      } else {
+        console.log("Base payment status:", status);
+      }
+    } catch (error) {
+      console.error(
+        `Payment failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+      // You can add error notification here
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handle custom tip payment
+  const handleCustomTipPayment = async () => {
+    const amount = parseFloat(customAmount);
+    if (isNaN(amount) || amount <= 0) {
+      console.error("Invalid custom amount");
+      return;
+    }
+
+    await handleTipPayment(amount);
+    setIsCustomTipModalOpen(false);
     setCustomAmount("");
   };
 
@@ -46,7 +130,8 @@ export const Tips = ({
           <NBButton
             key={tip.amount}
             buttonColor={tip.buttonColor}
-            onClick={tip.onClick}
+            onClick={() => handleTipPayment(tip.amount)}
+            disabled={isProcessing}
             className={cn("w-full", tip.buttonClassName)}>
             <p className={cn("text-base font-extrabold", tip.textClassName)}>
               ${tip.amount}
@@ -99,8 +184,16 @@ export const Tips = ({
             </div>
 
             <div className="flex flex-col justify-center items-center w-full gap-5">
-              <NBButton key="confirm" className="w-full bg-accent">
-                <p className="text-base font-extrabold text-white">Confirm</p>
+              <NBButton
+                key="confirm"
+                className="w-full bg-accent"
+                onClick={handleCustomTipPayment}
+                disabled={
+                  isProcessing || !customAmount || parseFloat(customAmount) <= 0
+                }>
+                <p className="text-base font-extrabold text-white">
+                  {isProcessing ? "Processing..." : "Confirm"}
+                </p>
               </NBButton>
 
               <button

@@ -30,7 +30,10 @@ const formatTokenAddress = (address: string, chainId: number): string => {
  * @param chainId - Chain ID
  * @returns CAIP-19 formatted token ID
  */
-export const formatSingleToken = (address: string, chainId: number): string => {
+export const formatSingleToken = (address: string, chainId?: number): string => {
+  if (!chainId) {
+    chainId = 8453;
+  }
   return formatTokenAddress(address, chainId);
 };
 

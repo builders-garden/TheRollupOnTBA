@@ -1,9 +1,13 @@
+import { sdk } from "@farcaster/miniapp-sdk";
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
+import { parseUnits } from "viem";
+import { BASE_USDC_ADDRESS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Input } from "../../shadcn-ui/input";
 import { NBButton } from "../nb-button";
 import { NBModal } from "../nb-modal";
+import { formatSingleToken } from "@/lib/utils/farcaster-tokens";
 
 interface BuyTokenModalProps {
   trigger: React.ReactNode;
@@ -18,6 +22,7 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
     SelectableAmount | undefined
   >(undefined);
   const [customAmount, setCustomAmount] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Handles Modal Open
   const handleModalOpen = () => {
@@ -26,7 +31,42 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
     setTimeout(() => {
       setAmountSelected(undefined);
       setCustomAmount("");
+      setIsProcessing(false);
     }, 300);
+  };
+
+  // Handle token swap
+  const handleSwapToken = async () => {
+    try {
+      setIsProcessing(true);
+
+      // Get the amount to swap
+      const amount =
+        amountSelected === "custom"
+          ? parseFloat(customAmount)
+          : parseFloat(amountSelected || "0");
+
+      if (isNaN(amount) || amount <= 0) {
+        console.error("Invalid amount for swap");
+        return;
+      }
+      // Placeholder token addresses - replace with actual token addresses
+      const sellToken = formatSingleToken(BASE_USDC_ADDRESS); // USDC on Base
+      const buyToken = formatSingleToken(NATIVE_TOKEN_ADDRESS); // Placeholder token address
+      await sdk.actions.swapToken({
+        sellToken,
+        buyToken,
+      });
+
+      // Close modal after successful swap
+      handleModalOpen();
+    } catch (error) {
+      console.error(
+        `Token swap failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const selectableAmounts: SelectableAmount[] = ["1", "3", "5", "10"];
@@ -100,8 +140,14 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
               <p className="text-base font-bold text-black/25">
                 You&apos;re getting 124,582 ${tokenName}
               </p>
-              <NBButton key="confirm" className="w-full bg-accent">
-                <p className="text-base text-white font-extrabold">Confirm</p>
+              <NBButton
+                key="confirm"
+                className="w-full bg-accent"
+                onClick={handleSwapToken}
+                disabled={isProcessing}>
+                <p className="text-base text-white font-extrabold">
+                  {isProcessing ? "Processing..." : "Confirm"}
+                </p>
               </NBButton>
             </div>
           )}

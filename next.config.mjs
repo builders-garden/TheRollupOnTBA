@@ -17,6 +17,7 @@ const nextConfig = {
       },
     ],
   },
+  devIndicators: true,
   async headers() {
     return [
       {

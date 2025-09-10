@@ -47,7 +47,7 @@ export default function OverlayPage() {
         votes: data.votes,
         voters: data.voters,
         qrCodeUrl: data.qrCodeUrl,
-        position: data.position,
+        position: PopupPositions.TOP_LEFT,
         results: data.results || { bullPercent: 0, bearPercent: 0 },
       });
     };

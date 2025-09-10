@@ -200,14 +200,12 @@ export const ToastPollNotification = ({
           x: xOffset,
           y: yOffset,
           scale: 0.75,
-          rotate: -6,
         }}
         animate={{
           opacity: 1,
           y: 0,
           x: 0,
           scale: [0.75, 1.2, 1],
-          rotate: [-6, 4, 0],
           transition: {
             duration: 0.9,
             ease: [0.19, 1.0, 0.22, 1.0],
@@ -231,10 +229,10 @@ export const ToastPollNotification = ({
           />
         ) : null}
 
-        <div className="bg-gradient-to-b from-[#1B2541]/85 to-[#102E50]/85 rounded-xl shadow-lg px-6 py-2 flex items-center justify-between gap-6 min-w-[1000px] min-h-[130px] border-4 border-[#E6B45E] font-grotesk text-white">
+        <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 py-2 flex items-center justify-between gap-6 min-w-[1000px] min-h-[130px] border-4 border-[#E6B45E] font-grotesk text-white">
           <p className="flex items-center gap-1 text-xl">
-            <BullIcon className="w-8 h-8 fill-[#4CAF50]" /> or{" "}
-            <BearIcon className="w-8 h-8 fill-[#CF5953]" />?
+            <BullIcon className="w-12 h-12 fill-[#4CAF50]" /> or{" "}
+            <BearIcon className="w-12 h-12 fill-[#CF5953]" />?
           </p>
           <span className="text-3xl font-black">{data.pollQuestion}</span>
           <div className="flex flex-col items-center gap-0">

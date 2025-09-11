@@ -2,6 +2,7 @@ import { CircleQuestionMark, Eye, EyeOff, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
@@ -37,6 +38,10 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
           await featuredTokens.refetch();
           setIsDeleting(false);
         },
+        onError: () => {
+          setIsDeleting(false);
+          toast.error("An error occurred while deleting the token");
+        },
       },
     );
   };
@@ -50,6 +55,10 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
         onSuccess: async () => {
           await featuredTokens.refetch();
           setIsUpdating(false);
+        },
+        onError: () => {
+          setIsUpdating(false);
+          toast.error("An error occurred while updating the token");
         },
       },
     );

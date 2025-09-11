@@ -115,16 +115,14 @@ export const StreamPage = () => {
       if (!hasEnoughAllowance) {
         await approve();
       }
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const newAllowance = await checkAllowance();
-        const stillNeedsApproval =
-          !newAllowance || newAllowance < requiredAmount;
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      const newAllowance = await checkAllowance();
+      const stillNeedsApproval = !newAllowance || newAllowance < requiredAmount;
 
-        if (stillNeedsApproval) {
-          console.warn(
-            "⚠️ Approval may not have completed yet, but proceeding with vote...",
-          );
-        } 
+      if (stillNeedsApproval) {
+        console.warn(
+          "⚠️ Approval may not have completed yet, but proceeding with vote...",
+        );
       }
 
       // Submit the vote

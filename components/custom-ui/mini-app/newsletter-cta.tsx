@@ -1,16 +1,21 @@
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../nb-button";
+import { useSubscribeNewsletter } from "@/hooks/use-subscribe-newsletter";
 
 interface NewsletterCTAProps {
   label: string;
-  onClick?: () => void;
 }
 
-export const NewsletterCTA = ({ label, onClick }: NewsletterCTAProps) => {
+export const NewsletterCTA = ({ label }: NewsletterCTAProps) => {
+  const { mutate: subscribe, isPending } = useSubscribeNewsletter();
   const [editingValue, setEditingValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSubscribe = () => {
+    subscribe({ email: editingValue });
+  };
 
   return (
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
@@ -36,9 +41,11 @@ export const NewsletterCTA = ({ label, onClick }: NewsletterCTAProps) => {
         </div>
         <NBButton
           className="bg-accent w-fit"
-          disabled={editingValue === ""}
-          onClick={onClick}>
-          <p className="text-base font-extrabold text-white">Subscribe</p>
+          disabled={editingValue === "" || isPending}
+          onClick={handleSubscribe}>
+          <p className="text-base font-extrabold text-white">
+            {isPending ? "Subscribing..." : "Subscribe"}
+          </p>
         </NBButton>
       </div>
     </div>

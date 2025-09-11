@@ -115,28 +115,45 @@ export const SentimentContent = () => {
             setPollHistory(historyResponse.result);
             checkForLivePoll(historyResponse.result);
           }
+
+          // Only reset UI state if blockchain transaction was successful
+          setPrompt("");
+          setDuration(defaultDuration);
+          setGuests([
+            {
+              owner: true,
+              nameOrAddress:
+                admin.baseName || admin.ensName || admin.address || "",
+              splitPercent: "100",
+            },
+          ]);
+          setIsGuestPayoutActive(false);
+          setIsLive(false);
+          setCurrentLivePoll(null);
         } else {
           toast.error("Failed to terminate poll. Please try again.");
+          // Don't reset UI state if blockchain transaction failed
         }
       } catch (error) {
         console.error("Failed to terminate poll:", error);
         toast.error("Failed to terminate poll. Please try again.");
+        // Don't reset UI state if blockchain transaction failed
       }
+    } else {
+      // If no live poll, just reset the UI state
+      setPrompt("");
+      setDuration(defaultDuration);
+      setGuests([
+        {
+          owner: true,
+          nameOrAddress: admin.baseName || admin.ensName || admin.address || "",
+          splitPercent: "100",
+        },
+      ]);
+      setIsGuestPayoutActive(false);
+      setIsLive(false);
+      setCurrentLivePoll(null);
     }
-
-    // Reset the UI state
-    setPrompt("");
-    setDuration(defaultDuration);
-    setGuests([
-      {
-        owner: true,
-        nameOrAddress: admin.baseName || admin.ensName || admin.address || "",
-        splitPercent: "100",
-      },
-    ]);
-    setIsGuestPayoutActive(false);
-    setIsLive(false);
-    setCurrentLivePoll(null);
   };
 
   // Handles claiming all claimable polls
@@ -201,8 +218,8 @@ export const SentimentContent = () => {
     }
 
     try {
-      const newDuration = 600; // Hardcoded 60 seconds
-
+      const newDuration = duration.seconds; // Use the duration selected from the UI
+      console.log("newDuration:", newDuration);
       toast.loading("Extending poll...", {
         action: {
           label: "Close",
@@ -214,7 +231,6 @@ export const SentimentContent = () => {
       });
 
       const result = await extendBullmeter(currentLivePoll.pollId, newDuration);
-
 
       if (result.success) {
         toast.success("Poll extended successfully!");

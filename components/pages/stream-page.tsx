@@ -145,7 +145,7 @@ export const StreamPage = () => {
         />
 
         {/* Newsletter CTA */}
-        <NewsletterCTA label="Subscribe to newsletter" onClick={() => {}} />
+        <NewsletterCTA label="Subscribe to newsletter" />
 
         {/* USDC Approval Section */}
         {/* <div className="flex flex-col justify-center items-center w-full gap-3">

@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
+import { useAccount } from "wagmi";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";

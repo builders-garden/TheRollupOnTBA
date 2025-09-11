@@ -34,8 +34,8 @@ export const SentimentResultsContent = () => {
     };
 
     adminStartSentimentPoll({
-      username: "Admin",
-      profilePicture: "https://via.placeholder.com/150",
+      //username: "Admin",
+      //profilePicture: "https://via.placeholder.com/150",
       pollQuestion: "ETH will flip BTC this cycle",
       endTime: addSeconds(new Date(), 5),
       position: selectedPopupPosition,
@@ -52,6 +52,9 @@ export const SentimentResultsContent = () => {
       onDismiss: () => {
         adminEndSentimentPoll({
           id: "1",
+          votes: 0,
+          voters: 0,
+          results: { bullPercent: 0, bearPercent: 0 },
         });
       },
     });

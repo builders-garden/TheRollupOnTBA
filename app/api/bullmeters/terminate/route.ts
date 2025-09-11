@@ -1,4 +1,4 @@
-import { like, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/database";
 import { bullMetersTable } from "@/lib/database/db.schema";
@@ -22,7 +22,7 @@ export const PATCH = async (req: NextRequest) => {
     const pollToUpdate = await db
       .select()
       .from(bullMetersTable)
-      .where(like(bullMetersTable.prompt, `%$$$${pollId}`))
+      .where(eq(bullMetersTable.pollId, pollId))
       .limit(1);
 
     if (pollToUpdate.length === 0) {
@@ -43,7 +43,7 @@ export const PATCH = async (req: NextRequest) => {
         deadline: newDeadline,
         updatedAt: sql`CURRENT_TIMESTAMP`,
       })
-      .where(like(bullMetersTable.prompt, `%$$$${pollId}`))
+      .where(eq(bullMetersTable.pollId, pollId))
       .returning();
 
     return NextResponse.json({

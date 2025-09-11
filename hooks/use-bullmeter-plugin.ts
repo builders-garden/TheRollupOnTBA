@@ -1,6 +1,6 @@
 import { createBaseAccountSDK } from "@base-org/account";
 import { useCallback, useState } from "react";
-import { decodeFunctionResult, encodeFunctionData, numberToHex, parseUnits } from "viem";
+import { decodeFunctionResult, encodeFunctionData } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
 import { CreateBullMeter } from "@/lib/database/db.schema";
@@ -25,8 +25,8 @@ interface SendCallsParams {
   capabilities: {
     paymasterService: {
       url: string;
-    }
-  }
+    };
+  };
 }
 
 // Helper function to create wallet_sendCalls parameters
@@ -44,9 +44,9 @@ const createSendCallsParams = (
     calls,
     capabilities: {
       paymasterService: {
-        url: process.env.NEXT_PUBLIC_PAYMASTER_URL || ""
-      }
-    }
+        url: process.env.NEXT_PUBLIC_PAYMASTER_URL || "",
+      },
+    },
   };
 };
 
@@ -234,7 +234,8 @@ export const useBullmeterPlugin = () => {
           try {
             const pollData: CreateBullMeter = {
               brandId: "417440a1a8ab42d0370a2e62817586db", //todo
-              prompt: question + " " + "$$$" + updatedLastPollId,
+              prompt: question,
+              pollId: updatedLastPollId,
               votePrice: updatedLastPollVotePrice.toString(),
               duration: duration,
               payoutAddresses: [guest as `0x${string}`],

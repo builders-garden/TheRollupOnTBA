@@ -52,7 +52,7 @@ export const StreamPage = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="relative flex flex-col justify-center items-start h-full w-full">
+      className="relative flex flex-col justify-center items-start h-full w-full no-scrollbar">
       <iframe
         width="100%"
         height="265px"

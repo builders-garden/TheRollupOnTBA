@@ -13,7 +13,7 @@ export default function MainContent() {
   //const debouncedIsLoading = useDebounce(isLoading, 1000);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen no-scrollbar">
       {/* <AnimatePresence mode="wait">
         {debouncedIsLoading ? (
           <LoadingPage key="loading" />

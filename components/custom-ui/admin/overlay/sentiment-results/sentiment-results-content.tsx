@@ -37,8 +37,8 @@ export const SentimentResultsContent = () => {
     };
 
     adminStartSentimentPoll({
-      username: "Admin",
-      profilePicture: "https://via.placeholder.com/150",
+      //username: "Admin",
+      //profilePicture: "https://via.placeholder.com/150",
       pollQuestion: "ETH will flip BTC this cycle",
       endTime: addSeconds(new Date(), 5),
       position: selectedPopupPosition,

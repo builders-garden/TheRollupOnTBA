@@ -195,6 +195,9 @@ export const useBullmeterPlugin = () => {
 
         const createResult = await executeBatch(calls, "Bullmeter create");
 
+        let updatedLastPollId: string | undefined;
+        let updatedLastPollDeadline: bigint | undefined;
+
         if (createResult.success) {
           console.log(
             "✅ Poll creation transaction confirmed, reading updated last active poll...",
@@ -227,16 +230,16 @@ export const useBullmeterPlugin = () => {
             data: updatedLastPollResult as `0x${string}`,
           });
 
-          const updatedLastPollId = updatedDecodedLastPoll[0];
+          updatedLastPollId = updatedDecodedLastPoll[0];
           const updatedLastPollVotePrice = updatedDecodedLastPoll[4];
-          const updatedLastPollDeadline = updatedDecodedLastPoll[6];
+          updatedLastPollDeadline = updatedDecodedLastPoll[6];
 
           // Store the poll data in the database
           try {
             const pollData: CreateBullMeter = {
               brandId: "417440a1a8ab42d0370a2e62817586db", //todo
               prompt: question,
-              pollId: updatedLastPollId,
+              pollId: updatedLastPollId as `0x${string}`,
               votePrice: updatedLastPollVotePrice.toString(),
               duration: duration,
               payoutAddresses: [guest as `0x${string}`],
@@ -268,7 +271,13 @@ export const useBullmeterPlugin = () => {
           }
         }
 
-        return createResult;
+        return {
+          ...createResult,
+          pollId: createResult.success ? updatedLastPollId : undefined,
+          deadline: createResult.success
+            ? Number(updatedLastPollDeadline)
+            : undefined,
+        };
       } catch (err: any) {
         console.error("Bullmeter create error:", err);
         setError(err.message || "Bullmeter create failed");
@@ -306,6 +315,8 @@ export const useBullmeterPlugin = () => {
 
         const extendResult = await executeBatch(calls, "Bullmeter extend");
 
+        let updatedLastPollDeadline: bigint | undefined;
+
         if (extendResult.success) {
           console.log(
             "✅ Poll extension transaction confirmed, updating database...",
@@ -342,7 +353,7 @@ export const useBullmeterPlugin = () => {
               data: updatedLastPollResult as `0x${string}`,
             });
 
-            const updatedLastPollDeadline = updatedDecodedLastPoll[6];
+            updatedLastPollDeadline = updatedDecodedLastPoll[6];
 
             const response = await ky.patch<{
               success: boolean;
@@ -371,7 +382,13 @@ export const useBullmeterPlugin = () => {
           }
         }
 
-        return extendResult;
+        return {
+          ...extendResult,
+          pollId: extendResult.success ? pollId : undefined,
+          deadline: extendResult.success
+            ? Number(updatedLastPollDeadline)
+            : undefined,
+        };
       } catch (err: any) {
         console.error("Bullmeter extend error:", err);
         setError(err.message || "Bullmeter extend failed");
@@ -409,6 +426,8 @@ export const useBullmeterPlugin = () => {
           "Bullmeter terminate",
         );
 
+        let updatedPollState: bigint | undefined;
+
         if (terminateResult.success) {
           console.log(
             "✅ Poll termination transaction confirmed, updating database...",
@@ -445,7 +464,7 @@ export const useBullmeterPlugin = () => {
               data: updatedPollStateResult as `0x${string}`,
             });
 
-            const updatedPollState = updatedDecodedLastPoll[5];
+            updatedPollState = updatedDecodedLastPoll[5];
 
             const response = await ky.patch<{
               success: boolean;
@@ -473,7 +492,13 @@ export const useBullmeterPlugin = () => {
           }
         }
 
-        return terminateResult;
+        return {
+          ...terminateResult,
+          pollId: terminateResult.success ? pollId : undefined,
+          deadline: terminateResult.success
+            ? Number(updatedPollState)
+            : undefined,
+        };
       } catch (err: any) {
         console.error("Bullmeter terminate error:", err);
         setError(err.message || "Bullmeter terminate failed");

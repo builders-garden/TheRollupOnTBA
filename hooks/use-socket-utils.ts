@@ -28,7 +28,7 @@ export function useSocketUtils() {
     [emit],
   );
 
-  const adminUpdateBullmeter = useCallback(
+  const adminUpdateSentimentPoll = useCallback(
     (data: UpdateSentimentPollEvent) => {
       emit(ClientToServerSocketEvents.UPDATE_SENTIMENT_POLL, data);
     },
@@ -61,7 +61,7 @@ export function useSocketUtils() {
     voteCasted,
     adminStartBullmeter,
     adminEndBullmeter,
-    adminUpdateBullmeter,
+    adminUpdateSentimentPoll,
     disconnect,
   };
 }

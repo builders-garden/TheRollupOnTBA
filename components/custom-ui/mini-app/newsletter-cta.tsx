@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../nb-button";
 import { useSubscribeNewsletter } from "@/hooks/use-subscribe-newsletter";
+import { toast } from "sonner";
 
 interface NewsletterCTAProps {
   label: string;
@@ -14,7 +15,17 @@ export const NewsletterCTA = ({ label }: NewsletterCTAProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubscribe = () => {
-    subscribe({ email: editingValue });
+    subscribe({ email: editingValue }, {
+      onSuccess: () => {
+        setEditingValue("");
+        toast.success("Subscribed to newsletter");
+        setIsEditing(false);
+      },
+      onError: () => {
+        toast.error("Failed to subscribe");
+        setIsEditing(false);
+      },
+    });
   };
 
   return (

@@ -31,8 +31,12 @@ const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
 export const SentimentContent = () => {
   const { subscribe, unsubscribe } = useSocket();
-  const { joinStream, adminStartSentimentPoll, adminEndSentimentPoll } =
-    useSocketUtils();
+  const {
+    joinStream,
+    adminStartSentimentPoll,
+    adminEndSentimentPoll,
+    adminUpdateSentimentPoll,
+  } = useSocketUtils();
   const {
     createBullmeter,
     extendBullmeter,
@@ -97,6 +101,14 @@ export const SentimentContent = () => {
         if (result.success) {
           toast.success("Poll terminated and funds claimed!");
 
+          // Add socket event to end the poll (client to server)
+          adminEndSentimentPoll({
+            id: result.pollId || "1",
+            votes: 0,
+            voters: 0,
+            results: { bullPercent: 0, bearPercent: 0 },
+          });
+
           // Refetch history to get updated poll data
           const historyResponse = await getAllPollsByCreator();
           if (historyResponse.success && historyResponse.result) {
@@ -125,9 +137,6 @@ export const SentimentContent = () => {
     setIsGuestPayoutActive(false);
     setIsLive(false);
     setCurrentLivePoll(null);
-    adminEndSentimentPoll({
-      id: "1",
-    });
   };
 
   // Handles claiming all claimable polls
@@ -206,6 +215,7 @@ export const SentimentContent = () => {
 
       const result = await extendBullmeter(currentLivePoll.pollId, newDuration);
 
+
       if (result.success) {
         toast.success("Poll extended successfully!");
 
@@ -214,11 +224,25 @@ export const SentimentContent = () => {
 
         // Refetch history to get updated poll data
         const historyResponse = await getAllPollsByCreator();
+
         if (historyResponse.success && historyResponse.result) {
           setPollHistory(historyResponse.result);
           checkForLivePoll(historyResponse.result);
+        } else {
+          console.log("❌ History refetch failed:", historyResponse);
         }
+
+        // Add socket event to extend the poll (client to server)
+        adminUpdateSentimentPoll({
+          id: result.pollId || "1",
+          position: PopupPositions.TOP_CENTER,
+          endTime: new Date((result.deadline || 0) * 1000),
+          voters: 0,
+          votes: 0,
+          results: { bullPercent: 0, bearPercent: 0 },
+        });
       } else {
+        console.log("❌ Extend failed:", result);
         toast.error("Failed to extend poll. Please try again.");
       }
     } catch (error) {
@@ -297,14 +321,11 @@ export const SentimentContent = () => {
         // Refetch history to get the new poll and check for live status
         const historyResponse = await getAllPollsByCreator();
         if (historyResponse.success && historyResponse.result) {
-          console.log(
-            `🔄 Refetched ${historyResponse.result.length} polls after creation`,
-          );
           setPollHistory(historyResponse.result);
           setCurrentPage(1); // Reset to first page
 
           // Check for live polls with the updated data
-          checkForLivePoll(historyResponse.result);
+          checkForLivePoll(historyResponse.result) || 0;
         }
 
         // Now proceed with the existing UI poll logic
@@ -317,12 +338,11 @@ export const SentimentContent = () => {
           },
           duration: 5,
         });
+        // Add socket event to start the poll (client to server)
         adminStartSentimentPoll({
-          username: "Admin",
-          position: PopupPositions.TOP_LEFT,
-          profilePicture: "https://via.placeholder.com/150",
+          position: PopupPositions.TOP_CENTER,
           pollQuestion: prompt,
-          endTime: new Date(Date.now() + duration.seconds * 1000),
+          endTime: new Date((result.deadline || 0) * 1000),
           guests,
           results: { bullPercent: 0, bearPercent: 0 },
         });
@@ -333,25 +353,13 @@ export const SentimentContent = () => {
     }
   };
 
-  // Handles the end of the live poll
-  const endLive = () => {
-    adminEndSentimentPoll({
-      id: "1",
-    });
-  };
-
   // Load poll history on component mount and check for live polls
   useEffect(() => {
-    console.log(
-      "🚀 SentimentContent component mounted - Loading poll history...",
-    );
-
     const loadHistory = async () => {
       try {
         const response = await getAllPollsByCreator();
 
         if (response.success && response.result) {
-          console.log(`📊 Loaded ${response.result.length} polls from history`);
           setPollHistory(response.result);
           setCurrentPage(1); // Reset to first page when new data is loaded
 
@@ -392,7 +400,7 @@ export const SentimentContent = () => {
   const checkForLivePoll = (polls: ReadPollData[]) => {
     if (polls.length === 0) {
       console.log("No polls found in history");
-      return;
+      return null;
     }
 
     // Get the most recent poll (assuming they're ordered by creation time)
@@ -411,19 +419,19 @@ export const SentimentContent = () => {
       const remainingSeconds = deadline - currentTime;
 
       console.log("✅ POLL IS LIVE!");
-      console.log(
-        `Remaining time: ${remainingSeconds} seconds (${Math.floor(remainingSeconds / 60)} minutes)`,
-      );
 
       // Update the prompt to show the live poll question
       setPrompt(mostRecentPoll.question);
 
       // Start the timer with the remaining time
       startTimer(remainingSeconds);
+      // Return the deadline of the live poll
+      return deadline;
     } else {
       setIsLive(false);
       setCurrentLivePoll(null);
       console.log("❌ POLL IS NOT LIVE - Deadline has passed");
+      return null;
     }
   };
 
@@ -645,7 +653,7 @@ export const SentimentContent = () => {
             <NBButton
               className="w-full bg-accent"
               disabled={isConfirmButtonDisabled || isCreatingBullmeter}
-              onClick={isLive ? endLive : startLive}>
+              onClick={isLive ? handleReset : startLive}>
               <AnimatePresence mode="wait">
                 {isLive ? (
                   <motion.p

@@ -11,7 +11,7 @@ interface UseTimerReturn {
   remainingSeconds: number;
   isPaused: boolean;
   addSeconds: (seconds: number) => void;
-  startTimer: () => void;
+  startTimer: (customSeconds?: number) => void;
   stopTimer: () => void;
 }
 
@@ -43,8 +43,8 @@ export const useTimer = ({
     setRemainingSeconds((prev) => Math.max(0, prev + seconds));
   };
 
-  const startTimer = () => {
-    setRemainingSeconds(initialSeconds);
+  const startTimer = (customSeconds?: number) => {
+    setRemainingSeconds(customSeconds ?? initialSeconds);
     setIsTimerGoing(true);
     setIsPaused(false);
   };

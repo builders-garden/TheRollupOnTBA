@@ -56,3 +56,28 @@ export interface GetAllPollsByCreatorResponse {
   result?: ReadPollData[];
   error?: string;
 }
+
+// Type for getLastActivePollForCreator function return
+export interface LastActivePollData {
+  pollId: `0x${string}`;
+  question: string;
+  creator: `0x${string}`;
+  guest: `0x${string}`;
+  votePrice: bigint;
+  startTime: bigint;
+  deadline: bigint;
+  maxVotePerUser: bigint;
+  guestSplitPercent: bigint;
+  totalYesVotes: bigint;
+  totalNoVotes: bigint;
+  totalUsdcCollected: bigint;
+  state: PollState;
+  result: PollResult;
+  fundsClaimed: boolean;
+}
+
+export interface GetLastActivePollResponse {
+  success: boolean;
+  result?: LastActivePollData;
+  error?: string;
+}

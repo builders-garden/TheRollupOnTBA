@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
 import { NBButton } from "@/components/custom-ui/nb-button";
+import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import {
   BASE_USDC_ADDRESS,
@@ -25,6 +26,7 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { tokenTraded } = useSocketUtils();
   const { address } = useAccount();
+  const { startConfetti } = useConfetti({});
 
   // Get the first wallet address with a base name
   const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;
@@ -65,6 +67,7 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
           tokenOutImageUrl: tokenImageUrl,
         });
         toast.success("Token swapped successfully");
+        startConfetti();
       }
     } catch (error) {
       console.error(

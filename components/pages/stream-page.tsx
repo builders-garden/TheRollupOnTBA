@@ -3,10 +3,12 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
+import { useConfetti } from "@/hooks/use-confetti";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { env } from "@/lib/zod";
@@ -23,6 +25,9 @@ export const StreamPage = () => {
   const { joinStream } = useSocketUtils();
   const { isConnected } = useSocket();
   const { brand, user } = useMiniAppAuth();
+  const { startConfetti } = useConfetti({
+    duration: 250,
+  });
 
   // Get active bullmeter poll for this brand
   const { data: activePoll, isLoading: isPollLoading } = useActiveBullMeter(
@@ -109,7 +114,7 @@ export const StreamPage = () => {
       // If not approved, approve first
       if (!hasEnoughAllowance) {
         await approve();
-      } 
+      }
 
       // Submit the vote
       await submitVote(
@@ -117,9 +122,12 @@ export const StreamPage = () => {
         isBull,
         "1", // 1 vote
       );
+
+      toast.success("Vote submitted");
+      startConfetti();
     } catch (error) {
-      console.error("❌ Vote failed:", error);
-      throw error; // Re-throw to let the UI handle the error state
+      console.log("❌ Vote failed:", error);
+      toast.error("Vote failed. Please try again.");
     } finally {
       // Clear loading state
       setLoadingButton(null);

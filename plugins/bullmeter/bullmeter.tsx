@@ -1,3 +1,5 @@
+import { Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
 import { cn } from "@/lib/utils";
@@ -60,19 +62,59 @@ export const Bullmeter = ({
           <NBButton
             onClick={button1OnClick}
             disabled={disabled || loading || button1Loading}
-            className={`bg-${button1Color} w-full`}>
-            <p className="text-white text-2xl font-extrabold">
-              {button1Loading ? "Loading..." : button1text}
-            </p>
+            className={`bg-${button1Color} w-full h-[50px]`}>
+            <AnimatePresence mode="wait">
+              {button1Loading ? (
+                <motion.div
+                  key="button1-loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <Loader2 className="size-5 text-white animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="button1-text"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <p className="text-white text-2xl font-extrabold">
+                    {button1text}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </NBButton>
           {/* Button 2 */}
           <NBButton
             onClick={button2OnClick}
             disabled={disabled || loading || button2Loading}
-            className={`bg-${button2Color} w-full`}>
-            <p className="text-white text-2xl font-extrabold">
-              {button2Loading ? "Loading..." : button2text}
-            </p>
+            className={`bg-${button2Color} w-full h-[50px]`}>
+            <AnimatePresence mode="wait">
+              {button2Loading ? (
+                <motion.div
+                  key="button2-loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <Loader2 className="size-5 text-white animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="button2-text"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <p className="text-white text-2xl font-extrabold">
+                    {button2text}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </NBButton>
         </div>
       </NBCard>

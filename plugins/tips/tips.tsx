@@ -1,10 +1,12 @@
 import { getPaymentStatus, pay } from "@base-org/account";
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useAccount } from "wagmi";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
 import { Input } from "@/components/shadcn-ui/input";
+import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useUsdcTransfer } from "@/hooks/use-usdc-transfer";
 import { FARCASTER_CLIENT_FID } from "@/lib/constants";
@@ -46,6 +48,7 @@ export const Tips = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const { tipSent } = useSocketUtils();
   const { address } = useAccount();
+  const { startConfetti } = useConfetti({});
 
   // Get the first wallet address with a base name
   const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;
@@ -90,6 +93,8 @@ export const Tips = ({
               profilePicture: user?.avatarUrl || "",
               tipAmount: amount.toString(),
             });
+            toast.success("Tip sent successfully");
+            startConfetti();
           } else if (isTransferError) {
             console.log("Farcaster USDC transfer failed:", transferError);
             throw transferError;

@@ -1,28 +1,44 @@
 import { sdk } from "@farcaster/miniapp-sdk";
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
-import { parseUnits } from "viem";
+import { useAccount } from "wagmi";
+import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { BASE_USDC_ADDRESS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { FeaturedToken } from "@/lib/database/db.schema";
+import { PopupPositions } from "@/lib/enums";
+import { User } from "@/lib/types/user.type";
+import { cn, formatWalletAddress } from "@/lib/utils";
+import { formatSingleToken } from "@/lib/utils/farcaster-tokens";
 import { Input } from "../../shadcn-ui/input";
 import { NBButton } from "../nb-button";
 import { NBModal } from "../nb-modal";
-import { formatSingleToken } from "@/lib/utils/farcaster-tokens";
 
 interface BuyTokenModalProps {
   trigger: React.ReactNode;
-  tokenName: string;
+  token: FeaturedToken;
+  user?: User;
 }
 
 type SelectableAmount = "1" | "3" | "5" | "10" | "custom";
 
-export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
+export const BuyTokenModal = ({ trigger, token, user }: BuyTokenModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [amountSelected, setAmountSelected] = useState<
     SelectableAmount | undefined
   >(undefined);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const { tokenTraded } = useSocketUtils();
+  const { address } = useAccount();
+
+  // Get the first wallet address with a base name
+  const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;
+
+  // token details
+  const tokenName = token.symbol || token.name || "";
+  const tokenAddress = token.address || NATIVE_TOKEN_ADDRESS;
+  const tokenChainId = token.chainId || 8453;
+  const tokenImageUrl = token.logoUrl || "";
 
   // Handles Modal Open
   const handleModalOpen = () => {
@@ -52,14 +68,31 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
       }
       // Placeholder token addresses - replace with actual token addresses
       const sellToken = formatSingleToken(BASE_USDC_ADDRESS); // USDC on Base
-      const buyToken = formatSingleToken(NATIVE_TOKEN_ADDRESS); // Placeholder token address
-      await sdk.actions.swapToken({
+      const buyToken = formatSingleToken(tokenAddress, tokenChainId); // Placeholder token address
+      const result = await sdk.actions.swapToken({
         sellToken,
         buyToken,
       });
 
-      // Close modal after successful swap
-      handleModalOpen();
+      if (result.success) {
+        // Send socket message to the server
+        tokenTraded({
+          position: PopupPositions.TOP_CENTER,
+          username: baseName || formatWalletAddress(address || ""),
+          profilePicture: user?.avatarUrl || "",
+          tokenInAmount: "0",
+          tokenInName: "USDC",
+          tokenInDecimals: 6,
+          tokenInImageUrl:
+            "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042194",
+          tokenOutAmount: "0",
+          tokenOutDecimals: 0,
+          tokenOutName: tokenName,
+          tokenOutImageUrl: tokenImageUrl,
+        });
+        // Close modal after successful swap
+        handleModalOpen();
+      }
     } catch (error) {
       console.error(
         `Token swap failed: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -136,24 +169,19 @@ export const BuyTokenModal = ({ trigger, tokenName }: BuyTokenModalProps) => {
       <div className="flex flex-col justify-center items-center w-full gap-5 mt-14">
         <AnimatePresence mode="wait">
           {!!amountSelected && (
-            <div className="flex flex-col justify-center items-center w-full gap-2.5">
-              <p className="text-base font-bold text-black/25">
-                You&apos;re getting 124,582 ${tokenName}
+            <NBButton
+              key="confirm"
+              className="w-full bg-accent"
+              onClick={handleSwapToken}
+              disabled={isProcessing}>
+              <p className="text-base text-white font-extrabold">
+                {isProcessing ? "Processing..." : "Confirm"}
               </p>
-              <NBButton
-                key="confirm"
-                className="w-full bg-accent"
-                onClick={handleSwapToken}
-                disabled={isProcessing}>
-                <p className="text-base text-white font-extrabold">
-                  {isProcessing ? "Processing..." : "Confirm"}
-                </p>
-              </NBButton>
-            </div>
+            </NBButton>
           )}
         </AnimatePresence>
         <button
-          className="text-base font-bold text-black"
+          className="text-base font-bold text-black cursor-pointer"
           onClick={handleModalOpen}>
           Cancel
         </button>

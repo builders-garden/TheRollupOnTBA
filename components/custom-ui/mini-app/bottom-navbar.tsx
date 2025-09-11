@@ -1,18 +1,22 @@
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useUsdcBalance } from "@/hooks/use-usdc-balance";
+import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
 import { NBButton } from "../nb-button";
 
 interface BottomNavbarProps {
-  userProfilePicture: string;
+  user: User;
 }
 
-export const BottomNavbar = ({ userProfilePicture }: BottomNavbarProps) => {
+export const BottomNavbar = ({ user }: BottomNavbarProps) => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const { address } = useAccount();
   const { balance: usdcBalance } = useUsdcBalance({ address });
+
+  // Get the first wallet address with a base name
+  const baseName = user.wallets.find((wallet) => wallet.baseName)?.baseName;
 
   // Handle Navbar Open
   const handleNavbarOpen = () => {
@@ -30,9 +34,9 @@ export const BottomNavbar = ({ userProfilePicture }: BottomNavbarProps) => {
           className="rounded-full py-1 w-[106px] shrink-0"
           onClick={handleNavbarOpen}>
           <div className="flex justify-center items-center w-full gap-1.5">
-            {userProfilePicture ? (
+            {user.avatarUrl ? (
               <img
-                src={userProfilePicture}
+                src={user.avatarUrl}
                 alt="User profile picture"
                 className="size-[24px] bg-warning rounded-full border border-black"
               />
@@ -67,11 +71,19 @@ export const BottomNavbar = ({ userProfilePicture }: BottomNavbarProps) => {
           />
         </div>
 
-        {address && isNavbarOpen && (
-          <div className="flex justify-center items-center shrink-0">
-            {formatWalletAddress(address)}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {isNavbarOpen && (
+            <motion.div
+              key="base-name-or-address"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex justify-center items-center shrink-0 font-bold">
+              {baseName || formatWalletAddress(address || "")}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </nav>
   );

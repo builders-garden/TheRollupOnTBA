@@ -42,8 +42,8 @@ export const StreamPage = () => {
   useEffect(() => {
     if (isConnected) {
       joinStream({
-        username: "John Doe",
-        profilePicture: "https://via.placeholder.com/150",
+        username: user.data?.username || "",
+        profilePicture: user.data?.avatarUrl || "",
       });
     }
   }, [isConnected, joinStream]);
@@ -82,7 +82,7 @@ export const StreamPage = () => {
             <ShareButton
               linkCopied
               miniappUrl="https://farcaster.miniapp.builders"
-              buttonClassName="shrink-1 w-min"
+              buttonClassName="shrink-1 w-min cursor-pointer"
             />
           </div>
           {brand.data?.logoUrl && (
@@ -128,11 +128,15 @@ export const StreamPage = () => {
               text: "Custom",
             }}
             payoutAddress={brand.tipSettings.data.payoutAddress}
+            user={user.data}
           />
         )}
 
         {/* Featured Tokens */}
-        <FeaturedTokens tokens={brand.featuredTokens.data || []} />
+        <FeaturedTokens
+          tokens={brand.featuredTokens.data || []}
+          user={user.data}
+        />
 
         {/* About Section */}
         <AboutSection
@@ -211,7 +215,7 @@ export const StreamPage = () => {
         </div> */}
       </div>
       {/* Floating Bottom Navbar */}
-      <BottomNavbar userProfilePicture={user.data?.avatarUrl || ""} />
+      {user.data && <BottomNavbar user={user.data} />}
     </motion.div>
   );
 };

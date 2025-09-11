@@ -1,12 +1,16 @@
 import { getPaymentStatus, pay } from "@base-org/account";
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
 import { Input } from "@/components/shadcn-ui/input";
+import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useUsdcTransfer } from "@/hooks/use-usdc-transfer";
 import { FARCASTER_CLIENT_FID } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { PopupPositions } from "@/lib/enums";
+import { User } from "@/lib/types/user.type";
+import { cn, formatWalletAddress } from "@/lib/utils";
 
 interface TipsProps {
   label?: string;
@@ -26,6 +30,7 @@ interface TipsProps {
     buttonClassName?: string;
   };
   payoutAddress: string;
+  user?: User;
 }
 
 export const Tips = ({
@@ -34,10 +39,16 @@ export const Tips = ({
   payoutAddress,
   tips,
   customTipButton,
+  user,
 }: TipsProps) => {
   const [isCustomTipModalOpen, setIsCustomTipModalOpen] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const { tipSent } = useSocketUtils();
+  const { address } = useAccount();
+
+  // Get the first wallet address with a base name
+  const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;
 
   // Usa il tuo hook con parametri fissi
   const {
@@ -73,12 +84,21 @@ export const Tips = ({
           if (isTransferSuccess) {
             console.log("Transaction hash:", txHash);
             // You can add success notification here
+            tipSent({
+              position: PopupPositions.TOP_CENTER,
+              username:
+                baseName ||
+                user?.username ||
+                formatWalletAddress(address || ""),
+              profilePicture: user?.avatarUrl || "",
+              tipAmount: amount.toString(),
+            });
           } else if (isTransferError) {
-            console.error("Farcaster USDC transfer failed:", transferError);
+            console.log("Farcaster USDC transfer failed:", transferError);
             throw transferError;
           }
         } catch (farcasterError) {
-          console.error("Farcaster USDC transfer failed:", farcasterError);
+          console.log("Farcaster USDC transfer failed:", farcasterError);
           throw farcasterError; // Re-throw to be caught by outer catch
         }
 
@@ -101,11 +121,18 @@ export const Tips = ({
       if (status === "completed") {
         console.log("🎉 Base payment settled");
         // You can add success notification here
+        tipSent({
+          position: PopupPositions.TOP_CENTER,
+          username:
+            baseName || user?.username || formatWalletAddress(address || ""),
+          profilePicture: user?.avatarUrl || "",
+          tipAmount: amount.toString(),
+        });
       } else {
         console.log("Base payment status:", status);
       }
     } catch (error) {
-      console.error(
+      console.log(
         `Payment failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
       // You can add error notification here

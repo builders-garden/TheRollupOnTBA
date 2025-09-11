@@ -22,6 +22,7 @@ export const brandsTable = sqliteTable("brands", {
   name: text("name"),
   logoUrl: text("logo_url"),
   description: text("description"),
+  streamTitle: text("stream_title"),
   youtubeLiveUrl: text("youtube_live_url"),
   activePlugins: text("active_plugins", { mode: "json" }).$type<
     ActivePlugins[]

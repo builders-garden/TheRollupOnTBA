@@ -1,5 +1,6 @@
 "use client";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { State } from "wagmi";
@@ -11,6 +12,8 @@ import { NotificationQueueProvider } from "@/contexts/notification-queue-context
 import { SocketProvider } from "@/contexts/socket-context";
 import { CustomWagmiProvider } from "@/contexts/wagmi-provider";
 import { wagmiConfigMiniApp } from "@/lib/reown";
+
+const queryClient = new QueryClient();
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -32,7 +35,11 @@ export default function Providers({ children, initialState }: ProvidersProps) {
   if (!isInMiniApp && pathName.includes("overlay")) {
     return (
       <SocketProvider>
-        <NotificationQueueProvider>{children}</NotificationQueueProvider>
+        <NotificationQueueProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </NotificationQueueProvider>
       </SocketProvider>
     );
   }

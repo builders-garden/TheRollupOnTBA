@@ -9,6 +9,7 @@ import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-n
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { PopupPositions } from "@/lib/enums";
+import { env } from "@/lib/zod";
 
 export const PopupsContent = () => {
   useSocket();
@@ -189,10 +190,10 @@ export const PopupsContent = () => {
             <div className="flex flex-col gap-1">
               <p className="font-medium opacity-50 text-sm">Popups URL</p>
               <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${window.location.origin}/overlay/popups`}
+                {`${env.NEXT_PUBLIC_URL}/overlay/popups`}
                 <CopyButton
                   key="copy-button"
-                  stringToCopy={`${window.location.origin}/overlay/popups`}
+                  stringToCopy={`${env.NEXT_PUBLIC_URL}/overlay/popups`}
                 />
               </div>
             </div>
@@ -201,10 +202,10 @@ export const PopupsContent = () => {
                 Bull-meter Poll URL
               </p>
               <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${window.location.origin}/overlay/sentiment`}
+                {`${env.NEXT_PUBLIC_URL}/overlay/sentiment`}
                 <CopyButton
                   key="copy-button"
-                  stringToCopy={`${window.location.origin}/overlay/sentiment`}
+                  stringToCopy={`${env.NEXT_PUBLIC_URL}/overlay/sentiment`}
                 />
               </div>
             </div>

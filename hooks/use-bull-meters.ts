@@ -38,10 +38,10 @@ export const useBullMeters = (params?: {
   if (params?.limit) searchParams.set("limit", params.limit.toString());
 
   const queryString = searchParams.toString();
-  const url = `/api/bull-meters${queryString ? `?${queryString}` : ""}`;
+  const url = `/api/bullmeters${queryString ? `?${queryString}` : ""}`;
 
   return useApiQuery<BullMetersApiResponse>({
-    queryKey: ["bull-meters", params],
+    queryKey: ["bullmeters", params],
     url,
     isProtected: true,
   });
@@ -49,9 +49,18 @@ export const useBullMeters = (params?: {
 
 export const useBullMeter = (bullMeterId: string) => {
   return useApiQuery<BullMeterApiResponse>({
-    queryKey: ["bull-meters", bullMeterId],
-    url: `/api/bull-meters/${bullMeterId}`,
+    queryKey: ["bullmeters", bullMeterId],
+    url: `/api/bullmeters/${bullMeterId}`,
     enabled: !!bullMeterId,
+    isProtected: true,
+  });
+};
+
+export const useActiveBullMeter = (brandId: string) => {
+  return useApiQuery<BullMeterApiResponse>({
+    queryKey: ["active-bullmeter", brandId],
+    url: `/api/bullmeters/active/${brandId}`,
+    enabled: !!brandId,
     isProtected: true,
   });
 };
@@ -59,7 +68,7 @@ export const useBullMeter = (bullMeterId: string) => {
 // Mutation hooks
 export const useCreateBullMeter = () => {
   return useApiMutation<BullMeterApiResponse, CreateBullMeter>({
-    url: "/api/bull-meters",
+    url: "/api/bullmeters",
     method: "POST",
     body: (variables) => variables,
   });
@@ -70,7 +79,7 @@ export const useUpdateBullMeter = () => {
     BullMeterApiResponse,
     { bullMeterId: string } & UpdateBullMeter
   >({
-    url: (variables) => `/api/bull-meters/${variables.bullMeterId}`,
+    url: (variables) => `/api/bullmeters/${variables.bullMeterId}`,
     method: "PUT",
     body: ({ bullMeterId, ...data }) => data,
   });
@@ -81,7 +90,7 @@ export const useDeleteBullMeter = () => {
     { success: boolean; message: string },
     { bullMeterId: string }
   >({
-    url: (variables) => `/api/bull-meters/${variables.bullMeterId}`,
+    url: (variables) => `/api/bullmeters/${variables.bullMeterId}`,
     method: "DELETE",
   });
 };

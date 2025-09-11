@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gte, lte } from "drizzle-orm";
+import { and, count, desc, eq, gt, gte, lte } from "drizzle-orm";
 import { db } from "@/lib/database";
 import {
   brandsTable,
@@ -85,6 +85,29 @@ export const getRecentBullMeters = async (limit = 10): Promise<BullMeter[]> => {
     .from(bullMetersTable)
     .orderBy(desc(bullMetersTable.createdAt))
     .limit(limit);
+};
+
+/**
+ * Get active bull meter for a brand ID
+ * @param brandId - The brand ID
+ * @returns Active bull meter
+ */
+export const getActiveBullMeterForBrandId = async (
+  brandId: string,
+): Promise<BullMeter> => {
+  const now = Math.floor(Date.now() / 1000);
+  const [activeBullMeter] = await db
+    .select()
+    .from(bullMetersTable)
+    .orderBy(desc(bullMetersTable.createdAt))
+    .where(
+      and(
+        eq(bullMetersTable.brandId, brandId),
+        gt(bullMetersTable.deadline, now),
+      ),
+    );
+
+  return activeBullMeter;
 };
 
 /**

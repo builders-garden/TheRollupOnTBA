@@ -13,6 +13,7 @@ export default async function middleware(req: NextRequest) {
     req.nextUrl.pathname === "/api/auth/base/nonce" ||
     req.nextUrl.pathname === "/api/auth/base/sign-in" ||
     req.nextUrl.pathname === "/api/auth/logout" ||
+    req.nextUrl.pathname === "/api/bullmeters/active/:brandId" ||
     req.nextUrl.pathname.includes("/api/og") ||
     req.nextUrl.pathname.includes("/api/webhook/farcaster")
   ) {

@@ -9,6 +9,7 @@ import {
   GetAllPollsByCreatorResponse,
   ReadPollData,
 } from "@/lib/types/bullmeter.type";
+import { env } from "@/lib/zod";
 
 // Types for wallet_sendCalls
 interface SendCallsCall {
@@ -237,7 +238,7 @@ export const useBullmeterPlugin = () => {
           // Store the poll data in the database
           try {
             const pollData: CreateBullMeter = {
-              brandId: "417440a1a8ab42d0370a2e62817586db", //todo
+              brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
               prompt: question,
               pollId: updatedLastPollId as `0x${string}`,
               votePrice: updatedLastPollVotePrice.toString(),

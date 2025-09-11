@@ -67,9 +67,11 @@ export const BottomNavbar = ({ userProfilePicture }: BottomNavbarProps) => {
           />
         </div>
 
-        <div className="flex justify-center items-center shrink-0">
-          {formatWalletAddress(address || "")}
-        </div>
+        {address && isNavbarOpen && (
+          <div className="flex justify-center items-center shrink-0">
+            {formatWalletAddress(address)}
+          </div>
+        )}
       </div>
     </nav>
   );

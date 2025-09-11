@@ -729,10 +729,12 @@ export const SentimentContent = () => {
               </NBCard>
             )}
             <NBButton
-              className="px-4 py-2 text-sm bg-warning hover:bg-warning/90"
+              className="bg-warning hover:bg-warning/90 shrink-0"
               disabled={isClaiming}
               onClick={handleClaimAll}>
-              {isClaiming ? "Claiming..." : "Claim All"}
+              <p className="font-extrabold text-white">
+                {isClaiming ? "Claiming..." : "Claim All"}
+              </p>
             </NBButton>
           </div>
         </div>

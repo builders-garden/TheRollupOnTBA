@@ -2,6 +2,7 @@ import ky from "ky";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { isAddress } from "viem/utils";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
@@ -146,6 +147,10 @@ export const TokensSearchModal = ({
             );
             setSelectedTokens([]);
           }, 300);
+        },
+        onError: () => {
+          toast.error("An error occurred while adding the tokens");
+          setIsCreatingFeaturedTokens(false);
         },
       },
     );

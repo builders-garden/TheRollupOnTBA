@@ -1,5 +1,4 @@
 import { sdk as miniappSdk } from "@farcaster/miniapp-sdk";
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import {
   createContext,
   ReactNode,
@@ -11,21 +10,29 @@ import {
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useFarcasterSignIn } from "@/hooks/use-auth-hooks";
+import { useBrandById } from "@/hooks/use-brands";
+import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
+import { useTip } from "@/hooks/use-tips";
+import { Brand, FeaturedToken, Tip } from "@/lib/database/db.schema";
 import { User } from "@/lib/types/user.type";
+import { env } from "@/lib/zod";
 
 interface MiniAppAuthContextType {
   user: {
     data: User | undefined;
-    refetch: (options?: RefetchOptions) => Promise<
-      QueryObserverResult<
-        {
-          user?: User;
-          status: "ok" | "nok";
-          error?: string;
-        },
-        Error
-      >
-    >;
+    refetch: () => Promise<void>;
+  };
+  brand: {
+    data: Brand | undefined;
+    refetch: () => Promise<void>;
+    tipSettings: {
+      data: Tip | undefined;
+      refetch: () => Promise<void>;
+    };
+    featuredTokens: {
+      data: FeaturedToken[];
+      refetch: () => Promise<void>;
+    };
   };
   isLoading: boolean;
   error: Error | null;
@@ -55,6 +62,9 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
   } = useMiniApp();
 
   // Local state
+  const [brand, setBrand] = useState<Brand>();
+  const [tipSettings, setTipSettings] = useState<Tip>();
+  const [featuredTokens, setFeaturedTokens] = useState<FeaturedToken[]>([]);
   const [user, setUser] = useState<User>();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -66,8 +76,85 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     refetch: refetchUser,
     isLoading: isFetchingUser,
     isFetched: isFetchedAuthUser,
-    error: userError,
   } = useAuthCheck(); // Always fetch to check for existing token
+
+  // Fetching the brand when the user is connected
+  // TODO: Remove the hardcoded brand id
+  const {
+    data: brandData,
+    isLoading: isFetchingBrand,
+    error: brandError,
+    refetch: refetchBrand,
+  } = useBrandById(env.NEXT_PUBLIC_ROLLUP_BRAND_ID);
+
+  // Fetching the tip settings when the brand is connected
+  const {
+    data: tipSettingsData,
+    isLoading: isFetchingTipSettings,
+    error: tipSettingsError,
+    refetch: refetchTipSettings,
+  } = useTip({ brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID });
+
+  // Fetching the featured tokens when the brand is connected
+  const {
+    data: featuredTokensData,
+    isLoading: isFetchingFeaturedTokens,
+    error: featuredTokensError,
+    refetch: refetchFeaturedTokens,
+  } = useFeaturedTokens({ brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID });
+
+  // Auto set brand logic
+  useEffect(() => {
+    if (brandData && brandData.data) {
+      setBrand(brandData.data);
+    }
+  }, [brandData]);
+
+  // Auto set tip settings logic
+  useEffect(() => {
+    if (tipSettingsData && tipSettingsData.data) {
+      setTipSettings(tipSettingsData.data);
+    }
+  }, [tipSettingsData]);
+
+  // Auto set featured tokens logic
+  useEffect(() => {
+    if (featuredTokensData && featuredTokensData.data) {
+      setFeaturedTokens(featuredTokensData.data as FeaturedToken[]);
+    }
+  }, [featuredTokensData]);
+
+  // Handles the refetching of the brand
+  const executeRefetchBrand = useCallback(async () => {
+    const newBrand = await refetchBrand();
+    if (newBrand.isSuccess && newBrand.data?.data) {
+      setBrand(newBrand.data.data);
+    }
+  }, [refetchBrand]);
+
+  // Handles the refetching of the user
+  const executeRefetchUser = useCallback(async () => {
+    const newUser = await refetchUser();
+    if (newUser.isSuccess && newUser.data?.user) {
+      setUser(newUser.data.user);
+    }
+  }, [refetchUser]);
+
+  // Handles the refetching of the tip settings
+  const executeRefetchTipSettings = useCallback(async () => {
+    const newTipSettings = await refetchTipSettings();
+    if (newTipSettings.isSuccess && newTipSettings.data?.data) {
+      setTipSettings(newTipSettings.data.data);
+    }
+  }, [refetchTipSettings]);
+
+  // Handles the refetching of the featured tokens
+  const executeRefetchFeaturedTokens = useCallback(async () => {
+    const newFeaturedTokens = await refetchFeaturedTokens();
+    if (newFeaturedTokens.isSuccess && newFeaturedTokens.data?.data) {
+      setFeaturedTokens(newFeaturedTokens.data.data as FeaturedToken[]);
+    }
+  }, [refetchFeaturedTokens]);
 
   // Farcaster sign-in mutation
   const { mutate: farcasterSignIn } = useFarcasterSignIn({
@@ -80,7 +167,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
       }
     },
     onError: (error: Error) => {
-      console.error("Farcaster sign-in error:", error);
+      console.log("Farcaster sign-in error:", error);
       setError(error);
       setIsSigningIn(false);
     },
@@ -154,14 +241,29 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
   const value: MiniAppAuthContextType = {
     user: {
       data: user,
-      refetch: refetchUser,
+      refetch: executeRefetchUser,
+    },
+    brand: {
+      data: brand,
+      refetch: executeRefetchBrand,
+      tipSettings: {
+        data: tipSettings,
+        refetch: executeRefetchTipSettings,
+      },
+      featuredTokens: {
+        data: featuredTokens,
+        refetch: executeRefetchFeaturedTokens,
+      },
     },
     isLoading:
       isEnvironmentLoading ||
       (isInMiniApp && !isMiniAppReady) ||
       isFetchingUser ||
-      isSigningIn,
-    error: error || userError,
+      isSigningIn ||
+      isFetchingBrand ||
+      isFetchingTipSettings ||
+      isFetchingFeaturedTokens,
+    error: error || brandError || tipSettingsError || featuredTokensError,
   };
 
   return (

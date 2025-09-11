@@ -72,20 +72,30 @@ export const PayoutAddressInput = () => {
         : undefined;
 
       if (isPayoutAddressAnAddress) {
-        payoutBaseName = (await getBasenameName(
-          editingTextFieldValue,
-        )) as string;
-        payoutEnsName = (await getEnsName(editingTextFieldValue)) as string;
+        payoutBaseName = (await getBasenameName(editingTextFieldValue)) || "";
+        payoutEnsName = (await getEnsName(editingTextFieldValue)) || "";
       } else if (isPayoutAddressABaseName) {
         payoutAddress = (await getAddressFromBaseName(
           editingTextFieldValue,
         )) as Address;
-        payoutEnsName = (await getEnsName(payoutAddress)) as string;
+        // If there is no payout address associated with the Base name, return
+        if (!payoutAddress) {
+          toast.error("Invalid Base name");
+          setIsUpdating(false);
+          return;
+        }
+        payoutEnsName = (await getEnsName(payoutAddress)) || "";
       } else if (isPayoutAddressAnEnsName) {
         payoutAddress = (await getAddressFromEnsName(
           editingTextFieldValue,
         )) as Address;
-        payoutBaseName = (await getBasenameName(payoutAddress)) as string;
+        // If there is no payout address associated with the ENS name, return
+        if (!payoutAddress) {
+          toast.error("Invalid ENS name");
+          setIsUpdating(false);
+          return;
+        }
+        payoutBaseName = (await getBasenameName(payoutAddress)) || "";
       }
 
       updateTip(

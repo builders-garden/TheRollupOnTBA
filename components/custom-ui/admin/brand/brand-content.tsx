@@ -1,5 +1,6 @@
 import {
   Globe,
+  Podcast,
   Signature,
   Sparkle,
   Twitch,
@@ -36,6 +37,7 @@ export const BrandContent = () => {
   );
   const [xUrl, setXUrl] = useState(brandData?.socialMediaUrls?.x || "");
   const [websiteUrl, setWebsiteUrl] = useState(brandData?.websiteUrl || "");
+  const [streamTitle, setStreamTitle] = useState(brandData?.streamTitle || "");
 
   // Text area description state
   const [description, setDescription] = useState(brandData?.description || "");
@@ -149,12 +151,21 @@ export const BrandContent = () => {
         </h1>
         <div className="grid grid-cols-4 gap-5 w-full">
           <NBTextInput
-            label="Name"
+            label="Brand Name"
             icon={<Signature className="size-5" />}
             placeholder="Your brand's name here..."
             value={brandName}
             setValue={setBrandName}
             onConfirm={handleUpdateBrandField("name")}
+            isUpdating={isUpdatingBrand}
+          />
+          <NBTextInput
+            label="Stream Title"
+            icon={<Podcast className="size-5" />}
+            placeholder="Your stream title here..."
+            value={streamTitle}
+            setValue={setStreamTitle}
+            onConfirm={handleUpdateBrandField("streamTitle")}
             isUpdating={isUpdatingBrand}
           />
           <TextDescriptionArea

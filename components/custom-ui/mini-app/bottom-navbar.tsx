@@ -1,12 +1,18 @@
 import { motion } from "motion/react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useAccount } from "wagmi";
+import { useUsdcBalance } from "@/hooks/use-usdc-balance";
+import { cn, formatWalletAddress } from "@/lib/utils";
 import { NBButton } from "../nb-button";
-import { TopUpModal } from "./top-up-modal";
-import { WithdrawModal } from "./withdraw-modal";
 
-export const BottomNavbar = () => {
+interface BottomNavbarProps {
+  userProfilePicture: string;
+}
+
+export const BottomNavbar = ({ userProfilePicture }: BottomNavbarProps) => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+  const { address } = useAccount();
+  const { balance: usdcBalance } = useUsdcBalance({ address });
 
   // Handle Navbar Open
   const handleNavbarOpen = () => {
@@ -24,8 +30,18 @@ export const BottomNavbar = () => {
           className="rounded-full py-1 w-[106px] shrink-0"
           onClick={handleNavbarOpen}>
           <div className="flex justify-center items-center w-full gap-1.5">
-            <div className="size-[24px] bg-warning rounded-full border border-black" />
-            <p className="text-xl font-bold">$5.76</p>
+            {userProfilePicture ? (
+              <img
+                src={userProfilePicture}
+                alt="User profile picture"
+                className="size-[24px] bg-warning rounded-full border border-black"
+              />
+            ) : (
+              <div className="size-[24px] bg-warning rounded-full border border-black" />
+            )}
+            <p className="text-xl font-bold">
+              ${Number(usdcBalance?.formatted).toFixed(1)}
+            </p>
           </div>
         </NBButton>
         <div className="flex justify-center items-center w-full gap-1.5 flex-shrink-1">
@@ -51,10 +67,11 @@ export const BottomNavbar = () => {
           />
         </div>
 
-        <div className="flex justify-center items-center gap-2.5 shrink-0">
-          <WithdrawModal isNavbarOpen={isNavbarOpen} />
-          <TopUpModal isNavbarOpen={isNavbarOpen} />
-        </div>
+        {address && isNavbarOpen && (
+          <div className="flex justify-center items-center shrink-0">
+            {formatWalletAddress(address)}
+          </div>
+        )}
       </div>
     </nav>
   );

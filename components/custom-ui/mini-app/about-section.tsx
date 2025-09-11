@@ -1,5 +1,6 @@
 import { Globe, Twitch, Twitter, Youtube } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 interface AboutSectionProps {
   label: string;
@@ -24,36 +25,24 @@ export const AboutSection = ({
         <h1 className="text-sm font-bold">{label}</h1>
         <div className="flex justify-end items-center gap-2.5">
           {youtubeUrl && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.open(youtubeUrl, "_blank")}>
+            <Link href={youtubeUrl} target="_blank">
               <Youtube className="size-5" />
-            </motion.button>
+            </Link>
           )}
           {twitchUrl && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.open(twitchUrl, "_blank")}>
+            <Link href={twitchUrl} target="_blank">
               <Twitch className="size-5" />
-            </motion.button>
+            </Link>
           )}
           {twitterUrl && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.open(twitterUrl, "_blank")}>
+            <Link href={twitterUrl} target="_blank">
               <Twitter className="size-5" />
-            </motion.button>
+            </Link>
           )}
           {websiteUrl && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.open(websiteUrl, "_blank")}>
+            <Link href={websiteUrl} target="_blank">
               <Globe className="size-5" />
-            </motion.button>
+            </Link>
           )}
         </div>
       </div>

@@ -1,8 +1,6 @@
 import { getPaymentStatus, pay } from "@base-org/account";
-import { Context } from "@farcaster/miniapp-core";
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useState } from "react";
-import { parseUnits } from "viem";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
 import { Input } from "@/components/shadcn-ui/input";
@@ -27,11 +25,13 @@ interface TipsProps {
     textClassName?: string;
     buttonClassName?: string;
   };
+  payoutAddress: string;
 }
 
 export const Tips = ({
   label = "Tip",
   showLabel = true,
+  payoutAddress,
   tips,
   customTipButton,
 }: TipsProps) => {
@@ -49,7 +49,7 @@ export const Tips = ({
     error: transferError,
   } = useUsdcTransfer({
     amount: "1", // Valore di default
-    receiver: "0x4110c5B6D9fAbf629c43a7B0279b9969CB698971", // Valore di default
+    receiver: payoutAddress,
   });
 
   // Handles Custom Tip Modal Open
@@ -66,13 +66,9 @@ export const Tips = ({
       if (
         (await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster
       ) {
-      
         try {
           // Execute the transfer using your hook with dynamic parameters
-          await transferUsdc(
-            amount.toString(),
-            "0x4110c5B6D9fAbf629c43a7B0279b9969CB698971",
-          );
+          await transferUsdc(amount.toString(), payoutAddress);
 
           if (isTransferSuccess) {
             console.log("Transaction hash:", txHash);
@@ -92,10 +88,9 @@ export const Tips = ({
       // Base payment flow for non-Farcaster environments
       const payment = await pay({
         amount: amount.toFixed(2), // USD amount (USDC used internally)
-        to: "0x4110c5B6D9fAbf629c43a7B0279b9969CB698971", // TODO: change to the recipient address
+        to: payoutAddress,
         testnet: false, // set false for Mainnet
       });
-
 
       // Poll until mined
       const { status } = await getPaymentStatus({

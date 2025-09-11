@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
+import { useAccount } from "wagmi";
+import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useSocket } from "@/hooks/use-socket";
@@ -13,13 +15,13 @@ import { Tips } from "@/plugins/tips/tips";
 import { AboutSection } from "../custom-ui/mini-app/about-section";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
 import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
-import { NBButton } from "../custom-ui/nb-button";
 import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
 
 export const StreamPage = () => {
   const { joinStream } = useSocketUtils();
   const { isConnected } = useSocket();
+  const { brand, user } = useMiniAppAuth();
 
   // USDC approval hook
   const {
@@ -53,15 +55,21 @@ export const StreamPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="relative flex flex-col justify-center items-start h-full w-full no-scrollbar">
-      <iframe
-        width="100%"
-        height="265px"
-        src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=cBiXzo8PUe3GQ7dx"
-        title="YouTube video player"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
-      />
+      {brand.data?.youtubeLiveUrl ? (
+        <iframe
+          width="100%"
+          height="265px"
+          src={brand.data.youtubeLiveUrl}
+          title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      ) : (
+        <div className="flex justify-center items-center w-full h-[265px]">
+          <p className="text-sm">No Livestream found, try again later!</p>
+        </div>
+      )}
 
       {/* Bottom Section */}
       <div className="flex flex-col justify-start items-center h-full w-full px-5 py-5 pb-[82px] gap-5">
@@ -69,7 +77,7 @@ export const StreamPage = () => {
         <div className="flex flex-col justify-center items-center w-full gap-0.5">
           <div className="flex justify-between items-center w-full">
             <h1 className="shrink-0 font-extrabold text-xl">
-              The Memecoin Rug Problems
+              {brand.data?.streamTitle || `The Rollup Streaming`}
             </h1>
             <ShareButton
               linkCopied
@@ -77,16 +85,18 @@ export const StreamPage = () => {
               buttonClassName="shrink-1 w-min"
             />
           </div>
-          <div className="flex justify-start items-center w-full gap-1.5">
-            <p>by</p>
-            <Image
-              src="/images/rollup_logo.png"
-              alt="Rollup Logo"
-              width={96}
-              height={21}
-              className="h-auto"
-            />
-          </div>
+          {brand.data?.logoUrl && (
+            <div className="flex justify-start items-center w-full gap-1.5">
+              <p className="text-sm">by</p>
+              <Image
+                src={brand.data.logoUrl}
+                alt={brand.data.name || ""}
+                width={20}
+                height={21}
+              />
+              <p className="text-md">{brand.data.name}</p>
+            </div>
+          )}
         </div>
 
         <Separator className="w-full bg-border" />
@@ -103,45 +113,42 @@ export const StreamPage = () => {
         />
 
         {/* Tip Buttons */}
-        <Tips
-          showLabel
-          tips={[
-            { amount: 0.5, buttonColor: "blue" },
-            { amount: 1, buttonColor: "blue" },
-            { amount: 3, buttonColor: "blue" },
-            { amount: 5, buttonColor: "blue" },
-            { amount: 10, buttonColor: "blue" },
-          ]}
-          customTipButton={{
-            color: "blue",
-            text: "Custom",
-          }}
-        />
+        {brand.tipSettings.data?.payoutAddress && (
+          <Tips
+            showLabel
+            tips={[
+              { amount: 0.5, buttonColor: "blue" },
+              { amount: 1, buttonColor: "blue" },
+              { amount: 3, buttonColor: "blue" },
+              { amount: 5, buttonColor: "blue" },
+              { amount: 10, buttonColor: "blue" },
+            ]}
+            customTipButton={{
+              color: "blue",
+              text: "Custom",
+            }}
+            payoutAddress={brand.tipSettings.data.payoutAddress}
+          />
+        )}
 
         {/* Featured Tokens */}
-        <FeaturedTokens
-          tokens={[
-            { name: "LIMONE", color: "bg-yellow-500" },
-            { name: "DRONE", color: "bg-black" },
-            { name: "CASO", color: "bg-gray-500" },
-          ]}
-        />
+        <FeaturedTokens tokens={brand.featuredTokens.data || []} />
 
         {/* About Section */}
         <AboutSection
           label="About"
-          text="Tune in as we unpack why Ethereum isn't just a blockchain it's a lifestyle. From dank memes to rollup wars, we're breaking down the culture, the tech, and why everything (yes, even your cat pics) should settle on Base."
-          youtubeUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-          twitchUrl="https://www.twitch.tv/rollup"
-          twitterUrl="https://x.com/rollup"
-          websiteUrl="https://rollup.com"
+          text={brand.data?.description || ""}
+          youtubeUrl={brand.data?.socialMediaUrls?.youtube || ""}
+          twitchUrl={brand.data?.socialMediaUrls?.twitch || ""}
+          twitterUrl={brand.data?.socialMediaUrls?.x || ""}
+          websiteUrl={brand.data?.websiteUrl || ""}
         />
 
         {/* Newsletter CTA */}
-        <NewsletterCTA label="Subscribe to newsletter" onClick={() => {}} />
+        <NewsletterCTA label="Subscribe to newsletter" />
 
         {/* USDC Approval Section */}
-        <div className="flex flex-col justify-center items-center w-full gap-3">
+        {/* <div className="flex flex-col justify-center items-center w-full gap-3">
           <h2 className="text-base font-bold">Vote on ETH vs BTC</h2>
 
           {!isApproved ? (
@@ -201,10 +208,10 @@ export const StreamPage = () => {
               Vote submitted successfully!
             </p>
           )}
-        </div>
+        </div> */}
       </div>
       {/* Floating Bottom Navbar */}
-      <BottomNavbar />
+      <BottomNavbar userProfilePicture={user.data?.avatarUrl || ""} />
     </motion.div>
   );
 };

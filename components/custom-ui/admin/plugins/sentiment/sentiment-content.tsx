@@ -5,6 +5,7 @@ import { Address, isAddress } from "viem";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
+import { useBullmeterClaim } from "@/hooks/use-bullmeter-claim";
 import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
@@ -40,6 +41,11 @@ export const SentimentContent = () => {
     isLoading: isCreatingBullmeter,
     error: bullmeterError,
   } = useBullmeterPlugin();
+  const {
+    claimAllBullmeters,
+    isLoading: isClaiming,
+    error: claimHookError,
+  } = useBullmeterClaim();
   const { admin } = useAdminAuth();
 
   const [prompt, setPrompt] = useState("");
@@ -58,6 +64,11 @@ export const SentimentContent = () => {
   const [currentLivePoll, setCurrentLivePoll] = useState<ReadPollData | null>(
     null,
   );
+  const [claimablePolls, setClaimablePolls] = useState<{
+    totalPolls: number;
+    pollIds: string[];
+  } | null>(null);
+  const [claimError, setClaimError] = useState<string | null>(null);
   const itemsPerPage = 3;
   const { timeString, addSeconds, startTimer, stopTimer } = useTimer({
     initialSeconds: duration.seconds,
@@ -117,6 +128,60 @@ export const SentimentContent = () => {
     adminEndSentimentPoll({
       id: "1",
     });
+  };
+
+  // Handles claiming all claimable polls
+  const handleClaimAll = async () => {
+    if (!admin.address) {
+      toast.error("No admin address found");
+      return;
+    }
+
+    // Clear previous errors
+    setClaimError(null);
+
+    try {
+      toast.loading("Checking for claimable polls...", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+        duration: 10,
+      });
+
+      const result = await claimAllBullmeters(admin.address);
+
+      if (result.success) {
+        if (result.result.claimedPolls > 0) {
+          toast.success(
+            `Successfully claimed funds from ${result.result.claimedPolls} polls!`,
+          );
+
+          // Refetch history to get updated poll data
+          const historyResponse = await getAllPollsByCreator();
+          if (historyResponse.success && historyResponse.result) {
+            setPollHistory(historyResponse.result);
+            checkForLivePoll(historyResponse.result);
+          }
+
+          // Clear claimable polls state
+          setClaimablePolls(null);
+        } else {
+          setClaimError("No claimable polls found");
+          toast.error("No claimable polls found");
+        }
+      } else {
+        setClaimError("Failed to claim polls. Please try again.");
+        toast.error("Failed to claim polls. Please try again.");
+      }
+    } catch (error) {
+      console.error("Failed to claim polls:", error);
+      const errorMessage = "Failed to claim polls. Please try again.";
+      setClaimError(errorMessage);
+      toast.error(errorMessage);
+    }
   };
 
   // Handles the extension of the live poll
@@ -301,7 +366,7 @@ export const SentimentContent = () => {
     };
 
     loadHistory();
-  }, []);
+  }, [admin.address]);
 
   // Periodic check for live poll status (every 30 seconds)
   useEffect(() => {
@@ -613,7 +678,29 @@ export const SentimentContent = () => {
       <div className="flex flex-col justify-start items-start w-full gap-5">
         <div className="flex justify-between items-center w-full">
           <p className="text-xl font-bold">History</p>
-          {reversedPollHistory.length > 0}
+          <div className="flex items-center gap-3">
+            {claimablePolls && claimablePolls.totalPolls > 0 && (
+              <NBCard className="bg-warning/20 border-warning/30 px-3 py-1">
+                <p className="text-sm font-medium text-warning">
+                  {claimablePolls.totalPolls} claimable poll
+                  {claimablePolls.totalPolls !== 1 ? "s" : ""}
+                </p>
+              </NBCard>
+            )}
+            {claimError && (
+              <NBCard className="bg-destructive/20 border-destructive/30 px-3 py-1">
+                <p className="text-sm font-medium text-destructive">
+                  {claimError}
+                </p>
+              </NBCard>
+            )}
+            <NBButton
+              className="px-4 py-2 text-sm bg-warning hover:bg-warning/90"
+              disabled={isClaiming}
+              onClick={handleClaimAll}>
+              {isClaiming ? "Claiming..." : "Claim All"}
+            </NBButton>
+          </div>
         </div>
 
         {reversedPollHistory.length > 0 ? (

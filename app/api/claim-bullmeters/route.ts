@@ -86,9 +86,9 @@ export const GET = async (req: NextRequest) => {
         data: getAllPollsResult as `0x${string}`,
       });
 
-      // Filter polls with totalUsdcCollected > 0 and convert BigInt values to strings for JSON serialization
+      // Filter polls with fundsClaimed = false and convert BigInt values to strings for JSON serialization
       polls = decodedAllPolls
-        .filter((poll: any) => poll.totalUsdcCollected > BigInt(0))
+        .filter((poll: any) => poll.fundsClaimed === false && poll.totalUsdcCollected > BigInt(0))
         .map((poll: any) => ({
           ...poll,
           votePrice: poll.votePrice.toString(),
@@ -144,9 +144,9 @@ export const GET = async (req: NextRequest) => {
           data: getPollsFromNonceResult as `0x${string}`,
         });
 
-        // Filter polls with totalUsdcCollected > 0 and convert BigInt values to strings for JSON serialization
+        // Filter polls with fundsClaimed = false and convert BigInt values to strings for JSON serialization
         const serializedPolls = decodedPollsFromNonce
-          .filter((poll: any) => poll.totalUsdcCollected > BigInt(0))
+          .filter((poll: any) => poll.fundsClaimed === false && poll.totalUsdcCollected > BigInt(0))
           .map((poll: any) => ({
             ...poll,
             votePrice: poll.votePrice.toString(),
@@ -173,6 +173,18 @@ export const GET = async (req: NextRequest) => {
       }
     }
 
+    // Extract all poll IDs from the filtered polls
+    const pollIds: string[] = [];
+    if (lastNonce < 50) {
+      // For getAllPollsByCreator, polls is a direct array
+      pollIds.push(...polls.map((poll: any) => poll.pollId));
+    } else {
+      // For batched approach, extract from each batch
+      polls.forEach((batch: any) => {
+        pollIds.push(...batch.polls.map((poll: any) => poll.pollId));
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -182,6 +194,7 @@ export const GET = async (req: NextRequest) => {
           lastNonce < 50
             ? polls.length
             : polls.reduce((acc, batch) => acc + batch.polls.length, 0),
+        pollIds,
         polls,
       },
     });

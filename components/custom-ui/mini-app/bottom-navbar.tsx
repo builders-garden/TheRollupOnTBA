@@ -5,7 +5,11 @@ import { useUsdcBalance } from "@/hooks/use-usdc-balance";
 import { cn, formatWalletAddress } from "@/lib/utils";
 import { NBButton } from "../nb-button";
 
-export const BottomNavbar = () => {
+interface BottomNavbarProps {
+  userProfilePicture: string;
+}
+
+export const BottomNavbar = ({ userProfilePicture }: BottomNavbarProps) => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const { address } = useAccount();
   const { balance: usdcBalance } = useUsdcBalance({ address });
@@ -26,7 +30,15 @@ export const BottomNavbar = () => {
           className="rounded-full py-1 w-[106px] shrink-0"
           onClick={handleNavbarOpen}>
           <div className="flex justify-center items-center w-full gap-1.5">
-            <div className="size-[24px] bg-warning rounded-full border border-black" />
+            {userProfilePicture ? (
+              <img
+                src={userProfilePicture}
+                alt="User profile picture"
+                className="size-[24px] bg-warning rounded-full border border-black"
+              />
+            ) : (
+              <div className="size-[24px] bg-warning rounded-full border border-black" />
+            )}
             <p className="text-xl font-bold">
               ${Number(usdcBalance?.formatted).toFixed(1)}
             </p>

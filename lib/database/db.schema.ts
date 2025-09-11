@@ -57,10 +57,7 @@ export const bullMetersTable = sqliteTable(
       .notNull()
       .references(() => brandsTable.id, { onDelete: "cascade" }),
     prompt: text("prompt").default("").notNull(),
-    pollId: text("poll_id", { mode: "json" })
-      .$type<Hex>()
-      .default("0x")
-      .notNull(),
+    pollId: text("poll_id").$type<Hex>().default("0x").notNull(),
     votePrice: numeric("vote_price"),
     duration: integer("duration"),
     payoutAddresses: text("payout_addresses", { mode: "json" }).$type<

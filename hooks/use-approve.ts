@@ -57,7 +57,6 @@ export const useApprove = ({
 
   // Execute the approval using sendCalls
   const approve = async () => {
-
     try {
       setIsPending(true);
       setIsError(false);
@@ -73,7 +72,7 @@ export const useApprove = ({
 
       console.log("📤 Sending approval transaction...");
 
-      // Send the call
+      // Send the call with higher gas price
       const result = await sendCalls(wagmiConfigMiniApp, {
         calls: [
           {
@@ -90,7 +89,8 @@ export const useApprove = ({
 
       setCallId(result.id);
       setIsSuccess(true);
-      
+      // Additional wait to ensure transaction is fully processed
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 more seconds
     } catch (err) {
       console.error("❌ Approval failed:", err);
       setIsError(true);

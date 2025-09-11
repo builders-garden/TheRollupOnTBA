@@ -3,6 +3,7 @@ import ky from "ky";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 import { BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
+import { FeaturedToken } from "../database/db.schema";
 import { Token } from "../types/tokens.type";
 
 /**
@@ -165,12 +166,35 @@ export const getChainName = (chainId: string) => {
 };
 
 /**
- * Deep compare two tokens
+ * Deep compare two tokens from the database
  * @param token1 - The first token
  * @param token2 - The second token
  * @returns True if the tokens are equal, false otherwise
  */
-export const deepCompareTokens = (token1: Token, token2: Token) => {
+export const deepCompareDatabaseTokens = (
+  token1: FeaturedToken,
+  token2: FeaturedToken,
+) => {
+  return (
+    token1.address === token2.address &&
+    token1.chainId === token2.chainId &&
+    token1.symbol === token2.symbol &&
+    token1.name === token2.name &&
+    token1.decimals === token2.decimals &&
+    token1.logoUrl === token2.logoUrl &&
+    token1.chainLogoUrl === token2.chainLogoUrl &&
+    token1.description === token2.description &&
+    token1.externalUrl === token2.externalUrl
+  );
+};
+
+/**
+ * Deep compare two tokens from Zerion
+ * @param token1 - The first token
+ * @param token2 - The second token
+ * @returns True if the tokens are equal, false otherwise
+ */
+export const deepCompareZerionTokens = (token1: Token, token2: Token) => {
   return (
     token1.address === token2.address &&
     token1.chainId === token2.chainId &&
@@ -179,4 +203,33 @@ export const deepCompareTokens = (token1: Token, token2: Token) => {
     token1.decimals === token2.decimals &&
     token1.iconUrl === token2.iconUrl
   );
+};
+
+/**
+ * Deep compare two tokens from Zerion and the database
+ * @param databaseToken - The database token
+ * @param zerionToken - The zerion token
+ * @returns True if the tokens are equal, false otherwise
+ */
+export const deepCompareDatabaseAndZerionTokens = (
+  databaseToken: FeaturedToken,
+  zerionToken: Token,
+) => {
+  return (
+    databaseToken.address === zerionToken.address &&
+    databaseToken.chainId === parseInt(zerionToken.chainId ?? "-1") &&
+    databaseToken.symbol === zerionToken.symbol &&
+    databaseToken.name === zerionToken.name &&
+    databaseToken.decimals === zerionToken.decimals
+  );
+};
+
+/**
+ * Get the logo url of a chain by its chainId
+ * @param chainId - The chainId of the chain
+ * @returns The logo url of the chain
+ */
+export const getChainLogoUrl = (chainId: string) => {
+  return BASE_APP_SUPPORTED_CHAINS.find((chain) => chain.chainId === chainId)
+    ?.logoUrl;
 };

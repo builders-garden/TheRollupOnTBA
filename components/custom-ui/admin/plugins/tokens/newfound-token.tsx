@@ -7,7 +7,7 @@ import { TokenNameToChainExplorerStringUrls } from "@/lib/constants";
 import { Token } from "@/lib/types/tokens.type";
 import {
   cn,
-  deepCompareTokens,
+  deepCompareZerionTokens,
   formatWalletAddress,
   getChainName,
 } from "@/lib/utils";
@@ -27,7 +27,9 @@ export const NewfoundToken = ({
   disabled,
   index,
 }: NewfoundTokenProps) => {
-  const isSelected = selectedTokens.some((t) => deepCompareTokens(t, token));
+  const isSelected = selectedTokens.some((t) =>
+    deepCompareZerionTokens(t, token),
+  );
 
   // Disabled state for the token if it's not selectable anymore
   const isNotSelectable = disabled && !isSelected;
@@ -42,7 +44,7 @@ export const NewfoundToken = ({
   const handleRemoveToken = () => {
     if (isNotSelectable) return;
     setSelectedTokens(
-      selectedTokens.filter((t) => !deepCompareTokens(t, token)),
+      selectedTokens.filter((t) => !deepCompareZerionTokens(t, token)),
     );
   };
 

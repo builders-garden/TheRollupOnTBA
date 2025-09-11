@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { Token } from "@/lib/types/tokens.type";
+import { useMemo, useState } from "react";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AddedToken } from "./added-token";
 import { TokensSearchModal } from "./tokens-search-modal";
 
 export const TokensContent = () => {
-  const [addedTokens, setAddedTokens] = useState<Token[]>([]);
+  const { featuredTokens } = useAdminAuth();
+  const addedTokens = useMemo(() => featuredTokens.data, [featuredTokens]);
 
   // Disabled state for the add more tokens button
   const isAddMoreTokensDisabled = addedTokens.length >= 6;
@@ -24,7 +25,6 @@ export const TokensContent = () => {
       <div className="flex flex-col justify-start items-start w-full gap-5">
         <TokensSearchModal
           addedTokens={addedTokens}
-          setAddedTokens={setAddedTokens}
           disabled={isAddMoreTokensDisabled}
         />
         <div className="flex flex-wrap gap-5 w-full">
@@ -34,8 +34,6 @@ export const TokensContent = () => {
                 key={`${token.address}-${token.chainId}`}
                 index={index}
                 token={token}
-                addedTokens={addedTokens}
-                setAddedTokens={setAddedTokens}
               />
             ))}
           </AnimatePresence>

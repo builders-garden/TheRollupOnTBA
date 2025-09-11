@@ -26,10 +26,12 @@ export const useFeaturedTokens = (params?: {
   search?: string;
   address?: string;
   limit?: number;
+  enabled?: boolean;
 }) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
-  if (params?.chainName) searchParams.set("chainName", params.chainName.toString());
+  if (params?.chainName)
+    searchParams.set("chainName", params.chainName.toString());
   if (params?.active !== undefined)
     searchParams.set("active", params.active.toString());
   if (params?.withBrand)
@@ -45,6 +47,7 @@ export const useFeaturedTokens = (params?: {
     queryKey: ["featured-tokens", params],
     url,
     isProtected: true,
+    enabled: params?.enabled || false,
   });
 };
 
@@ -58,8 +61,8 @@ export const useFeaturedToken = (tokenId: string) => {
 };
 
 // Mutation hooks
-export const useCreateFeaturedToken = () => {
-  return useApiMutation<FeaturedTokenApiResponse, CreateFeaturedToken>({
+export const useCreateFeaturedTokens = () => {
+  return useApiMutation<FeaturedTokenApiResponse, CreateFeaturedToken[]>({
     url: "/api/featured-tokens",
     method: "POST",
     body: (variables) => variables,

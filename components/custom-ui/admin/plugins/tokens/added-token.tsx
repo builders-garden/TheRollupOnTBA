@@ -1,35 +1,58 @@
-import { CircleQuestionMark, Eye, EyeOff } from "lucide-react";
-import { motion } from "motion/react";
+import { CircleQuestionMark, Eye, EyeOff, Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
-import { Token } from "@/lib/types/tokens.type";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import {
-  cn,
-  deepCompareTokens,
-  formatWalletAddress,
-  getChainName,
-} from "@/lib/utils";
+  useDeleteFeaturedToken,
+  useUpdateFeaturedToken,
+} from "@/hooks/use-featured-tokens";
+import { FeaturedToken } from "@/lib/database/db.schema";
+import { cn, formatWalletAddress, getChainName } from "@/lib/utils";
 
 interface AddedTokenProps {
-  token: Token;
-  addedTokens: Token[];
-  setAddedTokens: Dispatch<SetStateAction<Token[]>>;
+  token: FeaturedToken;
   index: number;
 }
 
-export const AddedToken = ({
-  token,
-  addedTokens,
-  setAddedTokens,
-  index,
-}: AddedTokenProps) => {
-  const [isVisible, setIsVisible] = useState(true);
+export const AddedToken = ({ token, index }: AddedTokenProps) => {
+  const { featuredTokens } = useAdminAuth();
+  const { mutate: deleteFeaturedToken } = useDeleteFeaturedToken();
+  const { mutate: updateFeaturedToken } = useUpdateFeaturedToken();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Whether the token is visible
+  const isVisible = token.isActive;
 
   // Handles the deletion of the token from the list
   const handleDeleteToken = () => {
-    setAddedTokens(addedTokens.filter((t) => !deepCompareTokens(t, token)));
+    setIsDeleting(true);
+    deleteFeaturedToken(
+      { tokenId: token.id },
+      {
+        onSuccess: async () => {
+          await featuredTokens.refetch();
+          setIsDeleting(false);
+        },
+      },
+    );
+  };
+
+  // Handles the showing/hiding of the token
+  const handleShowHideToken = () => {
+    setIsUpdating(true);
+    updateFeaturedToken(
+      { tokenId: token.id, isActive: !isVisible },
+      {
+        onSuccess: async () => {
+          await featuredTokens.refetch();
+          setIsUpdating(false);
+        },
+      },
+    );
   };
 
   return (
@@ -64,10 +87,10 @@ export const AddedToken = ({
         {/* Token information */}
         <div className="flex justify-between items-center w-full gap-3">
           <div className="flex justify-start items-center gap-2.5">
-            {token.iconUrl ? (
+            {token.logoUrl ? (
               <Image
-                src={token.iconUrl ?? ""}
-                alt={token.name}
+                src={token.logoUrl ?? ""}
+                alt={token.name ?? ""}
                 className="size-10 rounded-full"
                 width={40}
                 height={40}
@@ -82,11 +105,13 @@ export const AddedToken = ({
           </div>
           <div className="flex flex-col justify-start items-end gap-0.5">
             <p className="text-sm opacity-50 font-bold">
-              {getChainName(token.chainId!)}
+              {token.chainId
+                ? getChainName(token.chainId.toString())
+                : "Unknown chain"}
             </p>
             {token.address ? (
               <p className="text-sm opacity-50 font-bold">
-                {formatWalletAddress(token.address!)}
+                {formatWalletAddress(token.address)}
               </p>
             ) : (
               <p className="text-sm opacity-50 font-bold">No Address</p>
@@ -97,16 +122,56 @@ export const AddedToken = ({
         {/* Delete and show/hide buttons */}
         <div className="flex justify-between items-center w-full gap-2.5">
           <NBButton
-            className="w-full bg-destructive"
+            className="w-full bg-destructive h-[42px]"
             onClick={handleDeleteToken}>
-            <p className="text-base font-extrabold text-white">Remove</p>
+            <AnimatePresence mode="wait">
+              {isDeleting ? (
+                <motion.div
+                  key="deleting"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <Loader2 className="size-5 text-white animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="remove"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <p className="text-base font-extrabold text-white">Remove</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </NBButton>
           <NBButton
-            className="w-full bg-accent"
-            onClick={() => setIsVisible(!isVisible)}>
-            <p className="text-base font-extrabold text-white">
-              {isVisible ? "Hide" : "Show"}
-            </p>
+            className="w-full bg-accent h-[42px]"
+            onClick={handleShowHideToken}>
+            <AnimatePresence mode="wait">
+              {isUpdating ? (
+                <motion.div
+                  key="updating"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <Loader2 className="size-5 text-white animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="show-hide"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <p className="text-base font-extrabold text-white">
+                    {isVisible ? "Hide" : "Show"}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </NBButton>
         </div>
       </NBCard>

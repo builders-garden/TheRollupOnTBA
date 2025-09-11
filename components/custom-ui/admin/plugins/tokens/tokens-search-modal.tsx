@@ -1,28 +1,38 @@
 import ky from "ky";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { isAddress } from "viem/utils";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useCreateFeaturedTokens } from "@/hooks/use-featured-tokens";
+import { TokenNameToChainExplorerStringUrls } from "@/lib/constants";
+import { FeaturedToken } from "@/lib/database/db.schema";
 import { Token } from "@/lib/types/tokens.type";
-import { cn, deepCompareTokens } from "@/lib/utils";
+import {
+  cn,
+  deepCompareDatabaseAndZerionTokens,
+  deepCompareZerionTokens,
+  getChainLogoUrl,
+} from "@/lib/utils";
 import { ChainSelector } from "./chain-selector";
 import { NewfoundToken } from "./newfound-token";
 
 interface TokensSearchModalProps {
-  addedTokens: Token[];
-  setAddedTokens: Dispatch<SetStateAction<Token[]>>;
+  addedTokens: FeaturedToken[];
   disabled: boolean;
 }
 
 export const TokensSearchModal = ({
   addedTokens,
-  setAddedTokens,
   disabled,
 }: TokensSearchModalProps) => {
+  const { brand, featuredTokens } = useAdminAuth();
+  const { mutate: createFeaturedTokens } = useCreateFeaturedTokens();
+
   const [searchValue, setSearchValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [selectedChainName, setSelectedChainName] = useState<
@@ -34,6 +44,8 @@ export const TokensSearchModal = ({
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const [fetchingError, setFetchingError] = useState<Error | null>(null);
   const [selectedTokens, setSelectedTokens] = useState<Token[]>([]);
+  const [isCreatingFeaturedTokens, setIsCreatingFeaturedTokens] =
+    useState(false);
 
   // Debounce search value to avoid too frequent API calls
   const debouncedSearchValue = useDebounce(searchValue, 750);
@@ -66,9 +78,11 @@ export const TokensSearchModal = ({
         if (tokens.success) {
           // Filter out tokens that are already added
           const cleanedTokens = tokens.data.filter(
-            (token) => !addedTokens.some((t) => deepCompareTokens(t, token)),
+            (token) =>
+              !addedTokens.some((t) =>
+                deepCompareDatabaseAndZerionTokens(t, token),
+              ),
           );
-          console.log("TEST tokens", cleanedTokens);
           setFetchedTokens(cleanedTokens);
         } else {
           setFetchingError(
@@ -88,6 +102,54 @@ export const TokensSearchModal = ({
       fetchTokens();
     }
   }, [selectedChainName, debouncedSearchValue]);
+
+  // A function to handle the confirmation of the selected tokens
+  const handleConfirm = () => {
+    if (!brand.data || !brand.data.id) return;
+    setIsCreatingFeaturedTokens(true);
+    createFeaturedTokens(
+      selectedTokens.map((token) => {
+        const chainId = parseInt(token.chainId || "1");
+        const chainLogoUrl = getChainLogoUrl(token.chainId || "1");
+        const externalUrl =
+          token.chainId && token.address
+            ? `${TokenNameToChainExplorerStringUrls[token.chainId as keyof typeof TokenNameToChainExplorerStringUrls]}/token/${token.address}`
+            : "";
+
+        return {
+          brandId: brand.data!.id,
+          name: token.name,
+          symbol: token.symbol,
+          decimals: token.decimals || 18,
+          chainId: chainId,
+          chainLogoUrl: chainLogoUrl,
+          address: token.address || "",
+          logoUrl: token.iconUrl || "",
+          description: "",
+          externalUrl: externalUrl,
+          isActive: true,
+        };
+      }),
+      {
+        onSuccess: async () => {
+          await featuredTokens.refetch();
+          setIsCreatingFeaturedTokens(false);
+          setIsModalOpen(false);
+          setTimeout(() => {
+            setFetchedTokens(
+              fetchedTokens.filter(
+                (fetchedToken) =>
+                  !selectedTokens.some((selectedToken) =>
+                    deepCompareZerionTokens(selectedToken, fetchedToken),
+                  ),
+              ),
+            );
+            setSelectedTokens([]);
+          }, 300);
+        },
+      },
+    );
+  };
 
   return (
     <NBModal
@@ -231,23 +293,30 @@ export const TokensSearchModal = ({
       <div className="flex flex-col justify-center items-center w-full gap-5">
         <NBButton
           key="confirm"
-          className="w-full bg-accent"
-          disabled={selectedTokens.length === 0}
-          onClick={() => {
-            setAddedTokens([...addedTokens, ...selectedTokens]);
-            setIsModalOpen(false);
-            setTimeout(() => {
-              const oldSelectedTokens = selectedTokens;
-              setFetchedTokens(
-                fetchedTokens.filter(
-                  (t) =>
-                    !oldSelectedTokens.some((st) => deepCompareTokens(st, t)),
-                ),
-              );
-              setSelectedTokens([]);
-            }, 300);
-          }}>
-          <p className="text-base text-white font-extrabold">Confirm</p>
+          className="w-full bg-accent h-[42px]"
+          disabled={selectedTokens.length === 0 || isCreatingFeaturedTokens}
+          onClick={handleConfirm}>
+          <AnimatePresence mode="wait">
+            {isCreatingFeaturedTokens ? (
+              <motion.div
+                key="creating-featured-tokens-loader"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}>
+                <Loader2 className="size-5 text-white animate-spin" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="confirm-button"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}>
+                <p className="text-base text-white font-extrabold">Confirm</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </NBButton>
         <button
           className="text-base font-bold text-black cursor-pointer"

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  createFeaturedToken,
+  createFeaturedTokens,
   getActiveFeaturedTokens,
   getAllFeaturedTokensWithBrand,
   getFeaturedTokenByAddress,
@@ -70,21 +70,35 @@ export const POST = async (req: NextRequest) => {
     const data = await req.json();
 
     // Basic validation
-    if (!data.brandId || !data.name || !data.symbol) {
+    // First check if the data is an array
+    if (!Array.isArray(data)) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing required fields: brandId, name, symbol",
+          error: "Data must be an array",
         },
         { status: 400 },
       );
     }
 
-    const token = await createFeaturedToken(data);
+    // Then check each token in the array
+    for (const token of data) {
+      if (!token.brandId || !token.name || !token.symbol) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Missing required fields: brandId, name, symbol",
+          },
+          { status: 400 },
+        );
+      }
+    }
+
+    const tokens = await createFeaturedTokens(data);
 
     return NextResponse.json({
       success: true,
-      data: token,
+      data: tokens,
     });
   } catch (error) {
     console.error("Create featured token error:", error);

@@ -25,6 +25,22 @@ export const createFeaturedToken = async (
 };
 
 /**
+ * Create multiple featured tokens
+ * @param tokenData - The token data to create
+ * @returns The created tokens
+ */
+export const createFeaturedTokens = async (
+  tokenData: CreateFeaturedToken[],
+): Promise<FeaturedToken[]> => {
+  const newTokens = await db
+    .insert(featuredTokensTable)
+    .values(tokenData)
+    .returning();
+
+  return newTokens;
+};
+
+/**
  * Get a featured token by ID
  * @param tokenId - The token ID
  * @returns The token or null if not found

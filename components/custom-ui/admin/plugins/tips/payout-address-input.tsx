@@ -96,10 +96,11 @@ export const PayoutAddressInput = () => {
           payoutEnsName,
         },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
             setIsEditing(false);
             setIsUpdating(false);
             setTextFieldValue(editingTextFieldValue);
+            await tipSettings.refetch();
             toast.success("Payout address updated successfully");
           },
           onError: () => {

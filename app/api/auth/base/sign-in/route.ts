@@ -12,7 +12,6 @@ const client = createPublicClient({
 
 export const POST = async (req: NextRequest) => {
   try {
-    console.log("TEST req", JSON.stringify(req, null, 2));
     const { address, message, signature, nonce } = await req.json();
 
     // Parameters validation
@@ -53,8 +52,6 @@ export const POST = async (req: NextRequest) => {
 
     // Get the brand from the database
     const brand = await getBrandByAddress(address);
-
-    console.log("TEST brand", JSON.stringify(brand, null, 2));
 
     // Generate JWT token
     const secret = new TextEncoder().encode(env.JWT_SECRET);

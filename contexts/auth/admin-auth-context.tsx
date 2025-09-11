@@ -11,8 +11,9 @@ import { Address } from "viem";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useBaseSignIn, useLogout } from "@/hooks/use-auth-hooks";
+import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTips } from "@/hooks/use-tips";
-import { Brand, Tip } from "@/lib/database/db.schema";
+import { Brand, FeaturedToken, Tip } from "@/lib/database/db.schema";
 import { getBasenameName, getEnsName } from "@/lib/ens/client";
 
 interface AdminAuthContextType {
@@ -32,6 +33,12 @@ interface AdminAuthContextType {
     address?: string;
     baseName?: string;
     ensName?: string;
+  };
+  featuredTokens: {
+    data: FeaturedToken[];
+    refetch: () => Promise<void>;
+    featuredTokensNotFound: boolean;
+    isFetched: boolean;
   };
   signInWithBase: () => void;
   executeLogout: () => void;
@@ -63,6 +70,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     baseName?: string;
     ensName?: string;
   }>();
+  const [featuredTokens, setFeaturedTokens] = useState<FeaturedToken[]>([]);
   const [brandNotFound, setBrandNotFound] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isFetchingAdmin, setIsFetchingAdmin] = useState(false);
@@ -87,6 +95,15 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isFetched: isFetchedAuthTipSettings,
     error: tipSettingsError,
   } = useTips({ brandId: brand?.id, enabled: !!brand?.id });
+
+  // Single featured tokens query
+  const {
+    data: featuredTokensData,
+    refetch: refetchFeaturedTokens,
+    isLoading: isFetchingFeaturedTokens,
+    isFetched: isFetchedAuthFeaturedTokens,
+    error: featuredTokensError,
+  } = useFeaturedTokens({ brandId: brand?.id, enabled: !!brand?.id });
 
   // Farcaster sign-in mutation
   const { mutate: baseSignIn } = useBaseSignIn({
@@ -141,6 +158,14 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
       setTipSettings(newTipSettings.data.data);
     }
   }, [refetchTipSettings]);
+
+  // A function to refetch the featured tokens
+  const executeRefetchFeaturedTokens = useCallback(async () => {
+    const newFeaturedTokens = await refetchFeaturedTokens();
+    if (newFeaturedTokens.isSuccess && newFeaturedTokens.data?.data) {
+      setFeaturedTokens(newFeaturedTokens.data.data as FeaturedToken[]);
+    }
+  }, [refetchFeaturedTokens]);
 
   const signInWithBase = useCallback(async () => {
     if (isInMiniApp) return;
@@ -279,6 +304,14 @@ Issued At: ${new Date().toISOString()}`;
     getAdmin();
   }, [brand]);
 
+  // Auto fetch featured tokens logic
+  useEffect(() => {
+    if (!isFetchedAuthFeaturedTokens) {
+      return;
+    }
+    setFeaturedTokens(featuredTokensData?.data as FeaturedToken[]);
+  }, [isFetchedAuthFeaturedTokens]);
+
   const value: AdminAuthContextType = {
     brand: {
       data: brand,
@@ -297,6 +330,12 @@ Issued At: ${new Date().toISOString()}`;
       baseName: admin?.baseName,
       ensName: admin?.ensName,
     },
+    featuredTokens: {
+      data: featuredTokens,
+      refetch: executeRefetchFeaturedTokens,
+      featuredTokensNotFound: featuredTokensData?.success === false,
+      isFetched: isFetchedAuthFeaturedTokens,
+    },
     signInWithBase,
     executeLogout,
     isLoading:
@@ -304,8 +343,9 @@ Issued At: ${new Date().toISOString()}`;
       isFetchingTipSettings ||
       isSigningIn ||
       isLoggingOut ||
-      isFetchingAdmin,
-    error: error || brandError || tipSettingsError,
+      isFetchingAdmin ||
+      isFetchingFeaturedTokens,
+    error: error || brandError || tipSettingsError || featuredTokensError,
   };
 
   return (

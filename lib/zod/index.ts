@@ -37,6 +37,8 @@ export const env = createEnv({
     NEXT_PUBLIC_PAYMASTER_URL: z.string().min(1),
     //PINATA
     NEXT_PUBLIC_GATEWAY_URL: z.string().min(1),
+    // ROLLUP DATABASE ID
+    NEXT_PUBLIC_ROLLUP_BRAND_ID: z.string().min(1),
   },
   // For Next.js >= 13.4.4, you only need to destructure client variables:
   experimental__runtimeEnv: {
@@ -53,5 +55,6 @@ export const env = createEnv({
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
     NEXT_PUBLIC_PAYMASTER_URL: process.env.NEXT_PUBLIC_PAYMASTER_URL,
     NEXT_PUBLIC_GATEWAY_URL: process.env.NEXT_PUBLIC_GATEWAY_URL,
+    NEXT_PUBLIC_ROLLUP_BRAND_ID: process.env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
   },
 });

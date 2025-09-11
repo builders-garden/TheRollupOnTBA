@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
+import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useSocket } from "@/hooks/use-socket";
@@ -20,6 +21,7 @@ import { Separator } from "../shadcn-ui/separator";
 export const StreamPage = () => {
   const { joinStream } = useSocketUtils();
   const { isConnected } = useSocket();
+  const { brand } = useMiniAppAuth();
 
   // USDC approval hook
   const {
@@ -77,16 +79,18 @@ export const StreamPage = () => {
               buttonClassName="shrink-1 w-min"
             />
           </div>
-          <div className="flex justify-start items-center w-full gap-1.5">
-            <p>by</p>
-            <Image
-              src="/images/rollup_logo.png"
-              alt="Rollup Logo"
-              width={96}
-              height={21}
-              className="h-auto"
-            />
-          </div>
+          {brand.data?.logoUrl && (
+            <div className="flex justify-start items-center w-full gap-1.5">
+              <p className="text-sm">by</p>
+              <Image
+                src={brand.data.logoUrl}
+                alt={brand.data.name || ""}
+                width={20}
+                height={21}
+              />
+              <p className="text-md">{brand.data.name}</p>
+            </div>
+          )}
         </div>
 
         <Separator className="w-full bg-border" />
@@ -119,13 +123,7 @@ export const StreamPage = () => {
         />
 
         {/* Featured Tokens */}
-        <FeaturedTokens
-          tokens={[
-            { name: "LIMONE", color: "bg-yellow-500" },
-            { name: "DRONE", color: "bg-black" },
-            { name: "CASO", color: "bg-gray-500" },
-          ]}
-        />
+        <FeaturedTokens tokens={brand.featuredTokens.data || []} />
 
         {/* About Section */}
         <AboutSection
@@ -141,7 +139,7 @@ export const StreamPage = () => {
         <NewsletterCTA label="Subscribe to newsletter" onClick={() => {}} />
 
         {/* USDC Approval Section */}
-        <div className="flex flex-col justify-center items-center w-full gap-3">
+        {/* <div className="flex flex-col justify-center items-center w-full gap-3">
           <h2 className="text-base font-bold">Vote on ETH vs BTC</h2>
 
           {!isApproved ? (
@@ -201,7 +199,7 @@ export const StreamPage = () => {
               Vote submitted successfully!
             </p>
           )}
-        </div>
+        </div> */}
       </div>
       {/* Floating Bottom Navbar */}
       <BottomNavbar />

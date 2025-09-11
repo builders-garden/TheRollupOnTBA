@@ -1,6 +1,7 @@
 import { CircleQuestionMark, Eye, EyeOff, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
@@ -113,15 +114,27 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
             </div>
           </div>
           <div className="flex flex-col justify-start items-end gap-0.5">
-            <p className="text-sm opacity-50 font-bold">
-              {token.chainId
-                ? getChainName(token.chainId.toString())
-                : "Unknown chain"}
-            </p>
-            {token.address ? (
+            <div className="flex justify-end items-center gap-1">
+              <Image
+                src={token.chainLogoUrl || ""}
+                alt={token.chainId?.toString() || ""}
+                className="size-3.5 rounded-full"
+                width={14}
+                height={14}
+              />
               <p className="text-sm opacity-50 font-bold">
-                {formatWalletAddress(token.address)}
+                {token.chainId
+                  ? getChainName(token.chainId.toString())
+                  : "Unknown chain"}
               </p>
+            </div>
+            {token.address ? (
+              <Link
+                href={token.externalUrl || ""}
+                target="_blank"
+                className="text-sm opacity-50 font-bold underline">
+                {formatWalletAddress(token.address)}
+              </Link>
             ) : (
               <p className="text-sm opacity-50 font-bold">No Address</p>
             )}

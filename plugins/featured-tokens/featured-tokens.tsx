@@ -1,14 +1,10 @@
+import Image from "next/image";
 import { BuyTokenModal } from "@/components/custom-ui/mini-app/buy-token-modal";
 import { NBButton } from "@/components/custom-ui/nb-button";
-import { cn } from "@/lib/utils";
+import { FeaturedToken } from "@/lib/database/db.schema";
 
 interface FeaturedTokensProps {
-  tokens: {
-    name: string;
-    color: string;
-    buttonClassName?: string;
-    buttonColor?: "black" | "blue";
-  }[];
+  tokens: FeaturedToken[];
 }
 
 export const FeaturedTokens = ({ tokens }: FeaturedTokensProps) => {
@@ -16,27 +12,29 @@ export const FeaturedTokens = ({ tokens }: FeaturedTokensProps) => {
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
       <h1 className="text-sm font-bold">Featured Tokens</h1>
       <div className="grid grid-cols-2 w-full gap-2.5">
-        {tokens.map((token) => (
+        {tokens.map((token, index) => (
           <BuyTokenModal
-            key={token.name + token.color}
+            key={index}
             trigger={
-              <NBButton
-                className={cn("w-full py-2.5", token.buttonClassName)}
-                buttonColor={token.buttonColor}>
+              <NBButton className="w-full py-2.5">
                 <div className="flex justify-center items-center w-full gap-1.5">
-                  <div
-                    className={cn(
-                      "size-4 rounded-full border border-black",
-                      token.color,
-                    )}
-                  />
+                  {token.logoUrl ? (
+                    <Image
+                      src={token.logoUrl}
+                      alt={token.name + index.toString()}
+                      width={22}
+                      height={22}
+                    />
+                  ) : (
+                    <div className="size-4 rounded-full border border-black" />
+                  )}
                   <p className="text-base font-extrabold text-nowrap">
-                    Buy ${token.name}
+                    Buy ${token.symbol || token.name || ""}
                   </p>
                 </div>
               </NBButton>
             }
-            tokenName={token.name}
+            tokenName={token.symbol || token.name || ""}
           />
         ))}
       </div>

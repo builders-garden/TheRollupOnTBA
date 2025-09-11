@@ -1,26 +1,25 @@
 "use client";
 
-//import { AnimatePresence } from "motion/react";
-//import { useAuth } from "@/contexts/auth-context";
-//import { useDebounce } from "@/hooks/use-debounce";
-//import ErrorPage from "../error";
-//import LoadingPage from "../loading";
+import { AnimatePresence } from "motion/react";
+import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
+import ErrorPage from "../error";
+import LoadingPage from "../loading";
 import { StreamPage } from "../stream-page";
 
 export default function MainContent() {
-  //const { isLoading, error } = useAuth();
-
-  //const debouncedIsLoading = useDebounce(isLoading, 1000);
+  const { isLoading, error } = useMiniAppAuth();
 
   return (
     <div className="min-h-screen no-scrollbar">
-      {/* <AnimatePresence mode="wait">
-        {debouncedIsLoading ? (
+      <AnimatePresence mode="wait">
+        {isLoading ? (
           <LoadingPage key="loading" />
-        ) : ( */}
-      <StreamPage key="stream" />
-      {/* )}
-      </AnimatePresence> */}
+        ) : error ? (
+          <ErrorPage key="error" errorMessage={error.message} />
+        ) : (
+          <StreamPage key="stream" />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

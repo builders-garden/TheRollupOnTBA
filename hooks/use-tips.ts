@@ -8,7 +8,7 @@ interface TipApiResponse {
 }
 
 // Query hooks
-export const useTips = (params?: {
+export const useTip = (params?: {
   brandId?: string;
   payoutAddress?: string;
   ensName?: string;
@@ -29,16 +29,7 @@ export const useTips = (params?: {
     queryKey: ["tips", params],
     url,
     isProtected: true,
-    enabled: params?.enabled || false,
-  });
-};
-
-export const useTip = (tipId: string) => {
-  return useApiQuery<TipApiResponse>({
-    queryKey: ["tips", tipId],
-    url: `/api/tips/${tipId}`,
-    enabled: !!tipId,
-    isProtected: true,
+    enabled: params?.enabled || true,
   });
 };
 

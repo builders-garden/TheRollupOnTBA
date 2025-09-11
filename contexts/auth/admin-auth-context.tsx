@@ -12,7 +12,7 @@ import { Address } from "viem";
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useBaseSignIn, useLogout } from "@/hooks/use-auth-hooks";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
-import { useTips } from "@/hooks/use-tips";
+import { useTip } from "@/hooks/use-tips";
 import { Brand, FeaturedToken, Tip } from "@/lib/database/db.schema";
 import { getBasenameName, getEnsName } from "@/lib/ens/client";
 
@@ -94,7 +94,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     isFetched: isFetchedAuthTipSettings,
     error: tipSettingsError,
-  } = useTips({ brandId: brand?.id, enabled: !!brand?.id });
+  } = useTip({ brandId: brand?.id, enabled: !!brand?.id });
 
   // Single featured tokens query
   const {

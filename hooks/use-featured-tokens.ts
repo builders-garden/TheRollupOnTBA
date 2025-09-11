@@ -47,7 +47,7 @@ export const useFeaturedTokens = (params?: {
     queryKey: ["featured-tokens", params],
     url,
     isProtected: true,
-    enabled: params?.enabled || false,
+    enabled: params?.enabled || true,
   });
 };
 

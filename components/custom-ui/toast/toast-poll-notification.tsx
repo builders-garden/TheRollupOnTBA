@@ -240,7 +240,7 @@ export const ToastPollNotification = ({
               {timeLabel}
             </span>
             <span className="text-gray-400 text-base">
-              {votes.toString()} votes • {voters.toString()} voters
+              {votes.toString()} votes
             </span>
           </div>
           <div className="bg-white p-1">

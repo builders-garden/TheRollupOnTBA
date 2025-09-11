@@ -7,22 +7,30 @@ import {
   StartSentimentPollEvent,
   TipSentEvent,
   TokenTradedEvent,
+  UpdateSentimentPollEvent,
   VoteCastedEvent,
 } from "@/lib/types/socket/client-to-server.type";
 
 export function useSocketUtils() {
   const { emit, disconnect } = useSocket();
 
-  const adminStartSentimentPoll = useCallback(
+  const adminStartBullmeter = useCallback(
     (data: StartSentimentPollEvent) => {
       emit(ClientToServerSocketEvents.START_SENTIMENT_POLL, data);
     },
     [emit],
   );
 
-  const adminEndSentimentPoll = useCallback(
+  const adminEndBullmeter = useCallback(
     (data: EndSentimentPollEvent) => {
       emit(ClientToServerSocketEvents.END_SENTIMENT_POLL, data);
+    },
+    [emit],
+  );
+
+  const adminUpdateBullmeter = useCallback(
+    (data: UpdateSentimentPollEvent) => {
+      emit(ClientToServerSocketEvents.UPDATE_SENTIMENT_POLL, data);
     },
     [emit],
   );
@@ -51,8 +59,9 @@ export function useSocketUtils() {
     tipSent,
     tokenTraded,
     voteCasted,
-    adminStartSentimentPoll,
-    adminEndSentimentPoll,
+    adminStartBullmeter,
+    adminEndBullmeter,
+    adminUpdateBullmeter,
     disconnect,
   };
 }

@@ -48,8 +48,19 @@ export type StartSentimentPollEvent = {
 
 export type EndSentimentPollEvent = {
   id: string;
+  votes: number;
+  voters: number;
+  results: { bullPercent: number; bearPercent: number };
 };
 
+export type UpdateSentimentPollEvent = {
+  id: string;
+  position: PopupPositions;
+  endTime: Date;
+  voters: number;
+  votes: number;
+  results: { bullPercent: number; bearPercent: number };
+};
 export type ClientToServerEvents = {
   [ClientToServerSocketEvents.JOIN_STREAM]: JoinStreamEvent;
   [ClientToServerSocketEvents.TIP_SENT]: TipSentEvent;
@@ -57,4 +68,5 @@ export type ClientToServerEvents = {
   [ClientToServerSocketEvents.VOTE_CASTED]: VoteCastedEvent;
   [ClientToServerSocketEvents.START_SENTIMENT_POLL]: StartSentimentPollEvent;
   [ClientToServerSocketEvents.END_SENTIMENT_POLL]: EndSentimentPollEvent;
+  [ClientToServerSocketEvents.UPDATE_SENTIMENT_POLL]: UpdateSentimentPollEvent;
 };

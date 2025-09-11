@@ -1,9 +1,10 @@
 import { createBaseAccountSDK } from "@base-org/account";
+import ky from "ky";
 import { useCallback, useState } from "react";
 import { decodeFunctionResult, encodeFunctionData } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
-import { CreateBullMeter } from "@/lib/database/db.schema";
+import { BullMeter, CreateBullMeter } from "@/lib/database/db.schema";
 import {
   GetAllPollsByCreatorResponse,
   ReadPollData,
@@ -244,12 +245,12 @@ export const useBullmeterPlugin = () => {
               deadline: Number(updatedLastPollDeadline),
             };
 
-            const response = await fetch("/api/bullmeters", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(pollData),
+            const response = await ky.post<{
+              success: boolean;
+              error?: string;
+              data?: BullMeter;
+            }>("/api/bullmeters", {
+              json: pollData,
             });
 
             if (response.ok) {
@@ -343,16 +344,16 @@ export const useBullmeterPlugin = () => {
 
             const updatedLastPollDeadline = updatedDecodedLastPoll[6];
 
-            const response = await fetch("/api/bullmeters/extend", {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
+            const response = await ky.patch<{
+              success: boolean;
+              error?: string;
+              data?: BullMeter;
+            }>("/api/bullmeters/extend", {
+              json: {
                 pollId: pollId,
                 newDuration: newDuration,
                 newDeadline: Number(updatedLastPollDeadline),
-              }),
+              },
             });
 
             if (response.ok) {
@@ -446,15 +447,15 @@ export const useBullmeterPlugin = () => {
 
             const updatedPollState = updatedDecodedLastPoll[5];
 
-            const response = await fetch("/api/bullmeters/terminate", {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
+            const response = await ky.patch<{
+              success: boolean;
+              error?: string;
+              data?: BullMeter;
+            }>("/api/bullmeters/terminate", {
+              json: {
                 pollId: pollId,
                 newDeadline: Number(updatedPollState),
-              }),
+              },
             });
 
             if (response.ok) {

@@ -36,7 +36,7 @@ export const PATCH = async (req: NextRequest) => {
     }
 
     // Update the deadline on database
-    const updatedPoll = await db
+    const [updatedPoll] = await db
       .update(bullMetersTable)
       .set({
         // Set deadline to current time to mark as ended
@@ -48,7 +48,7 @@ export const PATCH = async (req: NextRequest) => {
 
     return NextResponse.json({
       success: true,
-      data: updatedPoll[0],
+      data: updatedPoll,
     });
   } catch (error) {
     console.error("Terminate poll error:", error);

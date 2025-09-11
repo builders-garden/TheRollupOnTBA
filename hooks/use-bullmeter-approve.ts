@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import ky from "ky";
 import { useAccount } from "wagmi";
 
 interface VoteRequest {
@@ -22,12 +23,8 @@ interface VoteResponse {
 }
 
 const executeVote = async (voteData: VoteRequest): Promise<VoteResponse> => {
-  const response = await fetch("/api/execute-bullmeters", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(voteData),
+  const response = await ky.post<VoteResponse>("/api/execute-bullmeters", {
+    json: voteData,
   });
 
   if (!response.ok) {
@@ -41,7 +38,6 @@ export const useBullmeterApprove = () => {
   const { address } = useAccount();
 
   console.log("address:", address);
-
 
   const voteMutation = useMutation({
     mutationFn: executeVote,

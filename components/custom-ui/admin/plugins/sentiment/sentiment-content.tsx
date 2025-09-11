@@ -31,8 +31,12 @@ const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
 export const SentimentContent = () => {
   const { subscribe, unsubscribe } = useSocket();
-  const { joinStream, adminStartSentimentPoll, adminEndSentimentPoll } =
-    useSocketUtils();
+  const {
+    joinStream,
+    adminStartBullmeter: adminStartBullmeterSocket,
+    adminEndBullmeter: adminEndBullmeterSocket,
+    adminUpdateBullmeter: adminUpdateBullmeterSocket,
+  } = useSocketUtils();
   const {
     createBullmeter,
     extendBullmeter,
@@ -125,8 +129,11 @@ export const SentimentContent = () => {
     setIsGuestPayoutActive(false);
     setIsLive(false);
     setCurrentLivePoll(null);
-    adminEndSentimentPoll({
+    adminEndBullmeterSocket({
       id: "1",
+      votes: 0,
+      voters: 0,
+      results: { bullPercent: 0, bearPercent: 0 },
     });
   };
 
@@ -211,6 +218,18 @@ export const SentimentContent = () => {
 
         // Add the extension time to the current timer
         addSeconds(newDuration);
+
+        adminUpdateBullmeterSocket({
+          id: currentLivePoll.pollId,
+          position: PopupPositions.TOP_CENTER,
+          endTime: new Date(Date.now() + newDuration * 1000),
+          voters: result.result.totalYesVotes + result.result.totalNoVotes,
+          votes: result.result.totalYesVotes + result.result.totalNoVotes,
+          results: {
+            bullPercent: result.result.totalYesVotes,
+            bearPercent: result.result.totalNoVotes,
+          },
+        });
 
         // Refetch history to get updated poll data
         const historyResponse = await getAllPollsByCreator();
@@ -317,7 +336,7 @@ export const SentimentContent = () => {
           },
           duration: 5,
         });
-        adminStartSentimentPoll({
+        adminStartBullmeterSocket({
           username: "Admin",
           position: PopupPositions.TOP_LEFT,
           profilePicture: "https://via.placeholder.com/150",
@@ -335,8 +354,11 @@ export const SentimentContent = () => {
 
   // Handles the end of the live poll
   const endLive = () => {
-    adminEndSentimentPoll({
+    adminEndBullmeterSocket({
       id: "1",
+      votes: 0,
+      voters: 0,
+      results: { bullPercent: 0, bearPercent: 0 },
     });
   };
 

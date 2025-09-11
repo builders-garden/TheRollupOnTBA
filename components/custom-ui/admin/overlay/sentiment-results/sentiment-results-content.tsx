@@ -12,8 +12,11 @@ import { cn } from "@/lib/utils";
 
 export const SentimentResultsContent = () => {
   useSocket();
-  const { joinStream, adminStartSentimentPoll, adminEndSentimentPoll } =
-    useSocketUtils();
+  const {
+    joinStream,
+    adminStartBullmeter: adminStartSentimentPoll,
+    adminEndBullmeter: adminEndSentimentPoll,
+  } = useSocketUtils();
 
   const [selectedPopupPosition, setSelectedPopupPosition] =
     useState<PopupPositions>(PopupPositions.TOP_LEFT);
@@ -52,6 +55,9 @@ export const SentimentResultsContent = () => {
       onDismiss: () => {
         adminEndSentimentPoll({
           id: "1",
+          votes: 0,
+          voters: 0,
+          results: { bullPercent: 0, bearPercent: 0 },
         });
       },
     });

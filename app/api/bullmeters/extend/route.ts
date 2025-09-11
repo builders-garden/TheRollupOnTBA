@@ -46,7 +46,7 @@ export const PATCH = async (req: NextRequest) => {
     }
 
     // Update the poll with new duration and deadline
-    const updatedPoll = await db
+    const [updatedPoll] = await db
       .update(bullMetersTable)
       .set({
         duration: newDuration,
@@ -58,7 +58,7 @@ export const PATCH = async (req: NextRequest) => {
 
     return NextResponse.json({
       success: true,
-      data: updatedPoll[0],
+      data: updatedPoll,
     });
   } catch (error) {
     console.error("Extend poll error:", error);

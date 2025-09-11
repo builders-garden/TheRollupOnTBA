@@ -1,4 +1,5 @@
 import { createBaseAccountSDK } from "@base-org/account";
+import ky from "ky";
 import { useCallback, useState } from "react";
 import { encodeFunctionData } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
@@ -164,17 +165,18 @@ export const useBullmeterClaim = () => {
 
       try {
         // Fetch claimable polls from the API
-        const response = await fetch(
+        const response = await ky.get<ClaimBullmetersResponse>(
           `/api/claim-bullmeters?address=${address}`,
         );
 
         if (!response.ok) {
+          const errorData = await response.json();
           throw new Error(
-            `Failed to fetch claimable polls: ${response.status}`,
+            `Failed to fetch claimable polls: ${response.status} ${errorData.error}`,
           );
         }
 
-        const data: ClaimBullmetersResponse = await response.json();
+        const data = await response.json();
 
         if (!data.success || !data.data) {
           throw new Error(data.error || "Failed to fetch claimable polls");

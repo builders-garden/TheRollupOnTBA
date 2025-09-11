@@ -97,7 +97,7 @@ export const NewfoundToken = ({
           </p>
           {token.address ? (
             <p className="text-sm opacity-50 font-bold">
-              {formatWalletAddress(token.address!)}
+              {formatWalletAddress(token.address)}
             </p>
           ) : (
             <p className="text-sm opacity-50 font-bold">No Address</p>

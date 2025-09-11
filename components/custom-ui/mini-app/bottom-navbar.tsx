@@ -80,7 +80,7 @@ export const BottomNavbar = ({ user }: BottomNavbarProps) => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="flex justify-center items-center shrink-0 font-bold">
-              {baseName || formatWalletAddress(address || "")}
+              {baseName || formatWalletAddress(address)}
             </motion.div>
           )}
         </AnimatePresence>

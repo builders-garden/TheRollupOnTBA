@@ -36,9 +36,7 @@ export const TokensSearchModal = ({
 
   const [searchValue, setSearchValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedChainName, setSelectedChainName] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedChainName, setSelectedChainName] = useState<string>("base");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fetchedTokens, setFetchedTokens] = useState<Token[]>([]);
   const [isFetchingTokens, setIsFetchingTokens] = useState(false);

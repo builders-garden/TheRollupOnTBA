@@ -1,27 +1,36 @@
 import { Duration } from "@/lib/types/poll.type";
 import { ChainImages, PopupPositions } from "./enums";
 
+// Message expiration time for JWT token
 export const MESSAGE_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30; // 30 day
 
+// OG image size
 export const OG_IMAGE_SIZE = {
   width: 1200,
   height: 630,
 };
+
+// Farcaster embed size
 export const FARCASTER_EMBED_SIZE = {
   width: 1500,
   height: 1000,
 };
 
+// Farcaster client FID
 export const FARCASTER_CLIENT_FID = {
   farcaster: 9152, // farcaster web/mobile client fid
   base: 309857, // base mobile client fid
 };
 
+// USDC on Base constants
 export const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+export const BASE_USDC_LOGO_URL =
+  "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042194";
+
+// Native token address
 export const NATIVE_TOKEN_ADDRESS =
   "0x0000000000000000000000000000000000000000";
-// TODO update this address
-export const DESTINATION_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 // Temporary bullmeter address on Base
 export const BULLMETER_ADDRESS = "0x7bB86545242688D51204748292433a07270863B0";
 
@@ -97,7 +106,7 @@ export const AVAILABLE_DURATIONS: Duration[] = [
   { label: "10 Minutes", value: "10m", seconds: 600 },
 ];
 
-// Available popup positions
+// Available overlay popup positions
 export const AVAILABLE_POPUP_POSITIONS: {
   label: string;
   value: PopupPositions;

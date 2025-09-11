@@ -9,6 +9,7 @@ import { useApprove } from "@/hooks/use-approve";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { env } from "@/lib/zod";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
 import { Tips } from "@/plugins/tips/tips";
@@ -66,7 +67,7 @@ export const StreamPage = () => {
           allowFullScreen
         />
       ) : (
-        <div className="flex justify-center items-center w-full h-[265px]">
+        <div className="flex justify-center items-center w-full h-[265px] bg-gray-400">
           <p className="text-sm">No Livestream found, try again later!</p>
         </div>
       )}
@@ -81,7 +82,7 @@ export const StreamPage = () => {
             </h1>
             <ShareButton
               linkCopied
-              miniappUrl="https://farcaster.miniapp.builders"
+              miniappUrl={env.NEXT_PUBLIC_URL}
               buttonClassName="shrink-1 w-min cursor-pointer"
             />
           </div>

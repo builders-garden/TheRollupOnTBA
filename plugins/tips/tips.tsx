@@ -87,9 +87,7 @@ export const Tips = ({
             tipSent({
               position: PopupPositions.TOP_CENTER,
               username:
-                baseName ||
-                user?.username ||
-                formatWalletAddress(address || ""),
+                baseName || user?.username || formatWalletAddress(address),
               profilePicture: user?.avatarUrl || "",
               tipAmount: amount.toString(),
             });
@@ -123,8 +121,7 @@ export const Tips = ({
         // You can add success notification here
         tipSent({
           position: PopupPositions.TOP_CENTER,
-          username:
-            baseName || user?.username || formatWalletAddress(address || ""),
+          username: baseName || user?.username || formatWalletAddress(address),
           profilePicture: user?.avatarUrl || "",
           tipAmount: amount.toString(),
         });

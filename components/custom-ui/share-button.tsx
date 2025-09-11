@@ -1,3 +1,4 @@
+import sdk from "@farcaster/miniapp-sdk";
 import { CheckIcon, CopyIcon, Share2Icon } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,8 +13,6 @@ interface ShareButtonProps {
   buttonSize?: "sm" | "default" | "lg";
   buttonClassName?: string;
   showText?: boolean;
-  navigatorTitle?: string;
-  navigatorText?: string;
   miniappUrl: string;
   linkCopied: boolean;
   handleShare?: () => void;
@@ -24,34 +23,22 @@ export const ShareButton = ({
   buttonSize = "default",
   buttonClassName,
   showText = false,
-  navigatorTitle = "Starter!",
-  navigatorText = `Check out this app on @farcaster`,
   miniappUrl,
   linkCopied,
   handleShare,
 }: ShareButtonProps) => {
+  // Handles sharing the miniapp on farcaster
   const handleShareClick = () => {
-    handleShare?.();
+    const embedsTuple: [string] = [miniappUrl];
+    console.log("TEST embedsTuple", embedsTuple);
+    const composeCastParams = {
+      text: "Check out The Rollup Streaming",
+      embeds: embedsTuple,
+    };
+    sdk.actions.composeCast(composeCastParams);
   };
 
-  const handleShareNative = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: navigatorTitle,
-          text: navigatorText,
-          url: miniappUrl,
-        });
-      } catch (err) {
-        // User cancelled or error
-        console.error("user cancelled or error", err);
-        await copyToClipboard(miniappUrl);
-      }
-    } else {
-      await copyToClipboard(miniappUrl);
-    }
-  };
-
+  // Handles the copy link
   const handleCopyLink = async () => {
     await copyToClipboard(miniappUrl);
   };
@@ -88,21 +75,7 @@ export const ShareButton = ({
                   : "size-7",
             )}
           />
-          Share via base app
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={handleShareNative}
-          className="gap-2 focus:bg-transparent">
-          <Share2Icon
-            className={cn(
-              buttonSize === "sm"
-                ? "size-4"
-                : buttonSize === "default"
-                  ? "size-5"
-                  : "size-7",
-            )}
-          />
-          Share to...
+          Share via Base App
         </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={handleCopyLink}

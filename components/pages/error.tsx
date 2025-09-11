@@ -16,7 +16,9 @@ export default function ErrorPage({ errorMessage }: ErrorPageProps) {
         <h1 className="text-2xl font-bold text-black">
           An error occurred, please try again later.
         </h1>
-        <p className="text-gray-500">{errorMessage}</p>
+        <p className="text-gray-500 break-words max-w-[300px]">
+          {errorMessage}
+        </p>
       </div>
     </motion.div>
   );

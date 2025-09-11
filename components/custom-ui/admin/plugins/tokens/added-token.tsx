@@ -102,6 +102,7 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
                 src={token.logoUrl ?? ""}
                 alt={token.name ?? ""}
                 className="size-10 rounded-full"
+                priority
                 width={40}
                 height={40}
               />

@@ -142,7 +142,8 @@ export const createTwitterIntentUrl = (text: string, miniappUrl: string) => {
  * @param address - The wallet address
  * @returns The formatted wallet address
  */
-export const formatWalletAddress = (address: string) => {
+export const formatWalletAddress = (address?: string | null) => {
+  if (!address) return "";
   return `${address.slice(0, 6)}...${address.slice(address.length - 4)}`;
 };
 

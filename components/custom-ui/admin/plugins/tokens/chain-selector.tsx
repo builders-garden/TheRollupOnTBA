@@ -10,8 +10,8 @@ import {
 import { BASE_APP_SUPPORTED_CHAINS } from "@/lib/constants";
 
 interface ChainSelectorProps {
-  selectedChainName: string | undefined;
-  setSelectedChainName: Dispatch<SetStateAction<string | undefined>>;
+  selectedChainName: string;
+  setSelectedChainName: Dispatch<SetStateAction<string>>;
 }
 
 export const ChainSelector = ({
@@ -26,10 +26,7 @@ export const ChainSelector = ({
     : undefined;
 
   return (
-    <Select
-      onValueChange={(value) =>
-        setSelectedChainName(value === "No Chain" ? undefined : value)
-      }>
+    <Select onValueChange={(value) => setSelectedChainName(value)}>
       <SelectTrigger className="w-[190px] shrink-0 min-h-full bg-white cursor-pointer border-accent border-[1px] focus-visible:ring-accent/40 focus-visible:ring-[2px] rounded-full">
         <div className="flex justify-start items-center w-full h-full">
           <AnimatePresence mode="wait" initial={false}>
@@ -64,9 +61,6 @@ export const ChainSelector = ({
         </div>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="No Chain" className="text-base">
-          No Chain
-        </SelectItem>
         {BASE_APP_SUPPORTED_CHAINS.map((chain) => (
           <SelectItem
             key={chain.chainId}

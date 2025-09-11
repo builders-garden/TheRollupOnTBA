@@ -4,9 +4,13 @@ import { cn } from "@/lib/utils";
 import { NBButton } from "../nb-button";
 import { TopUpModal } from "./top-up-modal";
 import { WithdrawModal } from "./withdraw-modal";
+import { useAccount } from "wagmi";
+import { useUsdcBalance } from "@/hooks/use-usdc-balance";
 
 export const BottomNavbar = () => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+  const { address } = useAccount();  
+  const { balance: usdcBalance } = useUsdcBalance({ address });
 
   // Handle Navbar Open
   const handleNavbarOpen = () => {
@@ -25,7 +29,7 @@ export const BottomNavbar = () => {
           onClick={handleNavbarOpen}>
           <div className="flex justify-center items-center w-full gap-1.5">
             <div className="size-[24px] bg-warning rounded-full border border-black" />
-            <p className="text-xl font-bold">$5.76</p>
+            <p className="text-xl font-bold">${(Number(usdcBalance?.formatted)).toFixed(1)}</p>
           </div>
         </NBButton>
         <div className="flex justify-center items-center w-full gap-1.5 flex-shrink-1">

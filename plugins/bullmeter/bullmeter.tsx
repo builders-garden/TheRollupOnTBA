@@ -15,6 +15,10 @@ interface BullmeterProps {
   button2Color?: string;
   button1OnClick?: () => void;
   button2OnClick?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+  button1Loading?: boolean;
+  button2Loading?: boolean;
 }
 
 export const Bullmeter = ({
@@ -30,6 +34,10 @@ export const Bullmeter = ({
   button2Color,
   button1OnClick,
   button2OnClick,
+  disabled = false,
+  loading = false,
+  button1Loading = false,
+  button2Loading = false,
 }: BullmeterProps) => {
   return (
     <div
@@ -51,14 +59,20 @@ export const Bullmeter = ({
           {/* Button 1 */}
           <NBButton
             onClick={button1OnClick}
+            disabled={disabled || loading || button1Loading}
             className={`bg-${button1Color} w-full`}>
-            <p className="text-white text-2xl font-extrabold">{button1text}</p>
+            <p className="text-white text-2xl font-extrabold">
+              {button1Loading ? "Loading..." : button1text}
+            </p>
           </NBButton>
           {/* Button 2 */}
           <NBButton
             onClick={button2OnClick}
+            disabled={disabled || loading || button2Loading}
             className={`bg-${button2Color} w-full`}>
-            <p className="text-white text-2xl font-extrabold">{button2text}</p>
+            <p className="text-white text-2xl font-extrabold">
+              {button2Loading ? "Loading..." : button2text}
+            </p>
           </NBButton>
         </div>
       </NBCard>

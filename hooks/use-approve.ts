@@ -1,6 +1,7 @@
-import { sendCalls } from "@wagmi/core";
+import { readContract, sendCalls } from "@wagmi/core";
 import { useState } from "react";
 import { encodeFunctionData, erc20Abi, parseUnits } from "viem";
+import { useAccount } from "wagmi";
 import { BASE_USDC_ADDRESS, BULLMETER_ADDRESS } from "@/lib/constants";
 import { wagmiConfigMiniApp } from "@/lib/reown";
 
@@ -13,6 +14,8 @@ export const useApprove = ({
   amount = "1",
   spender = BULLMETER_ADDRESS,
 }: UseApproveProps = {}) => {
+  const { address } = useAccount();
+
   // Parse the amount to USDC decimals (6 decimals for USDC)
   const parsedAmount = parseUnits(amount, 6);
 
@@ -22,9 +25,39 @@ export const useApprove = ({
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [currentAllowance, setCurrentAllowance] = useState<bigint | null>(null);
+  const [isCheckingAllowance, setIsCheckingAllowance] = useState(false);
+
+  // Check current allowance
+  const checkAllowance = async () => {
+    if (!address) {
+      console.error("❌ No wallet connected for allowance check");
+      throw new Error("No wallet connected");
+    }
+
+    try {
+      setIsCheckingAllowance(true);
+
+      const allowance = await readContract(wagmiConfigMiniApp, {
+        address: BASE_USDC_ADDRESS as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "allowance",
+        args: [address, spender as `0x${string}`],
+      });
+
+      setCurrentAllowance(allowance);
+      return allowance;
+    } catch (err) {
+      console.error("❌ Error checking allowance:", err);
+      throw err;
+    } finally {
+      setIsCheckingAllowance(false);
+    }
+  };
 
   // Execute the approval using sendCalls
   const approve = async () => {
+
     try {
       setIsPending(true);
       setIsError(false);
@@ -37,6 +70,8 @@ export const useApprove = ({
         functionName: "approve",
         args: [spender as `0x${string}`, parsedAmount],
       });
+
+      console.log("📤 Sending approval transaction...");
 
       // Send the call
       const result = await sendCalls(wagmiConfigMiniApp, {
@@ -55,7 +90,9 @@ export const useApprove = ({
 
       setCallId(result.id);
       setIsSuccess(true);
+      
     } catch (err) {
+      console.error("❌ Approval failed:", err);
       setIsError(true);
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {
@@ -65,12 +102,15 @@ export const useApprove = ({
 
   return {
     approve,
+    checkAllowance,
     callId,
     isPending,
     isError,
     error,
+    currentAllowance,
+    isCheckingAllowance,
     // Combined loading state
-    isLoading: isPending,
+    isLoading: isPending || isCheckingAllowance,
     // Combined success state
     isSuccess,
     // Combined error state

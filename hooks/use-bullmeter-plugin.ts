@@ -73,7 +73,6 @@ const executeBatchTransactionHelper = async (
       params: [sendCallsParams],
     });
 
-    console.log("Batch transaction successful:", result);
     return { success: true, result };
   } catch (error: any) {
     console.error("Batch transaction failed:", error);
@@ -107,7 +106,6 @@ export const useBullmeterPlugin = () => {
     const addresses = await provider.request({
       method: "eth_requestAccounts",
     });
-    console.log("addresses:", addresses);
 
     if (!addresses) {
       throw new Error("No accounts available");

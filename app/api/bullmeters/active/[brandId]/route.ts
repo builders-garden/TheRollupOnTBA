@@ -25,7 +25,7 @@ export const GET = async (
       );
     }
 
-    let activeBullMeter = await getActiveBullMeterForBrandId(brandId);
+    const activeBullMeter = await getActiveBullMeterForBrandId(brandId);
     if (!activeBullMeter) {
       console.error("No active bull meter found for brand ID:", brandId);
       return NextResponse.json(

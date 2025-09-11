@@ -82,7 +82,6 @@ export const Tips = ({
           await transferUsdc(amount.toString(), payoutAddress);
 
           if (isTransferSuccess) {
-            console.log("Transaction hash:", txHash);
             // You can add success notification here
             tipSent({
               position: PopupPositions.TOP_CENTER,

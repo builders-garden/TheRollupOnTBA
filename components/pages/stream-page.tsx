@@ -2,10 +2,10 @@
 
 import { motion } from "motion/react";
 import Image from "next/image";
-import { useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useApprove } from "@/hooks/use-approve";
+import { useActiveBullMeter } from "@/hooks/use-bull-meters";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
@@ -24,12 +24,57 @@ export const StreamPage = () => {
   const { isConnected } = useSocket();
   const { brand, user } = useMiniAppAuth();
 
+  // Get active bullmeter poll for this brand
+  const { data: activePoll, isLoading: isPollLoading } = useActiveBullMeter(
+    brand.data?.id || "",
+  );
+  console.log("activePoll:", activePoll);
+  console.log("brand.data?.id:", brand.data?.id);
+
+  // State for real-time countdown
+  const [timeLeft, setTimeLeft] = useState("0:00");
+
+  // State to track which button is loading
+  const [loadingButton, setLoadingButton] = useState<"bear" | "bull" | null>(
+    null,
+  );
+
+  // Helper function to calculate time left
+  const calculateTimeLeft = (deadline: number | null) => {
+    if (!deadline) return "0:00";
+    const now = Math.floor(Date.now() / 1000);
+    const timeLeft = deadline - now;
+    if (timeLeft <= 0) return "0:00";
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  // Update countdown every second
+  useEffect(() => {
+    if (!activePoll?.data?.deadline) return;
+
+    const updateTimer = () => {
+      setTimeLeft(calculateTimeLeft(activePoll.data.deadline));
+    };
+
+    // Update immediately
+    updateTimer();
+
+    // Set up interval for updates
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, [activePoll?.data?.deadline]);
+
   // USDC approval hook
   const {
     approve,
     isLoading: isApproving,
     isSuccess: isApproved,
     hasError: approveError,
+    currentAllowance,
+    checkAllowance,
   } = useApprove({ amount: "1" });
 
   // BullMeter voting hook
@@ -39,6 +84,47 @@ export const StreamPage = () => {
     isSuccess: voteSuccess,
     isError: voteError,
   } = useBullmeterApprove();
+
+  // Handle vote submission with approval check
+  const handleVote = async (isBull: boolean) => {
+    const buttonType = isBull ? "bull" : "bear";
+
+    if (!activePoll?.data?.pollId) {
+      console.error("❌ No active poll found");
+      return;
+    }
+
+    try {
+      // Set loading state for the specific button
+      setLoadingButton(buttonType);
+
+      // Check current allowance and get the actual value
+      const currentAllowance = await checkAllowance();
+
+      // Parse the required amount
+      const requiredAmount = BigInt(10000); // 0.01 USDC in wei
+      const hasEnoughAllowance =
+        currentAllowance && currentAllowance >= requiredAmount;
+
+      // If not approved, approve first
+      if (!hasEnoughAllowance) {
+        await approve();
+      } 
+
+      // Submit the vote
+      await submitVote(
+        activePoll.data.pollId,
+        isBull,
+        "1", // 1 vote
+      );
+    } catch (error) {
+      console.error("❌ Vote failed:", error);
+      throw error; // Re-throw to let the UI handle the error state
+    } finally {
+      // Clear loading state
+      setLoadingButton(null);
+    }
+  };
 
   useEffect(() => {
     if (isConnected) {
@@ -102,16 +188,33 @@ export const StreamPage = () => {
 
         <Separator className="w-full bg-border" />
 
-        {/* Bullmeter Poll Card */}
-        <Bullmeter
-          title="ETH will flip BTC this cycle"
-          showLabel
-          timeLeft="4:05"
-          button1text="Bear"
-          button2text="Bull"
-          button1Color="destructive"
-          button2Color="success"
-        />
+        {/* Bullmeter Poll Card - Only show if there's an active poll */}
+        {!isPollLoading && activePoll?.data && (
+          <>
+            <Bullmeter
+              title={activePoll.data.prompt}
+              showLabel
+              timeLeft={timeLeft}
+              button1text="Bear"
+              button2text="Bull"
+              button1Color="destructive"
+              button2Color="success"
+              button1OnClick={() => handleVote(false)} // Bear vote
+              button2OnClick={() => handleVote(true)} // Bull vote
+              disabled={isApproving || isVoting}
+              loading={isApproving || isVoting}
+              button1Loading={loadingButton === "bear"}
+              button2Loading={loadingButton === "bull"}
+            />
+
+            {/* Error Messages */}
+            {voteError && (
+              <p className="text-red-500 text-sm text-center">
+                Vote failed. Please try again.
+              </p>
+            )}
+          </>
+        )}
 
         {/* Tip Buttons */}
         {brand.tipSettings.data?.payoutAddress && (
@@ -151,69 +254,6 @@ export const StreamPage = () => {
 
         {/* Newsletter CTA */}
         <NewsletterCTA label="Subscribe to newsletter" />
-
-        {/* USDC Approval Section */}
-        {/* <div className="flex flex-col justify-center items-center w-full gap-3">
-          <h2 className="text-base font-bold">Vote on ETH vs BTC</h2>
-
-          {!isApproved ? (
-            <NBButton
-              className="bg-green-600 w-fit"
-              disabled={isApproving}
-              onClick={approve}>
-              <p className="text-base font-extrabold text-white">
-                {isApproving ? "Approving..." : "APPROVE USDC"}
-              </p>
-            </NBButton>
-          ) : (
-            <div className="flex gap-3 w-full">
-              <NBButton
-                className="bg-red-600 flex-1"
-                disabled={isVoting}
-                onClick={() =>
-                  submitVote(
-                    "0xcff2903becf1ed83be5948521afdb292794c1f82c074ec4648129f4e5159a584", //TODO: Update this
-                    false,
-                    "1",
-                  )
-                }>
-                <p className="text-base font-extrabold text-white">
-                  {isVoting ? "Voting..." : "BEAR"}
-                </p>
-              </NBButton>
-              <NBButton
-                className="bg-green-600 flex-1"
-                disabled={isVoting}
-                onClick={() =>
-                  submitVote(
-                    "0xcff2903becf1ed83be5948521afdb292794c1f82c074ec4648129f4e5159a584", //TODO: Update this
-                    true,
-                    "1",
-                  )
-                }>
-                <p className="text-base font-extrabold text-white">
-                  {isVoting ? "Voting..." : "BULL"}
-                </p>
-              </NBButton>
-            </div>
-          )}
-
-          {approveError && (
-            <p className="text-red-500 text-sm">
-              Approval failed. Please try again.
-            </p>
-          )}
-          {voteError && (
-            <p className="text-red-500 text-sm">
-              Vote failed. Please try again.
-            </p>
-          )}
-          {voteSuccess && (
-            <p className="text-green-500 text-sm">
-              Vote submitted successfully!
-            </p>
-          )}
-        </div> */}
       </div>
       {/* Floating Bottom Navbar */}
       {user.data && <BottomNavbar user={user.data} />}

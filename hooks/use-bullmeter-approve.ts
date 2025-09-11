@@ -37,11 +37,10 @@ const executeVote = async (voteData: VoteRequest): Promise<VoteResponse> => {
 export const useBullmeterApprove = () => {
   const { address } = useAccount();
 
-  console.log("address:", address);
-
   const voteMutation = useMutation({
     mutationFn: executeVote,
     onSuccess: (data) => {
+      // Send event to socket 
       console.log("Vote submitted successfully:", data);
     },
     onError: (error) => {

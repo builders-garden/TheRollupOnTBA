@@ -4,6 +4,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
+import { updateVoteCounts } from "@/lib/database/queries/bull-meter.query";
 import { authenticateApi } from "@/lib/utils/authenticate-api";
 import { env } from "@/lib/zod";
 
@@ -88,6 +89,33 @@ export const POST = async (req: NextRequest) => {
       data,
       value: BigInt(0), // No ETH value needed for this function
     });
+
+    // Update database with vote counts
+    console.log("📊 Updating database vote counts...");
+    try {
+      const updatedBullMeter = await updateVoteCounts(
+        pollId,
+        isYes,
+        Number(voteCountBigInt),
+      );
+
+      if (updatedBullMeter) {
+        console.log("✅ Database updated successfully:", {
+          pollId,
+          totalYesVotes: updatedBullMeter.totalYesVotes,
+          totalNoVotes: updatedBullMeter.totalNoVotes,
+        });
+      } else {
+        console.warn(
+          "⚠️ Database update failed - bull meter not found for pollId:",
+          pollId,
+        );
+      }
+    } catch (dbError) {
+      console.error("❌ Database update failed:", dbError);
+      // Don't fail the entire request if database update fails
+      // The blockchain transaction was successful
+    }
 
     return NextResponse.json({
       success: true,

@@ -111,7 +111,6 @@ export const useBullmeterClaim = () => {
     const addresses = await provider.request({
       method: "eth_requestAccounts",
     });
-    console.log("addresses:", addresses);
 
     if (!addresses) {
       throw new Error("No accounts available");
@@ -183,8 +182,6 @@ export const useBullmeterClaim = () => {
         }
 
         const { totalPolls, pollIds } = data.data;
-        console.log("totalPolls:", totalPolls);
-        console.log("pollIds:", pollIds);
 
         if (totalPolls === 0 || pollIds.length === 0) {
           console.log("No claimable polls found");
@@ -207,9 +204,6 @@ export const useBullmeterClaim = () => {
             data: encodedFunctionCall,
           };
         });
-        console.log("calls:", calls);
-
-        console.log(`Creating batch of ${calls.length} claim transactions`);
 
         // Execute the batch transaction
         const batchResult = await executeBatch(calls, "Claim all bullmeters");

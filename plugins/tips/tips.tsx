@@ -177,7 +177,7 @@ export const Tips = ({
             trigger={
               <NBButton
                 buttonColor={customTipButton.color}
-                onClick={() => {}}
+                disabled={isProcessing || isTransferLoading}
                 className={cn("w-full", customTipButton.buttonClassName)}>
                 <p
                   className={cn(

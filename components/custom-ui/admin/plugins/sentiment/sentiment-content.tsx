@@ -356,6 +356,7 @@ export const SentimentContent = () => {
         });
         // Add socket event to start the poll (client to server)
         adminStartSentimentPoll({
+          id: result.pollId || "1",
           position: PopupPositions.TOP_CENTER,
           pollQuestion: prompt,
           endTime: new Date((result.deadline || 0) * 1000),

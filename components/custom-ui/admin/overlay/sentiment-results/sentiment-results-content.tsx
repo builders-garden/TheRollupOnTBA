@@ -19,7 +19,7 @@ export const SentimentResultsContent = () => {
   } = useSocketUtils();
 
   const [selectedPopupPosition, setSelectedPopupPosition] =
-    useState<PopupPositions>(PopupPositions.TOP_LEFT);
+    useState<PopupPositions>(PopupPositions.TOP_CENTER);
 
   const handleTestPollNotification = () => {
     const data = {
@@ -37,6 +37,7 @@ export const SentimentResultsContent = () => {
     };
 
     adminStartSentimentPoll({
+      id: "1",
       //username: "Admin",
       //profilePicture: "https://via.placeholder.com/150",
       pollQuestion: "ETH will flip BTC this cycle",

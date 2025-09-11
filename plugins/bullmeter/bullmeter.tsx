@@ -11,6 +11,7 @@ interface BullmeterProps {
   cardClassName?: string;
   title: string;
   timeLeft: string;
+  deadlineSeconds?: number;
   button1text: string;
   button2text: string;
   button1Color?: string;
@@ -30,6 +31,7 @@ export const Bullmeter = ({
   cardClassName,
   title,
   timeLeft,
+  deadlineSeconds,
   button1text,
   button2text,
   button1Color,
@@ -41,6 +43,10 @@ export const Bullmeter = ({
   button1Loading = false,
   button2Loading = false,
 }: BullmeterProps) => {
+  const isExpired =
+    typeof deadlineSeconds === "number"
+      ? deadlineSeconds - Math.floor(Date.now() / 1000) <= 0
+      : false;
   return (
     <div
       className={cn(
@@ -52,8 +58,16 @@ export const Bullmeter = ({
         <div className="flex flex-col justify-center items-start">
           <h1 className="text-2xl font-bold">{title}</h1>
           <div className="flex justify-start items-center gap-1.5">
-            <div className="size-2 bg-[#41CB6E] rounded-full animate-pulse animate-infinite animate-ease-linear" />
-            <p className="text-sm font-medium">{timeLeft} left to vote</p>
+            <div
+              className={`size-2 rounded-full ${
+                isExpired
+                  ? "bg-yellow-500"
+                  : "bg-green-500 animate-pulse animate-infinite animate-ease-linear"
+              }`}
+            />
+            <p className="text-sm font-medium">
+              {isExpired ? "vote ended" : `${timeLeft} left to vote`}
+            </p>
           </div>
         </div>
 
@@ -61,7 +75,7 @@ export const Bullmeter = ({
           {/* Button 1 */}
           <NBButton
             onClick={button1OnClick}
-            disabled={disabled || loading || button1Loading}
+            disabled={disabled || loading || button1Loading || isExpired}
             className={`bg-${button1Color} w-full h-[50px]`}>
             <AnimatePresence mode="wait">
               {button1Loading ? (
@@ -90,7 +104,7 @@ export const Bullmeter = ({
           {/* Button 2 */}
           <NBButton
             onClick={button2OnClick}
-            disabled={disabled || loading || button2Loading}
+            disabled={disabled || loading || button2Loading || isExpired}
             className={`bg-${button2Color} w-full h-[50px]`}>
             <AnimatePresence mode="wait">
               {button2Loading ? (

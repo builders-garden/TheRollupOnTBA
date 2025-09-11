@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
-import { PollNotificationEvent } from "@/lib/types/socket";
+import {
+  EndPollNotificationEvent,
+  PollNotificationEvent,
+  UpdatePollNotificationEvent,
+} from "@/lib/types/socket";
 import { env } from "@/lib/zod";
 
 export default function OverlayPage() {
@@ -16,67 +20,76 @@ export default function OverlayPage() {
     useActiveBullMeter(env.NEXT_PUBLIC_ROLLUP_BRAND_ID);
   const { joinStream } = useSocketUtils();
 
-  const showPollNotificationCallback = useCallback(
-    (data: {
-      id: string;
-      pollQuestion: string;
-      endTime: Date;
-      votes: number;
-      voters: number;
-      qrCodeUrl: string;
-      position: PopupPositions;
-      results: { bullPercent: number; bearPercent: number };
-    }) => {
-      toast.custom(() => <ToastPollNotification data={data} />, {
-        duration: Infinity,
-        position: data.position,
-      });
-    },
-    [],
-  );
+  // Unified poll state and visibility flag
+  type NormalizedPoll = {
+    id: string;
+    prompt: string;
+    pollId?: string;
+    deadlineSeconds: number | null;
+    votes?: number;
+    voters?: number;
+    results?: { bullPercent: number; bearPercent: number };
+  };
+  const [poll, setPoll] = useState<NormalizedPoll | null>(null);
+  const [showPoll, setShowPoll] = useState<boolean>(false);
 
-  const handleOpenSentimentPoll = useCallback(
-    (data: PollNotificationEvent) => {
-      showPollNotificationCallback({
-        id: data.id,
-        pollQuestion: data.pollQuestion,
-        endTime: data.endTime,
-        votes: data.votes,
-        voters: data.voters,
-        qrCodeUrl: data.qrCodeUrl,
-        position: PopupPositions.TOP_LEFT,
-        results: data.results || { bullPercent: 0, bearPercent: 0 },
-      });
+  const toastId = useMemo(() => "sentiment-poll", []);
+
+  const openToastFromPoll = useCallback(
+    (p: NormalizedPoll, position: PopupPositions) => {
+      toast.custom(
+        () => (
+          <ToastPollNotification
+            data={{
+              id: p.id,
+              pollQuestion: p.prompt,
+              endTime: new Date((p.deadlineSeconds || 0) * 1000),
+              votes: p.votes || 0,
+              voters: p.voters || 0,
+              qrCodeUrl: p.pollId || "",
+              position,
+              results: p.results || { bullPercent: 0, bearPercent: 0 },
+            }}
+          />
+        ),
+        {
+          id: toastId,
+          duration: Infinity,
+          position: PopupPositions.TOP_LEFT,
+        },
+      );
     },
-    [showPollNotificationCallback],
+    [toastId],
   );
 
   useEffect(() => {
-    if (activeBullMeter && !isLoadingActiveBullMeter) {
+    if (isLoadingActiveBullMeter) return;
+    if (activeBullMeter?.data) {
       const totalVotes =
         (activeBullMeter.data.totalNoVotes || 0) +
         (activeBullMeter.data.totalYesVotes || 0);
 
-      const endTime = new Date(
-        activeBullMeter.data.deadline
-          ? activeBullMeter.data.deadline * 1000
-          : 0,
-      );
-      handleOpenSentimentPoll({
+      const normalized: NormalizedPoll = {
         id: activeBullMeter.data.id,
-        pollQuestion: activeBullMeter.data.prompt,
-        endTime,
+        prompt: activeBullMeter.data.prompt,
+        pollId: activeBullMeter.data.pollId,
+        deadlineSeconds: activeBullMeter.data.deadline || null,
         votes: totalVotes,
-        voters: 0,
-        qrCodeUrl: activeBullMeter.data.pollId,
-        position: PopupPositions.TOP_LEFT,
+        voters: undefined,
         results: {
           bullPercent: activeBullMeter.data.totalYesVotes || 0,
           bearPercent: activeBullMeter.data.totalNoVotes || 0,
         },
-      });
+      };
+      setPoll(normalized);
+      setShowPoll(true);
+      openToastFromPoll(normalized, PopupPositions.TOP_LEFT);
+    } else {
+      setShowPoll(false);
+      setPoll(null);
+      toast.dismiss(toastId);
     }
-  }, [activeBullMeter, handleOpenSentimentPoll, isLoadingActiveBullMeter]);
+  }, [activeBullMeter, isLoadingActiveBullMeter, openToastFromPoll, toastId]);
 
   useEffect(() => {
     // Join the stream
@@ -85,34 +98,68 @@ export default function OverlayPage() {
       profilePicture: "https://via.placeholder.com/150",
     });
 
-    // Create event handlers
+    // Socket event handlers
+    const handleStart = (data: PollNotificationEvent) => {
+      const normalized: NormalizedPoll = {
+        id: data.id,
+        prompt: data.pollQuestion,
+        pollId: data.qrCodeUrl,
+        deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000),
+        votes: data.votes,
+        voters: data.voters,
+        results: data.results,
+      };
+      setPoll(normalized);
+      setShowPoll(true);
+      openToastFromPoll(normalized, data.position);
+    };
 
-    const handleEndPollNotification = () => {
-      toast.dismiss();
+    const handleUpdate = (data: UpdatePollNotificationEvent) => {
+      setPoll((prev) => {
+        if (!prev) return prev;
+        const updated: NormalizedPoll = {
+          ...prev,
+          id: data.id,
+          votes: data.votes,
+          voters: data.voters,
+          results: data.results,
+        };
+        openToastFromPoll(updated, data.position);
+        return updated;
+      });
+      setShowPoll(true);
+    };
+
+    const handleEnd = (data: EndPollNotificationEvent) => {
+      setShowPoll(false);
+      setPoll((prev) =>
+        prev?.id === data.id
+          ? {
+              ...prev,
+              votes: data.votes,
+              voters: data.voters,
+              results: data.results,
+            }
+          : prev,
+      );
+      toast.dismiss(toastId);
     };
 
     // Set up subscriptions
-    subscribe(
-      ServerToClientSocketEvents.START_SENTIMENT_POLL,
-      handleOpenSentimentPoll,
-    );
-    subscribe(
-      ServerToClientSocketEvents.END_SENTIMENT_POLL,
-      handleEndPollNotification,
-    );
+    subscribe(ServerToClientSocketEvents.START_SENTIMENT_POLL, handleStart);
+    subscribe(ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL, handleUpdate);
+    subscribe(ServerToClientSocketEvents.END_SENTIMENT_POLL, handleEnd);
 
     // Cleanup subscriptions
     return () => {
+      unsubscribe(ServerToClientSocketEvents.START_SENTIMENT_POLL, handleStart);
       unsubscribe(
-        ServerToClientSocketEvents.START_SENTIMENT_POLL,
-        handleOpenSentimentPoll,
+        ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL,
+        handleUpdate,
       );
-      unsubscribe(
-        ServerToClientSocketEvents.END_SENTIMENT_POLL,
-        handleEndPollNotification,
-      );
+      unsubscribe(ServerToClientSocketEvents.END_SENTIMENT_POLL, handleEnd);
     };
-  }, [subscribe, unsubscribe, joinStream, showPollNotificationCallback]);
+  }, [subscribe, unsubscribe, joinStream, openToastFromPoll, toastId]);
 
   return (
     <div className="flex h-screen w-[100vw]">

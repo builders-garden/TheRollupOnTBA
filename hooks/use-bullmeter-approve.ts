@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
 import { useAccount } from "wagmi";
+import { PopupPositions } from "@/lib/enums";
 
 interface VoteRequest {
   voter: string;
@@ -34,14 +35,19 @@ const executeVote = async (voteData: VoteRequest): Promise<VoteResponse> => {
   return response.json();
 };
 
-export const useBullmeterApprove = () => {
+export const useBullmeterApprove = ({
+  onSuccess,
+}: {
+  onSuccess?: (data: VoteResponse) => void;
+}) => {
   const { address } = useAccount();
 
   const voteMutation = useMutation({
     mutationFn: executeVote,
     onSuccess: (data) => {
-      // Send event to socket 
+      // Send event to socket
       console.log("Vote submitted successfully:", data);
+      onSuccess?.(data);
     },
     onError: (error) => {
       console.error("Failed to submit vote:", error);

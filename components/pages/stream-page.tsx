@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useAccount } from "wagmi";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
@@ -11,6 +12,13 @@ import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
+import {
+  EndPollNotificationEvent,
+  PollNotificationEvent,
+  StreamJoinedEvent,
+  UpdatePollNotificationEvent,
+} from "@/lib/types/socket";
 import { env } from "@/lib/zod";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
@@ -22,9 +30,10 @@ import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
 
 export const StreamPage = () => {
-  const { joinStream } = useSocketUtils();
-  const { isConnected } = useSocket();
+  const { isConnected, subscribe, unsubscribe } = useSocket();
+  const { joinStream, voteCasted } = useSocketUtils();
   const { brand, user } = useMiniAppAuth();
+  const { address } = useAccount();
   const { startConfetti } = useConfetti({
     duration: 250,
   });
@@ -44,6 +53,145 @@ export const StreamPage = () => {
     null,
   );
 
+  // Show/hide state for the Bullmeter poll card
+  const [showPoll, setShowPoll] = useState<boolean>(false);
+
+  // Unified poll state populated from initial fetch and socket updates
+  type NormalizedPoll = {
+    id: string;
+    prompt: string;
+    pollId?: string;
+    deadlineSeconds: number | null;
+    votes?: number;
+    voters?: number;
+    results?: { bullPercent: number; bearPercent: number };
+  };
+  const [poll, setPoll] = useState<NormalizedPoll | null>(null);
+
+  const handleStreamJoined = (data: StreamJoinedEvent) => {
+    console.log("Stream joined:", data);
+  };
+
+  const handleUpdateSentimentPoll = (data: UpdatePollNotificationEvent) => {
+    console.log("Update sentiment poll:", data);
+    setShowPoll(true);
+    setPoll((prev) => {
+      const base: NormalizedPoll = prev ?? {
+        id: data.id,
+        prompt: "",
+        pollId: undefined,
+        deadlineSeconds: null,
+        votes: undefined,
+        voters: undefined,
+        results: undefined,
+      };
+      return {
+        ...base,
+        id: data.id,
+        votes: data.votes,
+        voters: data.voters,
+        results: data.results,
+      };
+    });
+  };
+
+  const handleEndSentimentPoll = (data: EndPollNotificationEvent) => {
+    console.log("End sentiment poll:", data);
+    setShowPoll(false);
+    setPoll((prev) =>
+      prev?.id === data.id
+        ? {
+            ...prev,
+            votes: data.votes,
+            voters: data.voters,
+            results: data.results,
+          }
+        : prev,
+    );
+  };
+
+  const handleStartSentimentPoll = (data: PollNotificationEvent) => {
+    console.log("Start sentiment poll:", data);
+    setShowPoll(true);
+    setPoll({
+      id: data.id,
+      prompt: data.pollQuestion,
+      pollId: data.qrCodeUrl,
+      deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000),
+      votes: data.votes,
+      voters: data.voters,
+      results: data.results,
+    });
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      joinStream({
+        username: user.data?.username || "",
+        profilePicture: user.data?.avatarUrl || "",
+      });
+    }
+
+    subscribe(ServerToClientSocketEvents.STREAM_JOINED, handleStreamJoined);
+    subscribe(
+      ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL,
+      handleUpdateSentimentPoll,
+    );
+    subscribe(
+      ServerToClientSocketEvents.START_SENTIMENT_POLL,
+      handleStartSentimentPoll,
+    );
+    subscribe(
+      ServerToClientSocketEvents.END_SENTIMENT_POLL,
+      handleEndSentimentPoll,
+    );
+
+    return () => {
+      unsubscribe(ServerToClientSocketEvents.STREAM_JOINED, handleStreamJoined);
+      unsubscribe(
+        ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL,
+        handleUpdateSentimentPoll,
+      );
+      unsubscribe(
+        ServerToClientSocketEvents.START_SENTIMENT_POLL,
+        handleStartSentimentPoll,
+      );
+      unsubscribe(
+        ServerToClientSocketEvents.END_SENTIMENT_POLL,
+        handleEndSentimentPoll,
+      );
+    };
+  }, [isConnected, joinStream]);
+
+  // Seed poll state from the initially fetched active poll
+  useEffect(() => {
+    if (isPollLoading) return;
+    if (activePoll?.data) {
+      const deadlineSeconds = activePoll.data.deadline || null;
+      const now = Math.floor(Date.now() / 1000);
+      const isExpired = !!deadlineSeconds && deadlineSeconds - now <= 0;
+
+      setPoll({
+        id: activePoll.data.id,
+        prompt: activePoll.data.prompt,
+        pollId: activePoll.data.pollId,
+        deadlineSeconds,
+        votes:
+          (activePoll.data.totalYesVotes || 0) +
+          (activePoll.data.totalNoVotes || 0),
+        voters: undefined,
+        results: {
+          bullPercent: activePoll.data.totalYesVotes || 0,
+          bearPercent: activePoll.data.totalNoVotes || 0,
+        },
+      });
+      setShowPoll(!isExpired);
+    } else {
+      setShowPoll(false);
+      setPoll(null);
+    }
+  }, [isPollLoading, activePoll?.data]);
+
   // Helper function to calculate time left
   const calculateTimeLeft = (deadline: number | null) => {
     if (!deadline) return "0:00";
@@ -57,10 +205,21 @@ export const StreamPage = () => {
 
   // Update countdown every second
   useEffect(() => {
-    if (!activePoll?.data?.deadline) return;
+    if (!poll?.deadlineSeconds) return;
 
     const updateTimer = () => {
-      setTimeLeft(calculateTimeLeft(activePoll.data.deadline));
+      if (!poll?.deadlineSeconds) {
+        setTimeLeft("0:00");
+        return;
+      }
+      const now = Math.floor(Date.now() / 1000);
+      const secondsLeft = poll.deadlineSeconds - now;
+      if (secondsLeft <= 0) {
+        setTimeLeft("0:00");
+        setShowPoll(false);
+        return;
+      }
+      setTimeLeft(calculateTimeLeft(poll.deadlineSeconds));
     };
 
     // Update immediately
@@ -70,7 +229,7 @@ export const StreamPage = () => {
     const interval = setInterval(updateTimer, 1000);
 
     return () => clearInterval(interval);
-  }, [activePoll?.data?.deadline]);
+  }, [poll?.deadlineSeconds]);
 
   // USDC approval hook
   const {
@@ -88,13 +247,31 @@ export const StreamPage = () => {
     isPending: isVoting,
     isSuccess: voteSuccess,
     isError: voteError,
-  } = useBullmeterApprove();
+  } = useBullmeterApprove({
+    onSuccess: (data) => {
+      console.log("Vote submitted successfully:", data);
+      voteCasted({
+        position: PopupPositions.TOP_CENTER,
+        username: address || "",
+        profilePicture: "",
+        voteAmount: "1",
+        isBull: data.data?.isYes || false,
+        promptId: poll?.pollId || "",
+      });
+    },
+  });
 
   // Handle vote submission with approval check
   const handleVote = async (isBull: boolean) => {
     const buttonType = isBull ? "bull" : "bear";
 
-    if (!activePoll?.data?.pollId) {
+    // Guard: poll must exist, not expired, and have an id
+    const now = Math.floor(Date.now() / 1000);
+    const isExpired = poll?.deadlineSeconds
+      ? poll.deadlineSeconds - now <= 0
+      : true;
+
+    if (!poll?.pollId || isExpired) {
       console.error("❌ No active poll found");
       return;
     }
@@ -115,22 +292,9 @@ export const StreamPage = () => {
       if (!hasEnoughAllowance) {
         await approve();
       }
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      const newAllowance = await checkAllowance();
-      const stillNeedsApproval = !newAllowance || newAllowance < requiredAmount;
-
-      if (stillNeedsApproval) {
-        console.warn(
-          "⚠️ Approval may not have completed yet, but proceeding with vote...",
-        );
-      }
 
       // Submit the vote
-      await submitVote(
-        activePoll.data.pollId,
-        isBull,
-        "1", // 1 vote
-      );
+      await submitVote(poll.pollId, isBull, "1");
 
       toast.success("Vote submitted");
       startConfetti();
@@ -142,15 +306,6 @@ export const StreamPage = () => {
       setLoadingButton(null);
     }
   };
-
-  useEffect(() => {
-    if (isConnected) {
-      joinStream({
-        username: user.data?.username || "",
-        profilePicture: user.data?.avatarUrl || "",
-      });
-    }
-  }, [isConnected, joinStream]);
 
   return (
     <motion.div
@@ -205,13 +360,14 @@ export const StreamPage = () => {
 
         <Separator className="w-full bg-border" />
 
-        {/* Bullmeter Poll Card - Only show if there's an active poll */}
-        {!isPollLoading && activePoll?.data && (
+        {/* Bullmeter Poll Card - Controlled by showPoll state */}
+        {showPoll && poll && (
           <>
             <Bullmeter
-              title={activePoll.data.prompt}
+              title={poll.prompt}
               showLabel
               timeLeft={timeLeft}
+              deadlineSeconds={poll.deadlineSeconds || undefined}
               button1text="Bear"
               button2text="Bull"
               button1Color="destructive"

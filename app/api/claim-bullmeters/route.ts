@@ -173,6 +173,18 @@ export const GET = async (req: NextRequest) => {
       }
     }
 
+    // Extract all poll IDs from the filtered polls
+    const pollIds: string[] = [];
+    if (lastNonce < 50) {
+      // For getAllPollsByCreator, polls is a direct array
+      pollIds.push(...polls.map((poll: any) => poll.pollId));
+    } else {
+      // For batched approach, extract from each batch
+      polls.forEach((batch: any) => {
+        pollIds.push(...batch.polls.map((poll: any) => poll.pollId));
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -182,6 +194,7 @@ export const GET = async (req: NextRequest) => {
           lastNonce < 50
             ? polls.length
             : polls.reduce((acc, batch) => acc + batch.polls.length, 0),
+        pollIds,
         polls,
       },
     });

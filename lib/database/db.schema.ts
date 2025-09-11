@@ -9,7 +9,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { ulid } from "ulid";
-import { Address } from "viem";
+import { Address, Hex } from "viem";
 import { ActivePlugins, SocialMediaUrls } from "../types/shared.type";
 
 /**
@@ -56,7 +56,8 @@ export const bullMetersTable = sqliteTable(
     brandId: text("brand_id")
       .notNull()
       .references(() => brandsTable.id, { onDelete: "cascade" }),
-    prompt: text("prompt"),
+    prompt: text("prompt").default("").notNull(),
+    pollId: text("poll_id").$type<Hex>().default("0x").notNull(),
     votePrice: numeric("vote_price"),
     duration: integer("duration"),
     payoutAddresses: text("payout_addresses", { mode: "json" }).$type<

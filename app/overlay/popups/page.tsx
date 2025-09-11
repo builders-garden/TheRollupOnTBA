@@ -25,7 +25,7 @@ export default function OverlayPage() {
     }) => {
       toast.custom(() => <ToastNotification data={data} slideOffset={100} />, {
         duration: 2000,
-        position: data.position,
+        position: PopupPositions.TOP_CENTER,
       });
     },
     [],

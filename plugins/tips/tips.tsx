@@ -63,15 +63,10 @@ export const Tips = ({
     try {
       setIsProcessing(true);
 
-      console.log("amount:", amount);
-      console.log("context client fid:", (await sdk.context).client.clientFid);
-
       if (
         (await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster
       ) {
-        // Farcaster payment flow - use your USDC transfer hook
-        console.log("Using Farcaster USDC transfer for payment");
-
+      
         try {
           // Execute the transfer using your hook with dynamic parameters
           await transferUsdc(
@@ -80,7 +75,6 @@ export const Tips = ({
           );
 
           if (isTransferSuccess) {
-            console.log("🎉 Farcaster USDC transfer completed successfully!");
             console.log("Transaction hash:", txHash);
             // You can add success notification here
           } else if (isTransferError) {
@@ -96,15 +90,12 @@ export const Tips = ({
       }
 
       // Base payment flow for non-Farcaster environments
-      console.log("Using Base payment SDK");
-
       const payment = await pay({
         amount: amount.toFixed(2), // USD amount (USDC used internally)
         to: "0x4110c5B6D9fAbf629c43a7B0279b9969CB698971", // TODO: change to the recipient address
         testnet: false, // set false for Mainnet
       });
 
-      console.log("payment:", payment);
 
       // Poll until mined
       const { status } = await getPaymentStatus({

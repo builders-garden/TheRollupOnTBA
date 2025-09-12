@@ -76,6 +76,7 @@ export const PopupsContent = () => {
         voteAmount: "5",
         isBull: true,
         promptId: "1",
+        endTime: addSeconds(new Date(), 5),
       });
     }
   };

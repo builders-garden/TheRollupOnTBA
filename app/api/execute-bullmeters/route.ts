@@ -7,6 +7,7 @@ import { BULLMETER_ADDRESS } from "@/lib/constants";
 import { updateVoteCounts } from "@/lib/database/queries/bull-meter.query";
 import { authenticateApi } from "@/lib/utils/authenticate-api";
 import { env } from "@/lib/zod";
+import { BullMeter } from "@/lib/database/db.schema";
 
 interface VoteRequest {
   voter: string;
@@ -91,9 +92,9 @@ export const POST = async (req: NextRequest) => {
     });
 
     // Update database with vote counts
-    console.log("📊 Updating database vote counts...");
+    let updatedBullMeter: BullMeter | null = null;
     try {
-      const updatedBullMeter = await updateVoteCounts(
+      updatedBullMeter = await updateVoteCounts(
         pollId,
         isYes,
         Number(voteCountBigInt),
@@ -125,6 +126,7 @@ export const POST = async (req: NextRequest) => {
         isYes,
         voteCount: voteCount,
         message: "Vote transaction submitted successfully",
+        endTime: updatedBullMeter?.deadline,
       },
     });
   } catch (error) {

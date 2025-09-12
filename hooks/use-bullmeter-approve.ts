@@ -18,6 +18,7 @@ interface VoteResponse {
     isYes: boolean;
     voteCount: string;
     message: string;
+    endTime: number;
   };
   error?: string;
   details?: string;

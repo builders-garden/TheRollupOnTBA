@@ -72,6 +72,7 @@ export type UpdatePollNotificationEvent = {
   position: PopupPositions;
   voters: number;
   votes: number;
+  endTime: Date;
   results?: {
     bullPercent: number;
     bearPercent: number;

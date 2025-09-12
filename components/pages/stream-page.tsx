@@ -19,6 +19,7 @@ import {
   StreamJoinedEvent,
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket";
+import { formatWalletAddress } from "@/lib/utils";
 import { env } from "@/lib/zod";
 import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
 import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
@@ -42,8 +43,6 @@ export const StreamPage = () => {
   const { data: activePoll, isLoading: isPollLoading } = useActiveBullMeter(
     brand.data?.id || "",
   );
-  console.log("activePoll:", activePoll);
-  console.log("brand.data?.id:", brand.data?.id);
 
   // State for real-time countdown
   const [timeLeft, setTimeLeft] = useState("0:00");
@@ -69,11 +68,10 @@ export const StreamPage = () => {
   const [poll, setPoll] = useState<NormalizedPoll | null>(null);
 
   const handleStreamJoined = (data: StreamJoinedEvent) => {
-    console.log("Stream joined:", data);
   };
 
   const handleUpdateSentimentPoll = (data: UpdatePollNotificationEvent) => {
-    console.log("Update sentiment poll:", data);
+
     setShowPoll(true);
     setPoll((prev) => {
       const base: NormalizedPoll = prev ?? {
@@ -85,18 +83,22 @@ export const StreamPage = () => {
         voters: undefined,
         results: undefined,
       };
+      // Store the absolute Unix timestamp, not remaining time
+      const absoluteDeadline = Math.floor(
+        new Date(data.endTime).getTime() / 1000,
+      );
       return {
         ...base,
         id: data.id,
         votes: data.votes,
         voters: data.voters,
         results: data.results,
+        deadlineSeconds: absoluteDeadline, // Store absolute timestamp, not remaining time
       };
     });
   };
 
   const handleEndSentimentPoll = (data: EndPollNotificationEvent) => {
-    console.log("End sentiment poll:", data);
     setShowPoll(false);
     setPoll((prev) =>
       prev?.id === data.id
@@ -111,13 +113,12 @@ export const StreamPage = () => {
   };
 
   const handleStartSentimentPoll = (data: PollNotificationEvent) => {
-    console.log("Start sentiment poll:", data);
     setShowPoll(true);
     setPoll({
       id: data.id,
       prompt: data.pollQuestion,
       pollId: data.qrCodeUrl,
-      deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000),
+      deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000), // This is already correct - absolute timestamp
       votes: data.votes,
       voters: data.voters,
       results: data.results,
@@ -162,6 +163,10 @@ export const StreamPage = () => {
       );
     };
   }, [isConnected, joinStream]);
+
+  const baseName = user.data?.wallets.find(
+    (wallet) => wallet.baseName,
+  )?.baseName;
 
   // Seed poll state from the initially fetched active poll
   useEffect(() => {
@@ -249,14 +254,21 @@ export const StreamPage = () => {
     isError: voteError,
   } = useBullmeterApprove({
     onSuccess: (data) => {
-      console.log("Vote submitted successfully:", data);
       voteCasted({
         position: PopupPositions.TOP_CENTER,
-        username: address || "",
-        profilePicture: "",
+        username:
+          baseName || user.data?.username || formatWalletAddress(address),
+        profilePicture: user.data?.avatarUrl || "",
         voteAmount: "1",
         isBull: data.data?.isYes || false,
         promptId: poll?.pollId || "",
+        endTime: data.data?.endTime
+          ? (() => {
+              // Convert Unix timestamp (seconds) to milliseconds
+              const date = new Date(data.data?.endTime * 1000);
+              return date;
+            })()
+          : new Date(),
       });
     },
   });
@@ -293,8 +305,13 @@ export const StreamPage = () => {
         await approve();
       }
 
+      // Extract the hash from the pollId URL
+      const pollHash = poll.pollId.includes("/poll/")
+        ? poll.pollId.split("/poll/")[1]
+        : poll.pollId;
+
       // Submit the vote
-      await submitVote(poll.pollId, isBull, "1");
+      await submitVote(pollHash, isBull, "1");
 
       toast.success("Vote submitted");
       startConfetti();

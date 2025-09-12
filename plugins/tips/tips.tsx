@@ -76,7 +76,7 @@ export const Tips = ({
   const handleTipPayment = async (amount: number) => {
     try {
       setIsProcessing(true);
-
+      
       if (
         (await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster
       ) {
@@ -110,9 +110,12 @@ export const Tips = ({
       // Base payment flow for non-Farcaster environments
       const payment = await pay({
         amount: amount.toFixed(2), // USD amount (USDC used internally)
-        to: payoutAddress,
+        to: address as `0x${string}`,
         testnet: false, // set false for Mainnet
       });
+
+      // await 2 seconds
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       // Poll until mined
       const { status } = await getPaymentStatus({

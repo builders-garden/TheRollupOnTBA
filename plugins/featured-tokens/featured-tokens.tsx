@@ -50,8 +50,10 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
         sellToken,
         buyToken,
       });
+      // await 5 seconds
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
-      if (result.success) {
+      if (result.success && result.swap.transactions && result.swap.transactions.length > 0) {
         // Send socket message to the server
         tokenTraded({
           position: PopupPositions.TOP_CENTER,

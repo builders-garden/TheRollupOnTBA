@@ -18,30 +18,6 @@ const nextConfig = {
     ],
   },
   devIndicators: true,
-  async headers() {
-    return [
-      {
-        locale: false,
-        source: "/(.*)",
-        headers: createSecureHeaders({
-          frameGuard: false,
-          noopen: "noopen",
-          nosniff: "nosniff",
-          xssProtection: "sanitize",
-          forceHTTPSRedirect: [
-            true,
-            { maxAge: 60 * 60 * 24 * 360, includeSubDomains: true },
-          ],
-          referrerPolicy: "same-origin",
-          contentSecurityPolicy: {
-            directives: {
-              connectSrc: ["*"],
-            },
-          },
-        }),
-      },
-    ];
-  },
   async redirects() {
     return [
       {

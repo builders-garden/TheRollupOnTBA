@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
         await setUserNotificationDetails(fid, event.notificationDetails);
         await sendFarcasterNotification({
           fid,
-          title: `Welcome to Farcaster Mini-app Starter!`,
-          body: `Hello from Builders Garden!`,
+          title: `Welcome to The Rollup!`,
+          body: `Enjoy The Rollup streams directly in mini app`,
           notificationDetails: event.notificationDetails,
         });
       } else {

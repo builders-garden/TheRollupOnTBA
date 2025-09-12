@@ -9,10 +9,10 @@ export async function generateMetadata(): Promise<Metadata> {
     version: "next",
     imageUrl: `${appUrl}/images/feed.png`,
     button: {
-      title: "Launch App",
+      title: "Watch the Stream",
       action: {
         type: "launch_frame",
-        name: "Mini-app Starter",
+        name: "The Rollup",
         url: appUrl,
         splashImageUrl: `${appUrl}/images/splash.png`,
         splashBackgroundColor: "#ffffff",
@@ -20,14 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
   return {
-    title: "Farcaster Mini-app Starter by Builders Garden",
-    description:
-      "A starter template for Farcaster mini-apps by Builders Garden",
+    title: "The Rollup",
+    description: "Enjoy The Rollup streams directly in mini app",
     metadataBase: new URL(appUrl),
     openGraph: {
-      title: "Farcaster Mini-app Starter by Builders Garden",
-      description:
-        "A starter template for Farcaster mini-apps by Builders Garden",
+      title: "The Rollup",
+      description: "Enjoy The Rollup streams directly in mini app",
       type: "website",
       images: [
         {
@@ -39,9 +37,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Farcaster Mini-app Starter by Builders Garden",
-      description:
-        "A starter template for Farcaster mini-apps by Builders Garden",
+      title: "The Rollup",
+      description: "Enjoy The Rollup streams directly in mini app",
       siteId: "1727435024931094528",
       creator: "@builders_garden",
       creatorId: "1727435024931094528",

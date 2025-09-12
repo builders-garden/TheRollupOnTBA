@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         await setUserNotificationDetails(fid, event.notificationDetails);
         await sendFarcasterNotification({
           fid,
-          title: `Welcome to The Rollup!`,
+          title: `Welcome to The Rollup Mini-app!`,
           body: `Enjoy The Rollup streams directly in mini app`,
           notificationDetails: event.notificationDetails,
         });

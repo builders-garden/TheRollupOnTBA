@@ -11,7 +11,7 @@ export const DefaultOGImage = ({
   return (
     <img
       src={`${env.NEXT_PUBLIC_URL}/images/feed.png`}
-      alt="Default image for The Rollup"
+      alt="Default image for The Rollup Mini-app"
       width={`${width}px`}
       height={`${height}px`}
     />

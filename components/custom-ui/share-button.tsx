@@ -30,9 +30,8 @@ export const ShareButton = ({
   // Handles sharing the miniapp on farcaster
   const handleShareClick = () => {
     const embedsTuple: [string] = [miniappUrl];
-    console.log("TEST embedsTuple", embedsTuple);
     const composeCastParams = {
-      text: "Check out The Rollup Streaming",
+      text: "Check out The Rollup Mini-app",
       embeds: embedsTuple,
     };
     sdk.actions.composeCast(composeCastParams);

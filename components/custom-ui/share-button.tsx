@@ -25,7 +25,6 @@ export const ShareButton = ({
   showText = false,
   miniappUrl,
   linkCopied,
-  handleShare,
 }: ShareButtonProps) => {
   // Handles sharing the miniapp on farcaster
   const handleShareClick = () => {

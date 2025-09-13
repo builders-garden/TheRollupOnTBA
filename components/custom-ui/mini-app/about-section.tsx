@@ -1,5 +1,4 @@
 import { Globe, Twitch, Twitter, Youtube } from "lucide-react";
-import { motion } from "motion/react";
 import Link from "next/link";
 
 interface AboutSectionProps {

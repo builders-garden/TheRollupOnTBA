@@ -55,7 +55,10 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
       if (result.success && result.swap.transactions) {
-        if ((await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster) {
+        if (
+          (await sdk.context).client.clientFid ===
+          FARCASTER_CLIENT_FID.farcaster
+        ) {
           if (result.swap.transactions.length > 0) {
             // Send socket message to the server
             tokenTraded({
@@ -73,20 +76,20 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
             });
           }
         } else {
-        // Send socket message to the server
-        tokenTraded({
-          position: PopupPositions.TOP_CENTER,
-          username: baseName || formatWalletAddress(address),
-          profilePicture: user?.avatarUrl || "",
-          tokenInAmount: "",
-          tokenInName: "USDC",
-          tokenInDecimals: 6,
-          tokenInImageUrl: BASE_USDC_LOGO_URL,
-          tokenOutAmount: "",
-          tokenOutDecimals: tokenDecimals,
-          tokenOutName: tokenName,
-          tokenOutImageUrl: tokenImageUrl,
-        });
+          // Send socket message to the server
+          tokenTraded({
+            position: PopupPositions.TOP_CENTER,
+            username: baseName || formatWalletAddress(address),
+            profilePicture: user?.avatarUrl || "",
+            tokenInAmount: "",
+            tokenInName: "USDC",
+            tokenInDecimals: 6,
+            tokenInImageUrl: BASE_USDC_LOGO_URL,
+            tokenOutAmount: "",
+            tokenOutDecimals: tokenDecimals,
+            tokenOutName: tokenName,
+            tokenOutImageUrl: tokenImageUrl,
+          });
         }
         toast.success("Token swapped successfully");
         startConfetti();
@@ -111,16 +114,12 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
             onClick={() => handleSwapToken(token)}
             disabled={isProcessing}>
             <div className="flex justify-center items-center w-full gap-1.5">
-              {token.logoUrl ? (
-                <Image
-                  src={token.logoUrl}
-                  alt={token.name + index.toString()}
-                  width={22}
-                  height={22}
-                />
-              ) : (
-                <div className="size-4 rounded-full border border-black" />
-              )}
+              <Image
+                src={token.logoUrl || "/images/coin.svg"}
+                alt={token.name + index.toString()}
+                width={22}
+                height={22}
+              />
               <p className="text-base font-extrabold text-nowrap">
                 Buy ${token.symbol || token.name || ""}
               </p>

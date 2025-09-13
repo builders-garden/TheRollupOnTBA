@@ -67,11 +67,9 @@ export const StreamPage = () => {
   };
   const [poll, setPoll] = useState<NormalizedPoll | null>(null);
 
-  const handleStreamJoined = (data: StreamJoinedEvent) => {
-  };
+  const handleStreamJoined = (data: StreamJoinedEvent) => {};
 
   const handleUpdateSentimentPoll = (data: UpdatePollNotificationEvent) => {
-
     setShowPoll(true);
     setPoll((prev) => {
       const base: NormalizedPoll = prev ?? {
@@ -240,9 +238,6 @@ export const StreamPage = () => {
   const {
     approve,
     isLoading: isApproving,
-    isSuccess: isApproved,
-    hasError: approveError,
-    currentAllowance,
     checkAllowance,
   } = useApprove({ amount: "1" });
 
@@ -250,7 +245,6 @@ export const StreamPage = () => {
   const {
     submitVote,
     isPending: isVoting,
-    isSuccess: voteSuccess,
     isError: voteError,
   } = useBullmeterApprove({
     onSuccess: (data) => {

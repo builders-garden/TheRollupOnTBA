@@ -453,7 +453,7 @@ export const useBullmeterPlugin = () => {
             // Wait a moment for the transaction to be fully processed
             await new Promise((resolve) => setTimeout(resolve, 4000));
 
-            const { provider, address } = await getWalletConnection();
+            const { provider } = await getWalletConnection();
 
             const pollStateEncodedCall = encodeFunctionData({
               abi: bullMeterAbi,

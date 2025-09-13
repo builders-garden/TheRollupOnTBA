@@ -1,6 +1,6 @@
 import { Check, SquarePen, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface NBTextInputProps {

@@ -21,8 +21,9 @@ export const PopupsContent = () => {
     adminStartBullmeter: adminStartSentimentPoll,
     adminEndBullmeter: adminEndSentimentPoll,
   } = useSocketUtils();
-  const [selectedPopupPosition, setSelectedPopupPosition] =
-    useState<PopupPositions>(PopupPositions.TOP_CENTER);
+  const [selectedPopupPosition, _] = useState<PopupPositions>(
+    PopupPositions.TOP_CENTER,
+  );
 
   const handleTestNotification = (type: "tip" | "trade" | "vote") => {
     const testData = {

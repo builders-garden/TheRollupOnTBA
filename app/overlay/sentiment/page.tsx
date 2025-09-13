@@ -30,8 +30,8 @@ export default function OverlayPage() {
     voters?: number;
     results?: { bullPercent: number; bearPercent: number };
   };
-  const [poll, setPoll] = useState<NormalizedPoll | null>(null);
-  const [showPoll, setShowPoll] = useState<boolean>(false);
+  const [_, setPoll] = useState<NormalizedPoll | null>(null);
+  const [__, setShowPoll] = useState<boolean>(false);
 
   const toastId = useMemo(() => "sentiment-poll", []);
 

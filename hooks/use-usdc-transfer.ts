@@ -1,6 +1,6 @@
-import { sendCalls, writeContract } from "@wagmi/core";
+import { writeContract } from "@wagmi/core";
 import { useState } from "react";
-import { encodeFunctionData, erc20Abi, parseUnits } from "viem";
+import { erc20Abi, parseUnits } from "viem";
 import { BASE_USDC_ADDRESS } from "@/lib/constants";
 import { wagmiConfigMiniApp } from "@/lib/reown";
 

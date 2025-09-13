@@ -1,4 +1,3 @@
-import { sdk as miniappSdk } from "@farcaster/miniapp-sdk";
 import {
   createContext,
   ReactNode,
@@ -7,6 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useAccount } from "wagmi";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useFakeFarcasterSignIn } from "@/hooks/use-auth-hooks";
@@ -68,6 +68,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { address: connectedAddress } = useAccount();
 
   // Single user query - this is the only place we fetch user data
   // Always try to fetch on load to check for existing valid token
@@ -197,6 +198,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
       fakeFarcasterSignIn({
         fid: miniAppContext.user.fid,
         referrerFid,
+        connectedAddress,
       });
     } catch (err) {
       console.error("Farcaster sign-in error:", err);

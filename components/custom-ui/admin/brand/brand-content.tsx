@@ -8,7 +8,7 @@ import {
   Youtube,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useUpdateBrand } from "@/hooks/use-brands";

@@ -103,7 +103,6 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingFeaturedTokens,
     isFetched: isFetchedAuthFeaturedTokens,
     error: featuredTokensError,
-    isEnabled: isEnabledFeaturedTokens,
   } = useFeaturedTokens({ brandId: brand?.id, enabled: !!brand?.id });
 
   // Farcaster sign-in mutation

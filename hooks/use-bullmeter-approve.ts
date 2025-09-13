@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
 import { useAccount } from "wagmi";
-import { PopupPositions } from "@/lib/enums";
 
 interface VoteRequest {
   voter: string;

@@ -43,13 +43,8 @@ export const SentimentContent = () => {
     terminateAndClaimBullmeter,
     getAllPollsByCreator,
     isLoading: isCreatingBullmeter,
-    error: bullmeterError,
   } = useBullmeterPlugin();
-  const {
-    claimAllBullmeters,
-    isLoading: isClaiming,
-    error: claimHookError,
-  } = useBullmeterClaim();
+  const { claimAllBullmeters, isLoading: isClaiming } = useBullmeterClaim();
   const { admin } = useAdminAuth();
 
   const [prompt, setPrompt] = useState("");
@@ -763,7 +758,7 @@ export const SentimentContent = () => {
         {reversedPollHistory.length > 0 ? (
           <>
             <div className="flex flex-col gap-3 w-full">
-              {currentPageData.map((poll, index) => {
+              {currentPageData.map((poll) => {
                 const formattedPoll = formatPollForDisplay(poll);
                 return (
                   <HistoryItem

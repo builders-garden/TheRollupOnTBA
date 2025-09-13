@@ -35,13 +35,23 @@ export function useFarcasterSignIn(
   options?: Partial<
     UseApiMutationOptions<
       { success: boolean; error?: string; user?: User },
-      { fid: number; referrerFid?: number; token: string }
+      {
+        fid: number;
+        referrerFid?: number;
+        token: string;
+        connectedAddress?: string;
+      }
     >
   >,
 ) {
   return useApiMutation<
     { success: boolean; error?: string; user?: User },
-    { fid: number; referrerFid?: number; token: string }
+    {
+      fid: number;
+      referrerFid?: number;
+      token: string;
+      connectedAddress?: string;
+    }
   >({
     url: "/api/auth/farcaster/sign-in",
     method: "POST",
@@ -55,13 +65,21 @@ export function useFakeFarcasterSignIn(
   options?: Partial<
     UseApiMutationOptions<
       { success: boolean; error?: string; user?: User },
-      { fid: number; referrerFid?: number; }
+      {
+        fid: number;
+        referrerFid?: number;
+        connectedAddress?: string;
+      }
     >
   >,
 ) {
   return useApiMutation<
     { success: boolean; error?: string; user?: User },
-    { fid: number; referrerFid?: number;  }
+    {
+      fid: number;
+      referrerFid?: number;
+      connectedAddress?: string;
+    }
   >({
     url: "/api/auth/farcaster/fake-sign-in",
     method: "POST",

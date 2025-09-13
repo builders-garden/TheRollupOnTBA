@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   createPublicClient,
-  createWalletClient,
   decodeFunctionResult,
   encodeFunctionData,
   http,
@@ -88,7 +87,10 @@ export const GET = async (req: NextRequest) => {
 
       // Filter polls with fundsClaimed = false and convert BigInt values to strings for JSON serialization
       polls = decodedAllPolls
-        .filter((poll: any) => poll.fundsClaimed === false && poll.totalUsdcCollected > BigInt(0))
+        .filter(
+          (poll: any) =>
+            poll.fundsClaimed === false && poll.totalUsdcCollected > BigInt(0),
+        )
         .map((poll: any) => ({
           ...poll,
           votePrice: poll.votePrice.toString(),
@@ -146,7 +148,11 @@ export const GET = async (req: NextRequest) => {
 
         // Filter polls with fundsClaimed = false and convert BigInt values to strings for JSON serialization
         const serializedPolls = decodedPollsFromNonce
-          .filter((poll: any) => poll.fundsClaimed === false && poll.totalUsdcCollected > BigInt(0))
+          .filter(
+            (poll: any) =>
+              poll.fundsClaimed === false &&
+              poll.totalUsdcCollected > BigInt(0),
+          )
           .map((poll: any) => ({
             ...poll,
             votePrice: poll.votePrice.toString(),

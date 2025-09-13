@@ -188,11 +188,11 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
           ? miniAppContext.location.cast.author.fid
           : undefined;
 
-      const result = await miniappSdk.quickAuth.getToken();
+      // const result = await miniappSdk.quickAuth.getToken();
 
-      if (!result) {
-        throw new Error("No token from SIWF Quick Auth");
-      }
+      // if (!result) {
+      //   throw new Error("No token from SIWF Quick Auth");
+      // }
 
       fakeFarcasterSignIn({
         fid: miniAppContext.user.fid,

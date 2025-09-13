@@ -26,7 +26,7 @@ export const PopupsContent = () => {
 
   const handleTestNotification = (type: "tip" | "trade" | "vote") => {
     const testData = {
-      username: "limone.base.eth",
+      username: "test.base.eth",
       profilePicture: "https://picsum.photos/200",
       text:
         type === "tip"

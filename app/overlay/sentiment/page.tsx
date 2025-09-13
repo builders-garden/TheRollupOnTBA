@@ -115,12 +115,11 @@ export default function OverlayPage() {
     };
 
     const handleUpdate = (data: UpdatePollNotificationEvent) => {
+      const absoluteDeadline = data.endTime
+        ? Math.floor(new Date(data.endTime).getTime() / 1000)
+        : null;
       setPoll((prev) => {
         if (!prev) return prev;
-
-        const absoluteDeadline = Math.floor(
-          new Date(data.endTime).getTime() / 1000,
-        );
         const updated: NormalizedPoll = {
           ...prev,
           id: data.id,

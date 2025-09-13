@@ -173,7 +173,12 @@ export const ToastPollNotification = ({
     const timeoutId = setTimeout(() => {
       intervalId = setInterval(() => {
         const next = getSecondsRemaining();
-        setSecondsLeft((prev) => (prev !== next ? next : prev));
+        setSecondsLeft((prev) => {
+          if (prev !== next) {
+            return next;
+          }
+          return prev;
+        });
         if (next <= 0 && intervalId) {
           clearInterval(intervalId);
         }

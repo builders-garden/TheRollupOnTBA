@@ -104,10 +104,10 @@ export const SentimentContent = () => {
           // Add socket event to end the poll (client to server)
           adminEndSentimentPoll({
             id: result.pollId || "1",
-            votes: 0,
-            voters: 0,
-            results: { bullPercent: 0, bearPercent: 0 },
-          });
+            voters: result.votes?.yes ?? 0,
+            votes: result.votes?.total ?? 0,
+          results: { bullPercent: result.votes?.yes ?? 0, bearPercent: result.votes?.no ?? 0 },
+        });
 
           // Refetch history to get updated poll data
           const historyResponse = await getAllPollsByCreator();

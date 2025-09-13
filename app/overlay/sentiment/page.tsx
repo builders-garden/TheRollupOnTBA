@@ -81,7 +81,19 @@ export default function OverlayPage() {
           bearPercent: activeBullMeter.data.totalNoVotes || 0,
         },
       };
-      setPoll(normalized);
+      setPoll((prev) => {
+        if (
+          prev &&
+          prev.id === normalized.id &&
+          prev.votes === normalized.votes &&
+          prev.deadlineSeconds === normalized.deadlineSeconds &&
+          prev.results?.bullPercent === normalized.results?.bullPercent &&
+          prev.results?.bearPercent === normalized.results?.bearPercent
+        ) {
+          return prev;
+        }
+        return normalized;
+      });
       setShowPoll(true);
       openToastFromPoll(normalized, PopupPositions.TOP_CENTER);
     } else {
@@ -135,17 +147,23 @@ export default function OverlayPage() {
     };
 
     const handleEnd = (data: EndPollNotificationEvent) => {
-      setShowPoll(false);
-      setPoll((prev) =>
-        prev?.id === data.id
-          ? {
-              ...prev,
-              votes: data.votes,
-              voters: data.voters,
-              results: data.results,
-            }
-          : prev,
-      );
+      const absoluteDeadline = data.endTime
+        ? Math.floor(new Date(data.endTime).getTime() / 1000)
+        : null;
+      setPoll((prev) => {
+        const updated: NormalizedPoll = {
+          id: data.id,
+          prompt: prev?.prompt || "",
+          pollId: prev?.pollId,
+          deadlineSeconds: absoluteDeadline,
+          votes: data.votes,
+          voters: data.voters,
+          results: data.results,
+        };
+        openToastFromPoll(updated, data.position);
+        return updated;
+      });
+      setShowPoll(true);
       setTimeout(() => {
         toast.dismiss(toastId);
       }, 25000);

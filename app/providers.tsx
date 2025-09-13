@@ -99,7 +99,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
           Control The Stream
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          Turn viewing into action with The Rollup's interactive streaming
+          Turn viewing into action with The Rollup&apos;s interactive streaming
           experience. Engage with content, participate in real-time, and be part
           of the conversation.
         </p>

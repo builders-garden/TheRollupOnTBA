@@ -414,8 +414,6 @@ export const StreamPage = () => {
               { amount: 0.5, buttonColor: "blue" },
               { amount: 1, buttonColor: "blue" },
               { amount: 3, buttonColor: "blue" },
-              { amount: 5, buttonColor: "blue" },
-              { amount: 10, buttonColor: "blue" },
             ]}
             customTipButton={{
               color: "blue",

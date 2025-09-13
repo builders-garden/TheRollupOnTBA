@@ -91,9 +91,9 @@ export async function getFarcasterManifest() {
   let miniappName = "Control The Stream";
   let noindex = true;
   const appUrl = env.NEXT_PUBLIC_URL;
-  if (appUrl === "https://production-url.com") {
+  if (appUrl === "https://controlthestream.tv") {
     noindex = false;
-  } else if (appUrl === "https://dev.production-url.com") {
+  } else if (appUrl === "https://dev.controlthestream.tv") {
     miniappName += " Dev";
   } else if (appUrl.includes("ngrok") || appUrl.includes("tunnel")) {
     miniappName += " Local";

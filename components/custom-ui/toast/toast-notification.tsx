@@ -48,16 +48,18 @@ export const ToastNotification = ({
       <motion.div
         {...motionProps}
         whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-        className="bg-[#1B2541] rounded-3xl shadow-lg p-4 flex flex-grow items-center gap-3 min-w-[500px] border-8 border-[#E6B45E] font-overused-grotesk">
+        className="bg-[#1B2541] rounded-3xl shadow-lg p-4 flex items-center gap-3 min-w-[500px] border-8 border-[#E6B45E] font-overused-grotesk">
         <img
           src={data.profilePicture}
           alt={data.username}
-          className="w-12 h-12 rounded-full object-cover"
+          className="w-12 h-12 rounded-full object-cover shrink-0"
         />
-        <div className="flex items-center gap-2 text-white">
-          <p className="flex gap-1 text-2xl font-medium">
-            {data.username}
-            {data.text && <b className="text-2xl font-bold">{data.text}</b>}
+        <div className="flex-1 flex items-center gap-2 text-white overflow-hidden">
+          <p className="w-full flex gap-1 text-2xl font-medium">
+            <span className="truncate">{data.username}</span>
+            {data.text && (
+              <span className="shrink-0 text-2xl font-bold">{data.text}</span>
+            )}
           </p>
         </div>
       </motion.div>

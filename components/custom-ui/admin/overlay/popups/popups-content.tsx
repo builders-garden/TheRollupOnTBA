@@ -26,13 +26,13 @@ export const PopupsContent = () => {
 
   const handleTestNotification = (type: "tip" | "trade" | "vote") => {
     const testData = {
-      username: "TestUser",
+      username: "limone.base.eth",
       profilePicture: "https://picsum.photos/200",
       text:
         type === "tip"
           ? "sent a $5 tip"
           : type === "trade"
-            ? "bought 100 $HIGHER"
+            ? "bought some $HIGHER"
             : "is bullish",
     };
     const isRightSide =

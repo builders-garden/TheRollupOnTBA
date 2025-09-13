@@ -439,6 +439,9 @@ export const useBullmeterPlugin = () => {
         );
 
         let updatedPollState: bigint | undefined;
+        let votesYes: number | undefined;
+        let votesNo: number | undefined;
+        let votesTotal: number | undefined;
 
         if (terminateResult.success) {
           console.log(
@@ -482,6 +485,7 @@ export const useBullmeterPlugin = () => {
               success: boolean;
               error?: string;
               data?: BullMeter;
+              votes?: { yes: number; no: number; total: number };
             }>("/api/bullmeters/terminate", {
               json: {
                 pollId: pollId,
@@ -491,6 +495,12 @@ export const useBullmeterPlugin = () => {
 
             if (response.ok) {
               const result = await response.json();
+              votesYes = result.votes?.yes ?? result.data?.totalYesVotes ?? 0;
+              votesNo = result.votes?.no ?? result.data?.totalNoVotes ?? 0;
+              votesTotal =
+                result.votes?.total ??
+                (result.data?.totalYesVotes ?? 0) +
+                  (result.data?.totalNoVotes ?? 0);
               console.log("✅ Poll marked as terminated in database:", result);
             } else {
               const errorData = await response.json();
@@ -510,6 +520,11 @@ export const useBullmeterPlugin = () => {
           deadline: terminateResult.success
             ? Number(updatedPollState)
             : undefined,
+          votes: {
+            yes: votesYes ?? 0,
+            no: votesNo ?? 0,
+            total: votesTotal ?? 0,
+          },
         };
       } catch (err: any) {
         console.error("Bullmeter terminate error:", err);

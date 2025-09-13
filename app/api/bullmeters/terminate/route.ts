@@ -46,9 +46,18 @@ export const PATCH = async (req: NextRequest) => {
       .where(eq(bullMetersTable.pollId, pollId))
       .returning();
 
+    const yesVotes = updatedPoll.totalYesVotes ?? 0;
+    const noVotes = updatedPoll.totalNoVotes ?? 0;
+    const totalVotes = yesVotes + noVotes;
+
     return NextResponse.json({
       success: true,
       data: updatedPoll,
+      votes: {
+        yes: yesVotes,
+        no: noVotes,
+        total: totalVotes,
+      },
     });
   } catch (error) {
     console.error("Terminate poll error:", error);

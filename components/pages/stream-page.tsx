@@ -384,6 +384,7 @@ export const StreamPage = () => {
               title={poll.prompt}
               showLabel
               timeLeft={timeLeft}
+              votePrice={0.01}
               deadlineSeconds={poll.deadlineSeconds || undefined}
               button1text="Bear"
               button2text="Bull"

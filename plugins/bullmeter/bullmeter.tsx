@@ -11,6 +11,7 @@ interface BullmeterProps {
   cardClassName?: string;
   title: string;
   timeLeft: string;
+  votePrice: number;
   deadlineSeconds?: number;
   button1text: string;
   button2text: string;
@@ -31,6 +32,7 @@ export const Bullmeter = ({
   cardClassName,
   title,
   timeLeft,
+  votePrice,
   deadlineSeconds,
   button1text,
   button2text,
@@ -66,7 +68,9 @@ export const Bullmeter = ({
               }`}
             />
             <p className="text-sm font-medium">
-              {isExpired ? "vote ended" : `${timeLeft} left to vote`}
+              {isExpired
+                ? "vote ended"
+                : `${timeLeft} left to vote • $${votePrice} per vote`}
             </p>
           </div>
         </div>

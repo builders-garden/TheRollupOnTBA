@@ -85,17 +85,16 @@ export const SentimentContent = () => {
   const handleReset = async () => {
     // If there's a live poll, terminate and claim it first
     if (currentLivePoll) {
-      try {
-        toast.loading("Terminating poll...", {
-          action: {
-            label: "Close",
-            onClick: () => {
-              toast.dismiss();
-            },
+      const toastId = toast.loading("Terminating poll...", {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
           },
-          duration: 10,
-        });
-
+        },
+        duration: 10,
+      });
+      try {
         const result = await terminateAndClaimBullmeter(currentLivePoll.pollId);
 
         if (result.success) {
@@ -106,8 +105,11 @@ export const SentimentContent = () => {
             id: result.pollId || "1",
             voters: result.votes?.yes ?? 0,
             votes: result.votes?.total ?? 0,
-          results: { bullPercent: result.votes?.yes ?? 0, bearPercent: result.votes?.no ?? 0 },
-        });
+            results: {
+              bullPercent: result.votes?.yes ?? 0,
+              bearPercent: result.votes?.no ?? 0,
+            },
+          });
 
           // Refetch history to get updated poll data
           const historyResponse = await getAllPollsByCreator();
@@ -138,6 +140,8 @@ export const SentimentContent = () => {
         console.error("Failed to terminate poll:", error);
         toast.error("Failed to terminate poll. Please try again.");
         // Don't reset UI state if blockchain transaction failed
+      } finally {
+        toast.dismiss(toastId);
       }
     } else {
       // If no live poll, just reset the UI state
@@ -166,17 +170,17 @@ export const SentimentContent = () => {
     // Clear previous errors
     setClaimError(null);
 
-    try {
-      toast.loading("Checking for claimable polls...", {
-        action: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
+    const toastId = toast.loading("Checking for claimable polls...", {
+      action: {
+        label: "Close",
+        onClick: () => {
+          toast.dismiss();
         },
-        duration: 10,
-      });
+      },
+      duration: 10,
+    });
 
+    try {
       const result = await claimAllBullmeters(admin.address);
 
       if (result.success) {
@@ -207,6 +211,8 @@ export const SentimentContent = () => {
       const errorMessage = "Failed to claim polls. Please try again.";
       setClaimError(errorMessage);
       toast.error(errorMessage);
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
@@ -217,18 +223,19 @@ export const SentimentContent = () => {
       return;
     }
 
+    const toastId = toast.loading("Extending poll...", {
+      action: {
+        label: "Close",
+        onClick: () => {
+          toast.dismiss();
+        },
+      },
+      duration: 10,
+    });
+
     try {
       const newDuration = duration.seconds; // Use the duration selected from the UI
       console.log("newDuration:", newDuration);
-      toast.loading("Extending poll...", {
-        action: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-        duration: 10,
-      });
 
       const result = await extendBullmeter(currentLivePoll.pollId, newDuration);
 
@@ -255,7 +262,10 @@ export const SentimentContent = () => {
           endTime: new Date((result.deadline || 0) * 1000),
           voters: 0,
           votes: result.votesCount ?? 0,
-          results: { bullPercent: result.totalYesVotes ?? 0, bearPercent: result.totalNoVotes ?? 0 },
+          results: {
+            bullPercent: result.totalYesVotes ?? 0,
+            bearPercent: result.totalNoVotes ?? 0,
+          },
         });
       } else {
         console.log("❌ Extend failed:", result);
@@ -264,6 +274,8 @@ export const SentimentContent = () => {
     } catch (error) {
       console.error("Failed to extend poll:", error);
       toast.error("Failed to extend poll. Please try again.");
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
@@ -290,17 +302,18 @@ export const SentimentContent = () => {
       ]);
     }
 
+    const toastId = toast.loading("Creating Bullmeter poll...", {
+      action: {
+        label: "Close",
+        onClick: () => {
+          toast.dismiss();
+        },
+      },
+      duration: 10,
+    });
+
     try {
       // First create the Bullmeter poll on-chain
-      toast.loading("Creating Bullmeter poll...", {
-        action: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-        duration: 10,
-      });
 
       // Get the first guest (owner) for the guest address and split percent
       const ownerGuest = guests.find((guest) => !guest.owner);
@@ -345,7 +358,7 @@ export const SentimentContent = () => {
         }
 
         // Now proceed with the existing UI poll logic
-        toast.loading("Starting poll...", {
+        const toastId2 = toast.loading("Starting poll...", {
           action: {
             label: "Close",
             onClick: () => {
@@ -363,10 +376,14 @@ export const SentimentContent = () => {
           guests,
           results: { bullPercent: 0, bearPercent: 0 },
         });
+
+        toast.dismiss(toastId2);
       }
     } catch (error) {
       console.error("Failed to create Bullmeter poll:", error);
       toast.error("Failed to create Bullmeter poll. Please try again.");
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 

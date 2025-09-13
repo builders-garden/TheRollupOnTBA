@@ -110,7 +110,7 @@ export const Tips = ({
       // Base payment flow for non-Farcaster environments
       const payment = await pay({
         amount: amount.toFixed(2), // USD amount (USDC used internally)
-        to: address as `0x${string}`,
+        to: payoutAddress as `0x${string}`,
         testnet: false, // set false for Mainnet
       });
 

@@ -9,6 +9,7 @@ import { useSocketUtils } from "@/hooks/use-socket-utils";
 import {
   BASE_USDC_ADDRESS,
   BASE_USDC_LOGO_URL,
+  FARCASTER_CLIENT_FID,
   NATIVE_TOKEN_ADDRESS,
 } from "@/lib/constants";
 import { FeaturedToken } from "@/lib/database/db.schema";
@@ -53,7 +54,25 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
       // await 5 seconds
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
-      if (result.success && result.swap.transactions && result.swap.transactions.length > 0) {
+      if (result.success && result.swap.transactions) {
+        if ((await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster) {
+          if (result.swap.transactions.length > 0) {
+            // Send socket message to the server
+            tokenTraded({
+              position: PopupPositions.TOP_CENTER,
+              username: baseName || formatWalletAddress(address),
+              profilePicture: user?.avatarUrl || "",
+              tokenInAmount: "",
+              tokenInName: "USDC",
+              tokenInDecimals: 6,
+              tokenInImageUrl: BASE_USDC_LOGO_URL,
+              tokenOutAmount: "",
+              tokenOutDecimals: tokenDecimals,
+              tokenOutName: tokenName,
+              tokenOutImageUrl: tokenImageUrl,
+            });
+          }
+        } else {
         // Send socket message to the server
         tokenTraded({
           position: PopupPositions.TOP_CENTER,
@@ -68,6 +87,7 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
           tokenOutName: tokenName,
           tokenOutImageUrl: tokenImageUrl,
         });
+        }
         toast.success("Token swapped successfully");
         startConfetti();
       }

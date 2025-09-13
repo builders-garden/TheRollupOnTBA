@@ -315,6 +315,9 @@ export const useBullmeterPlugin = () => {
         const extendResult = await executeBatch(calls, "Bullmeter extend");
 
         let updatedLastPollDeadline: bigint | undefined;
+        let votesCount: number | undefined;
+        let totalYesVotes: number | undefined;
+        let totalNoVotes: number | undefined;
 
         if (extendResult.success) {
           console.log(
@@ -358,6 +361,7 @@ export const useBullmeterPlugin = () => {
               success: boolean;
               error?: string;
               data?: BullMeter;
+              votes?: { yes: number; no: number; total: number };
             }>("/api/bullmeters/extend", {
               json: {
                 pollId: pollId,
@@ -368,6 +372,12 @@ export const useBullmeterPlugin = () => {
 
             if (response.ok) {
               const result = await response.json();
+              votesCount =
+                result.votes?.total ??
+                (result.data?.totalYesVotes ?? 0) +
+                  (result.data?.totalNoVotes ?? 0);
+              totalYesVotes = result.data?.totalYesVotes ?? 0;
+              totalNoVotes = result.data?.totalNoVotes ?? 0;
               console.log("✅ Poll duration updated in database:", result);
             } else {
               const errorData = await response.json();
@@ -387,6 +397,9 @@ export const useBullmeterPlugin = () => {
           deadline: extendResult.success
             ? Number(updatedLastPollDeadline)
             : undefined,
+          votesCount,
+          totalYesVotes,
+          totalNoVotes,
         };
       } catch (err: any) {
         console.error("Bullmeter extend error:", err);

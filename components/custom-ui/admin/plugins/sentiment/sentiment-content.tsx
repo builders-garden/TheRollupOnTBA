@@ -254,8 +254,8 @@ export const SentimentContent = () => {
           position: PopupPositions.TOP_CENTER,
           endTime: new Date((result.deadline || 0) * 1000),
           voters: 0,
-          votes: 0,
-          results: { bullPercent: 0, bearPercent: 0 },
+          votes: result.votesCount ?? 0,
+          results: { bullPercent: result.totalYesVotes ?? 0, bearPercent: result.totalNoVotes ?? 0 },
         });
       } else {
         console.log("❌ Extend failed:", result);

@@ -31,7 +31,7 @@ export const ShareButton = ({
   const handleShareClick = () => {
     const embedsTuple: [string] = [miniappUrl];
     const composeCastParams = {
-      text: "Check out The Rollup Mini-app",
+      text: "Watch this stream by The Rollup",
       embeds: embedsTuple,
     };
     sdk.actions.composeCast(composeCastParams);

@@ -18,8 +18,8 @@ const overusedGrotesk = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "The Rollup Mini-app",
-  description: "Enjoy The Rollup streams directly in mini app",
+  title: "Control The Stream",
+  description: "Parti",
 };
 
 export default async function RootLayout({

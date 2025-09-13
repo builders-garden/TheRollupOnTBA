@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "Watch the Stream",
       action: {
         type: "launch_frame",
-        name: "The Rollup Mini-app",
+        name: "Control The Stream",
         url: appUrl,
         splashImageUrl: `${appUrl}/images/splash.png`,
         splashBackgroundColor: "#ffffff",
@@ -20,12 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
   return {
-    title: "The Rollup Mini-app",
-    description: "Enjoy The Rollup streams directly in mini app",
+    title: "Control The Stream",
+    description: "Turn viewing into action",
     metadataBase: new URL(appUrl),
     openGraph: {
-      title: "The Rollup Mini-app",
-      description: "Enjoy The Rollup streams directly in mini app",
+      title: "Control The Stream",
+      description: "Turn viewing into action",
       type: "website",
       images: [
         {
@@ -37,8 +37,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "The Rollup Mini-app",
-      description: "Enjoy The Rollup streams directly in mini app",
+      title: "Control The Stream",
+      description: "Turn viewing into action",
       siteId: "1727435024931094528",
       creator: "@builders_garden",
       creatorId: "1727435024931094528",

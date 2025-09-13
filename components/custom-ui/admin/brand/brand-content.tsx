@@ -4,10 +4,10 @@ import {
   Signature,
   Sparkle,
   Twitch,
-  Twitter,
   Youtube,
 } from "lucide-react";
 import { motion } from "motion/react";
+import Image from "next/image";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
@@ -45,6 +45,7 @@ export const BrandContent = () => {
   // A list of all the social links
   const socialLinks = [
     {
+      key: "yt-live-url",
       label: "Youtube Live URL",
       icon: <Youtube className="size-5" />,
       inputColor: "destructive",
@@ -53,6 +54,7 @@ export const BrandContent = () => {
       setValue: setYoutubeLiveUrl,
     },
     {
+      key: "yt-channel-url",
       label: "Youtube",
       icon: <Youtube className="size-5" />,
       placeholder: "https://www.youtube.com/@username",
@@ -60,6 +62,7 @@ export const BrandContent = () => {
       setValue: setYoutubeChannelUrl,
     },
     {
+      key: "twitch-channel-url",
       label: "Twitch",
       icon: <Twitch className="size-5" />,
       placeholder: "https://twitch.tv/@username",
@@ -67,13 +70,15 @@ export const BrandContent = () => {
       setValue: setTwitchChannelUrl,
     },
     {
-      label: "X",
-      icon: <Twitter className="size-5" />,
+      key: "x-url",
+      label: "",
+      icon: <Image src="/socials/x_logo.svg" alt="X" width={18} height={18} />,
       placeholder: "https://x.com/username",
       value: xUrl,
       setValue: setXUrl,
     },
     {
+      key: "website-url",
       label: "Website",
       icon: <Globe className="size-5" />,
       placeholder: "https://example.com/",
@@ -183,7 +188,7 @@ export const BrandContent = () => {
         <div className="grid grid-cols-4 gap-5 w-full">
           {socialLinks.map((link) => (
             <NBTextInput
-              key={link.label}
+              key={link.key}
               label={link.label}
               inputColor={link.inputColor as "accent" | "destructive"}
               icon={link.icon}
@@ -192,13 +197,13 @@ export const BrandContent = () => {
               setValue={link.setValue}
               isUpdating={isUpdatingBrand}
               onConfirm={
-                link.label === "Youtube"
+                link.key === "yt-channel-url"
                   ? handleUpdateBrandField("socialMediaUrls", "youtube")
-                  : link.label === "Twitch"
+                  : link.key === "twitch-channel-url"
                     ? handleUpdateBrandField("socialMediaUrls", "twitch")
-                    : link.label === "X"
+                    : link.key === "x-url"
                       ? handleUpdateBrandField("socialMediaUrls", "x")
-                      : link.label === "Website"
+                      : link.key === "website-url"
                         ? handleUpdateBrandField("websiteUrl")
                         : handleUpdateBrandField("youtubeLiveUrl")
               }

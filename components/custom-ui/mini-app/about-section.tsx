@@ -1,4 +1,5 @@
-import { Globe, Twitch, Twitter, Youtube } from "lucide-react";
+import { Globe, Twitch, Youtube } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 interface AboutSectionProps {
@@ -35,7 +36,7 @@ export const AboutSection = ({
           )}
           {twitterUrl && (
             <Link href={twitterUrl} target="_blank">
-              <Twitter className="size-5" />
+              <Image src="/socials/x_logo.svg" alt="X" width={16} height={16} />
             </Link>
           )}
           {websiteUrl && (

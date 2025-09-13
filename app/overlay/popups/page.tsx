@@ -52,7 +52,7 @@ export default function OverlayPage() {
       showPopupCallback({
         username: data.username,
         profilePicture: data.profilePicture,
-        text: `traded ${data.tokenInAmount} $${data.tokenInName} for ${data.tokenOutAmount} $${data.tokenOutName}`,
+        text: `bought some $${data.tokenOutName}`,
         position: data.position,
       });
     };

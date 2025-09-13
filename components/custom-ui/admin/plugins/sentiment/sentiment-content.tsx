@@ -539,7 +539,10 @@ export const SentimentContent = () => {
     const handleStartSentimentPoll = (data: PollNotificationEvent) => {
       setIsLive(true);
       toast.success("Poll started");
-      startTimer();
+      const currentTime = Math.floor(Date.now() / 1000);
+      const deadline = Math.floor(new Date(data.endTime).getTime() / 1000);
+      const remainingSeconds = Math.max(0, deadline - currentTime);
+      startTimer(remainingSeconds);
     };
 
     const handleEndSentimentPoll = (data: EndPollNotificationEvent) => {

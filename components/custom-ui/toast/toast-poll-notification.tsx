@@ -148,7 +148,7 @@ export const ToastPollNotification = ({
         handleUpdateSentimentPoll,
       );
     };
-  });
+  }, []);
 
   // Compute directional offsets based on toast position
   const isLeft = data.position?.includes("left");

@@ -117,12 +117,17 @@ export default function OverlayPage() {
     const handleUpdate = (data: UpdatePollNotificationEvent) => {
       setPoll((prev) => {
         if (!prev) return prev;
+
+        const absoluteDeadline = Math.floor(
+          new Date(data.endTime).getTime() / 1000,
+        );
         const updated: NormalizedPoll = {
           ...prev,
           id: data.id,
           votes: data.votes,
           voters: data.voters,
           results: data.results,
+          deadlineSeconds: absoluteDeadline,
         };
         openToastFromPoll(updated, data.position);
         return updated;

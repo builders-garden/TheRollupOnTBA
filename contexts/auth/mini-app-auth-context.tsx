@@ -9,7 +9,7 @@ import {
 } from "react";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
-import { useAuthCheck, useFarcasterSignIn } from "@/hooks/use-auth-hooks";
+import { useAuthCheck, useFakeFarcasterSignIn } from "@/hooks/use-auth-hooks";
 import { useBrandById } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTip } from "@/hooks/use-tips";
@@ -157,7 +157,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
   }, [refetchFeaturedTokens]);
 
   // Farcaster sign-in mutation
-  const { mutate: farcasterSignIn } = useFarcasterSignIn({
+  const { mutate: fakeFarcasterSignIn } = useFakeFarcasterSignIn({
     onSuccess: (data) => {
       console.log("Farcaster sign-in success:", data);
       if (data.success && data.user) {
@@ -194,8 +194,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("No token from SIWF Quick Auth");
       }
 
-      farcasterSignIn({
-        token: result.token,
+      fakeFarcasterSignIn({
         fid: miniAppContext.user.fid,
         referrerFid,
       });
@@ -206,7 +205,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
       );
       setIsSigningIn(false);
     }
-  }, [miniAppContext, farcasterSignIn]);
+  }, [miniAppContext, fakeFarcasterSignIn]);
 
   // Auto sign-in logic
   useEffect(() => {

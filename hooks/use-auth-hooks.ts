@@ -50,6 +50,26 @@ export function useFarcasterSignIn(
   });
 }
 
+// Auth mutations
+export function useFakeFarcasterSignIn(
+  options?: Partial<
+    UseApiMutationOptions<
+      { success: boolean; error?: string; user?: User },
+      { fid: number; referrerFid?: number; }
+    >
+  >,
+) {
+  return useApiMutation<
+    { success: boolean; error?: string; user?: User },
+    { fid: number; referrerFid?: number;  }
+  >({
+    url: "/api/auth/farcaster/fake-sign-in",
+    method: "POST",
+    body: (variables) => variables,
+    ...options,
+  });
+}
+
 export function useBaseSignIn(
   options?: Partial<
     UseApiMutationOptions<

@@ -55,7 +55,7 @@ export default function OverlayPage() {
         {
           id: toastId,
           duration: Infinity,
-          position: PopupPositions.TOP_LEFT,
+          position: PopupPositions.TOP_CENTER,
         },
       );
     },
@@ -83,7 +83,7 @@ export default function OverlayPage() {
       };
       setPoll(normalized);
       setShowPoll(true);
-      openToastFromPoll(normalized, PopupPositions.TOP_LEFT);
+      openToastFromPoll(normalized, PopupPositions.TOP_CENTER);
     } else {
       setShowPoll(false);
       setPoll(null);
@@ -146,7 +146,9 @@ export default function OverlayPage() {
             }
           : prev,
       );
-      toast.dismiss(toastId);
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 25000);
     };
 
     // Set up subscriptions

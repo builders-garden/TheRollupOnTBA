@@ -88,7 +88,7 @@ export const triggerHaptics = (
  * @documentation https://miniapps.farcaster.xyz/docs/guides/publishing#define-your-application-configuration
  */
 export async function getFarcasterManifest() {
-  let miniappName = "The Rollup Mini-app";
+  let miniappName = "Control The Stream";
   let noindex = true;
   const appUrl = env.NEXT_PUBLIC_URL;
   if (appUrl === "https://production-url.com") {
@@ -115,13 +115,13 @@ export async function getFarcasterManifest() {
       splashBackgroundColor: "#FFFFFF",
       webhookUrl: `${appUrl}/api/webhook/farcaster`, // our farcaster webhook
       // Metadata https://github.com/farcasterxyz/miniapps/discussions/191
-      subtitle: "The Rollup Mini-app", // 30 characters, no emojis or special characters, short description under app name
-      description: "The Rollup Mini-app", // 170 characters, no emojis or special characters, promotional message displayed on Mini App Page
+      subtitle: "Interactive Stream Control", // 30 characters, no emojis or special characters, short description under app name
+      description: "Control The Stream lets viewers shape live streams in real time with tips, votes, and trades—making watching interactive and participatory.", // 170 characters, no emojis or special characters, promotional message displayed on Mini App Page
       primaryCategory: "social", // https://github.com/farcasterxyz/miniapps/blob/main/packages/miniapp-core/src/schemas/manifest.ts
       tags: ["base", "streaming", "therollup"], // up to 5 tags, filtering/search tags
-      tagline: "The Rollup Mini-app", // 30 characters, marketing tagline should be punchy and descriptive
+      tagline: "Turn viewing into action", // 30 characters, marketing tagline should be punchy and descriptive
       ogTitle: `${miniappName}`, // 30 characters, app name + short tag, Title case, no emojis
-      ogDescription: "The Rollup Mini-app", // 100 characters, summarize core benefits in 1-2 lines
+      ogDescription: "Turn viewing into action", // 100 characters, summarize core benefits in 1-2 lines
       screenshotUrls: [
         // 1284 x 2778, visual previews of the app, max 3 screenshots
         `${appUrl}/images/feed.png`,

@@ -9,6 +9,7 @@ export interface UseApiMutationOptions<TData, TVariables>
   method?: HttpMethod;
   isProtected?: boolean;
   body?: (variables: TVariables) => unknown;
+  timeout?: number;
 }
 
 export const useApiMutation = <TData, TVariables = unknown>(
@@ -18,6 +19,7 @@ export const useApiMutation = <TData, TVariables = unknown>(
     url,
     method = "POST",
     isProtected = true,
+    timeout = 30000,
     ...mutationOptions
   } = options;
 
@@ -32,6 +34,7 @@ export const useApiMutation = <TData, TVariables = unknown>(
           credentials: "include",
         }),
         ...(resolvedBody ? { json: resolvedBody } : {}),
+        timeout,
       });
 
       if (!response.ok) {

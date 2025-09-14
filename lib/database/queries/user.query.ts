@@ -54,7 +54,7 @@ async function createUserFromNeynar(
   }));
 
   // Add the connected address if it exists
-  if (connectedAddress && isConnectedAddressInVerifiedAddresses) {
+  if (connectedAddress && !isConnectedAddressInVerifiedAddresses) {
     ethAddresses.push({
       address: getAddress(connectedAddress),
       isPrimary: false,

@@ -22,7 +22,7 @@ export const NewsletterCTA = ({ label }: NewsletterCTAProps) => {
         setIsEditing(false);
       },
       onError: () => {
-        toast.error("Failed to subscribe");
+        toast.error("Request failed: your email is already registered to this newsletter or is invalid!");
         setIsEditing(false);
       },
     });

@@ -21,6 +21,7 @@ export const brandsTable = sqliteTable("brands", {
     .$defaultFn(() => ulid()),
   name: text("name"),
   logoUrl: text("logo_url"),
+  coverUrl: text("cover_url"),
   description: text("description"),
   streamTitle: text("stream_title"),
   youtubeLiveUrl: text("youtube_live_url"),

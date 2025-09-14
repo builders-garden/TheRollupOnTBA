@@ -8,6 +8,7 @@ import { NBButton } from "../../nb-button";
 
 interface FileUploadProps {
   brandLogoUrl?: string | null;
+  label?: string;
   handleUpdateDatabase: (
     data?: any,
     onSuccess?: () => void,
@@ -17,6 +18,7 @@ interface FileUploadProps {
 }
 
 export const FileUpload = ({
+  label,
   brandLogoUrl,
   handleUpdateDatabase,
   isUpdatingDatabase,
@@ -81,7 +83,7 @@ export const FileUpload = ({
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center gap-2.5">
           <LucideImage className="size-5" />
-          <p className="text-base font-bold">Logo</p>
+          <p className="text-base font-bold">{label ?? "Logo"}</p>
         </div>
         <AnimatePresence mode="wait">
           {previewUrl && (
@@ -149,7 +151,7 @@ export const FileUpload = ({
               className="flex justify-start items-center w-fit">
               <Image
                 src={previewUrl}
-                alt="Logo preview"
+                alt={`${label ?? "Logo"} preview`}
                 width={100}
                 height={100}
                 className="w-fit h-[155px] object-contain"

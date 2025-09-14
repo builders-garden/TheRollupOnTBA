@@ -21,8 +21,8 @@ export const addUserWallets = async (
   addresses: { address: Address; isPrimary: boolean }[],
 ) => {
   // Get the ENS and base name for all the addresses
-  let ensNames: string[] = [];
-  let baseNames: string[] = [];
+  const ensNames: string[] = [];
+  const baseNames: string[] = [];
   for (const address of addresses) {
     const [ensName, baseName] = await Promise.all([
       getEnsName(address.address),
@@ -34,8 +34,8 @@ export const addUserWallets = async (
   }
 
   // Get the ENS and base avatar for all the addresses
-  let ensAvatars: string[] = [];
-  let baseAvatars: string[] = [];
+  const ensAvatars: string[] = [];
+  const baseAvatars: string[] = [];
   for (const baseName of baseNames) {
     const baseAvatar = await getBasenameAvatar(baseName?.normalize() || "");
     baseAvatars.push(baseAvatar || "");

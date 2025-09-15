@@ -45,6 +45,12 @@ export const NBTextInput = ({
     }, 0);
   };
 
+  // Handles the activation of the input
+  const handleActivateEditing = () => {
+    if (isUpdating) return;
+    setIsEditing(true);
+  };
+
   // Handle the cancel button
   const handleCancel = () => {
     if (isUpdating) return;
@@ -91,9 +97,10 @@ export const NBTextInput = ({
           ref={inputRef}
           type="text"
           placeholder={placeholder}
-          disabled={!isEditing || isUpdating}
+          disabled={isUpdating}
           className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
           value={editingValue}
+          onFocus={handleActivateEditing}
           onChange={(e) => {
             setEditingValue(e.target.value);
           }}

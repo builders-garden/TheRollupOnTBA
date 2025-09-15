@@ -5,19 +5,26 @@ import { useApiQuery } from "./use-api-query";
 
 // Auth queries
 export function useAuthCheck(enabled: boolean = true) {
-  const { data, isPending, isLoading, isFetched, refetch, error } =
-    useApiQuery<{
-      user?: User;
-      brand?: Brand;
-      status: "ok" | "nok";
-      error?: string;
-    }>({
-      queryKey: ["auth-check"],
-      url: "/api/auth/check",
-      enabled,
-      retry: false,
-      refetchOnWindowFocus: false,
-    });
+  const {
+    data,
+    isPending,
+    isLoading,
+    isFetched,
+    refetch,
+    error,
+    isRefetching,
+  } = useApiQuery<{
+    user?: User;
+    brand?: Brand;
+    status: "ok" | "nok";
+    error?: string;
+  }>({
+    queryKey: ["auth-check"],
+    url: "/api/auth/check",
+    enabled,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   return {
     user: data?.user,
@@ -27,6 +34,7 @@ export function useAuthCheck(enabled: boolean = true) {
     isFetched,
     isPending,
     refetch,
+    isRefetching,
   };
 }
 

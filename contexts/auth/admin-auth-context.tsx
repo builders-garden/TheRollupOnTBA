@@ -43,6 +43,7 @@ interface AdminAuthContextType {
   signInWithBase: () => void;
   executeLogout: () => void;
   isLoading: boolean;
+  isRefetching: boolean;
   error: Error | null;
 }
 
@@ -84,6 +85,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     refetch: refetchBrand,
     isLoading: isFetchingBrand,
     isFetched: isFetchedAuthBrand,
+    isRefetching: isRefetchingBrand,
     error: brandError,
   } = useAuthCheck(); // Always fetch to check for existing token
 
@@ -93,6 +95,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     refetch: refetchTipSettings,
     isLoading: isFetchingTipSettings,
     isFetched: isFetchedAuthTipSettings,
+    isRefetching: isRefetchingTipSettings,
     error: tipSettingsError,
   } = useTip({ brandId: brand?.id, enabled: !!brand?.id });
 
@@ -102,6 +105,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     refetch: refetchFeaturedTokens,
     isLoading: isFetchingFeaturedTokens,
     isFetched: isFetchedAuthFeaturedTokens,
+    isRefetching: isRefetchingFeaturedTokens,
     error: featuredTokensError,
   } = useFeaturedTokens({ brandId: brand?.id, enabled: !!brand?.id });
 
@@ -270,7 +274,7 @@ Issued At: ${new Date().toISOString()}`;
   // Auto fetch admin logic, only works if brand is fetched
   useEffect(() => {
     const getAdmin = async () => {
-      if (!brand) {
+      if (!brand || !!admin?.address) {
         return;
       }
 
@@ -341,10 +345,14 @@ Issued At: ${new Date().toISOString()}`;
     isLoading:
       isFetchingBrand ||
       isFetchingTipSettings ||
+      isFetchingFeaturedTokens ||
       isSigningIn ||
       isLoggingOut ||
-      isFetchingAdmin ||
-      isFetchingFeaturedTokens,
+      isFetchingAdmin,
+    isRefetching:
+      isRefetchingBrand ||
+      isRefetchingTipSettings ||
+      isRefetchingFeaturedTokens,
     error: error || brandError || tipSettingsError || featuredTokensError,
   };
 

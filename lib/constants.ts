@@ -136,3 +136,20 @@ export const AVAILABLE_POPUP_POSITIONS: {
     value: PopupPositions.BOTTOM_RIGHT,
   },
 ];
+
+// The rollup hosts
+export const THE_ROLLUP_HOSTS = [
+  {
+    name: "Robbie",
+    farcasterUsername: "robbierollup.base.eth",
+    fid: 1280545,
+    pictureUrl:
+      "https://tba-mobile.mypinata.cloud/ipfs/QmNy4mLwzgVr3ivDJKGJuhhPJi41MNAwqH4d12yiMLuiGo?pinataGatewayToken=3nq0UVhtd3rYmgYDdb1I9qv7rHsw-_DzwdWkZPRQ-QW1avFI9dCS8knaSfq_R5_q",
+  },
+  {
+    name: "Andy",
+    farcasterUsername: "ayyyeandy",
+    fid: 268937,
+    pictureUrl: "https://i.imgur.com/AcPm09W.jpg",
+  },
+];

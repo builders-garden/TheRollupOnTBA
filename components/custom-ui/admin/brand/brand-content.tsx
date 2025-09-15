@@ -173,25 +173,25 @@ export const BrandContent = () => {
             onConfirm={handleUpdateBrandField("streamTitle")}
             isUpdating={isUpdatingBrand}
           />
-          <TextDescriptionArea
-            description={description}
-            setDescription={setDescription}
-            onConfirm={handleUpdateBrandField("description")}
-            isUpdating={isUpdatingBrand}
-          />
           <FileUpload
             label="Logo"
             brandLogoUrl={brandData?.logoUrl}
             handleUpdateDatabase={handleUpdateBrandField("logoUrl")}
             isUpdatingDatabase={isUpdatingBrand}
           />
-        </div>
-        <div className="grid grid-cols-4 gap-5 w-full">
           <FileUpload
             label="Cover Image"
             brandLogoUrl={brandData?.coverUrl}
             handleUpdateDatabase={handleUpdateBrandField("coverUrl")}
             isUpdatingDatabase={isUpdatingBrand}
+          />
+        </div>
+        <div className="grid grid-cols-4 gap-5 w-full">
+          <TextDescriptionArea
+            description={description}
+            setDescription={setDescription}
+            onConfirm={handleUpdateBrandField("description")}
+            isUpdating={isUpdatingBrand}
           />
         </div>
         <div className="grid grid-cols-4 gap-5 w-full">

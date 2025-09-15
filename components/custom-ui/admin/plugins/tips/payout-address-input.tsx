@@ -1,6 +1,6 @@
 import { Check, SquarePen, Wallet, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Address, isAddress } from "viem";
 import { CopyButton } from "@/components/custom-ui/copy-button";
@@ -29,6 +29,7 @@ export const PayoutAddressInput = () => {
     useState(textFieldValue);
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Whether the input text is an address
   const isPayoutAddressAnAddress = isAddress(editingTextFieldValue);
@@ -39,9 +40,20 @@ export const PayoutAddressInput = () => {
   // Whether the input text is a Base name
   const isPayoutAddressABaseName = editingTextFieldValue.endsWith(".base.eth");
 
-  // Switches the editing state
-  const handleEdit = () => {
-    setIsEditing(!isEditing);
+  // Handles the activation of the input
+  const handleActivateEditing = () => {
+    if (isUpdating) return;
+    setIsEditing(true);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+
+  // Handle the cancel button
+  const handleCancel = () => {
+    setIsEditing(false);
+    setTextFieldValue(textFieldValue);
+    setEditingTextFieldValue(textFieldValue);
   };
 
   // Handles the confirm button
@@ -134,9 +146,9 @@ export const PayoutAddressInput = () => {
         <div className="flex w-[630px] justify-start items-center gap-2.5 rounded-full border-accent border-[1px] px-5 py-2.5 bg-white">
           <input
             type="text"
-            disabled={!isEditing}
             className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-xl font-bold"
             value={editingTextFieldValue}
+            onFocus={handleActivateEditing}
             onChange={(e) => {
               if (e.target.value.length > 42) {
                 return;
@@ -168,7 +180,7 @@ export const PayoutAddressInput = () => {
                     "cursor-pointer shrink-0",
                     isUpdating && "animate-pulse cursor-default",
                   )}
-                  onClick={handleEdit}>
+                  onClick={handleActivateEditing}>
                   <SquarePen className="size-6 text-success" />
                 </motion.button>
               </motion.div>
@@ -189,7 +201,7 @@ export const PayoutAddressInput = () => {
                     "cursor-pointer shrink-0",
                     isUpdating && "animate-pulse cursor-default",
                   )}
-                  onClick={() => setEditingTextFieldValue("")}>
+                  onClick={handleCancel}>
                   <X className="size-6 text-black" />
                 </motion.button>
                 <motion.button

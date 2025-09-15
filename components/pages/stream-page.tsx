@@ -12,6 +12,7 @@ import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { THE_ROLLUP_HOSTS } from "@/lib/constants";
 import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 import {
   EndPollNotificationEvent,
@@ -26,6 +27,7 @@ import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
 import { Tips } from "@/plugins/tips/tips";
 import { AboutSection } from "../custom-ui/mini-app/about-section";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
+import { HostsSection } from "../custom-ui/mini-app/hosts";
 import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
 import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
@@ -429,11 +431,15 @@ export const StreamPage = () => {
         <AboutSection
           label="About"
           text={brand.data?.description || ""}
+          coverUrl={brand.data?.coverUrl || ""}
           youtubeUrl={brand.data?.socialMediaUrls?.youtube || ""}
           twitchUrl={brand.data?.socialMediaUrls?.twitch || ""}
           twitterUrl={brand.data?.socialMediaUrls?.x || ""}
           websiteUrl={brand.data?.websiteUrl || ""}
         />
+
+        {/* Hosts Section */}
+        <HostsSection hosts={THE_ROLLUP_HOSTS} label="Hosts" />
 
         {/* Newsletter CTA */}
         <NewsletterCTA label="Subscribe to newsletter" />

@@ -17,7 +17,7 @@ export const TextDescriptionArea = ({
   onConfirm,
   isUpdating,
 }: TextDescriptionAreaProps) => {
-  const [editingDescription, setEditingDescription] = useState("");
+  const [editingDescription, setEditingDescription] = useState(description);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -28,6 +28,12 @@ export const TextDescriptionArea = ({
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 0);
+  };
+
+  // Handles the activation of the textarea
+  const handleActivateEditing = () => {
+    if (isUpdating) return;
+    setIsEditing(true);
   };
 
   // Handle the cancel button
@@ -116,8 +122,9 @@ export const TextDescriptionArea = ({
         <Textarea
           ref={textareaRef}
           placeholder="Your livestream description here..."
-          disabled={!isEditing || isUpdating}
+          disabled={isUpdating}
           value={editingDescription}
+          onFocus={handleActivateEditing}
           onChange={(e) => {
             setEditingDescription(e.target.value.slice(0, 200));
           }}

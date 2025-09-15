@@ -20,28 +20,46 @@ export const addUserWallets = async (
   userId: string,
   addresses: { address: Address; isPrimary: boolean }[],
 ) => {
-  const [ensName, baseName] = await Promise.all([
-    getEnsName(addresses[0].address),
-    getBasenameName(addresses[0].address),
-  ]);
-  const [ensAvatar, baseAvatar] = await Promise.all([
-    getEnsAvatar(ensName?.normalize() || ""),
-    getBasenameAvatar(baseName?.normalize() || ""),
-  ]);
-  const dbWallets = await db
-    .insert(walletTable)
-    .values(
-      addresses.map((address) => ({
-        address: getAddress(address.address),
-        ensName: ensName?.normalize() || null,
-        baseName: baseName?.normalize() || null,
-        ensAvatarUrl: ensAvatar || null,
-        baseAvatarUrl: baseAvatar || null,
-        userId,
-        isPrimary: address.isPrimary,
-      })),
-    )
-    .returning();
+  // Get the ENS and base name for all the addresses
+  const ensNames: string[] = [];
+  const baseNames: string[] = [];
+  for (const address of addresses) {
+    const [ensName, baseName] = await Promise.all([
+      getEnsName(address.address),
+      getBasenameName(address.address),
+    ]);
+
+    ensNames.push(ensName?.normalize() || "");
+    baseNames.push(baseName?.normalize() || "");
+  }
+
+  // Get the ENS and base avatar for all the addresses
+  const ensAvatars: string[] = [];
+  const baseAvatars: string[] = [];
+  for (const baseName of baseNames) {
+    const baseAvatar = await getBasenameAvatar(baseName?.normalize() || "");
+    baseAvatars.push(baseAvatar || "");
+  }
+  for (const ensName of ensNames) {
+    const ensAvatar = await getEnsAvatar(ensName?.normalize() || "");
+    ensAvatars.push(ensAvatar || "");
+  }
+
+  // Map the new values to insert in the database
+  const newValues = addresses.map((address, index) => ({
+    address: getAddress(address.address),
+    ensName: ensNames[index]?.normalize() || null,
+    baseName: baseNames[index]?.normalize() || null,
+    ensAvatarUrl: ensAvatars[index] || null,
+    baseAvatarUrl: baseAvatars[index] || null,
+    userId,
+    isPrimary: address.isPrimary,
+  }));
+
+  // Add the wallets to the database
+  const dbWallets = await db.insert(walletTable).values(newValues).returning();
+
+  // Return the added wallets
   return dbWallets;
 };
 

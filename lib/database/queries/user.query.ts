@@ -13,11 +13,14 @@ import { addUserWallets, getUserFromWalletAddress } from "./wallet.query";
  * Create a user in the database
  * @param user - The user to create
  * @param referrerFid - The Farcaster fid of the referrer
+ * @param connectedAddress - The connected address of the user
+ * @param baseName - The base name of the user
  * @returns The created user
  */
 async function createUserFromNeynar(
   user: NeynarUser,
   referrerFid?: number,
+  connectedAddress?: string,
 ): Promise<User> {
   const dbUser = await db
     .insert(userTable)
@@ -35,6 +38,13 @@ async function createUserFromNeynar(
       farcasterReferrerFid: referrerFid ? referrerFid : null,
     })
     .returning();
+
+  // Check if the connected address is in the user's verified addresses
+  const isConnectedAddressInVerifiedAddresses = connectedAddress
+    ? user.verified_addresses.eth_addresses.includes(connectedAddress)
+    : false;
+
+  // Fill with the verified addresses
   const ethAddresses = user.verified_addresses.eth_addresses.map((address) => ({
     address: getAddress(address),
     isPrimary: isAddressEqual(
@@ -42,6 +52,15 @@ async function createUserFromNeynar(
       getAddress(address),
     ),
   }));
+
+  // Add the connected address if it exists
+  if (connectedAddress && !isConnectedAddressInVerifiedAddresses) {
+    ethAddresses.push({
+      address: getAddress(connectedAddress),
+      isPrimary: false,
+    });
+  }
+
   const wallets = await addUserWallets(dbUser[0].id, ethAddresses);
   return { ...dbUser[0], wallets };
 }
@@ -247,11 +266,14 @@ export async function getUserFromFid(fid: number): Promise<User | null> {
  * Get a user from their Farcaster fid or create them if they don't exist
  * @param fid - The Farcaster fid of the user
  * @param referrerFid - The Farcaster fid of the referrer
+ * @param connectedAddress - The connected address of the user
+ * @param baseName - The base name of the user
  * @returns The user in the database
  */
 export async function getOrCreateUserFromFid(
   fid: number,
   referrerFid?: number,
+  connectedAddress?: string,
 ): Promise<User> {
   const user = await getUserFromFid(fid);
   if (user) return user;
@@ -262,7 +284,11 @@ export async function getOrCreateUserFromFid(
     throw new Error("Farcaster user not found in Neynar");
   }
 
-  const dbUser = await createUserFromNeynar(userFromNeynar, referrerFid);
+  const dbUser = await createUserFromNeynar(
+    userFromNeynar,
+    referrerFid,
+    connectedAddress,
+  );
   return dbUser;
 }
 

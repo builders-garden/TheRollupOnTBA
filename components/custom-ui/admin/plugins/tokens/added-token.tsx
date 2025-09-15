@@ -1,4 +1,4 @@
-import { CircleQuestionMark, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -97,18 +97,14 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
         {/* Token information */}
         <div className="flex justify-between items-center w-full gap-3">
           <div className="flex justify-start items-center gap-2.5">
-            {token.logoUrl ? (
-              <Image
-                src={token.logoUrl ?? ""}
-                alt={token.name ?? ""}
-                className="size-10 rounded-full"
-                priority
-                width={40}
-                height={40}
-              />
-            ) : (
-              <CircleQuestionMark className="size-10 opacity-50 shrink-0" />
-            )}
+            <Image
+              src={token.logoUrl || "/images/coin.svg"}
+              alt={token.name ?? ""}
+              className="size-10 rounded-full"
+              priority
+              width={40}
+              height={40}
+            />
             <div className="flex flex-col justify-start items-start gap-0.5">
               <h1 className="text-lg font-bold">{token.name}</h1>
               <p className="text-sm opacity-50 font-bold">{token.symbol}</p>

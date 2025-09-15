@@ -1,26 +1,24 @@
-import { createClient, Errors } from "@farcaster/quick-auth";
+import { Errors } from "@farcaster/quick-auth";
 import * as jose from "jose";
 import { NextRequest, NextResponse } from "next/server";
 import { getOrCreateUserFromFid } from "@/lib/database/queries";
 import { env } from "@/lib/zod";
 
 export const POST = async (req: NextRequest) => {
-  const {
-    fid ,
-    referrerFid,
-  } = await req.json();
+  const { fid, referrerFid, connectedAddress } = await req.json();
+
+  // Verify mandatory arguments
   if (!fid || isNaN(Number(fid)))
     return NextResponse.json(
       { success: false, error: "Invalid arguments" },
       { status: 400 },
     );
 
-  // Verify signature matches custody address and auth address
   try {
-
     const dbUser = await getOrCreateUserFromFid(
       Number(fid),
       referrerFid ? Number(referrerFid) : undefined,
+      connectedAddress,
     );
     const primaryWallet = dbUser.wallets.find((wallet) => wallet.isPrimary);
     const walletAddress = dbUser.wallets[0].address;

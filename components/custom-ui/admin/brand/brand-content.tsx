@@ -4,11 +4,11 @@ import {
   Signature,
   Sparkle,
   Twitch,
-  Twitter,
   Youtube,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useUpdateBrand } from "@/hooks/use-brands";
@@ -42,9 +42,54 @@ export const BrandContent = () => {
   // Text area description state
   const [description, setDescription] = useState(brandData?.description || "");
 
+  // Normalize YouTube URLs to embed format
+  const normalizeYouTubeEmbedUrl = useCallback((inputUrl: string) => {
+    try {
+      const trimmed = (inputUrl || "").trim();
+      if (!trimmed) return "";
+      // Handle a leading '@' accidentally pasted before the URL
+      const sanitized = trimmed.startsWith("@") ? trimmed.slice(1) : trimmed;
+
+      const url = new URL(sanitized);
+      const host = url.hostname.toLowerCase();
+      let videoId = "";
+
+      if (host.includes("youtu.be")) {
+        // https://youtu.be/<id>
+        videoId = url.pathname.split("/").filter(Boolean)[0] || "";
+      } else if (
+        host.includes("youtube.com") ||
+        host.includes("youtube-nocookie.com") ||
+        host.includes("m.youtube.com")
+      ) {
+        const path = url.pathname;
+        const parts = path.split("/").filter(Boolean);
+        if (path === "/watch") {
+          // https://www.youtube.com/watch?v=<id>
+          videoId = url.searchParams.get("v") || "";
+        } else if (parts[0] === "live" && parts[1]) {
+          // https://www.youtube.com/live/<id>
+          videoId = parts[1];
+        } else if (parts[0] === "embed" && parts[1]) {
+          // Already embed format
+          videoId = parts[1];
+        } else if (parts[0] === "shorts" && parts[1]) {
+          // https://www.youtube.com/shorts/<id>
+          videoId = parts[1];
+        }
+      }
+
+      if (!videoId) return sanitized; // If not recognized, keep original
+      return `https://www.youtube.com/embed/${videoId}`;
+    } catch {
+      return inputUrl; // If not a valid URL, keep as-is
+    }
+  }, []);
+
   // A list of all the social links
   const socialLinks = [
     {
+      key: "yt-live-url",
       label: "Youtube Live URL",
       icon: <Youtube className="size-5" />,
       inputColor: "destructive",
@@ -53,6 +98,7 @@ export const BrandContent = () => {
       setValue: setYoutubeLiveUrl,
     },
     {
+      key: "yt-channel-url",
       label: "Youtube",
       icon: <Youtube className="size-5" />,
       placeholder: "https://www.youtube.com/@username",
@@ -60,6 +106,7 @@ export const BrandContent = () => {
       setValue: setYoutubeChannelUrl,
     },
     {
+      key: "twitch-channel-url",
       label: "Twitch",
       icon: <Twitch className="size-5" />,
       placeholder: "https://twitch.tv/@username",
@@ -67,13 +114,15 @@ export const BrandContent = () => {
       setValue: setTwitchChannelUrl,
     },
     {
-      label: "X",
-      icon: <Twitter className="size-5" />,
+      key: "x-url",
+      label: "",
+      icon: <Image src="/socials/x_logo.svg" alt="X" width={18} height={18} />,
       placeholder: "https://x.com/username",
       value: xUrl,
       setValue: setXUrl,
     },
     {
+      key: "website-url",
       label: "Website",
       icon: <Globe className="size-5" />,
       placeholder: "https://example.com/",
@@ -92,6 +141,11 @@ export const BrandContent = () => {
       ) => {
         if (!brandData || !brandData?.id) return;
         let dataToUpdate: string | SocialMediaUrls = updateData;
+        // Normalize YouTube Live URL before saving
+        if (field === "youtubeLiveUrl") {
+          const normalized = normalizeYouTubeEmbedUrl(String(updateData || ""));
+          dataToUpdate = normalized;
+        }
         if (field === "socialMediaUrls" && !!socialType) {
           dataToUpdate = {
             youtube: brandData.socialMediaUrls?.youtube || "",
@@ -120,7 +174,17 @@ export const BrandContent = () => {
         }
       };
     },
-    [brandData],
+    [brandData, normalizeYouTubeEmbedUrl],
+  );
+
+  // Wrapper to update state with normalized value and persist to DB
+  const updateYouTubeLiveUrl = useCallback(
+    (rawUrl?: string, onSuccess?: () => void, onError?: () => void) => {
+      const normalized = normalizeYouTubeEmbedUrl(String(rawUrl || ""));
+      setYoutubeLiveUrl(normalized);
+      handleUpdateBrandField("youtubeLiveUrl")(normalized, onSuccess, onError);
+    },
+    [handleUpdateBrandField, normalizeYouTubeEmbedUrl],
   );
 
   return (
@@ -168,22 +232,31 @@ export const BrandContent = () => {
             onConfirm={handleUpdateBrandField("streamTitle")}
             isUpdating={isUpdatingBrand}
           />
+          <FileUpload
+            label="Logo"
+            brandLogoUrl={brandData?.logoUrl}
+            handleUpdateDatabase={handleUpdateBrandField("logoUrl")}
+            isUpdatingDatabase={isUpdatingBrand}
+          />
+          <FileUpload
+            label="Cover Image"
+            brandLogoUrl={brandData?.coverUrl}
+            handleUpdateDatabase={handleUpdateBrandField("coverUrl")}
+            isUpdatingDatabase={isUpdatingBrand}
+          />
+        </div>
+        <div className="grid grid-cols-4 gap-5 w-full">
           <TextDescriptionArea
             description={description}
             setDescription={setDescription}
             onConfirm={handleUpdateBrandField("description")}
             isUpdating={isUpdatingBrand}
           />
-          <FileUpload
-            brandLogoUrl={brandData?.logoUrl}
-            handleUpdateDatabase={handleUpdateBrandField("logoUrl")}
-            isUpdatingDatabase={isUpdatingBrand}
-          />
         </div>
         <div className="grid grid-cols-4 gap-5 w-full">
           {socialLinks.map((link) => (
             <NBTextInput
-              key={link.label}
+              key={link.key}
               label={link.label}
               inputColor={link.inputColor as "accent" | "destructive"}
               icon={link.icon}
@@ -192,15 +265,17 @@ export const BrandContent = () => {
               setValue={link.setValue}
               isUpdating={isUpdatingBrand}
               onConfirm={
-                link.label === "Youtube"
-                  ? handleUpdateBrandField("socialMediaUrls", "youtube")
-                  : link.label === "Twitch"
-                    ? handleUpdateBrandField("socialMediaUrls", "twitch")
-                    : link.label === "X"
-                      ? handleUpdateBrandField("socialMediaUrls", "x")
-                      : link.label === "Website"
-                        ? handleUpdateBrandField("websiteUrl")
-                        : handleUpdateBrandField("youtubeLiveUrl")
+                link.key === "yt-live-url"
+                  ? updateYouTubeLiveUrl
+                  : link.key === "yt-channel-url"
+                    ? handleUpdateBrandField("socialMediaUrls", "youtube")
+                    : link.key === "twitch-channel-url"
+                      ? handleUpdateBrandField("socialMediaUrls", "twitch")
+                      : link.key === "x-url"
+                        ? handleUpdateBrandField("socialMediaUrls", "x")
+                        : link.key === "website-url"
+                          ? handleUpdateBrandField("websiteUrl")
+                          : handleUpdateBrandField("youtubeLiveUrl")
               }
             />
           ))}

@@ -5,19 +5,26 @@ import { useApiQuery } from "./use-api-query";
 
 // Auth queries
 export function useAuthCheck(enabled: boolean = true) {
-  const { data, isPending, isLoading, isFetched, refetch, error } =
-    useApiQuery<{
-      user?: User;
-      brand?: Brand;
-      status: "ok" | "nok";
-      error?: string;
-    }>({
-      queryKey: ["auth-check"],
-      url: "/api/auth/check",
-      enabled,
-      retry: false,
-      refetchOnWindowFocus: false,
-    });
+  const {
+    data,
+    isPending,
+    isLoading,
+    isFetched,
+    refetch,
+    error,
+    isRefetching,
+  } = useApiQuery<{
+    user?: User;
+    brand?: Brand;
+    status: "ok" | "nok";
+    error?: string;
+  }>({
+    queryKey: ["auth-check"],
+    url: "/api/auth/check",
+    enabled,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
   return {
     user: data?.user,
@@ -27,6 +34,7 @@ export function useAuthCheck(enabled: boolean = true) {
     isFetched,
     isPending,
     refetch,
+    isRefetching,
   };
 }
 
@@ -35,13 +43,23 @@ export function useFarcasterSignIn(
   options?: Partial<
     UseApiMutationOptions<
       { success: boolean; error?: string; user?: User },
-      { fid: number; referrerFid?: number; token: string }
+      {
+        fid: number;
+        referrerFid?: number;
+        token: string;
+        connectedAddress?: string;
+      }
     >
   >,
 ) {
   return useApiMutation<
     { success: boolean; error?: string; user?: User },
-    { fid: number; referrerFid?: number; token: string }
+    {
+      fid: number;
+      referrerFid?: number;
+      token: string;
+      connectedAddress?: string;
+    }
   >({
     url: "/api/auth/farcaster/sign-in",
     method: "POST",
@@ -55,13 +73,21 @@ export function useFakeFarcasterSignIn(
   options?: Partial<
     UseApiMutationOptions<
       { success: boolean; error?: string; user?: User },
-      { fid: number; referrerFid?: number; }
+      {
+        fid: number;
+        referrerFid?: number;
+        connectedAddress?: string;
+      }
     >
   >,
 ) {
   return useApiMutation<
     { success: boolean; error?: string; user?: User },
-    { fid: number; referrerFid?: number;  }
+    {
+      fid: number;
+      referrerFid?: number;
+      connectedAddress?: string;
+    }
   >({
     url: "/api/auth/farcaster/fake-sign-in",
     method: "POST",

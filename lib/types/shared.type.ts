@@ -1,5 +1,3 @@
-import { Address } from "viem";
-
 // The active plugins in database
 export type ActivePlugins = "tips" | "tokens" | "bullmeter";
 

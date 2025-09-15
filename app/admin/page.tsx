@@ -16,7 +16,7 @@ import { AdminPageContent } from "@/lib/enums";
 export default function AdminPage() {
   const [selectedPageContent, setSelectedPageContent] =
     useState<AdminPageContent>(AdminPageContent.BRAND);
-  const { brand, isLoading, signInWithBase } = useAdminAuth();
+  const { brand, isLoading, isRefetching, signInWithBase } = useAdminAuth();
 
   // Whether the page content is overlay or brand
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
@@ -24,7 +24,7 @@ export default function AdminPage() {
 
   return (
     <AnimatePresence mode="wait">
-      {isLoading ? (
+      {isLoading && !isRefetching ? (
         <motion.div
           key="loading"
           initial={{ opacity: 0 }}

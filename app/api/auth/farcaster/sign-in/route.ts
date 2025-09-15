@@ -11,7 +11,10 @@ export const POST = async (req: NextRequest) => {
     token: farcasterToken,
     fid: contextFid,
     referrerFid,
+    connectedAddress,
   } = await req.json();
+
+  // Verify mandatory arguments
   if (!farcasterToken || !contextFid || isNaN(Number(contextFid)))
     return NextResponse.json(
       { success: false, error: "Invalid arguments" },
@@ -36,6 +39,7 @@ export const POST = async (req: NextRequest) => {
     const dbUser = await getOrCreateUserFromFid(
       Number(fid),
       referrerFid ? Number(referrerFid) : undefined,
+      connectedAddress,
     );
     const primaryWallet = dbUser.wallets.find((wallet) => wallet.isPrimary);
     const walletAddress = dbUser.wallets[0].address;

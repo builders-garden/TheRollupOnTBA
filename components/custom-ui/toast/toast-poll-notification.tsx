@@ -110,7 +110,7 @@ export const ToastPollNotification = ({
 }) => {
   const { subscribe, unsubscribe } = useSocket();
   const { joinStream } = useSocketUtils();
-  const [voters, setVoters] = useState<number>(data.voters);
+  const [_, setVoters] = useState<number>(data.voters);
   const [votes, setVotes] = useState<number>(data.votes);
   const [results, setResults] = useState<{
     bullPercent: number;

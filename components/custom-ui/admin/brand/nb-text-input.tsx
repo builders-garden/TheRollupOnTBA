@@ -1,6 +1,6 @@
 import { Check, SquarePen, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface NBTextInputProps {
@@ -43,6 +43,12 @@ export const NBTextInput = ({
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
+  };
+
+  // Handles the activation of the input
+  const handleActivateEditing = () => {
+    if (isUpdating) return;
+    setIsEditing(true);
   };
 
   // Handle the cancel button
@@ -91,9 +97,10 @@ export const NBTextInput = ({
           ref={inputRef}
           type="text"
           placeholder={placeholder}
-          disabled={!isEditing || isUpdating}
+          disabled={isUpdating}
           className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
           value={editingValue}
+          onFocus={handleActivateEditing}
           onChange={(e) => {
             setEditingValue(e.target.value);
           }}

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AddedToken } from "./added-token";
 import { TokensSearchModal } from "./tokens-search-modal";

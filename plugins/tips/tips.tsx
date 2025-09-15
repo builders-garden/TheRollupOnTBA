@@ -56,7 +56,6 @@ export const Tips = ({
   // Usa il tuo hook con parametri fissi
   const {
     transfer: transferUsdc,
-    txHash,
     isLoading: isTransferLoading,
     isSuccess: isTransferSuccess,
     hasError: isTransferError,
@@ -76,7 +75,7 @@ export const Tips = ({
   const handleTipPayment = async (amount: number) => {
     try {
       setIsProcessing(true);
-      
+
       if (
         (await sdk.context).client.clientFid === FARCASTER_CLIENT_FID.farcaster
       ) {

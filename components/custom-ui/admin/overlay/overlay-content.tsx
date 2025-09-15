@@ -1,6 +1,5 @@
 import { Sparkle } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
 import { useState } from "react";
 import { OverlayTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";

@@ -106,7 +106,7 @@ export const AboutSection = ({
             <Image
               src={coverUrl}
               alt="Cover"
-              className="w-full object-cover"
+              className="w-full object-cover rounded-[12px]"
               width={1000}
               height={200}
             />

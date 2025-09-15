@@ -365,6 +365,7 @@ export const StreamPage = () => {
                 alt={brand.data.name || ""}
                 width={20}
                 height={21}
+                className="rounded-[4px]"
               />
               <p className="text-md">{brand.data.name}</p>
             </div>

@@ -41,7 +41,9 @@ async function createUserFromNeynar(
 
   // Check if the connected address is in the user's verified addresses
   const isConnectedAddressInVerifiedAddresses = connectedAddress
-    ? user.verified_addresses.eth_addresses.includes(connectedAddress)
+    ? user.verified_addresses.eth_addresses.some((address) =>
+        isAddressEqual(getAddress(address), getAddress(connectedAddress)),
+      )
     : false;
 
   // Fill with the verified addresses

@@ -9,6 +9,7 @@ interface UseApiQueryOptions<TData, TBody = unknown>
   method?: HttpMethod;
   body?: TBody;
   isProtected?: boolean;
+  timeout?: number | false;
 }
 
 export const useApiQuery = <TData, TBody = unknown>(
@@ -19,6 +20,7 @@ export const useApiQuery = <TData, TBody = unknown>(
     method = "GET",
     body,
     isProtected = false,
+    timeout = false,
     ...queryOptions
   } = options;
 
@@ -34,6 +36,7 @@ export const useApiQuery = <TData, TBody = unknown>(
           credentials: "include",
         }),
         ...(body && { json: body }),
+        timeout,
       });
 
       if (!response.ok) {

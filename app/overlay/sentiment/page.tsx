@@ -47,7 +47,7 @@ export default function OverlayPage() {
               votes: p.votes || 0,
               voters: p.voters || 0,
               qrCodeUrl: p.pollId || "",
-              position,
+              position: PopupPositions.TOP_CENTER,
               results: p.results || { bullPercent: 0, bearPercent: 0 },
             }}
           />
@@ -56,6 +56,7 @@ export default function OverlayPage() {
           id: toastId,
           duration: Infinity,
           position: PopupPositions.TOP_CENTER,
+          className: "flex items-center justify-center w-full",
         },
       );
     },
@@ -186,7 +187,7 @@ export default function OverlayPage() {
   }, [subscribe, unsubscribe, joinStream, openToastFromPoll, toastId]);
 
   return (
-    <div className="flex h-screen w-[100vw]">
+    <div className="flex items-center justify-center min-h-[130px] w-[1000px]">
       <div className="flex h-full w-full"> </div>
     </div>
   );

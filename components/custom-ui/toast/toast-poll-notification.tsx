@@ -8,6 +8,7 @@ import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { UpdatePollNotificationEvent } from "@/lib/types/socket";
+import { cn } from "@/lib/utils";
 import { BearIcon } from "../icons/bear-icon";
 import { BullIcon } from "../icons/bull-icon";
 
@@ -58,7 +59,10 @@ const ResultsBar = ({
         rotate: { type: "spring", visualDuration: 0.45, bounce: 0.3 },
       }}>
       <motion.div
-        className="h-14 flex items-center justify-center bg-[#CF5953]/85 px-4"
+        className={cn(
+          "h-14 flex items-center justify-center bg-[#CF5953]/85",
+          normalizedBear > 0 ? "px-4" : "px-0",
+        )}
         initial={{ width: "50%" }}
         animate={{ width: `${normalizedBear}%` }}
         transition={{
@@ -72,14 +76,17 @@ const ResultsBar = ({
           <NumberTicker
             value={normalizedBear}
             startValue={50}
-            className="whitespace-pre-wrap text-white font-overused-grotesk font-black text-2xl tracking-tighter"
+            className="whitespace-pre-wrap text-white font-overused-grotesk font-black text-2xl tracking-tighter shrink-0"
             delay={0.45}
           />
           %
         </span>
       </motion.div>
       <motion.div
-        className="h-14 flex items-center justify-center bg-[#4CAF50]/85 px-4"
+        className={cn(
+          "h-14 flex items-center justify-center bg-[#4CAF50]/85",
+          normalizedBull > 0 ? "px-4" : "px-0",
+        )}
         initial={{ width: "50%" }}
         animate={{ width: `${normalizedBull}%` }}
         transition={{
@@ -93,7 +100,7 @@ const ResultsBar = ({
           <NumberTicker
             value={normalizedBull}
             startValue={50}
-            className="whitespace-pre-wrap text-white font-overused-grotesk font-black text-2xl tracking-tighter"
+            className="whitespace-pre-wrap text-white font-overused-grotesk font-black text-2xl tracking-tighter shrink-0"
             delay={0.45}
           />
           %

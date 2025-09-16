@@ -61,7 +61,7 @@ export default function OverlayPage() {
       showPopupCallback({
         username: data.username,
         profilePicture: data.profilePicture,
-        text: `voted ${data.voteAmount} ${data.isBull ? "bull" : "bear"}`,
+        text: `${data.isBull ? "is bullish" : "is bearish"}`,
         position: data.position,
       });
     };

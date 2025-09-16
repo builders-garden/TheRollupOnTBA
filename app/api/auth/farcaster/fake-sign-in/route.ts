@@ -21,7 +21,7 @@ export const POST = async (req: NextRequest) => {
       connectedAddress,
     );
     const primaryWallet = dbUser.wallets.find((wallet) => wallet.isPrimary);
-    const walletAddress = dbUser.wallets[0].address;
+    const walletAddress = dbUser.wallets[0]?.address;
 
     // Generate JWT token
     const secret = new TextEncoder().encode(env.JWT_SECRET);
@@ -29,7 +29,7 @@ export const POST = async (req: NextRequest) => {
     const exp = new Date(Date.now() + monthInMs);
     const token = await new jose.SignJWT({
       fid,
-      walletAddress: primaryWallet ? primaryWallet.address : walletAddress,
+      walletAddress: primaryWallet ? primaryWallet?.address : walletAddress,
       timestamp: Date.now(),
     })
       .setProtectedHeader({ alg: "HS256" })

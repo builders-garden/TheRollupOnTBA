@@ -66,7 +66,7 @@ export const PopupsContent = () => {
         tokenInImageUrl: "https://via.placeholder.com/150",
         tokenOutAmount: "100",
         tokenOutDecimals: 18,
-        tokenOutName: "BTC",
+        tokenOutName: "ETH",
         tokenOutImageUrl: "https://via.placeholder.com/150",
       });
     } else if (type === "vote") {

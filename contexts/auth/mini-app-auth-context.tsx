@@ -86,7 +86,10 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingBrand,
     error: brandError,
     refetch: refetchBrand,
-  } = useBrandById(env.NEXT_PUBLIC_ROLLUP_BRAND_ID);
+  } = useBrandById(
+    env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
+    !!env.NEXT_PUBLIC_ROLLUP_BRAND_ID && !!user,
+  );
 
   // Fetching the tip settings when the brand is connected
   const {
@@ -94,7 +97,10 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     error: tipSettingsError,
     refetch: refetchTipSettings,
-  } = useTip({ brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID });
+  } = useTip({
+    brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
+    enabled: !!env.NEXT_PUBLIC_ROLLUP_BRAND_ID && !!user,
+  });
 
   // Fetching the featured tokens when the brand is connected
   const {
@@ -102,7 +108,10 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingFeaturedTokens,
     error: featuredTokensError,
     refetch: refetchFeaturedTokens,
-  } = useFeaturedTokens({ brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID });
+  } = useFeaturedTokens({
+    brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
+    enabled: !!env.NEXT_PUBLIC_ROLLUP_BRAND_ID && !!user,
+  });
 
   // Auto set brand logic
   useEffect(() => {
@@ -189,12 +198,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
           ? miniAppContext.location.cast.author.fid
           : undefined;
 
-      // const result = await miniappSdk.quickAuth.getToken();
-
-      // if (!result) {
-      //   throw new Error("No token from SIWF Quick Auth");
-      // }
-
+      // The signin is not required but this will create the user if they don't exist
       fakeFarcasterSignIn({
         fid: miniAppContext.user.fid,
         referrerFid,

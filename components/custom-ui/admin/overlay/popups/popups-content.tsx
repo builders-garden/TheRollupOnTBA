@@ -216,7 +216,7 @@ export const PopupsContent = () => {
         <div className="flex flex-col justify-start items-start gap-1">
           <p className="text-black font-medium">
             <span className="font-bold">2.</span> Set width and height to
-            600x150 for popups and 1100x300 for bull-meter poll
+            600x150 for popups and 1100x250 for bull-meter poll
           </p>
           <p className="text-sm opacity-50">
             These are suggested sizes, feel free to adjust them to your liking.

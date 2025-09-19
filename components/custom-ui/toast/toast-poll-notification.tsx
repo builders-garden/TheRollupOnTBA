@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence, easeIn, motion } from "motion/react";
+import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useMemo, useState } from "react";
-import QRCode from "react-qr-code";
 import { NumberTicker } from "@/components/shadcn-ui/number-ticker";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
@@ -256,12 +256,7 @@ export const ToastPollNotification = ({
             </span>
           </div>
           <div className="bg-white p-1">
-            <QRCode
-              value={data.qrCodeUrl}
-              size={60}
-              style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-              viewBox={`0 0 256 256`}
-            />
+            <QRCodeSVG value={data.qrCodeUrl} size={82} level="M" />
           </div>
         </div>
       </motion.div>

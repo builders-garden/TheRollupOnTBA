@@ -101,9 +101,7 @@ export const StreamPage = () => {
         results: undefined,
       };
       // Store the absolute Unix timestamp, not remaining time
-      const absoluteDeadline = Math.floor(
-        new Date(data.endTime).getTime() / 1000,
-      );
+      const absoluteDeadline = Math.floor(data.endTimeMs / 1000);
       return {
         ...base,
         id: data.id,
@@ -135,7 +133,7 @@ export const StreamPage = () => {
       id: data.id,
       prompt: data.pollQuestion,
       pollId: data.qrCodeUrl,
-      deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000), // This is already correct - absolute timestamp
+      deadlineSeconds: Math.floor(data.endTimeMs / 1000),
       votes: data.votes,
       voters: data.voters,
       results: data.results,

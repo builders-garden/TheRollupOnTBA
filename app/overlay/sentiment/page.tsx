@@ -40,7 +40,7 @@ export default function OverlayPage() {
             data={{
               id: p.id,
               pollQuestion: p.prompt,
-              endTime: new Date((p.deadlineSeconds || 0) * 1000),
+              endTimeMs: (p.deadlineSeconds || 0) * 1000,
               votes: p.votes || 0,
               voters: p.voters || 0,
               qrCodeUrl: p.pollId || "",
@@ -111,7 +111,7 @@ export default function OverlayPage() {
         id: data.id,
         prompt: data.pollQuestion,
         pollId: data.qrCodeUrl,
-        deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000),
+        deadlineSeconds: Math.floor(data.endTimeMs / 1000),
         votes: data.votes,
         voters: data.voters,
         results: data.results,
@@ -121,8 +121,8 @@ export default function OverlayPage() {
       openToastFromPoll(normalized);
     },
     onUpdate: (data: UpdatePollNotificationEvent) => {
-      const absoluteDeadline = data.endTime
-        ? Math.floor(new Date(data.endTime).getTime() / 1000)
+      const absoluteDeadline = data.endTimeMs
+        ? Math.floor(data.endTimeMs / 1000)
         : null;
       setPoll((prev) => {
         if (!prev) return prev;
@@ -140,8 +140,8 @@ export default function OverlayPage() {
       setShowPoll(true);
     },
     onEnd: (data: EndPollNotificationEvent) => {
-      const absoluteDeadline = data.endTime
-        ? Math.floor(new Date(data.endTime).getTime() / 1000)
+      const absoluteDeadline = data.endTimeMs
+        ? Math.floor(data.endTimeMs / 1000)
         : null;
       setPoll((prev) => {
         const updated: NormalizedPoll = {

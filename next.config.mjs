@@ -1,6 +1,5 @@
 import { fileURLToPath } from "node:url";
 import createJiti from "jiti";
-import { createSecureHeaders } from "next-secure-headers";
 
 const jiti = createJiti(fileURLToPath(import.meta.url));
 

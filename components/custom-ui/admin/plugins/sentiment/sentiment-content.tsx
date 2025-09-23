@@ -253,7 +253,7 @@ export const SentimentContent = () => {
         adminUpdateSentimentPoll({
           id: result.pollId || "1",
           position: PopupPositions.TOP_CENTER,
-          endTime: new Date((result.deadline || 0) * 1000),
+          endTimeMs: (result.deadline || 0) * 1000,
           voters: 0,
           votes: result.votesCount ?? 0,
           results: {
@@ -366,7 +366,7 @@ export const SentimentContent = () => {
           id: result.pollId || "1",
           position: PopupPositions.TOP_CENTER,
           pollQuestion: prompt,
-          endTime: new Date((result.deadline || 0) * 1000),
+          endTimeMs: (result.deadline || 0) * 1000,
           guests,
           results: { bullPercent: 0, bearPercent: 0 },
         });
@@ -538,7 +538,7 @@ export const SentimentContent = () => {
       setIsLive(true);
       toast.success("Poll started");
       const currentTime = Math.floor(Date.now() / 1000);
-      const deadline = Math.floor(new Date(data.endTime).getTime() / 1000);
+      const deadline = Math.floor(data.endTimeMs / 1000);
       const remainingSeconds = Math.max(0, deadline - currentTime);
       startTimer(remainingSeconds);
     },

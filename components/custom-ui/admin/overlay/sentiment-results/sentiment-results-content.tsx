@@ -25,7 +25,7 @@ export const SentimentResultsContent = () => {
     const data = {
       id: "1",
       pollQuestion: "ETH will flip BTC this cycle",
-      endTime: addSeconds(new Date(), 5),
+      endTimeMs: addSeconds(new Date(), 5).getTime(),
       votes: 10,
       voters: 10,
       qrCodeUrl: "https://example.com/poll",
@@ -41,7 +41,7 @@ export const SentimentResultsContent = () => {
       //username: "Admin",
       //profilePicture: "https://via.placeholder.com/150",
       pollQuestion: "ETH will flip BTC this cycle",
-      endTime: addSeconds(new Date(), 5),
+      endTimeMs: addSeconds(new Date(), 5).getTime(),
       position: selectedPopupPosition,
       guests: [],
       results: {

@@ -511,7 +511,7 @@ export const StreamPage = () => {
             }}
             className="size-6 data-[state=checked]:bg-accent data-[state=checked]:border-accent mx-1.5"
           />
-          <p className="text-sm">Don't show this again</p>
+          <p className="text-sm">Don&apos;t show this again</p>
         </div>
 
         <div className="flex flex-col justify-center items-center w-full mt-2 gap-5">

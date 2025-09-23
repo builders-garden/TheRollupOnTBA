@@ -7,7 +7,7 @@ import { NBCard } from "@/components/custom-ui/nb-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useBullmeterClaim } from "@/hooks/use-bullmeter-claim";
 import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
-import { useSocket } from "@/hooks/use-socket";
+import { useSentimentPollSocket } from "@/hooks/use-sentiment-poll-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
 import { AVAILABLE_DURATIONS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
@@ -15,12 +15,13 @@ import {
   getAddressFromBaseName,
   getAddressFromEnsName,
 } from "@/lib/ens/client";
-import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
+import { PopupPositions } from "@/lib/enums";
 import { ReadPollData } from "@/lib/types/bullmeter.type";
 import { Duration, Guest } from "@/lib/types/poll.type";
 import {
   EndPollNotificationEvent,
   PollNotificationEvent,
+  UpdatePollNotificationEvent,
 } from "@/lib/types/socket/server-to-client.type";
 import { FormDurationSelection } from "./form-duration-selection";
 import { FormTextInput } from "./form-text-input";
@@ -30,9 +31,7 @@ import { HistoryItem } from "./history-item";
 const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
 export const SentimentContent = () => {
-  const { subscribe, unsubscribe } = useSocket();
   const {
-    joinStream,
     adminStartBullmeter: adminStartSentimentPoll,
     adminEndBullmeter: adminEndSentimentPoll,
     adminUpdateSentimentPoll,
@@ -540,49 +539,28 @@ export const SentimentContent = () => {
         (guest) => guest.nameOrAddress && parseFloat(guest.splitPercent) > 0,
       ));
 
-  useEffect(() => {
-    // Join the stream
-    joinStream({
+  useSentimentPollSocket({
+    joinInfo: {
       username: "Admin",
       profilePicture: "https://via.placeholder.com/150",
-    });
-
-    // Create event handlers
-    const handleStartSentimentPoll = (data: PollNotificationEvent) => {
+    },
+    onStart: (data: PollNotificationEvent) => {
       setIsLive(true);
       toast.success("Poll started");
       const currentTime = Math.floor(Date.now() / 1000);
       const deadline = Math.floor(new Date(data.endTime).getTime() / 1000);
       const remainingSeconds = Math.max(0, deadline - currentTime);
       startTimer(remainingSeconds);
-    };
-
-    const handleEndSentimentPoll = (data: EndPollNotificationEvent) => {
+    },
+    onUpdate: (data: UpdatePollNotificationEvent) => {
+      console.log("✅ POLL UPDATED", data);
+    },
+    onEnd: (data: EndPollNotificationEvent) => {
       setIsLive(false);
       toast.success("Poll ended");
       stopTimer();
-    };
-
-    subscribe(
-      ServerToClientSocketEvents.START_SENTIMENT_POLL,
-      handleStartSentimentPoll,
-    );
-    subscribe(
-      ServerToClientSocketEvents.END_SENTIMENT_POLL,
-      handleEndSentimentPoll,
-    );
-
-    return () => {
-      unsubscribe(
-        ServerToClientSocketEvents.START_SENTIMENT_POLL,
-        handleStartSentimentPoll,
-      );
-      unsubscribe(
-        ServerToClientSocketEvents.END_SENTIMENT_POLL,
-        handleEndSentimentPoll,
-      );
-    };
-  }, [subscribe]);
+    },
+  });
 
   return (
     <motion.div

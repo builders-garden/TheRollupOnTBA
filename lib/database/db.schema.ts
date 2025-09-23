@@ -100,6 +100,31 @@ export type CreateTipSettings = typeof tipSettingsTable.$inferInsert;
 export type UpdateTipSettings = Partial<CreateTipSettings>;
 
 /**
+ * Tips table
+ */
+export const tipsTable = sqliteTable("tips", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => ulid()),
+  senderId: text("sender_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  receiverBrandId: text("receiver_brand_id")
+    .notNull()
+    .references(() => brandsTable.id, { onDelete: "cascade" }),
+  receiverAddress: text("receiver_address"),
+  receiverBaseName: text("receiver_base_name"),
+  receiverEnsName: text("receiver_ens_name"),
+  amount: numeric("amount").notNull(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type Tip = typeof tipsTable.$inferSelect;
+export type CreateTip = typeof tipsTable.$inferInsert;
+export type UpdateTip = Partial<CreateTip>;
+
+/**
  * Featured Tokens table
  */
 export const featuredTokensTable = sqliteTable("featured_tokens", {

@@ -12,7 +12,7 @@ import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useFakeFarcasterSignIn } from "@/hooks/use-auth-hooks";
 import { useBrandById } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
-import { useTip } from "@/hooks/use-tips";
+import { useTipSettings } from "@/hooks/use-tip-settings";
 import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
 import { User } from "@/lib/types/user.type";
 import { env } from "@/lib/zod";
@@ -97,7 +97,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     error: tipSettingsError,
     refetch: refetchTipSettings,
-  } = useTip({
+  } = useTipSettings({
     brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
     enabled: !!env.NEXT_PUBLIC_ROLLUP_BRAND_ID && !!user,
   });

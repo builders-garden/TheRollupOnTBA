@@ -452,7 +452,7 @@ export const StreamPage = () => {
               color: "blue",
               text: "Custom",
             }}
-            payoutAddress={brand.tipSettings.data.payoutAddress}
+            tipSettings={brand.tipSettings.data}
             user={user.data}
           />
         )}

@@ -6,7 +6,7 @@ import { Address, isAddress } from "viem";
 import { CopyButton } from "@/components/custom-ui/copy-button";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
-import { useUpdateTip } from "@/hooks/use-tips";
+import { useUpdateTipSettings } from "@/hooks/use-tip-settings";
 import {
   getAddressFromBaseName,
   getAddressFromEnsName,
@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 export const PayoutAddressInput = () => {
   const { tipSettings, admin } = useAdminAuth();
-  const { mutate: updateTip } = useUpdateTip();
+  const { mutate: updateTip } = useUpdateTipSettings();
 
   const [textFieldValue, setTextFieldValue] = useState(
     tipSettings?.data?.payoutBaseName ||

@@ -1,7 +1,9 @@
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
+import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 
 interface BullmeterProps {
@@ -17,8 +19,8 @@ interface BullmeterProps {
   button2text: string;
   button1Color?: string;
   button2Color?: string;
-  button1OnClick?: () => void;
-  button2OnClick?: () => void;
+  button1OnClick?: (votesNumber: number) => void;
+  button2OnClick?: (votesNumber: number) => void;
   disabled?: boolean;
   loading?: boolean;
   button1Loading?: boolean;
@@ -45,10 +47,43 @@ export const Bullmeter = ({
   button1Loading = false,
   button2Loading = false,
 }: BullmeterProps) => {
+  const [button1VotesNumber, setButton1VotesNumber] = useState<number>(0);
+  const [button2VotesNumber, setButton2VotesNumber] = useState<number>(0);
+  const [totalVotes, setTotalVotes] = useState<number>(0);
+
+  // The maximum number of votes
+  const MAX_VOTES = 100;
+
+  // Whether the poll has expired
   const isExpired =
     typeof deadlineSeconds === "number"
       ? deadlineSeconds - Math.floor(Date.now() / 1000) <= 0
       : false;
+
+  // Debounce the votes number in order to avoid sending the vote to the
+  // smart contract multiple times
+  const debouncedButton1VotesNumber = useDebounce(button1VotesNumber, 1500);
+  const debouncedButton2VotesNumber = useDebounce(button2VotesNumber, 1500);
+
+  // When the debounced votes number changes, send the smart contract the vote
+  useEffect(() => {
+    const sendVote = async () => {
+      if (debouncedButton1VotesNumber > 0) {
+        // Call the button1OnClick function
+        button1OnClick?.(debouncedButton1VotesNumber);
+        setTotalVotes(totalVotes + debouncedButton1VotesNumber);
+        setButton1VotesNumber(0);
+      } else if (debouncedButton2VotesNumber > 0) {
+        // Call the button2OnClick function
+        button2OnClick?.(debouncedButton2VotesNumber);
+        setTotalVotes(totalVotes + debouncedButton2VotesNumber);
+        setButton2VotesNumber(0);
+      }
+    };
+
+    sendVote();
+  }, [debouncedButton1VotesNumber, debouncedButton2VotesNumber]);
+
   return (
     <div
       className={cn(
@@ -78,8 +113,32 @@ export const Bullmeter = ({
         <div className="flex justify-between items-center w-full gap-2.5">
           {/* Button 1 */}
           <NBButton
-            onClick={button1OnClick}
-            disabled={disabled || loading || button1Loading || isExpired}
+            onClick={() => {
+              if (
+                button1VotesNumber >= MAX_VOTES - totalVotes ||
+                isExpired ||
+                disabled ||
+                loading ||
+                button1Loading
+              )
+                return;
+
+              if (button2VotesNumber > 0) {
+                // Reset the button2 votes number
+                setButton2VotesNumber(0);
+              }
+
+              // Increment the button1 votes number
+              setButton1VotesNumber(button1VotesNumber + 1);
+            }}
+            disabled={
+              disabled ||
+              loading ||
+              button1Loading ||
+              isExpired ||
+              button1VotesNumber >= MAX_VOTES - totalVotes ||
+              button2VotesNumber >= MAX_VOTES - totalVotes
+            }
             className={`bg-${button1Color} w-full h-[50px]`}>
             <AnimatePresence mode="wait">
               {button1Loading ? (
@@ -107,8 +166,32 @@ export const Bullmeter = ({
           </NBButton>
           {/* Button 2 */}
           <NBButton
-            onClick={button2OnClick}
-            disabled={disabled || loading || button2Loading || isExpired}
+            onClick={() => {
+              if (
+                button2VotesNumber >= MAX_VOTES - totalVotes ||
+                isExpired ||
+                disabled ||
+                loading ||
+                button2Loading
+              )
+                return;
+
+              if (button1VotesNumber > 0) {
+                // Reset the button1 votes number
+                setButton1VotesNumber(0);
+              }
+
+              // Increment the button2 votes number
+              setButton2VotesNumber(button2VotesNumber + 1);
+            }}
+            disabled={
+              disabled ||
+              loading ||
+              button2Loading ||
+              isExpired ||
+              button2VotesNumber >= MAX_VOTES - totalVotes ||
+              button1VotesNumber >= MAX_VOTES - totalVotes
+            }
             className={`bg-${button2Color} w-full h-[50px]`}>
             <AnimatePresence mode="wait">
               {button2Loading ? (

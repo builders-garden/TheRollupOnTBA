@@ -5,11 +5,12 @@ import { toast } from "sonner";
 import { useAccount } from "wagmi";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
-import { Input } from "@/components/shadcn-ui/input";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { useCreateTip } from "@/hooks/use-tips";
 import { useUsdcTransfer } from "@/hooks/use-usdc-transfer";
 import { FARCASTER_CLIENT_FID } from "@/lib/constants";
+import { TipSettings } from "@/lib/database/db.schema";
 import { PopupPositions } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
@@ -31,14 +32,14 @@ interface TipsProps {
     textClassName?: string;
     buttonClassName?: string;
   };
-  payoutAddress: string;
+  tipSettings: TipSettings;
   user?: User;
 }
 
 export const Tips = ({
   label = "Tip",
   showLabel = true,
-  payoutAddress,
+  tipSettings,
   tips,
   customTipButton,
   user,
@@ -49,11 +50,13 @@ export const Tips = ({
   const { tipSent } = useSocketUtils();
   const { address } = useAccount();
   const { startConfetti } = useConfetti({});
+  const [isEditing, setIsEditing] = useState(false);
+  const { mutate: createTip } = useCreateTip();
 
   // Get the first wallet address with a base name
   const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;
 
-  // Usa il tuo hook con parametri fissi
+  // Use your hook with fixed parameters
   const {
     transfer: transferUsdc,
     isLoading: isTransferLoading,
@@ -61,8 +64,8 @@ export const Tips = ({
     hasError: isTransferError,
     error: transferError,
   } = useUsdcTransfer({
-    amount: "1", // Valore di default
-    receiver: payoutAddress,
+    amount: "1", // Default value
+    receiver: tipSettings.payoutAddress || "",
   });
 
   // Handles Custom Tip Modal Open
@@ -73,6 +76,10 @@ export const Tips = ({
 
   // Handle tip payment
   const handleTipPayment = async (amount: number) => {
+    if (!tipSettings.payoutAddress || !user?.id) {
+      return;
+    }
+
     try {
       setIsProcessing(true);
 
@@ -81,10 +88,9 @@ export const Tips = ({
       ) {
         try {
           // Execute the transfer using your hook with dynamic parameters
-          await transferUsdc(amount.toString(), payoutAddress);
+          await transferUsdc(amount.toString(), tipSettings.payoutAddress);
 
           if (isTransferSuccess) {
-            // You can add success notification here
             tipSent({
               position: PopupPositions.TOP_CENTER,
               username:
@@ -94,6 +100,17 @@ export const Tips = ({
             });
             toast.success("Tip sent successfully");
             startConfetti();
+
+            // Create a tip record in the database
+            createTip({
+              senderId: user.id,
+              receiverBrandId: tipSettings.brandId,
+              receiverAddress: tipSettings.payoutAddress,
+              receiverBaseName: tipSettings.payoutBaseName,
+              receiverEnsName: tipSettings.payoutEnsName,
+              amount: amount.toString(),
+              platform: "farcaster",
+            });
           } else if (isTransferError) {
             console.log("Farcaster USDC transfer failed:", transferError);
             throw transferError;
@@ -109,7 +126,7 @@ export const Tips = ({
       // Base payment flow for non-Farcaster environments
       const payment = await pay({
         amount: amount.toFixed(2), // USD amount (USDC used internally)
-        to: payoutAddress as `0x${string}`,
+        to: tipSettings.payoutAddress as `0x${string}`,
         testnet: false, // set false for Mainnet
       });
 
@@ -130,6 +147,19 @@ export const Tips = ({
           username: baseName || user?.username || formatWalletAddress(address),
           profilePicture: user?.avatarUrl || "",
           tipAmount: amount.toString(),
+        });
+        toast.success("Tip sent successfully");
+        startConfetti();
+
+        // Create a tip record in the database
+        createTip({
+          senderId: user?.id,
+          receiverBrandId: tipSettings.brandId,
+          receiverAddress: tipSettings.payoutAddress,
+          receiverBaseName: tipSettings.payoutBaseName,
+          receiverEnsName: tipSettings.payoutEnsName,
+          amount: amount.toString(),
+          platform: "base",
         });
       } else {
         console.log("Base payment status:", status);
@@ -196,13 +226,20 @@ export const Tips = ({
             <h1 className="text-2xl font-bold text-center">
               Choose custom tip
             </h1>
-            <div className="flex flex-col justify-center items-center w-full gap-2.5">
-              <Input
-                placeholder="e.g. $0.01"
-                className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px] transition-all duration-300"
+            <div
+              className={cn(
+                "flex justify-center items-center w-full gap-1 rounded-[12px] pl-2 border-accent border-[1px] ring-accent/40 transition-all duration-300",
+                isEditing && "ring-[2px]",
+              )}>
+              <p>$</p>
+              <input
+                placeholder="0.01"
+                className="w-full h-[42px] focus-visible:ring-none focus-visible:border-none rounded-[12px] transition-all duration-300 outline-none focus:ring-none focus:ring-0 focus:border-none"
                 type="number"
                 min={0}
                 value={customAmount}
+                onFocus={() => setIsEditing(true)}
+                onBlur={() => setIsEditing(false)}
                 onChange={(e) => {
                   const value = e.target.value;
                   // Allow empty string or valid numbers >= 0

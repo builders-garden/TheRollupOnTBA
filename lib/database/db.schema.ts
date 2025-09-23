@@ -79,9 +79,9 @@ export type CreateBullMeter = typeof bullMetersTable.$inferInsert;
 export type UpdateBullMeter = Partial<CreateBullMeter>;
 
 /**
- * Tips table
+ * Tip settings table
  */
-export const tipsTable = sqliteTable("tips", {
+export const tipSettingsTable = sqliteTable("tip_settings", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -93,6 +93,32 @@ export const tipsTable = sqliteTable("tips", {
   payoutEnsName: text("payout_ens_name"),
   amounts: text("amounts"),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type TipSettings = typeof tipSettingsTable.$inferSelect;
+export type CreateTipSettings = typeof tipSettingsTable.$inferInsert;
+export type UpdateTipSettings = Partial<CreateTipSettings>;
+
+/**
+ * Tips table
+ */
+export const tipsTable = sqliteTable("tips", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => ulid()),
+  senderId: text("sender_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  receiverBrandId: text("receiver_brand_id")
+    .notNull()
+    .references(() => brandsTable.id, { onDelete: "cascade" }),
+  receiverAddress: text("receiver_address"),
+  receiverBaseName: text("receiver_base_name"),
+  receiverEnsName: text("receiver_ens_name"),
+  amount: numeric("amount").notNull(),
+  platform: text("platform").notNull().$type<"farcaster" | "base">(),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 export type Tip = typeof tipsTable.$inferSelect;

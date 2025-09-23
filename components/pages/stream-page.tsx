@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -29,8 +30,22 @@ import { AboutSection } from "../custom-ui/mini-app/about-section";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
 import { HostsSection } from "../custom-ui/mini-app/hosts";
 import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
+import { NBButton } from "../custom-ui/nb-button";
+import { NBModal } from "../custom-ui/nb-modal";
 import { ShareButton } from "../custom-ui/share-button";
+import { Checkbox } from "../shadcn-ui/checkbox";
 import { Separator } from "../shadcn-ui/separator";
+
+// Unified poll state populated from initial fetch and socket updates
+type NormalizedPoll = {
+  id: string;
+  prompt: string;
+  pollId?: string;
+  deadlineSeconds: number | null;
+  votes?: number;
+  voters?: number;
+  results?: { bullPercent: number; bearPercent: number };
+};
 
 export const StreamPage = () => {
   const { isConnected, subscribe, unsubscribe } = useSocket();
@@ -46,6 +61,11 @@ export const StreamPage = () => {
     brand.data?.id || "",
   );
 
+  // Get the base name of the user
+  const baseName = user.data?.wallets.find(
+    (wallet) => wallet.baseName,
+  )?.baseName;
+
   // State for real-time countdown
   const [timeLeft, setTimeLeft] = useState("0:00");
 
@@ -54,22 +74,19 @@ export const StreamPage = () => {
     null,
   );
 
+  // State to track the number of votes
+  const [currentVotesNumber, setCurrentVotesNumber] = useState<number>(0);
+
+  // State to track the approve modal
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState<boolean>(false);
+
   // Show/hide state for the Bullmeter poll card
   const [showPoll, setShowPoll] = useState<boolean>(false);
 
-  // Unified poll state populated from initial fetch and socket updates
-  type NormalizedPoll = {
-    id: string;
-    prompt: string;
-    pollId?: string;
-    deadlineSeconds: number | null;
-    votes?: number;
-    voters?: number;
-    results?: { bullPercent: number; bearPercent: number };
-  };
+  // State to track the poll
   const [poll, setPoll] = useState<NormalizedPoll | null>(null);
 
-  const handleStreamJoined = (data: StreamJoinedEvent) => {};
+  const handleStreamJoined = (_: StreamJoinedEvent) => {};
 
   const handleUpdateSentimentPoll = (data: UpdatePollNotificationEvent) => {
     setShowPoll(true);
@@ -164,10 +181,6 @@ export const StreamPage = () => {
     };
   }, [isConnected, joinStream]);
 
-  const baseName = user.data?.wallets.find(
-    (wallet) => wallet.baseName,
-  )?.baseName;
-
   // Seed poll state from the initially fetched active poll
   useEffect(() => {
     if (isPollLoading) return;
@@ -240,37 +253,45 @@ export const StreamPage = () => {
   const {
     approve,
     isLoading: isApproving,
+    isError: isApprovingError,
     checkAllowance,
   } = useApprove({ amount: "1" });
 
   // BullMeter voting hook
-  const {
-    submitVote,
-    isPending: isVoting,
-    isError: voteError,
-  } = useBullmeterApprove({
-    onSuccess: (data) => {
-      voteCasted({
-        position: PopupPositions.TOP_CENTER,
-        username:
-          baseName || user.data?.username || formatWalletAddress(address),
-        profilePicture: user.data?.avatarUrl || "",
-        voteAmount: "1",
-        isBull: data.data?.isYes || false,
-        promptId: poll?.pollId || "",
-        endTime: data.data?.endTime
-          ? (() => {
-              // Convert Unix timestamp (seconds) to milliseconds
-              const date = new Date(data.data?.endTime * 1000);
-              return date;
-            })()
-          : new Date(),
-      });
+  const { submitVote, isPending: isVoting } = useBullmeterApprove({
+    onSuccess: async (data) => {
+      const voteCount = data.data?.voteCount;
+      if (!voteCount || voteCount === "0" || isNaN(Number(voteCount))) return;
+      for (let i = 0; i < Number(voteCount); i++) {
+        voteCasted({
+          position: PopupPositions.TOP_CENTER,
+          username:
+            baseName || user.data?.username || formatWalletAddress(address),
+          profilePicture: user.data?.avatarUrl || "",
+          voteAmount: "1",
+          isBull: data.data?.isYes || false,
+          promptId: poll?.pollId || "",
+          endTime: data.data?.endTime
+            ? (() => {
+                // Convert Unix timestamp (seconds) to milliseconds
+                const date = new Date(data.data?.endTime * 1000);
+                return date;
+              })()
+            : new Date(),
+        });
+
+        // Wait for 1 second before sending the next vote
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     },
   });
 
   // Handle vote submission with approval check
-  const handleVote = async (isBull: boolean) => {
+  const handleVote = async (
+    isBull: boolean,
+    votesNumber: number,
+    launchedByModal: boolean = false,
+  ) => {
     const buttonType = isBull ? "bull" : "bear";
 
     // Guard: poll must exist, not expired, and have an id
@@ -280,7 +301,7 @@ export const StreamPage = () => {
       : true;
 
     if (!poll?.pollId || isExpired) {
-      console.error("❌ No active poll found");
+      console.log("❌ No active poll found");
       return;
     }
 
@@ -288,17 +309,40 @@ export const StreamPage = () => {
       // Set loading state for the specific button
       setLoadingButton(buttonType);
 
+      // Set the current votes number
+      setCurrentVotesNumber(votesNumber);
+
       // Check current allowance and get the actual value
-      const currentAllowance = await checkAllowance();
+      let currentAllowance = await checkAllowance();
 
       // Parse the required amount
-      const requiredAmount = BigInt(10000); // 0.01 USDC in wei
-      const hasEnoughAllowance =
+      const requiredAmount = BigInt(10000 * votesNumber); // 0.01 * votesNumber USDC in wei
+      let hasEnoughAllowance =
         currentAllowance && currentAllowance >= requiredAmount;
+
+      // Get the local storage preference set by the user
+      const dontShowApproveModal = localStorage.getItem("dontShowApproveModal");
 
       // If not approved, approve first
       if (!hasEnoughAllowance) {
-        await approve();
+        if (dontShowApproveModal || launchedByModal) {
+          await approve();
+          currentAllowance = await checkAllowance();
+          hasEnoughAllowance =
+            currentAllowance && currentAllowance >= requiredAmount;
+          if (!hasEnoughAllowance) {
+            return;
+          }
+          setIsApproveModalOpen(false);
+        } else {
+          setIsApproveModalOpen(true);
+          return;
+        }
+      }
+
+      if (isApprovingError) {
+        toast.error("Approval failed. Please try again.");
+        return;
       }
 
       // Extract the hash from the pollId URL
@@ -307,7 +351,7 @@ export const StreamPage = () => {
         : poll.pollId;
 
       // Submit the vote
-      await submitVote(pollHash, isBull, "1");
+      await submitVote(pollHash, isBull, votesNumber.toString());
 
       toast.success("Vote submitted");
       startConfetti();
@@ -376,32 +420,23 @@ export const StreamPage = () => {
 
         {/* Bullmeter Poll Card - Controlled by showPoll state */}
         {showPoll && poll && (
-          <>
-            <Bullmeter
-              title={poll.prompt}
-              showLabel
-              timeLeft={timeLeft}
-              votePrice={0.01}
-              deadlineSeconds={poll.deadlineSeconds || undefined}
-              button1text="Bear"
-              button2text="Bull"
-              button1Color="destructive"
-              button2Color="success"
-              button1OnClick={() => handleVote(false)} // Bear vote
-              button2OnClick={() => handleVote(true)} // Bull vote
-              disabled={isApproving || isVoting}
-              loading={isApproving || isVoting}
-              button1Loading={loadingButton === "bear"}
-              button2Loading={loadingButton === "bull"}
-            />
-
-            {/* Error Messages */}
-            {voteError && (
-              <p className="text-red-500 text-sm text-center">
-                Vote failed. Please try again.
-              </p>
-            )}
-          </>
+          <Bullmeter
+            title={poll.prompt}
+            showLabel
+            timeLeft={timeLeft}
+            votePrice={0.01}
+            deadlineSeconds={poll.deadlineSeconds || undefined}
+            button1text="Bear"
+            button2text="Bull"
+            button1Color="destructive"
+            button2Color="success"
+            button1OnClick={(votesNumber) => handleVote(false, votesNumber)} // Bear vote
+            button2OnClick={(votesNumber) => handleVote(true, votesNumber)} // Bull vote
+            disabled={isApproving || isVoting}
+            loading={isApproving || isVoting}
+            button1Loading={loadingButton === "bear"}
+            button2Loading={loadingButton === "bull"}
+          />
         )}
 
         {/* Tip Buttons */}
@@ -417,7 +452,7 @@ export const StreamPage = () => {
               color: "blue",
               text: "Custom",
             }}
-            payoutAddress={brand.tipSettings.data.payoutAddress}
+            tipSettings={brand.tipSettings.data}
             user={user.data}
           />
         )}
@@ -447,6 +482,75 @@ export const StreamPage = () => {
       </div>
       {/* Floating Bottom Navbar */}
       {user.data && <BottomNavbar user={user.data} />}
+
+      {/* Bullmeter Approve Modal */}
+      <NBModal
+        trigger={<div />}
+        isOpen={isApproveModalOpen}
+        setIsOpen={setIsApproveModalOpen}>
+        <h1 className="text-base font-extrabold w-full text-center">
+          Approve USDC to Vote
+        </h1>
+        <p className="text-sm text-center">
+          You will approve the spending amount of <b>$1.00</b> and have the
+          possibility to vote <b>100 times</b>.
+          <br />
+          Feel free to spam as much as you want!
+        </p>
+
+        <div className="flex justify-center items-center w-full gap-1 my-1.5">
+          <Checkbox
+            onCheckedChange={(checked) => {
+              if (checked) {
+                // Set a state to remember the user don't want to see the modal anymore in the local storage
+                localStorage.setItem("dontShowApproveModal", "true");
+              } else {
+                // Remove the state from the local storage
+                localStorage.removeItem("dontShowApproveModal");
+              }
+            }}
+            className="size-6 data-[state=checked]:bg-accent data-[state=checked]:border-accent mx-1.5"
+          />
+          <p className="text-sm">Don&apos;t show this again</p>
+        </div>
+
+        <div className="flex flex-col justify-center items-center w-full mt-2 gap-5">
+          <NBButton
+            className="w-full bg-accent h-[42px]"
+            disabled={isApproving || isVoting || !showPoll}
+            onClick={async () => {
+              if (!showPoll) {
+                return;
+              }
+              const isBull = loadingButton === "bull";
+              await handleVote(isBull, currentVotesNumber, true);
+            }}>
+            <AnimatePresence mode="wait">
+              {isApproving || isVoting ? (
+                <motion.div
+                  key="approve-and-vote-loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <Loader2 className="size-5 text-white animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.p
+                  key="approve-and-vote-text"
+                  className="text-base font-extrabold text-white">
+                  Approve and Vote
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </NBButton>
+          <button
+            className="text-base font-bold text-black cursor-pointer"
+            onClick={() => setIsApproveModalOpen(false)}>
+            Cancel
+          </button>
+        </div>
+      </NBModal>
     </motion.div>
   );
 };

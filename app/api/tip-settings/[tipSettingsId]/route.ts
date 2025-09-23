@@ -1,19 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteTip, getTipById, updateTip } from "@/lib/database/queries";
+import {
+  deleteTipSettings,
+  getTipSettingsById,
+  updateTipSettings,
+} from "@/lib/database/queries";
 
 export const GET = async (
   _: NextRequest,
-  { params }: { params: Promise<{ tipId: string }> },
+  { params }: { params: Promise<{ tipSettingsId: string }> },
 ) => {
   try {
-    const { tipId } = await params;
-    const tip = await getTipById(tipId);
+    const { tipSettingsId } = await params;
+    const tipSettings = await getTipSettingsById(tipSettingsId);
 
-    if (!tip) {
+    if (!tipSettings) {
       return NextResponse.json(
         {
           success: false,
-          error: "Tip not found",
+          error: "Tip settings not found",
         },
         { status: 404 },
       );
@@ -21,14 +25,14 @@ export const GET = async (
 
     return NextResponse.json({
       success: true,
-      data: tip,
+      data: tipSettings,
     });
   } catch (error) {
-    console.error("Get tip error:", error);
+    console.error("Get tip settings error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to fetch tip",
+        error: "Failed to fetch tip settings",
       },
       { status: 500 },
     );
@@ -37,19 +41,19 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: Promise<{ tipId: string }> },
+  { params }: { params: Promise<{ tipSettingsId: string }> },
 ) => {
   try {
     console.log("Update tip request received", req.body);
     const data = await req.json();
-    const { tipId } = await params;
-    const tip = await updateTip(tipId, data);
+    const { tipSettingsId } = await params;
+    const tipSettings = await updateTipSettings(tipSettingsId, data);
 
-    if (!tip) {
+    if (!tipSettings) {
       return NextResponse.json(
         {
           success: false,
-          error: "Tip not found",
+          error: "Tip settings not found",
         },
         { status: 404 },
       );
@@ -57,14 +61,14 @@ export const PUT = async (
 
     return NextResponse.json({
       success: true,
-      data: tip,
+      data: tipSettings,
     });
   } catch (error) {
     console.error("Update tip error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to update tip",
+        error: "Failed to update tip settings",
       },
       { status: 500 },
     );
@@ -73,17 +77,17 @@ export const PUT = async (
 
 export const DELETE = async (
   _: NextRequest,
-  { params }: { params: Promise<{ tipId: string }> },
+  { params }: { params: Promise<{ tipSettingsId: string }> },
 ) => {
   try {
-    const { tipId } = await params;
-    const deleted = await deleteTip(tipId);
+    const { tipSettingsId } = await params;
+    const deleted = await deleteTipSettings(tipSettingsId);
 
     if (!deleted) {
       return NextResponse.json(
         {
           success: false,
-          error: "Tip not found",
+          error: "Tip settings not found",
         },
         { status: 404 },
       );
@@ -91,14 +95,14 @@ export const DELETE = async (
 
     return NextResponse.json({
       success: true,
-      message: "Tip deleted successfully",
+      message: "Tip settings deleted successfully",
     });
   } catch (error) {
-    console.error("Delete tip error:", error);
+    console.error("Delete tip settings error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to delete tip",
+        error: "Failed to delete tip settings",
       },
       { status: 500 },
     );

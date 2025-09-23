@@ -1,27 +1,21 @@
 import { eq } from "drizzle-orm";
-import { db } from "@/lib/database";
-import {
-  tipsTable,
-  type CreateTip,
-  type Tip,
-  type UpdateTip,
-} from "@/lib/database/db.schema";
+import { db } from "..";
+import { CreateTip, Tip, tipsTable } from "../db.schema";
 
 /**
- * Create a new tip configuration
+ * Create a new tip
  * @param tipData - The tip data to create
  * @returns The created tip
  */
 export const createTip = async (tipData: CreateTip): Promise<Tip> => {
   const [newTip] = await db.insert(tipsTable).values(tipData).returning();
-
   return newTip;
 };
 
 /**
- * Get tip settings by ID
- * @param tipId - The tip settings ID
- * @returns The tip settings or null if not found
+ * Get a tip by ID
+ * @param tipId - The tip ID
+ * @returns The tip or null if not found
  */
 export const getTipById = async (tipId: string): Promise<Tip | null> => {
   const tip = await db
@@ -29,100 +23,76 @@ export const getTipById = async (tipId: string): Promise<Tip | null> => {
     .from(tipsTable)
     .where(eq(tipsTable.id, tipId))
     .limit(1);
-
   return tip[0] || null;
 };
 
 /**
- * Get the tip settings for a brand
+ * Get tips by brand ID
  * @param brandId - The brand ID
- * @returns The tip settings for the brand or null if not found
+ * @returns The tips
  */
-export const getTipByBrand = async (brandId: string): Promise<Tip | null> => {
-  const tip = await db
+export const getTipsByBrandId = async (brandId: string): Promise<Tip[]> => {
+  const tips = await db
     .select()
     .from(tipsTable)
-    .where(eq(tipsTable.brandId, brandId))
-    .limit(1);
-
-  return tip[0] || null;
+    .where(eq(tipsTable.receiverBrandId, brandId));
+  return tips;
 };
 
 /**
- * Get tip settings by payout address
- * @param payoutAddress - The payout address to search for
- * @returns The tip settings with the specified payout address or null if not found
+ * Get tips by sender ID
+ * @param senderId - The sender ID
+ * @returns The tips
  */
-export const getTipByPayoutAddress = async (
-  payoutAddress: string,
-): Promise<Tip | null> => {
-  const tip = await db
+export const getTipsBySenderId = async (senderId: string): Promise<Tip[]> => {
+  const tips = await db
     .select()
     .from(tipsTable)
-    .where(eq(tipsTable.payoutAddress, payoutAddress))
-    .limit(1);
-
-  return tip[0] || null;
+    .where(eq(tipsTable.senderId, senderId));
+  return tips;
 };
 
 /**
- * Get tip settings by ENS name
- * @param ensName - The ENS name to search for
- * @returns The tip settings with the specified ENS name or null if not found
+ * Get tips by receiver address
+ * @param receiverAddress - The receiver address
+ * @returns The tips
  */
-export const getTipByEnsName = async (ensName: string): Promise<Tip | null> => {
-  const tip = await db
+export const getTipsByReceiverAddress = async (
+  receiverAddress: string,
+): Promise<Tip[]> => {
+  const tips = await db
     .select()
     .from(tipsTable)
-    .where(eq(tipsTable.payoutEnsName, ensName))
-    .limit(1);
-
-  return tip[0] || null;
+    .where(eq(tipsTable.receiverAddress, receiverAddress));
+  return tips;
 };
 
 /**
- * Get tip settings by Base name
- * @param baseName - The Base name to search for
- * @returns The tip settings with the specified Base name or null if not found
+ * Get tips by receiver Base name
+ * @param receiverBaseName - The receiver Base name
+ * @returns The tips
  */
-export const getTipByBaseName = async (
-  baseName: string,
-): Promise<Tip | null> => {
-  const tip = await db
+export const getTipsByReceiverBaseName = async (
+  receiverBaseName: string,
+): Promise<Tip[]> => {
+  const tips = await db
     .select()
     .from(tipsTable)
-    .where(eq(tipsTable.payoutBaseName, baseName))
-    .limit(1);
-
-  return tip[0] || null;
+    .where(eq(tipsTable.receiverBaseName, receiverBaseName));
+  return tips;
 };
 
 /**
- * Update a tip settings
- * @param tipId - The tip ID
- * @param updateData - The data to update
- * @returns The updated tip settings or null if not found
+ * Get tips by receiver ENS name
+ * @param receiverEnsName - The receiver ENS name
+ * @returns The tips
  */
-export const updateTip = async (
-  tipId: string,
-  updateData: UpdateTip,
-): Promise<Tip | null> => {
-  const [updatedTip] = await db
-    .update(tipsTable)
-    .set(updateData)
-    .where(eq(tipsTable.id, tipId))
-    .returning();
-
-  return updatedTip || null;
-};
-
-/**
- * Delete a tip settings
- * @param tipId - The tip ID
- * @returns Whether the tip settings was deleted
- */
-export const deleteTip = async (tipId: string): Promise<boolean> => {
-  const result = await db.delete(tipsTable).where(eq(tipsTable.id, tipId));
-
-  return result.rowsAffected > 0;
+export const getTipsByReceiverEnsName = async (
+  receiverEnsName: string,
+): Promise<Tip[]> => {
+  const tips = await db
+    .select()
+    .from(tipsTable)
+    .where(eq(tipsTable.receiverEnsName, receiverEnsName));
+  return tips;
 };

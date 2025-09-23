@@ -76,7 +76,7 @@ export const Tips = ({
 
   // Handle tip payment
   const handleTipPayment = async (amount: number) => {
-    if (!tipSettings.payoutAddress || !address) {
+    if (!tipSettings.payoutAddress || !user?.id) {
       return;
     }
 
@@ -103,12 +103,13 @@ export const Tips = ({
 
             // Create a tip record in the database
             createTip({
-              senderId: address,
+              senderId: user.id,
               receiverBrandId: tipSettings.brandId,
               receiverAddress: tipSettings.payoutAddress,
               receiverBaseName: tipSettings.payoutBaseName,
               receiverEnsName: tipSettings.payoutEnsName,
               amount: amount.toString(),
+              platform: "farcaster",
             });
           } else if (isTransferError) {
             console.log("Farcaster USDC transfer failed:", transferError);
@@ -147,15 +148,18 @@ export const Tips = ({
           profilePicture: user?.avatarUrl || "",
           tipAmount: amount.toString(),
         });
+        toast.success("Tip sent successfully");
+        startConfetti();
 
         // Create a tip record in the database
         createTip({
-          senderId: address,
+          senderId: user?.id,
           receiverBrandId: tipSettings.brandId,
           receiverAddress: tipSettings.payoutAddress,
           receiverBaseName: tipSettings.payoutBaseName,
           receiverEnsName: tipSettings.payoutEnsName,
           amount: amount.toString(),
+          platform: "base",
         });
       } else {
         console.log("Base payment status:", status);

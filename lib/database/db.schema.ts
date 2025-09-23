@@ -116,6 +116,7 @@ export const tipsTable = sqliteTable("tips", {
   receiverBaseName: text("receiver_base_name"),
   receiverEnsName: text("receiver_ens_name"),
   amount: numeric("amount").notNull(),
+  platform: text("platform").notNull().$type<"farcaster" | "base">(),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });

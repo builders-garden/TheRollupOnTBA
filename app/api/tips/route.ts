@@ -16,6 +16,8 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    console.log("Create tip data:", data);
+
     const tip = await createTip(data);
 
     return NextResponse.json({

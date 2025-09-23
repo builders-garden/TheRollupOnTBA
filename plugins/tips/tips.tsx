@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { useAccount } from "wagmi";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
-import { Input } from "@/components/shadcn-ui/input";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useUsdcTransfer } from "@/hooks/use-usdc-transfer";
@@ -49,6 +48,7 @@ export const Tips = ({
   const { tipSent } = useSocketUtils();
   const { address } = useAccount();
   const { startConfetti } = useConfetti({});
+  const [isEditing, setIsEditing] = useState(false);
 
   // Get the first wallet address with a base name
   const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;
@@ -196,13 +196,20 @@ export const Tips = ({
             <h1 className="text-2xl font-bold text-center">
               Choose custom tip
             </h1>
-            <div className="flex flex-col justify-center items-center w-full gap-2.5">
-              <Input
-                placeholder="e.g. $0.01"
-                className="w-full h-[42px] border-accent focus-visible:ring-accent/40 focus-visible:ring-[2px] focus-visible:border-accent rounded-[12px] transition-all duration-300"
+            <div
+              className={cn(
+                "flex justify-center items-center w-full gap-1 rounded-[12px] pl-2 border-accent border-[1px] ring-accent/40 transition-all duration-300",
+                isEditing && "ring-[2px]",
+              )}>
+              <p>$</p>
+              <input
+                placeholder="0.01"
+                className="w-full h-[42px] focus-visible:ring-none focus-visible:border-none rounded-[12px] transition-all duration-300 outline-none focus:ring-none focus:ring-0 focus:border-none"
                 type="number"
                 min={0}
                 value={customAmount}
+                onFocus={() => setIsEditing(true)}
+                onBlur={() => setIsEditing(false)}
                 onChange={(e) => {
                   const value = e.target.value;
                   // Allow empty string or valid numbers >= 0

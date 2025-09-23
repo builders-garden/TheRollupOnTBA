@@ -86,7 +86,7 @@ export const StreamPage = () => {
   // State to track the poll
   const [poll, setPoll] = useState<NormalizedPoll | null>(null);
 
-  const handleStreamJoined = (data: StreamJoinedEvent) => {};
+  const handleStreamJoined = (_: StreamJoinedEvent) => {};
 
   const handleUpdateSentimentPoll = (data: UpdatePollNotificationEvent) => {
     setShowPoll(true);
@@ -301,7 +301,7 @@ export const StreamPage = () => {
       : true;
 
     if (!poll?.pollId || isExpired) {
-      console.error("❌ No active poll found");
+      console.log("❌ No active poll found");
       return;
     }
 
@@ -313,11 +313,11 @@ export const StreamPage = () => {
       setCurrentVotesNumber(votesNumber);
 
       // Check current allowance and get the actual value
-      const currentAllowance = await checkAllowance();
+      let currentAllowance = await checkAllowance();
 
       // Parse the required amount
       const requiredAmount = BigInt(10000 * votesNumber); // 0.01 * votesNumber USDC in wei
-      const hasEnoughAllowance =
+      let hasEnoughAllowance =
         currentAllowance && currentAllowance >= requiredAmount;
 
       // Get the local storage preference set by the user
@@ -327,6 +327,13 @@ export const StreamPage = () => {
       if (!hasEnoughAllowance) {
         if (dontShowApproveModal || launchedByModal) {
           await approve();
+          currentAllowance = await checkAllowance();
+          hasEnoughAllowance =
+            currentAllowance && currentAllowance >= requiredAmount;
+          if (!hasEnoughAllowance) {
+            return;
+          }
+          setIsApproveModalOpen(false);
         } else {
           setIsApproveModalOpen(true);
           return;
@@ -354,9 +361,6 @@ export const StreamPage = () => {
     } finally {
       // Clear loading state
       setLoadingButton(null);
-
-      // Clear the current votes number
-      setCurrentVotesNumber(0);
     }
   };
 
@@ -514,12 +518,12 @@ export const StreamPage = () => {
           <NBButton
             className="w-full bg-accent h-[42px]"
             disabled={isApproving || isVoting || !showPoll}
-            onClick={() => {
+            onClick={async () => {
               if (!showPoll) {
                 return;
               }
               const isBull = loadingButton === "bull";
-              handleVote(isBull, currentVotesNumber, true);
+              await handleVote(isBull, currentVotesNumber, true);
             }}>
             <AnimatePresence mode="wait">
               {isApproving || isVoting ? (

@@ -36,7 +36,7 @@ export default function OverlayPage() {
   const toastId = useMemo(() => "sentiment-poll", []);
 
   const openToastFromPoll = useCallback(
-    (p: NormalizedPoll, position: PopupPositions) => {
+    (p: NormalizedPoll) => {
       toast.custom(
         () => (
           <ToastPollNotification
@@ -96,7 +96,7 @@ export default function OverlayPage() {
         return normalized;
       });
       setShowPoll(true);
-      openToastFromPoll(normalized, PopupPositions.TOP_CENTER);
+      openToastFromPoll(normalized);
     } else {
       setShowPoll(false);
       setPoll(null);
@@ -124,7 +124,7 @@ export default function OverlayPage() {
       };
       setPoll(normalized);
       setShowPoll(true);
-      openToastFromPoll(normalized, data.position);
+      openToastFromPoll(normalized);
     };
 
     const handleUpdate = (data: UpdatePollNotificationEvent) => {
@@ -141,7 +141,7 @@ export default function OverlayPage() {
           results: data.results,
           deadlineSeconds: absoluteDeadline,
         };
-        openToastFromPoll(updated, data.position);
+        openToastFromPoll(updated);
         return updated;
       });
       setShowPoll(true);
@@ -161,7 +161,7 @@ export default function OverlayPage() {
           voters: data.voters,
           results: data.results,
         };
-        openToastFromPoll(updated, data.position);
+        openToastFromPoll(updated);
         return updated;
       });
       setShowPoll(true);

@@ -51,6 +51,9 @@ export const Bullmeter = ({
   const [button2VotesNumber, setButton2VotesNumber] = useState<number>(0);
   const [totalVotes, setTotalVotes] = useState<number>(0);
 
+  // The maximum number of votes
+  const MAX_VOTES = 100;
+
   // Whether the poll has expired
   const isExpired =
     typeof deadlineSeconds === "number"
@@ -112,7 +115,7 @@ export const Bullmeter = ({
           <NBButton
             onClick={() => {
               if (
-                button1VotesNumber >= 100 - totalVotes ||
+                button1VotesNumber >= MAX_VOTES - totalVotes ||
                 isExpired ||
                 disabled ||
                 loading ||
@@ -133,8 +136,8 @@ export const Bullmeter = ({
               loading ||
               button1Loading ||
               isExpired ||
-              button1VotesNumber >= 100 - totalVotes ||
-              button2VotesNumber >= 100 - totalVotes
+              button1VotesNumber >= MAX_VOTES - totalVotes ||
+              button2VotesNumber >= MAX_VOTES - totalVotes
             }
             className={`bg-${button1Color} w-full h-[50px]`}>
             <AnimatePresence mode="wait">
@@ -165,7 +168,7 @@ export const Bullmeter = ({
           <NBButton
             onClick={() => {
               if (
-                button2VotesNumber >= 100 - totalVotes ||
+                button2VotesNumber >= MAX_VOTES - totalVotes ||
                 isExpired ||
                 disabled ||
                 loading ||
@@ -186,8 +189,8 @@ export const Bullmeter = ({
               loading ||
               button2Loading ||
               isExpired ||
-              button2VotesNumber >= 100 - totalVotes ||
-              button1VotesNumber >= 100 - totalVotes
+              button2VotesNumber >= MAX_VOTES - totalVotes ||
+              button1VotesNumber >= MAX_VOTES - totalVotes
             }
             className={`bg-${button2Color} w-full h-[50px]`}>
             <AnimatePresence mode="wait">

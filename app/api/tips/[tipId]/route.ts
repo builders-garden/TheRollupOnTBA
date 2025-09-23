@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteTip, getTipById, updateTip } from "@/lib/database/queries";
+import {
+  deleteTipSettings,
+  getTipSettingsById,
+  updateTipSettings,
+} from "@/lib/database/queries";
 
 export const GET = async (
   _: NextRequest,
@@ -7,7 +11,7 @@ export const GET = async (
 ) => {
   try {
     const { tipId } = await params;
-    const tip = await getTipById(tipId);
+    const tip = await getTipSettingsById(tipId);
 
     if (!tip) {
       return NextResponse.json(
@@ -43,7 +47,7 @@ export const PUT = async (
     console.log("Update tip request received", req.body);
     const data = await req.json();
     const { tipId } = await params;
-    const tip = await updateTip(tipId, data);
+    const tip = await updateTipSettings(tipId, data);
 
     if (!tip) {
       return NextResponse.json(
@@ -77,7 +81,7 @@ export const DELETE = async (
 ) => {
   try {
     const { tipId } = await params;
-    const deleted = await deleteTip(tipId);
+    const deleted = await deleteTipSettings(tipId);
 
     if (!deleted) {
       return NextResponse.json(

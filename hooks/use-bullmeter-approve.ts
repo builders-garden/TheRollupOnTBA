@@ -26,6 +26,7 @@ interface VoteResponse {
 const executeVote = async (voteData: VoteRequest): Promise<VoteResponse> => {
   const response = await ky.post<VoteResponse>("/api/execute-bullmeters", {
     json: voteData,
+    timeout: false,
   });
 
   if (!response.ok) {
@@ -50,7 +51,7 @@ export const useBullmeterApprove = ({
       onSuccess?.(data);
     },
     onError: (error) => {
-      console.error("Failed to submit vote:", error);
+      console.log("Failed to submit vote:", error);
     },
   });
 

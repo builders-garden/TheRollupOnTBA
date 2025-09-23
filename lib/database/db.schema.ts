@@ -79,9 +79,9 @@ export type CreateBullMeter = typeof bullMetersTable.$inferInsert;
 export type UpdateBullMeter = Partial<CreateBullMeter>;
 
 /**
- * Tips table
+ * Tip settings table
  */
-export const tipsTable = sqliteTable("tips", {
+export const tipSettingsTable = sqliteTable("tip_settings", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => ulid()),
@@ -95,9 +95,9 @@ export const tipsTable = sqliteTable("tips", {
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export type Tip = typeof tipsTable.$inferSelect;
-export type CreateTip = typeof tipsTable.$inferInsert;
-export type UpdateTip = Partial<CreateTip>;
+export type TipSettings = typeof tipSettingsTable.$inferSelect;
+export type CreateTipSettings = typeof tipSettingsTable.$inferInsert;
+export type UpdateTipSettings = Partial<CreateTipSettings>;
 
 /**
  * Featured Tokens table

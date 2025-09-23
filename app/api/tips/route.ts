@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  createTip,
-  getTipByBaseName,
-  getTipByBrand,
-  getTipByEnsName,
-  getTipByPayoutAddress,
+  createTipSettings,
+  getTipSettingsByBaseName,
+  getTipSettingsByBrand,
+  getTipSettingsByEnsName,
+  getTipSettingsByPayoutAddress,
 } from "@/lib/database/queries";
 
 export const GET = async (req: NextRequest) => {
@@ -18,13 +18,13 @@ export const GET = async (req: NextRequest) => {
     let tip;
 
     if (payoutAddress) {
-      tip = await getTipByPayoutAddress(payoutAddress);
+      tip = await getTipSettingsByPayoutAddress(payoutAddress);
     } else if (ensName) {
-      tip = await getTipByEnsName(ensName);
+      tip = await getTipSettingsByEnsName(ensName);
     } else if (baseName) {
-      tip = await getTipByBaseName(baseName);
+      tip = await getTipSettingsByBaseName(baseName);
     } else if (brandId) {
-      tip = await getTipByBrand(brandId);
+      tip = await getTipSettingsByBrand(brandId);
     } else {
       throw new Error("No tip identifier found");
     }
@@ -60,7 +60,7 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    const tip = await createTip(data);
+    const tip = await createTipSettings(data);
 
     return NextResponse.json({
       success: true,

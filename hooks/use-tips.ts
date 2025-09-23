@@ -1,10 +1,14 @@
-import type { CreateTip, Tip, UpdateTip } from "@/lib/database/db.schema";
+import type {
+  CreateTipSettings,
+  TipSettings,
+  UpdateTipSettings,
+} from "@/lib/database/db.schema";
 import { useApiMutation } from "./use-api-mutation";
 import { useApiQuery } from "./use-api-query";
 
 interface TipApiResponse {
   success: boolean;
-  data: Tip;
+  data: TipSettings;
 }
 
 // Query hooks
@@ -35,7 +39,7 @@ export const useTip = (params?: {
 
 // Mutation hooks
 export const useCreateTip = () => {
-  return useApiMutation<TipApiResponse, CreateTip>({
+  return useApiMutation<TipApiResponse, CreateTipSettings>({
     url: "/api/tips",
     method: "POST",
     body: (variables) => variables,
@@ -43,7 +47,7 @@ export const useCreateTip = () => {
 };
 
 export const useUpdateTip = () => {
-  return useApiMutation<TipApiResponse, { tipId: string } & UpdateTip>({
+  return useApiMutation<TipApiResponse, { tipId: string } & UpdateTipSettings>({
     url: (variables) => `/api/tips/${variables.tipId}`,
     method: "PUT",
     body: ({ tipId, ...data }) => data,

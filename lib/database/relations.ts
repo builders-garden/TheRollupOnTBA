@@ -3,14 +3,14 @@ import {
   brandsTable,
   bullMetersTable,
   featuredTokensTable,
-  tipsTable,
+  tipSettingsTable,
   userTable,
   walletTable,
 } from "./db.schema";
 
 export const brandsRelations = relations(brandsTable, ({ many }) => ({
   bullMeters: many(bullMetersTable),
-  tips: many(tipsTable),
+  tips: many(tipSettingsTable),
   featuredTokens: many(featuredTokensTable),
 }));
 
@@ -21,9 +21,9 @@ export const bullMetersRelations = relations(bullMetersTable, ({ one }) => ({
   }),
 }));
 
-export const tipsRelations = relations(tipsTable, ({ one }) => ({
+export const tipsRelations = relations(tipSettingsTable, ({ one }) => ({
   brand: one(brandsTable, {
-    fields: [tipsTable.brandId],
+    fields: [tipSettingsTable.brandId],
     references: [brandsTable.id],
   }),
 }));

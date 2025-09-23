@@ -13,7 +13,7 @@ import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useBaseSignIn, useLogout } from "@/hooks/use-auth-hooks";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTip } from "@/hooks/use-tips";
-import { Brand, FeaturedToken, Tip } from "@/lib/database/db.schema";
+import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
 import { getBasenameName, getEnsName } from "@/lib/ens/client";
 
 interface AdminAuthContextType {
@@ -24,7 +24,7 @@ interface AdminAuthContextType {
     isFetched: boolean;
   };
   tipSettings: {
-    data: Tip | undefined;
+    data: TipSettings | undefined;
     refetch: () => Promise<void>;
     tipSettingsNotFound: boolean;
     isFetched: boolean;
@@ -65,7 +65,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Local state
   const [brand, setBrand] = useState<Brand>();
-  const [tipSettings, setTipSettings] = useState<Tip>();
+  const [tipSettings, setTipSettings] = useState<TipSettings>();
   const [admin, setAdmin] = useState<{
     address?: string;
     baseName?: string;

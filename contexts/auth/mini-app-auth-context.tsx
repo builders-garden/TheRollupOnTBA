@@ -13,7 +13,7 @@ import { useAuthCheck, useFakeFarcasterSignIn } from "@/hooks/use-auth-hooks";
 import { useBrandById } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTip } from "@/hooks/use-tips";
-import { Brand, FeaturedToken, Tip } from "@/lib/database/db.schema";
+import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
 import { User } from "@/lib/types/user.type";
 import { env } from "@/lib/zod";
 
@@ -26,7 +26,7 @@ interface MiniAppAuthContextType {
     data: Brand | undefined;
     refetch: () => Promise<void>;
     tipSettings: {
-      data: Tip | undefined;
+      data: TipSettings | undefined;
       refetch: () => Promise<void>;
     };
     featuredTokens: {
@@ -63,7 +63,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Local state
   const [brand, setBrand] = useState<Brand>();
-  const [tipSettings, setTipSettings] = useState<Tip>();
+  const [tipSettings, setTipSettings] = useState<TipSettings>();
   const [featuredTokens, setFeaturedTokens] = useState<FeaturedToken[]>([]);
   const [user, setUser] = useState<User>();
   const [isSigningIn, setIsSigningIn] = useState(false);

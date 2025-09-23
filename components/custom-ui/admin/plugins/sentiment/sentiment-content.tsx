@@ -382,16 +382,6 @@ export const SentimentContent = () => {
     }
   };
 
-  // Handles the end of the live poll
-  const endLive = () => {
-    adminEndSentimentPoll({
-      id: "1",
-      votes: 0,
-      voters: 0,
-      results: { bullPercent: 0, bearPercent: 0 },
-    });
-  };
-
   // Load poll history on component mount and check for live polls
   useEffect(() => {
     const loadHistory = async () => {
@@ -557,7 +547,7 @@ export const SentimentContent = () => {
       startTimer(remainingSeconds);
     };
 
-    const handleEndSentimentPoll = (data: EndPollNotificationEvent) => {
+    const handleEndSentimentPoll = (_: EndPollNotificationEvent) => {
       setIsLive(false);
       toast.success("Poll ended");
       stopTimer();

@@ -92,7 +92,7 @@ export const useApprove = ({
       // Additional wait to ensure transaction is fully processed
       await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 more seconds
     } catch (err) {
-      console.error("❌ Approval failed:", err);
+      console.log("❌ Approval failed:", err);
       setIsError(true);
       setError(err instanceof Error ? err : new Error("Unknown error"));
     } finally {

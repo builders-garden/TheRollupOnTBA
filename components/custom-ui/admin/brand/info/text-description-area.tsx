@@ -45,6 +45,10 @@ export const TextDescriptionArea = ({
 
   // Handle the confirm button
   const handleConfirm = () => {
+    if (editingDescription === description) {
+      setIsEditing(false);
+      return;
+    }
     setIsEditing(false);
     setDescription(editingDescription);
     onConfirm(

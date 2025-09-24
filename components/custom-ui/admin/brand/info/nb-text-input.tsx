@@ -62,7 +62,10 @@ export const NBTextInput = ({
   // Handle the confirm button
   const handleConfirm = () => {
     if (isUpdating) return;
-    if (editingValue === value) return;
+    if (editingValue === value) {
+      setIsEditing(false);
+      return;
+    }
     setValue(editingValue);
     onConfirm(
       editingValue,

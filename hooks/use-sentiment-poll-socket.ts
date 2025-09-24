@@ -11,6 +11,7 @@ import {
 } from "@/lib/types/socket/server-to-client.type";
 
 type JoinInfo = {
+  brandId: string;
   username: string;
   profilePicture: string;
 };
@@ -33,6 +34,7 @@ export function useSentimentPollSocket(options: UseSentimentPollSocketOptions) {
 
     // Join stream once on mount (or when joinInfo changes) if enabled
     joinStream({
+      brandId: joinInfo.brandId,
       username: joinInfo.username,
       profilePicture: joinInfo.profilePicture,
     });

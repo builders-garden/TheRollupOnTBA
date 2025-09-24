@@ -8,7 +8,7 @@ import { SentimentContent } from "./sentiment/sentiment-content";
 import { TipsContent } from "./tips/tips-content";
 import { TokensContent } from "./tokens/tokens-conent";
 
-export const PluginsContent = () => {
+export const PluginsContent = ({ brandId }: { brandId: string }) => {
   const [selectedTab, setSelectedTab] = useState<PluginsTabs>(PluginsTabs.TIPS);
 
   // Whether the tab is tips, tokens, or sentiments
@@ -72,7 +72,9 @@ export const PluginsContent = () => {
       {/* Plugins Content */}
       <AnimatePresence mode="wait">
         {isTipsTab && <TipsContent key="tips" />}
-        {isSentimentTab && <SentimentContent key="sentiment" />}
+        {isSentimentTab && (
+          <SentimentContent key="sentiment" brandId={brandId} />
+        )}
         {isTokensTab && <TokensContent key="tokens" />}
       </AnimatePresence>
     </motion.div>

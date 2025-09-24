@@ -2,11 +2,13 @@ import { ClientToServerSocketEvents, PopupPositions } from "@/lib/enums";
 import { Guest } from "../poll.type";
 
 export type JoinStreamEvent = {
+  brandId: string;
   username: string;
   profilePicture: string;
 };
 
 export type TipSentEvent = {
+  brandId: string;
   position: PopupPositions;
   username: string;
   profilePicture: string;
@@ -14,6 +16,7 @@ export type TipSentEvent = {
 };
 
 export type TokenTradedEvent = {
+  brandId: string;
   position: PopupPositions;
   username: string;
   profilePicture: string;
@@ -28,6 +31,7 @@ export type TokenTradedEvent = {
 };
 
 export type VoteCastedEvent = {
+  brandId: string;
   position: PopupPositions;
   username: string;
   profilePicture: string;
@@ -39,9 +43,8 @@ export type VoteCastedEvent = {
 
 export type StartSentimentPollEvent = {
   id: string;
+  brandId: string;
   position: PopupPositions;
-  //username: string;
-  //profilePicture: string;
   pollQuestion: string;
   endTimeMs: number;
   guests: Guest[];
@@ -50,6 +53,7 @@ export type StartSentimentPollEvent = {
 
 export type EndSentimentPollEvent = {
   id: string;
+  brandId: string;
   votes: number;
   voters: number;
   results: { bullPercent: number; bearPercent: number };
@@ -57,6 +61,7 @@ export type EndSentimentPollEvent = {
 
 export type UpdateSentimentPollEvent = {
   id: string;
+  brandId: string;
   position: PopupPositions;
   endTimeMs: number;
   voters: number;

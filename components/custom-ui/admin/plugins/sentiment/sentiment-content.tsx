@@ -30,7 +30,7 @@ import { HistoryItem } from "./history-item";
 
 const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
-export const SentimentContent = () => {
+export const SentimentContent = ({ brandId }: { brandId: string }) => {
   const {
     adminStartBullmeter: adminStartSentimentPoll,
     adminEndBullmeter: adminEndSentimentPoll,
@@ -107,6 +107,7 @@ export const SentimentContent = () => {
         // Add socket event to end the poll (client to server)
         adminEndSentimentPoll({
           id: result.pollId || "1",
+          brandId,
           voters: result.votes?.yes ?? 0,
           votes: result.votes?.total ?? 0,
           results: {
@@ -259,6 +260,7 @@ export const SentimentContent = () => {
       // Add socket event to extend the poll (client to server)
       adminUpdateSentimentPoll({
         id: result.pollId || "1",
+        brandId,
         position: PopupPositions.TOP_CENTER,
         endTimeMs: (result.deadline || 0) * 1000,
         voters: 0,
@@ -364,6 +366,7 @@ export const SentimentContent = () => {
         // Add socket event to start the poll (client to server)
         adminStartSentimentPoll({
           id: result.pollId || "1",
+          brandId,
           position: PopupPositions.TOP_CENTER,
           pollQuestion: prompt,
           endTimeMs: (result.deadline || 0) * 1000,
@@ -542,6 +545,7 @@ export const SentimentContent = () => {
 
   useSentimentPollSocket({
     joinInfo: {
+      brandId,
       username: "Admin",
       profilePicture: "https://via.placeholder.com/150",
     },

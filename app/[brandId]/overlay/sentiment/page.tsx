@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
@@ -11,11 +12,11 @@ import {
   PollNotificationEvent,
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket";
-import { env } from "@/lib/zod";
 
 export default function OverlayPage() {
+  const { brandId } = useParams<{ brandId: string }>();
   const { data: activeBullMeter, isLoading: isLoadingActiveBullMeter } =
-    useActiveBullMeter(env.NEXT_PUBLIC_ROLLUP_BRAND_ID);
+    useActiveBullMeter(brandId);
 
   // Unified poll state and visibility flag
   type NormalizedPoll = {
@@ -27,10 +28,10 @@ export default function OverlayPage() {
     voters?: number;
     results?: { bullPercent: number; bearPercent: number };
   };
-  const [_, setPoll] = useState<NormalizedPoll | null>(null);
-  const [__, setShowPoll] = useState<boolean>(false);
+  const [_poll, setPoll] = useState<NormalizedPoll | null>(null);
+  const [_showPoll, setShowPoll] = useState<boolean>(false);
 
-  const toastId = useMemo(() => "sentiment-poll", []);
+  const toastId = useMemo(() => `sentiment-poll-${brandId}`, [brandId]);
 
   const openToastFromPoll = useCallback(
     (p: NormalizedPoll) => {
@@ -39,6 +40,7 @@ export default function OverlayPage() {
           <ToastPollNotification
             data={{
               id: p.id,
+              brandId,
               pollQuestion: p.prompt,
               endTimeMs: (p.deadlineSeconds || 0) * 1000,
               votes: p.votes || 0,
@@ -103,6 +105,7 @@ export default function OverlayPage() {
 
   useSentimentPollSocket({
     joinInfo: {
+      brandId,
       username: "Overlay",
       profilePicture: "https://via.placeholder.com/150",
     },

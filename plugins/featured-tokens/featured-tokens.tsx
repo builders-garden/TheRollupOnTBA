@@ -60,6 +60,7 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
           if (result.swap.transactions.length > 0) {
             // Send socket message to the server
             tokenTraded({
+              brandId: token.brandId || "",
               position: PopupPositions.TOP_CENTER,
               username: baseName || formatWalletAddress(address),
               profilePicture: user?.avatarUrl || "",
@@ -76,6 +77,7 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
         } else {
           // Send socket message to the server
           tokenTraded({
+            brandId: token.brandId || "",
             position: PopupPositions.TOP_CENTER,
             username: baseName || formatWalletAddress(address),
             profilePicture: user?.avatarUrl || "",

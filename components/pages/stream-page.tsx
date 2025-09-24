@@ -143,6 +143,7 @@ export const StreamPage = () => {
   useEffect(() => {
     if (isConnected) {
       joinStream({
+        brandId: brand.data?.id || "",
         username: user.data?.username || "",
         profilePicture: user.data?.avatarUrl || "",
       });
@@ -262,6 +263,7 @@ export const StreamPage = () => {
       if (!voteCount || voteCount === "0" || isNaN(Number(voteCount))) return;
       for (let i = 0; i < Number(voteCount); i++) {
         voteCasted({
+          brandId: brand.data?.id || "",
           position: PopupPositions.TOP_CENTER,
           username:
             baseName || user.data?.username || formatWalletAddress(address),
@@ -269,13 +271,13 @@ export const StreamPage = () => {
           voteAmount: "1",
           isBull: data.data?.isYes || false,
           promptId: poll?.pollId || "",
-          endTime: data.data?.endTime
+          endTimeMs: data.data?.endTime
             ? (() => {
                 // Convert Unix timestamp (seconds) to milliseconds
                 const date = new Date(data.data?.endTime * 1000);
-                return date;
+                return date.getTime();
               })()
-            : new Date(),
+            : new Date().getTime(),
         });
 
         // Wait for 1 second before sending the next vote

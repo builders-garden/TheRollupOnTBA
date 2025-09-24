@@ -14,6 +14,7 @@ import { BullIcon } from "../icons/bull-icon";
 
 export interface PollNotificationData {
   id: string;
+  brandId: string;
   pollQuestion: string;
   endTimeMs: number;
   votes: number;
@@ -138,6 +139,7 @@ export const ToastPollNotification = ({
   useEffect(() => {
     // Join the stream
     joinStream({
+      brandId: data.brandId,
       username: "Poll",
       profilePicture: "https://via.placeholder.com/150",
     });

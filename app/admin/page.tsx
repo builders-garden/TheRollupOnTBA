@@ -59,7 +59,7 @@ export default function AdminPage() {
               ) : isContentBrand ? (
                 <BrandContent key="brand" />
               ) : (
-                <PluginsContent key="plugins" />
+                <PluginsContent key="plugins" brandId={brand.data.id} />
               )}
             </AnimatePresence>
           </div>

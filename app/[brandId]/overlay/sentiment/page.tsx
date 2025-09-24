@@ -1,24 +1,22 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
-import { useSocket } from "@/hooks/use-socket";
-import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
+import { useSentimentPollSocket } from "@/hooks/use-sentiment-poll-socket";
+import { PopupPositions } from "@/lib/enums";
 import {
   EndPollNotificationEvent,
   PollNotificationEvent,
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket";
-import { env } from "@/lib/zod";
 
 export default function OverlayPage() {
-  const { subscribe, unsubscribe } = useSocket();
+  const { brandId } = useParams<{ brandId: string }>();
   const { data: activeBullMeter, isLoading: isLoadingActiveBullMeter } =
-    useActiveBullMeter(env.NEXT_PUBLIC_ROLLUP_BRAND_ID);
-  const { joinStream } = useSocketUtils();
+    useActiveBullMeter(brandId);
 
   // Unified poll state and visibility flag
   type NormalizedPoll = {
@@ -30,10 +28,10 @@ export default function OverlayPage() {
     voters?: number;
     results?: { bullPercent: number; bearPercent: number };
   };
-  const [_, setPoll] = useState<NormalizedPoll | null>(null);
-  const [__, setShowPoll] = useState<boolean>(false);
+  const [_poll, setPoll] = useState<NormalizedPoll | null>(null);
+  const [_showPoll, setShowPoll] = useState<boolean>(false);
 
-  const toastId = useMemo(() => "sentiment-poll", []);
+  const toastId = useMemo(() => `sentiment-poll-${brandId}`, [brandId]);
 
   const openToastFromPoll = useCallback(
     (p: NormalizedPoll) => {
@@ -42,8 +40,9 @@ export default function OverlayPage() {
           <ToastPollNotification
             data={{
               id: p.id,
+              brandId,
               pollQuestion: p.prompt,
-              endTime: new Date((p.deadlineSeconds || 0) * 1000),
+              endTimeMs: (p.deadlineSeconds || 0) * 1000,
               votes: p.votes || 0,
               voters: p.voters || 0,
               qrCodeUrl: p.pollId || "",
@@ -104,20 +103,18 @@ export default function OverlayPage() {
     }
   }, [activeBullMeter, isLoadingActiveBullMeter, openToastFromPoll, toastId]);
 
-  useEffect(() => {
-    // Join the stream
-    joinStream({
+  useSentimentPollSocket({
+    joinInfo: {
+      brandId,
       username: "Overlay",
       profilePicture: "https://via.placeholder.com/150",
-    });
-
-    // Socket event handlers
-    const handleStart = (data: PollNotificationEvent) => {
+    },
+    onStart: (data: PollNotificationEvent) => {
       const normalized: NormalizedPoll = {
         id: data.id,
         prompt: data.pollQuestion,
         pollId: data.qrCodeUrl,
-        deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000),
+        deadlineSeconds: Math.floor(data.endTimeMs / 1000),
         votes: data.votes,
         voters: data.voters,
         results: data.results,
@@ -125,11 +122,10 @@ export default function OverlayPage() {
       setPoll(normalized);
       setShowPoll(true);
       openToastFromPoll(normalized);
-    };
-
-    const handleUpdate = (data: UpdatePollNotificationEvent) => {
-      const absoluteDeadline = data.endTime
-        ? Math.floor(new Date(data.endTime).getTime() / 1000)
+    },
+    onUpdate: (data: UpdatePollNotificationEvent) => {
+      const absoluteDeadline = data.endTimeMs
+        ? Math.floor(data.endTimeMs / 1000)
         : null;
       setPoll((prev) => {
         if (!prev) return prev;
@@ -145,11 +141,10 @@ export default function OverlayPage() {
         return updated;
       });
       setShowPoll(true);
-    };
-
-    const handleEnd = (data: EndPollNotificationEvent) => {
-      const absoluteDeadline = data.endTime
-        ? Math.floor(new Date(data.endTime).getTime() / 1000)
+    },
+    onEnd: (data: EndPollNotificationEvent) => {
+      const absoluteDeadline = data.endTimeMs
+        ? Math.floor(data.endTimeMs / 1000)
         : null;
       setPoll((prev) => {
         const updated: NormalizedPoll = {
@@ -168,23 +163,8 @@ export default function OverlayPage() {
       setTimeout(() => {
         toast.dismiss(toastId);
       }, 25000);
-    };
-
-    // Set up subscriptions
-    subscribe(ServerToClientSocketEvents.START_SENTIMENT_POLL, handleStart);
-    subscribe(ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL, handleUpdate);
-    subscribe(ServerToClientSocketEvents.END_SENTIMENT_POLL, handleEnd);
-
-    // Cleanup subscriptions
-    return () => {
-      unsubscribe(ServerToClientSocketEvents.START_SENTIMENT_POLL, handleStart);
-      unsubscribe(
-        ServerToClientSocketEvents.UPDATE_SENTIMENT_POLL,
-        handleUpdate,
-      );
-      unsubscribe(ServerToClientSocketEvents.END_SENTIMENT_POLL, handleEnd);
-    };
-  }, [subscribe, unsubscribe, joinStream, openToastFromPoll, toastId]);
+    },
+  });
 
   return (
     <div className="flex items-center justify-center min-h-[130px] w-[1000px]">

@@ -14,8 +14,9 @@ import { BullIcon } from "../icons/bull-icon";
 
 export interface PollNotificationData {
   id: string;
+  brandId: string;
   pollQuestion: string;
-  endTime: Date;
+  endTimeMs: number;
   votes: number;
   voters: number;
   qrCodeUrl: string;
@@ -126,11 +127,6 @@ export const ToastPollNotification = ({
     bearPercent: number;
   }>(data.results || { bullPercent: 0, bearPercent: 0 });
 
-  const endTimeMs = useMemo(
-    () => new Date(data.endTime).getTime(),
-    [data.endTime],
-  );
-
   // Create event handlers
   const handleUpdateSentimentPoll = (data: UpdatePollNotificationEvent) => {
     setVoters(data.voters);
@@ -143,6 +139,7 @@ export const ToastPollNotification = ({
   useEffect(() => {
     // Join the stream
     joinStream({
+      brandId: data.brandId,
       username: "Poll",
       profilePicture: "https://via.placeholder.com/150",
     });
@@ -168,8 +165,8 @@ export const ToastPollNotification = ({
   const yOffset = isCenter ? (isTop ? 100 : -100) : 0;
 
   const getSecondsRemaining = useMemo(() => {
-    return () => Math.max(0, Math.ceil((endTimeMs - Date.now()) / 1000));
-  }, [endTimeMs]);
+    return () => Math.max(0, Math.ceil((data.endTimeMs - Date.now()) / 1000));
+  }, [data]);
 
   const [secondsLeft, setSecondsLeft] = useState<number>(getSecondsRemaining());
 

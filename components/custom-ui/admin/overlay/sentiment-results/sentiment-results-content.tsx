@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { AVAILABLE_POPUP_POSITIONS } from "@/lib/constants";
@@ -11,6 +12,7 @@ import { PopupPositions } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
 export const SentimentResultsContent = () => {
+  const { brand } = useAdminAuth();
   useSocket();
   const {
     joinStream,
@@ -22,10 +24,12 @@ export const SentimentResultsContent = () => {
     useState<PopupPositions>(PopupPositions.TOP_CENTER);
 
   const handleTestPollNotification = () => {
+    if (!brand.data?.id) return;
     const data = {
       id: "1",
+      brandId: brand.data.id,
       pollQuestion: "ETH will flip BTC this cycle",
-      endTime: addSeconds(new Date(), 5),
+      endTimeMs: addSeconds(new Date(), 5).getTime(),
       votes: 10,
       voters: 10,
       qrCodeUrl: "https://example.com/poll",
@@ -38,10 +42,11 @@ export const SentimentResultsContent = () => {
 
     adminStartSentimentPoll({
       id: "1",
+      brandId: brand.data.id,
       //username: "Admin",
       //profilePicture: "https://via.placeholder.com/150",
       pollQuestion: "ETH will flip BTC this cycle",
-      endTime: addSeconds(new Date(), 5),
+      endTimeMs: addSeconds(new Date(), 5).getTime(),
       position: selectedPopupPosition,
       guests: [],
       results: {
@@ -54,8 +59,10 @@ export const SentimentResultsContent = () => {
       duration: Infinity,
       position: selectedPopupPosition,
       onDismiss: () => {
+        if (!brand.data?.id) return;
         adminEndSentimentPoll({
           id: "1",
+          brandId: brand.data.id,
           votes: 0,
           voters: 0,
           results: { bullPercent: 0, bearPercent: 0 },
@@ -65,7 +72,9 @@ export const SentimentResultsContent = () => {
   };
 
   useEffect(() => {
+    if (!brand.data?.id) return;
     joinStream({
+      brandId: brand.data.id,
       username: "Admin",
       profilePicture: "https://via.placeholder.com/150",
     });

@@ -7,7 +7,7 @@ import { NBCard } from "@/components/custom-ui/nb-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useBullmeterClaim } from "@/hooks/use-bullmeter-claim";
 import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
-import { useSocket } from "@/hooks/use-socket";
+import { useSentimentPollSocket } from "@/hooks/use-sentiment-poll-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
 import { AVAILABLE_DURATIONS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
@@ -15,12 +15,13 @@ import {
   getAddressFromBaseName,
   getAddressFromEnsName,
 } from "@/lib/ens/client";
-import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
+import { PopupPositions } from "@/lib/enums";
 import { ReadPollData } from "@/lib/types/bullmeter.type";
 import { Duration, Guest } from "@/lib/types/poll.type";
 import {
   EndPollNotificationEvent,
   PollNotificationEvent,
+  UpdatePollNotificationEvent,
 } from "@/lib/types/socket/server-to-client.type";
 import { FormDurationSelection } from "./form-duration-selection";
 import { FormTextInput } from "./form-text-input";
@@ -29,10 +30,8 @@ import { HistoryItem } from "./history-item";
 
 const defaultDuration: Duration = AVAILABLE_DURATIONS[1];
 
-export const SentimentContent = () => {
-  const { subscribe, unsubscribe } = useSocket();
+export const SentimentContent = ({ brandId }: { brandId: string }) => {
   const {
-    joinStream,
     adminStartBullmeter: adminStartSentimentPoll,
     adminEndBullmeter: adminEndSentimentPoll,
     adminUpdateSentimentPoll,
@@ -80,63 +79,67 @@ export const SentimentContent = () => {
   const handleReset = async () => {
     // If there's a live poll, terminate and claim it first
     if (currentLivePoll) {
-      const toastId = toast.loading("Terminating poll...", {
-        action: {
-          label: "Close",
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-        duration: 10,
-      });
       try {
-        const result = await terminateAndClaimBullmeter(currentLivePoll.pollId);
-
-        if (result.success) {
-          toast.success("Poll terminated and funds claimed!");
-
-          // Add socket event to end the poll (client to server)
-          adminEndSentimentPoll({
-            id: result.pollId || "1",
-            voters: result.votes?.yes ?? 0,
-            votes: result.votes?.total ?? 0,
-            results: {
-              bullPercent: result.votes?.yes ?? 0,
-              bearPercent: result.votes?.no ?? 0,
-            },
-          });
-
-          // Refetch history to get updated poll data
-          const historyResponse = await getAllPollsByCreator();
-          if (historyResponse.success && historyResponse.result) {
-            setPollHistory(historyResponse.result);
-            checkForLivePoll(historyResponse.result);
+        const terminatePromise = terminateAndClaimBullmeter(
+          currentLivePoll.pollId,
+        ).then((res) => {
+          if (!res.success) {
+            throw new Error("Failed to terminate poll. Please try again.");
           }
-
-          // Only reset UI state if blockchain transaction was successful
-          setPrompt("");
-          setDuration(defaultDuration);
-          setGuests([
-            {
-              owner: true,
-              nameOrAddress:
-                admin.baseName || admin.ensName || admin.address || "",
-              splitPercent: "100",
+          return res;
+        });
+        toast.promise(terminatePromise, {
+          loading: "Terminating poll...",
+          success: "Poll terminated and funds claimed!",
+          error: (err) =>
+            (err as Error)?.message ||
+            "Failed to terminate poll. Please try again.",
+          action: {
+            label: "Close",
+            onClick: () => {
+              toast.dismiss();
             },
-          ]);
-          setIsGuestPayoutActive(false);
-          setIsLive(false);
-          setCurrentLivePoll(null);
-        } else {
-          toast.error("Failed to terminate poll. Please try again.");
-          // Don't reset UI state if blockchain transaction failed
+          },
+          duration: 10,
+        });
+        const result = await terminatePromise;
+
+        // Add socket event to end the poll (client to server)
+        adminEndSentimentPoll({
+          id: result.pollId || "1",
+          brandId,
+          voters: result.votes?.yes ?? 0,
+          votes: result.votes?.total ?? 0,
+          results: {
+            bullPercent: result.votes?.yes ?? 0,
+            bearPercent: result.votes?.no ?? 0,
+          },
+        });
+
+        // Refetch history to get updated poll data
+        const historyResponse = await getAllPollsByCreator();
+        if (historyResponse.success && historyResponse.result) {
+          setPollHistory(historyResponse.result);
+          checkForLivePoll(historyResponse.result);
         }
+
+        // Only reset UI state if blockchain transaction was successful
+        setPrompt("");
+        setDuration(defaultDuration);
+        setGuests([
+          {
+            owner: true,
+            nameOrAddress:
+              admin.baseName || admin.ensName || admin.address || "",
+            splitPercent: "100",
+          },
+        ]);
+        setIsGuestPayoutActive(false);
+        setIsLive(false);
+        setCurrentLivePoll(null);
       } catch (error) {
         console.error("Failed to terminate poll:", error);
-        toast.error("Failed to terminate poll. Please try again.");
         // Don't reset UI state if blockchain transaction failed
-      } finally {
-        toast.dismiss(toastId);
       }
     } else {
       // If no live poll, just reset the UI state
@@ -164,50 +167,47 @@ export const SentimentContent = () => {
 
     // Clear previous errors
     setClaimError(null);
-
-    const toastId = toast.loading("Checking for claimable polls...", {
-      action: {
-        label: "Close",
-        onClick: () => {
-          toast.dismiss();
-        },
-      },
-      duration: 10,
-    });
-
     try {
-      const result = await claimAllBullmeters(admin.address);
-
-      if (result.success) {
-        if (result.result.claimedPolls > 0) {
-          toast.success(
-            `Successfully claimed funds from ${result.result.claimedPolls} polls!`,
-          );
-
-          // Refetch history to get updated poll data
-          const historyResponse = await getAllPollsByCreator();
-          if (historyResponse.success && historyResponse.result) {
-            setPollHistory(historyResponse.result);
-            checkForLivePoll(historyResponse.result);
-          }
-
-          // Clear claimable polls state
-          setClaimablePolls(null);
-        } else {
-          setClaimError("No claimable polls found");
-          toast.error("No claimable polls found");
+      const claimPromiseRaw = claimAllBullmeters(admin.address);
+      const claimPromise = claimPromiseRaw.then((res) => {
+        if (!res.success) {
+          throw new Error("Failed to claim polls. Please try again.");
         }
-      } else {
-        setClaimError("Failed to claim polls. Please try again.");
-        toast.error("Failed to claim polls. Please try again.");
+        if ((res.result?.claimedPolls ?? 0) <= 0) {
+          throw new Error("No claimable polls found");
+        }
+        return res;
+      });
+      toast.promise(claimPromise, {
+        loading: "Checking for claimable polls...",
+        success: (res) =>
+          `Successfully claimed funds from ${res.result.claimedPolls} polls!`,
+        error: (err) =>
+          (err as Error)?.message || "Failed to claim polls. Please try again.",
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+        duration: 10,
+      });
+      const result = await claimPromise;
+
+      // Refetch history to get updated poll data
+      const historyResponse = await getAllPollsByCreator();
+      if (historyResponse.success && historyResponse.result) {
+        setPollHistory(historyResponse.result);
+        checkForLivePoll(historyResponse.result);
       }
+
+      // Clear claimable polls state
+      setClaimablePolls(null);
     } catch (error) {
       console.error("Failed to claim polls:", error);
-      const errorMessage = "Failed to claim polls. Please try again.";
+      const errorMessage =
+        (error as Error)?.message || "Failed to claim polls. Please try again.";
       setClaimError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      toast.dismiss(toastId);
     }
   };
 
@@ -217,60 +217,62 @@ export const SentimentContent = () => {
       console.error("No live poll to extend");
       return;
     }
-
-    const toastId = toast.loading("Extending poll...", {
-      action: {
-        label: "Close",
-        onClick: () => {
-          toast.dismiss();
-        },
-      },
-      duration: 10,
-    });
-
     try {
       const newDuration = duration.seconds; // Use the duration selected from the UI
       console.log("newDuration:", newDuration);
-
-      const result = await extendBullmeter(currentLivePoll.pollId, newDuration);
-
-      if (result.success) {
-        toast.success("Poll extended successfully!");
-
-        // Add the extension time to the current timer
-        addSeconds(newDuration);
-
-        // Refetch history to get updated poll data
-        const historyResponse = await getAllPollsByCreator();
-
-        if (historyResponse.success && historyResponse.result) {
-          setPollHistory(historyResponse.result);
-          checkForLivePoll(historyResponse.result);
-        } else {
-          console.log("❌ History refetch failed:", historyResponse);
+      const extendPromise = extendBullmeter(
+        currentLivePoll.pollId,
+        newDuration,
+      ).then((res) => {
+        if (!res.success) {
+          throw new Error("Failed to extend poll. Please try again.");
         }
-
-        // Add socket event to extend the poll (client to server)
-        adminUpdateSentimentPoll({
-          id: result.pollId || "1",
-          position: PopupPositions.TOP_CENTER,
-          endTime: new Date((result.deadline || 0) * 1000),
-          voters: 0,
-          votes: result.votesCount ?? 0,
-          results: {
-            bullPercent: result.totalYesVotes ?? 0,
-            bearPercent: result.totalNoVotes ?? 0,
+        return res;
+      });
+      toast.promise(extendPromise, {
+        loading: "Extending poll...",
+        success: "Poll extended successfully!",
+        error: (err) =>
+          (err as Error)?.message || "Failed to extend poll. Please try again.",
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
           },
-        });
+        },
+        duration: 10,
+      });
+      const result = await extendPromise;
+
+      // Add the extension time to the current timer
+      addSeconds(newDuration);
+
+      // Refetch history to get updated poll data
+      const historyResponse = await getAllPollsByCreator();
+
+      if (historyResponse.success && historyResponse.result) {
+        setPollHistory(historyResponse.result);
+        checkForLivePoll(historyResponse.result);
       } else {
-        console.log("❌ Extend failed:", result);
-        toast.error("Failed to extend poll. Please try again.");
+        console.log("❌ History refetch failed:", historyResponse);
       }
+
+      // Add socket event to extend the poll (client to server)
+      adminUpdateSentimentPoll({
+        id: result.pollId || "1",
+        brandId,
+        position: PopupPositions.TOP_CENTER,
+        endTimeMs: (result.deadline || 0) * 1000,
+        voters: 0,
+        votes: result.votesCount ?? 0,
+        results: {
+          bullPercent: result.totalYesVotes ?? 0,
+          bearPercent: result.totalNoVotes ?? 0,
+        },
+      });
     } catch (error) {
       console.error("Failed to extend poll:", error);
-      toast.error("Failed to extend poll. Please try again.");
-    } finally {
-      toast.dismiss(toastId);
+      // error toast handled by toast.promise
     }
   };
 
@@ -297,16 +299,6 @@ export const SentimentContent = () => {
       ]);
     }
 
-    const toastId = toast.loading("Creating Bullmeter poll...", {
-      action: {
-        label: "Close",
-        onClick: () => {
-          toast.dismiss();
-        },
-      },
-      duration: 10,
-    });
-
     try {
       // First create the Bullmeter poll on-chain
 
@@ -329,7 +321,7 @@ export const SentimentContent = () => {
         splitPercent = guestAddress ? Number(ownerGuest.splitPercent) * 100 : 0;
       }
 
-      const result = await createBullmeter(
+      const createPromise = createBullmeter(
         prompt, // question
         "10000", // votePrice (0.01 USDC)
         0, // startTime (current timestamp)
@@ -337,48 +329,69 @@ export const SentimentContent = () => {
         10000, // maxVotePerUser
         guestAddress!, // guest address from UI
         splitPercent, // guestSplitPercent from UI
-      );
-
-      if (result.success) {
-        toast.success("Bullmeter poll created successfully!");
-
-        // Refetch history to get the new poll and check for live status
-        const historyResponse = await getAllPollsByCreator();
-        if (historyResponse.success && historyResponse.result) {
-          setPollHistory(historyResponse.result);
-          setCurrentPage(1); // Reset to first page
-
-          // Check for live polls with the updated data
-          checkForLivePoll(historyResponse.result) || 0;
+      ).then((res) => {
+        if (!res.success) {
+          throw new Error("Failed to create Bullmeter poll. Please try again.");
         }
-
-        // Now proceed with the existing UI poll logic
-        const toastId2 = toast.loading("Starting poll...", {
-          action: {
-            label: "Close",
-            onClick: () => {
-              toast.dismiss();
-            },
+        return res;
+      });
+      toast.promise(createPromise, {
+        loading: "Creating Bullmeter poll...",
+        success: "Bullmeter poll created successfully!",
+        error: (err) =>
+          (err as Error)?.message ||
+          "Failed to create Bullmeter poll. Please try again.",
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
           },
-          duration: 5,
-        });
+        },
+        duration: 10,
+      });
+      const result = await createPromise;
+
+      // Refetch history to get the new poll and check for live status
+      const historyResponse = await getAllPollsByCreator();
+      if (historyResponse.success && historyResponse.result) {
+        setPollHistory(historyResponse.result);
+        setCurrentPage(1); // Reset to first page
+
+        // Check for live polls with the updated data
+        checkForLivePoll(historyResponse.result) || 0;
+      }
+
+      // Now proceed with the existing UI poll logic
+      const startPromise = Promise.resolve().then(() => {
         // Add socket event to start the poll (client to server)
         adminStartSentimentPoll({
           id: result.pollId || "1",
+          brandId,
           position: PopupPositions.TOP_CENTER,
           pollQuestion: prompt,
-          endTime: new Date((result.deadline || 0) * 1000),
+          endTimeMs: (result.deadline || 0) * 1000,
           guests,
           results: { bullPercent: 0, bearPercent: 0 },
         });
-
-        toast.dismiss(toastId2);
-      }
+        return true as const;
+      });
+      toast.promise(startPromise, {
+        loading: "Starting poll...",
+        // Avoid duplicate success feedback; socket onStart already notifies
+        success: () => null,
+        error: "Failed to start poll",
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+        duration: 5,
+      });
+      await startPromise;
     } catch (error) {
       console.error("Failed to create Bullmeter poll:", error);
-      toast.error("Failed to create Bullmeter poll. Please try again.");
-    } finally {
-      toast.dismiss(toastId);
+      // error toast handled by toast.promise
     }
   };
 
@@ -530,49 +543,29 @@ export const SentimentContent = () => {
         (guest) => guest.nameOrAddress && parseFloat(guest.splitPercent) > 0,
       ));
 
-  useEffect(() => {
-    // Join the stream
-    joinStream({
+  useSentimentPollSocket({
+    joinInfo: {
+      brandId,
       username: "Admin",
       profilePicture: "https://via.placeholder.com/150",
-    });
-
-    // Create event handlers
-    const handleStartSentimentPoll = (data: PollNotificationEvent) => {
+    },
+    onStart: (data: PollNotificationEvent) => {
       setIsLive(true);
       toast.success("Poll started");
       const currentTime = Math.floor(Date.now() / 1000);
-      const deadline = Math.floor(new Date(data.endTime).getTime() / 1000);
+      const deadline = Math.floor(data.endTimeMs / 1000);
       const remainingSeconds = Math.max(0, deadline - currentTime);
       startTimer(remainingSeconds);
-    };
-
-    const handleEndSentimentPoll = (_: EndPollNotificationEvent) => {
+    },
+    onUpdate: (data: UpdatePollNotificationEvent) => {
+      console.log("✅ POLL UPDATED", data);
+    },
+    onEnd: (_: EndPollNotificationEvent) => {
       setIsLive(false);
       toast.success("Poll ended");
       stopTimer();
-    };
-
-    subscribe(
-      ServerToClientSocketEvents.START_SENTIMENT_POLL,
-      handleStartSentimentPoll,
-    );
-    subscribe(
-      ServerToClientSocketEvents.END_SENTIMENT_POLL,
-      handleEndSentimentPoll,
-    );
-
-    return () => {
-      unsubscribe(
-        ServerToClientSocketEvents.START_SENTIMENT_POLL,
-        handleStartSentimentPoll,
-      );
-      unsubscribe(
-        ServerToClientSocketEvents.END_SENTIMENT_POLL,
-        handleEndSentimentPoll,
-      );
-    };
-  }, [subscribe]);
+    },
+  });
 
   return (
     <motion.div

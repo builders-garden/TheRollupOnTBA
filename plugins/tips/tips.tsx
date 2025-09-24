@@ -92,6 +92,7 @@ export const Tips = ({
 
           if (isTransferSuccess) {
             tipSent({
+              brandId: tipSettings.brandId,
               position: PopupPositions.TOP_CENTER,
               username:
                 baseName || user?.username || formatWalletAddress(address),
@@ -143,6 +144,7 @@ export const Tips = ({
         console.log("🎉 Base payment settled");
         // You can add success notification here
         tipSent({
+          brandId: tipSettings.brandId,
           position: PopupPositions.TOP_CENTER,
           username: baseName || user?.username || formatWalletAddress(address),
           profilePicture: user?.avatarUrl || "",

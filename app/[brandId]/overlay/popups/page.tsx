@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/types/socket";
 
 export default function OverlayPage() {
+  const { brandId } = useParams<{ brandId: string }>();
   const { subscribe, unsubscribe } = useSocket();
   const { joinStream } = useSocketUtils();
 
@@ -33,7 +35,13 @@ export default function OverlayPage() {
 
   useEffect(() => {
     // Join the stream
+    console.log("1.b JOIN_STREAM emitted", {
+      brandId,
+      username: "Overlay",
+      profilePicture: "https://via.placeholder.com/150",
+    });
     joinStream({
+      brandId,
       username: "Overlay",
       profilePicture: "https://via.placeholder.com/150",
     });
@@ -77,7 +85,7 @@ export default function OverlayPage() {
       unsubscribe(ServerToClientSocketEvents.TOKEN_TRADED, handleTokenTraded);
       unsubscribe(ServerToClientSocketEvents.VOTE_RECEIVED, handleVoteReceived);
     };
-  }, [subscribe, unsubscribe, joinStream, showPopupCallback]);
+  }, [subscribe, unsubscribe, joinStream, showPopupCallback, brandId]);
 
   return (
     <div className="flex h-screen w-[100vw]">

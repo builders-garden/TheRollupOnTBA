@@ -6,12 +6,14 @@ import { CopyButton } from "@/components/custom-ui/copy-button";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
+import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { PopupPositions } from "@/lib/enums";
 import { env } from "@/lib/zod";
 
 export const PopupsContent = () => {
+  const { brand } = useAdminAuth();
   useSocket();
   const {
     joinStream,
@@ -26,6 +28,7 @@ export const PopupsContent = () => {
   );
 
   const handleTestNotification = (type: "tip" | "trade" | "vote") => {
+    if (!brand.data?.id) return;
     const testData = {
       username: "test.base.eth",
       profilePicture: "https://picsum.photos/200",
@@ -50,6 +53,7 @@ export const PopupsContent = () => {
     );
     if (type === "tip") {
       tipSent({
+        brandId: brand.data.id,
         position: selectedPopupPosition,
         username: testData.username,
         profilePicture: testData.profilePicture,
@@ -57,6 +61,7 @@ export const PopupsContent = () => {
       });
     } else if (type === "trade") {
       tokenTraded({
+        brandId: brand.data.id,
         position: selectedPopupPosition,
         username: testData.username,
         profilePicture: testData.profilePicture,
@@ -71,22 +76,26 @@ export const PopupsContent = () => {
       });
     } else if (type === "vote") {
       voteCasted({
+        brandId: brand.data.id,
         position: selectedPopupPosition,
         username: testData.username,
         profilePicture: testData.profilePicture,
         voteAmount: "5",
         isBull: true,
         promptId: "1",
-        endTime: addSeconds(new Date(), 5),
+        endTimeMs: addSeconds(new Date(), 5).getTime(),
       });
     }
   };
 
   const handleTestPollNotification = () => {
+    if (!brand.data?.id) return;
+
     const data = {
       id: "1",
+      brandId: brand.data.id,
       pollQuestion: "ETH will flip BTC this cycle",
-      endTime: addSeconds(new Date(), 5),
+      endTimeMs: addSeconds(new Date(), 5).getTime(),
       votes: 10,
       voters: 10,
       qrCodeUrl: "https://example.com/poll",
@@ -99,10 +108,11 @@ export const PopupsContent = () => {
 
     adminStartSentimentPoll({
       id: "1",
+      brandId: brand.data.id,
       //username: "Admin",
       //profilePicture: "https://via.placeholder.com/150",
       pollQuestion: "ETH will flip BTC this cycle",
-      endTime: addSeconds(new Date(), 5),
+      endTimeMs: addSeconds(new Date(), 5).getTime(),
       position: selectedPopupPosition,
       guests: [],
       results: {
@@ -111,21 +121,14 @@ export const PopupsContent = () => {
       },
     });
 
-    setTimeout(() => {
-      adminEndSentimentPoll({
-        id: "1",
-        votes: 0,
-        voters: 0,
-        results: { bullPercent: 0, bearPercent: 0 },
-      });
-    }, 2000);
-
     toast.custom(() => <ToastPollNotification data={data} />, {
       duration: 10000,
       position: selectedPopupPosition,
       onDismiss: () => {
+        if (!brand.data?.id) return;
         adminEndSentimentPoll({
           id: "1",
+          brandId: brand.data.id,
           votes: 0,
           voters: 0,
           results: { bullPercent: 0, bearPercent: 0 },
@@ -135,7 +138,9 @@ export const PopupsContent = () => {
   };
 
   useEffect(() => {
+    if (!brand.data?.id) return;
     joinStream({
+      brandId: brand.data.id,
       username: "Admin",
       profilePicture: "https://via.placeholder.com/150",
     });
@@ -201,10 +206,10 @@ export const PopupsContent = () => {
             <div className="flex flex-col gap-1">
               <p className="font-medium opacity-50 text-sm">Popups URL</p>
               <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${env.NEXT_PUBLIC_URL}/overlay/popups`}
+                {`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/popups`}
                 <CopyButton
                   key="copy-button"
-                  stringToCopy={`${env.NEXT_PUBLIC_URL}/overlay/popups`}
+                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/popups`}
                 />
               </div>
             </div>
@@ -213,10 +218,10 @@ export const PopupsContent = () => {
                 Bull-meter Poll URL
               </p>
               <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${env.NEXT_PUBLIC_URL}/overlay/sentiment`}
+                {`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/sentiment`}
                 <CopyButton
                   key="copy-button"
-                  stringToCopy={`${env.NEXT_PUBLIC_URL}/overlay/sentiment`}
+                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/sentiment`}
                 />
               </div>
             </div>

@@ -14,14 +14,12 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
   // Handles the copy button
   const handleCopy = () => {
     setIsCopying(true);
+    copyToClipboard(stringToCopy);
+    setIsCopying(false);
+    setHasCopied(true);
     setTimeout(() => {
-      copyToClipboard(stringToCopy);
-      setIsCopying(false);
-      setHasCopied(true);
-      setTimeout(() => {
-        setHasCopied(false);
-      }, 1500);
-    }, 1250);
+      setHasCopied(false);
+    }, 450);
   };
 
   return (

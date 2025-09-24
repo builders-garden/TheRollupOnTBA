@@ -111,6 +111,15 @@ export const PopupsContent = () => {
       },
     });
 
+    setTimeout(() => {
+      adminEndSentimentPoll({
+        id: "1",
+        votes: 0,
+        voters: 0,
+        results: { bullPercent: 0, bearPercent: 0 },
+      });
+    }, 2000);
+
     toast.custom(() => <ToastPollNotification data={data} />, {
       duration: 10000,
       position: selectedPopupPosition,

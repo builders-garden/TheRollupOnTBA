@@ -60,7 +60,8 @@ const ResultsBar = ({
       }}>
       <motion.div
         className={cn(
-          "h-14 flex items-center justify-center bg-[#CF5953]/85",
+          // TODO: add 85%  transparency on BG
+          "h-14 flex items-center justify-center bg-[#CF5953]",
           normalizedBear > 0 ? "px-4" : "px-0",
         )}
         initial={{ width: "50%" }}
@@ -84,7 +85,8 @@ const ResultsBar = ({
       </motion.div>
       <motion.div
         className={cn(
-          "h-14 flex items-center justify-center bg-[#4CAF50]/85",
+          // TODO: add 85%  transparency on BG
+          "h-14 flex items-center justify-center bg-[#4CAF50]",
           normalizedBull > 0 ? "px-4" : "px-0",
         )}
         initial={{ width: "50%" }}

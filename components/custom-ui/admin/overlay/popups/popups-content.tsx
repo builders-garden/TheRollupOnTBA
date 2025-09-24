@@ -206,10 +206,10 @@ export const PopupsContent = () => {
             <div className="flex flex-col gap-1">
               <p className="font-medium opacity-50 text-sm">Popups URL</p>
               <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/popups`}
+                {`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/popups`}
                 <CopyButton
                   key="copy-button"
-                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/popups`}
+                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/popups`}
                 />
               </div>
             </div>
@@ -218,10 +218,10 @@ export const PopupsContent = () => {
                 Bull-meter Poll URL
               </p>
               <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/sentiment`}
+                {`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/sentiment`}
                 <CopyButton
                   key="copy-button"
-                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.id}/overlay/sentiment`}
+                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/sentiment`}
                 />
               </div>
             </div>

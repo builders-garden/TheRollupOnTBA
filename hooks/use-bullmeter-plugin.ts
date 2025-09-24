@@ -156,6 +156,7 @@ export const useBullmeterPlugin = () => {
   // Bullmeter create function calls
   const createBullmeter = useCallback(
     async (
+      brandId: string,
       question: string,
       votePrice: string,
       startTime: number,
@@ -236,7 +237,7 @@ export const useBullmeterPlugin = () => {
           // Store the poll data in the database
           try {
             const pollData: CreateBullMeter = {
-              brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
+              brandId,
               prompt: question,
               pollId: updatedLastPollId as `0x${string}`,
               votePrice: updatedLastPollVotePrice.toString(),

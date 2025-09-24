@@ -1,5 +1,6 @@
 import sdk from "@farcaster/miniapp-sdk";
 import { CheckIcon, CopyIcon, Share2Icon } from "lucide-react";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,6 @@ interface ShareButtonProps {
   buttonClassName?: string;
   showText?: boolean;
   miniappUrl: string;
-  linkCopied: boolean;
   handleShare?: () => void;
 }
 
@@ -24,8 +24,9 @@ export const ShareButton = ({
   buttonClassName,
   showText = false,
   miniappUrl,
-  linkCopied,
 }: ShareButtonProps) => {
+  const [linkCopied, setLinkCopied] = useState(false);
+
   // Handles sharing the miniapp on farcaster
   const handleShareClick = () => {
     const embedsTuple: [string] = [miniappUrl];
@@ -38,7 +39,11 @@ export const ShareButton = ({
 
   // Handles the copy link
   const handleCopyLink = async () => {
+    setLinkCopied(true);
     await copyToClipboard(miniappUrl);
+    setTimeout(() => {
+      setLinkCopied(false);
+    }, 450);
   };
 
   return (

@@ -1,11 +1,11 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
 import { useSentimentPollSocket } from "@/hooks/use-sentiment-poll-socket";
+import { Brand } from "@/lib/database/db.schema";
 import { PopupPositions } from "@/lib/enums";
 import {
   EndPollNotificationEvent,
@@ -13,10 +13,9 @@ import {
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket";
 
-export default function OverlayPage() {
-  const { brandId } = useParams<{ brandId: string }>();
+export const OverlaySentiment = ({ brand }: { brand: Brand }) => {
   const { data: activeBullMeter, isLoading: isLoadingActiveBullMeter } =
-    useActiveBullMeter(brandId);
+    useActiveBullMeter(brand.id);
 
   // Unified poll state and visibility flag
   type NormalizedPoll = {
@@ -31,7 +30,7 @@ export default function OverlayPage() {
   const [_poll, setPoll] = useState<NormalizedPoll | null>(null);
   const [_showPoll, setShowPoll] = useState<boolean>(false);
 
-  const toastId = useMemo(() => `sentiment-poll-${brandId}`, [brandId]);
+  const toastId = useMemo(() => `sentiment-poll-${brand.id}`, [brand]);
 
   const openToastFromPoll = useCallback(
     (p: NormalizedPoll) => {
@@ -40,7 +39,7 @@ export default function OverlayPage() {
           <ToastPollNotification
             data={{
               id: p.id,
-              brandId,
+              brandId: brand.id,
               pollQuestion: p.prompt,
               endTimeMs: (p.deadlineSeconds || 0) * 1000,
               votes: p.votes || 0,
@@ -105,7 +104,7 @@ export default function OverlayPage() {
 
   useSentimentPollSocket({
     joinInfo: {
-      brandId,
+      brandId: brand.id,
       username: "Overlay",
       profilePicture: "https://via.placeholder.com/150",
     },
@@ -171,4 +170,4 @@ export default function OverlayPage() {
       <div className="flex h-full w-full"> </div>
     </div>
   );
-}
+};

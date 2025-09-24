@@ -396,8 +396,7 @@ export const StreamPage = () => {
               {brand.data?.streamTitle || `The Rollup Streaming`}
             </h1>
             <ShareButton
-              linkCopied
-              miniappUrl={env.NEXT_PUBLIC_URL}
+              miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
               buttonClassName="shrink-1 w-min cursor-pointer"
             />
           </div>

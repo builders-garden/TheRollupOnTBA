@@ -46,8 +46,6 @@ export const useBullmeterApprove = ({
   const voteMutation = useMutation({
     mutationFn: executeVote,
     onSuccess: (data) => {
-      // Send event to socket
-      console.log("Vote submitted successfully:", data);
       onSuccess?.(data);
     },
     onError: (error) => {

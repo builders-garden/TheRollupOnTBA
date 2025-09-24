@@ -36,18 +36,12 @@ export const PollsHistory = ({
     totalPolls: number;
     pollIds: string[];
   } | null>(null);
-  const [claimError, setClaimError] = useState<string | null>(null);
   const [isLoadingPolls, setIsLoadingPolls] = useState(false);
   const { getAllPollsByCreator } = useBullmeterPlugin();
 
   // Hooks
   const { claimAllBullmeters, isLoading: isClaiming } = useBullmeterClaim();
   const { admin } = useAdminAuth();
-
-  useEffect(() => {
-    console.log("TEST currentPage", currentPage);
-    console.log("TEST previousPage", previousPage);
-  }, [currentPage, previousPage]);
 
   // Handles claiming all claimable polls
   const handleClaimAll = async () => {
@@ -56,8 +50,6 @@ export const PollsHistory = ({
       return;
     }
 
-    // Clear previous errors
-    setClaimError(null);
     setIsLoadingPolls(true);
     try {
       const claimPromiseRaw = claimAllBullmeters(admin.address);
@@ -84,9 +76,6 @@ export const PollsHistory = ({
       toast.success("Polls claimed successfully");
     } catch (error) {
       console.log("Failed to claim polls:", error);
-      const errorMessage =
-        (error as Error)?.message || "Failed to claim polls. Please try again.";
-      setClaimError(errorMessage);
       toast.error("Failed to claim polls");
     } finally {
       setIsLoadingPolls(false);
@@ -191,13 +180,6 @@ export const PollsHistory = ({
               </p>
             </NBCard>
           )}
-          {claimError && (
-            <NBCard className="bg-destructive/20 border-destructive/30 px-3 py-1">
-              <p className="text-sm font-medium text-destructive">
-                {claimError}
-              </p>
-            </NBCard>
-          )}
           <NBButton
             className="bg-warning hover:bg-warning/90 shrink-0"
             disabled={isClaiming}
@@ -276,15 +258,15 @@ export const PollsHistory = ({
             )}
           </motion.div>
         ) : (
-          <motion.p
+          <motion.div
             key="no-polls-history"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, ease: "easeInOut" }}
-            className="text-gray-500">
+            className="flex justify-center items-center w-full h-[250px] text-gray-500">
             No poll history available. Create your first poll!
-          </motion.p>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

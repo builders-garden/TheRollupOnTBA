@@ -50,6 +50,19 @@ export const HistoryItem = ({
   currentPage,
   previousPage,
 }: HistoryItemProps) => {
+  // If the bear percent is not 0 or 100, calculate the width
+  // If the bear percent is greater than 91, set the width to 91
+  // If the bear percent is less than 9, set the width to 9
+  // Otherwise, set the width to the bear percent
+  const bearWidth =
+    bearPercent !== 0 && bearPercent !== 100
+      ? bearPercent > 91
+        ? 91
+        : bearPercent < 9
+          ? 9
+          : bearPercent
+      : bearPercent;
+
   return (
     <motion.div
       key={`history-item-${index}`}
@@ -80,7 +93,9 @@ export const HistoryItem = ({
         {bearPercent > 0 && (
           <div
             className="flex flex-col justify-center items-center border bg-destructive rounded-[12px] shrink-0 py-1 px-2.5 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-            style={{ width: `${bearPercent}%` }}>
+            style={{
+              width: `${bearWidth}%`,
+            }}>
             <p className="text-base font-extrabold text-white">
               {bearPercent}%
             </p>

@@ -1,22 +1,68 @@
+import { motion } from "motion/react";
+
 interface HistoryItemProps {
+  index: number;
   deadline: string;
   question: string;
   bullPercent: number;
   bearPercent: number;
   totalVotes: number;
   usdcCollected: number;
+  currentPage: number;
+  previousPage: number;
 }
 
+interface PaginationState {
+  currentPage: number;
+  previousPage: number;
+}
+
+const PAGINATION_VARIANTS = {
+  initial: (custom: PaginationState) => ({
+    opacity: 0,
+    x:
+      custom.currentPage > custom.previousPage
+        ? 30
+        : custom.currentPage < custom.previousPage
+          ? -30
+          : 0,
+  }),
+  animate: { opacity: 1, x: 0 },
+  exit: (custom: PaginationState) => ({
+    opacity: 0,
+    x:
+      custom.currentPage < custom.previousPage
+        ? 30
+        : custom.currentPage > custom.previousPage
+          ? -30
+          : 0,
+  }),
+};
+
 export const HistoryItem = ({
+  index,
   deadline,
   question,
   bullPercent,
   bearPercent,
   totalVotes,
   usdcCollected,
+  currentPage,
+  previousPage,
 }: HistoryItemProps) => {
   return (
-    <div className="flex flex-col lg:flex-row justify-start items-start lg:justify-between lg:items-center w-full pl-10 pr-4">
+    <motion.div
+      key={`history-item-${index}`}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={PAGINATION_VARIANTS}
+      custom={{
+        currentPage,
+        previousPage,
+      }}
+      transition={{ duration: 0.15, ease: "easeInOut", delay: index * 0.1 }}
+      className="flex flex-col lg:flex-row justify-start items-start lg:justify-between lg:items-center w-full pl-10 pr-4">
       <div className="flex flex-col justify-start items-start gap-1">
         <p className="text-sm italic text-gray-500 shrink-0">
           Deadline: {deadline}
@@ -48,6 +94,6 @@ export const HistoryItem = ({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };

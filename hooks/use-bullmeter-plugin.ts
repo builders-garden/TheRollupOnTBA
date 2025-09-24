@@ -75,7 +75,7 @@ const executeBatchTransactionHelper = async (
 
     return { success: true, result };
   } catch (error: any) {
-    console.error("Batch transaction failed:", error);
+    console.log("Batch transaction failed:", error);
 
     // Handle specific error types
     let errorMessage = "Unknown error occurred";
@@ -146,7 +146,7 @@ export const useBullmeterPlugin = () => {
         );
         return { success: true, result: batchResult.result };
       } else {
-        console.error(`${operation} transaction failed:`, batchResult.error);
+        console.log(`${operation} transaction failed:`, batchResult.error);
         throw new Error(`${operation} failed: ${batchResult.error}`);
       }
     },
@@ -260,13 +260,13 @@ export const useBullmeterPlugin = () => {
               console.log("✅ Poll data stored in database:", result);
             } else {
               const errorData = await response.json();
-              console.error(
+              console.log(
                 "❌ Failed to store poll data in database:",
                 errorData,
               );
             }
           } catch (dbError) {
-            console.error("Database storage error:", dbError);
+            console.log("Database storage error:", dbError);
           }
         }
 
@@ -278,7 +278,7 @@ export const useBullmeterPlugin = () => {
             : undefined,
         };
       } catch (err: any) {
-        console.error("Bullmeter create error:", err);
+        console.log("Bullmeter create error:", err);
         setError(err.message || "Bullmeter create failed");
         throw err;
       } finally {
@@ -381,13 +381,13 @@ export const useBullmeterPlugin = () => {
               console.log("✅ Poll duration updated in database:", result);
             } else {
               const errorData = await response.json();
-              console.error(
+              console.log(
                 "❌ Failed to update poll duration in database:",
                 errorData,
               );
             }
           } catch (dbError) {
-            console.error("Database update error:", dbError);
+            console.log("Database update error:", dbError);
           }
         }
 
@@ -402,7 +402,7 @@ export const useBullmeterPlugin = () => {
           totalNoVotes,
         };
       } catch (err: any) {
-        console.error("Bullmeter extend error:", err);
+        console.log("Bullmeter extend error:", err);
         setError(err.message || "Bullmeter extend failed");
         throw err;
       } finally {
@@ -504,13 +504,13 @@ export const useBullmeterPlugin = () => {
               console.log("✅ Poll marked as terminated in database:", result);
             } else {
               const errorData = await response.json();
-              console.error(
+              console.log(
                 "❌ Failed to update poll status in database:",
                 errorData,
               );
             }
           } catch (dbError) {
-            console.error("Database update error:", dbError);
+            console.log("Database update error:", dbError);
           }
         }
 
@@ -527,7 +527,7 @@ export const useBullmeterPlugin = () => {
           },
         };
       } catch (err: any) {
-        console.error("Bullmeter terminate error:", err);
+        console.log("Bullmeter terminate error:", err);
         setError(err.message || "Bullmeter terminate failed");
         throw err;
       } finally {
@@ -574,7 +574,7 @@ export const useBullmeterPlugin = () => {
 
         return { success: true, result: decodedResult as ReadPollData[] };
       } catch (err: any) {
-        console.error("getAllPollsByCreator error:", err);
+        console.log("getAllPollsByCreator error:", err);
         const errorMessage = err.message || "Failed to get polls by creator";
         setError(errorMessage);
         return { success: false, error: errorMessage };

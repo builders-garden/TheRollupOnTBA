@@ -47,7 +47,7 @@ export const AboutSection = ({
               <h1 className="text-sm font-bold">{label}</h1>
               <motion.div
                 initial={{ rotate: 180 }}
-                animate={{ rotate: !!accordionValue ? 0 : 180 }}
+                animate={{ rotate: !!accordionValue ? 180 : 0 }}
                 transition={{ duration: 0.2 }}>
                 <ChevronDownIcon className="text-muted-foreground size-4 shrink-0" />
               </motion.div>

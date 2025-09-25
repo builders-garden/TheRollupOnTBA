@@ -10,12 +10,11 @@ import { useAccount } from "wagmi";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useFakeFarcasterSignIn } from "@/hooks/use-auth-hooks";
-import { useBrandById } from "@/hooks/use-brands";
+import { useBrandBySlug } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTipSettings } from "@/hooks/use-tip-settings";
 import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
 import { User } from "@/lib/types/user.type";
-import { env } from "@/lib/zod";
 
 interface MiniAppAuthContextType {
   user: {
@@ -23,6 +22,8 @@ interface MiniAppAuthContextType {
     refetch: () => Promise<void>;
   };
   brand: {
+    brandSlug: string | undefined;
+    setBrandSlug: (brandSlug: string) => void;
     data: Brand | undefined;
     refetch: () => Promise<void>;
     tipSettings: {
@@ -62,6 +63,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
   } = useMiniApp();
 
   // Local state
+  const [brandSlug, setBrandSlug] = useState<string>();
   const [brand, setBrand] = useState<Brand>();
   const [tipSettings, setTipSettings] = useState<TipSettings>();
   const [featuredTokens, setFeaturedTokens] = useState<FeaturedToken[]>([]);
@@ -80,16 +82,12 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
   } = useAuthCheck(); // Always fetch to check for existing token
 
   // Fetching the brand when the user is connected
-  // TODO: Remove the hardcoded brand id
   const {
     data: brandData,
     isLoading: isFetchingBrand,
     error: brandError,
     refetch: refetchBrand,
-  } = useBrandById(
-    env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
-    !!env.NEXT_PUBLIC_ROLLUP_BRAND_ID && !!user,
-  );
+  } = useBrandBySlug({ brandSlug, enabled: !!brandSlug && !!user });
 
   // Fetching the tip settings when the brand is connected
   const {
@@ -98,8 +96,8 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     error: tipSettingsError,
     refetch: refetchTipSettings,
   } = useTipSettings({
-    brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
-    enabled: !!env.NEXT_PUBLIC_ROLLUP_BRAND_ID && !!user,
+    brandId: brand?.id,
+    enabled: !!brand?.id && !!user,
   });
 
   // Fetching the featured tokens when the brand is connected
@@ -109,8 +107,8 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     error: featuredTokensError,
     refetch: refetchFeaturedTokens,
   } = useFeaturedTokens({
-    brandId: env.NEXT_PUBLIC_ROLLUP_BRAND_ID,
-    enabled: !!env.NEXT_PUBLIC_ROLLUP_BRAND_ID && !!user,
+    brandId: brand?.id,
+    enabled: !!brand?.id && !!user,
   });
 
   // Auto set brand logic
@@ -250,6 +248,8 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     },
     brand: {
       data: brand,
+      brandSlug,
+      setBrandSlug,
       refetch: executeRefetchBrand,
       tipSettings: {
         data: tipSettings,

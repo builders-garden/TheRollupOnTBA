@@ -1,15 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { User } from "@/lib/types/user.type";
+import { Brand } from "@/lib/database/db.schema";
 import { formatAvatarSrc } from "@/lib/utils";
 
 interface ProfileBarProps {
-  user: User;
+  brand: Brand;
 }
 
-export const ProfileBar = ({ user }: ProfileBarProps) => {
-  const userAvatarSrc = user.farcasterAvatarUrl
-    ? formatAvatarSrc(user.farcasterAvatarUrl)
-    : null;
+export const ProfileBar = ({ brand }: ProfileBarProps) => {
+  const userAvatarSrc = brand.logoUrl ? formatAvatarSrc(brand.logoUrl) : null;
 
   return (
     <div
@@ -39,7 +37,7 @@ export const ProfileBar = ({ user }: ProfileBarProps) => {
           {userAvatarSrc ? (
             <img
               src={userAvatarSrc ?? ""}
-              alt={user.farcasterUsername ?? "User pfp"}
+              alt={brand.name ?? "Brand pfp"}
               width="260px"
               height="260px"
               style={{
@@ -63,23 +61,11 @@ export const ProfileBar = ({ user }: ProfileBarProps) => {
                 fontSize: "82px",
                 fontWeight: "extrabold",
               }}>
-              {user.farcasterUsername
-                ? user.farcasterUsername.length > 25
-                  ? `${user.farcasterUsername.slice(0, 25)}…`
-                  : user.farcasterUsername
+              {brand.name
+                ? brand.name.length > 25
+                  ? `${brand.name.slice(0, 25)}…`
+                  : brand.name
                 : ""}
-            </p>
-            <p
-              style={{
-                color: "white",
-                fontSize: "52px",
-              }}>
-              Joined{" "}
-              {new Date(user.createdAt ?? "").toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
             </p>
           </div>
         </div>

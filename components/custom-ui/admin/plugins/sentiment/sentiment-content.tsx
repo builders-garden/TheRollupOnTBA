@@ -248,6 +248,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
       }
 
       const createPromise = createBullmeter(
+        brandId,
         prompt, // question
         "10000", // votePrice (0.01 USDC)
         0, // startTime (current timestamp)

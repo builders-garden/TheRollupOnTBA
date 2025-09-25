@@ -7,6 +7,6 @@ const AppContent = dynamic(() => import("@/components/pages/App/app-content"), {
   loading: () => <div />,
 });
 
-export default function App() {
-  return <AppContent />;
+export default function App({ brandSlug }: { brandSlug?: string }) {
+  return <AppContent brandSlug={brandSlug} />;
 }

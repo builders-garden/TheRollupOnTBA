@@ -1,22 +1,22 @@
-import { User } from "@/lib/types/user.type";
-import { ProfileBar } from "./profile-bar";
+import { Brand } from "@/lib/database/db.schema";
+import { ProfileBar } from "./brand-details";
 
 /* eslint-disable @next/next/no-img-element */
-interface ProfileOGImageProps {
-  user: User;
+interface BrandOGImageProps {
+  brand: Brand;
   coverImage: ArrayBuffer;
   coverImageType: string;
   width: number;
   height: number;
 }
 
-export const ProfileOGImage = ({
-  user,
+export const BrandOGImage = ({
+  brand,
   coverImage,
   coverImageType,
   width,
   height,
-}: ProfileOGImageProps) => {
+}: BrandOGImageProps) => {
   return (
     <div
       style={{
@@ -54,8 +54,8 @@ export const ProfileOGImage = ({
             ).toString("base64")}`}
             alt="Cover Image"
             style={{
-              width: "100%",
-              height: "100%",
+              width: `${width}px`,
+              height: `${height}px`,
               objectPosition: "top",
               marginBottom: "-33.33%",
               imageRendering: "crisp-edges",
@@ -76,7 +76,7 @@ export const ProfileOGImage = ({
               display: "flex",
             }}
           />
-          {/* User section - positioned at bottom-left */}
+          {/* Brand section - positioned at bottom-left */}
           <div
             style={{
               position: "absolute",
@@ -90,7 +90,7 @@ export const ProfileOGImage = ({
               width: "100%",
               minWidth: "350px",
             }}>
-            <ProfileBar user={user} />
+            <ProfileBar brand={brand} />
           </div>
         </div>
       </div>

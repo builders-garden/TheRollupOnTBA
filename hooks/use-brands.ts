@@ -35,10 +35,16 @@ export const useBrands = (params?: {
   });
 };
 
-export const useBrandById = (brandId: string, enabled: boolean) => {
+export const useBrandBySlug = ({
+  brandSlug,
+  enabled,
+}: {
+  brandSlug?: string;
+  enabled: boolean;
+}) => {
   return useApiQuery<BrandApiResponse>({
-    queryKey: ["brands", brandId],
-    url: `/api/brands/${brandId}`,
+    queryKey: ["brands", brandSlug],
+    url: `/api/brands/${brandSlug}`,
     enabled: enabled,
     isProtected: true,
   });
@@ -63,26 +69,26 @@ export const useCreateBrand = () => {
 };
 
 export const useUpdateBrand = () => {
-  return useApiMutation<BrandApiResponse, { brandId: string } & UpdateBrand>({
-    url: (variables) => `/api/brands/${variables.brandId}`,
+  return useApiMutation<BrandApiResponse, { brandSlug: string } & UpdateBrand>({
+    url: (variables) => `/api/brands/${variables.brandSlug}`,
     method: "PUT",
-    body: ({ brandId, ...data }) => data,
+    body: ({ brandSlug, ...data }) => data,
   });
 };
 
 export const useDeleteBrand = () => {
   return useApiMutation<
     { success: boolean; message: string },
-    { brandId: string }
+    { brandSlug: string }
   >({
-    url: (variables) => `/api/brands/${variables.brandId}`,
+    url: (variables) => `/api/brands/${variables.brandSlug}`,
     method: "DELETE",
   });
 };
 
 export const useToggleBrandActive = () => {
-  return useApiMutation<BrandApiResponse, { brandId: string }>({
-    url: (variables) => `/api/brands/${variables.brandId}`,
+  return useApiMutation<BrandApiResponse, { brandSlug: string }>({
+    url: (variables) => `/api/brands/${variables.brandSlug}`,
     method: "PATCH",
     body: () => ({ action: "toggle-active" }),
   });

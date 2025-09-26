@@ -148,7 +148,7 @@ export const InfoContent = () => {
         }
         try {
           updateBrand(
-            { brandId: brandData.id, [field]: dataToUpdate },
+            { brandSlug: brandData.slug, [field]: dataToUpdate },
             {
               onSuccess: async () => {
                 await brand.refetch();

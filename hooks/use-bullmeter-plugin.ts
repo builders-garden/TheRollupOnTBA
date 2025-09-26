@@ -9,7 +9,6 @@ import {
   GetAllPollsByCreatorResponse,
   ReadPollData,
 } from "@/lib/types/bullmeter.type";
-import { env } from "@/lib/zod";
 
 // Types for wallet_sendCalls
 interface SendCallsCall {
@@ -254,6 +253,7 @@ export const useBullmeterPlugin = () => {
               data?: BullMeter;
             }>("/api/bullmeters", {
               json: pollData,
+              timeout: false,
             });
 
             if (response.ok) {
@@ -369,6 +369,7 @@ export const useBullmeterPlugin = () => {
                 newDuration: newDuration,
                 newDeadline: Number(updatedLastPollDeadline),
               },
+              timeout: false,
             });
 
             if (response.ok) {
@@ -492,6 +493,7 @@ export const useBullmeterPlugin = () => {
                 pollId: pollId,
                 newDeadline: Number(updatedPollState),
               },
+              timeout: false,
             });
 
             if (response.ok) {

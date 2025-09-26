@@ -33,9 +33,7 @@ export const AdminBanner = ({ selectedPageContent }: AdminBannerProps) => {
       </AnimatePresence>
       {brand.data?.id ? (
         <div className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/90 border border-border rounded-md px-3 py-1 text-sm font-medium">
-          <p>
-            Brand <b>{brand.data.name}</b>
-          </p>
+          <b>{brand.data.name}</b>
         </div>
       ) : null}
     </div>

@@ -166,6 +166,7 @@ export const useBullmeterClaim = () => {
         // Fetch claimable polls from the API
         const response = await ky.get<ClaimBullmetersResponse>(
           `/api/claim-bullmeters?address=${address}`,
+          { timeout: false },
         );
 
         if (!response.ok) {

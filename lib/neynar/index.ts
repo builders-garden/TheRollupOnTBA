@@ -86,6 +86,7 @@ export const fetchUserByAddress = async (
       headers: {
         "x-api-key": env.NEYNAR_API_KEY,
       },
+      timeout: false,
     },
   );
   if (!response.ok) {

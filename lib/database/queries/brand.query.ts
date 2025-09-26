@@ -1,6 +1,8 @@
-import { and, eq, like, sql } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
+import { Address } from "viem";
 import { db } from "@/lib/database";
 import {
+  adminsTable,
   brandsTable,
   type Brand,
   type CreateBrand,
@@ -41,10 +43,20 @@ export const getBrandById = async (brandId: string): Promise<Brand | null> => {
 export const getBrandByAddress = async (
   address: string,
 ): Promise<Brand | null> => {
+  // Get the admin address record from the database
+  const [admin] = await db
+    .select()
+    .from(adminsTable)
+    .where(eq(adminsTable.address, address as Address))
+    .limit(1);
+
+  if (!admin) return null;
+
+  // Get the brand record from the database
   const [brand] = await db
     .select()
     .from(brandsTable)
-    .where(sql`${brandsTable.walletAddresses} LIKE '%' || ${address} || '%'`)
+    .where(eq(brandsTable.id, admin?.brandId))
     .limit(1);
 
   return brand || null;

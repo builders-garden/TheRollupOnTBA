@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm/relations";
 import {
+  adminsTable,
   brandsTable,
   bullMetersTable,
   featuredTokensTable,
@@ -46,5 +47,12 @@ export const walletRelations = relations(walletTable, ({ one }) => ({
   user: one(userTable, {
     fields: [walletTable.userId],
     references: [userTable.id],
+  }),
+}));
+
+export const adminRelations = relations(adminsTable, ({ one }) => ({
+  brand: one(brandsTable, {
+    fields: [adminsTable.brandId],
+    references: [brandsTable.id],
   }),
 }));

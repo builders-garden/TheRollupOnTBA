@@ -16,6 +16,7 @@ interface NBTextInputProps {
     onError?: () => void,
   ) => void;
   isUpdating: boolean;
+  resetValueAfterConfirm?: boolean;
 }
 
 export const NBTextInput = ({
@@ -27,6 +28,7 @@ export const NBTextInput = ({
   setValue,
   onConfirm = () => {},
   isUpdating = false,
+  resetValueAfterConfirm = false,
 }: NBTextInputProps) => {
   const [editingValue, setEditingValue] = useState(value);
   const [isEditing, setIsEditing] = useState(false);
@@ -71,9 +73,15 @@ export const NBTextInput = ({
       editingValue,
       () => {
         setIsEditing(false);
+        if (resetValueAfterConfirm) {
+          setEditingValue("");
+        }
       },
       () => {
         setIsEditing(false);
+        if (resetValueAfterConfirm) {
+          setEditingValue("");
+        }
       },
     );
   };

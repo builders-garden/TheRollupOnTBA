@@ -15,7 +15,7 @@ export default function MainContent({ brandSlug }: { brandSlug?: string }) {
   } = useMiniAppAuth();
 
   useLayoutEffect(() => {
-    setBrandSlug(brandSlug || "rollup");
+    setBrandSlug(brandSlug || "therollup");
   }, [brandSlug, setBrandSlug]);
 
   return (

@@ -43,7 +43,7 @@ export async function getFonts(): Promise<
  * @returns The image as an ArrayBuffer
  */
 export async function loadImage(url: string): Promise<ArrayBuffer> {
-  return await ky.get(url).arrayBuffer();
+  return await ky.get(url, { timeout: false }).arrayBuffer();
 }
 
 /**

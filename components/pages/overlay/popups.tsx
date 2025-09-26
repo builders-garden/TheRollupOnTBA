@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { Brand } from "@/lib/database/db.schema";
 import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 import {
   TipReceivedEvent,
@@ -12,7 +13,7 @@ import {
   VoteReceivedEvent,
 } from "@/lib/types/socket";
 
-export default function OverlayPage() {
+export const OverlayPopups = ({ brand }: { brand: Brand }) => {
   const { subscribe, unsubscribe } = useSocket();
   const { joinStream } = useSocketUtils();
 
@@ -34,6 +35,7 @@ export default function OverlayPage() {
   useEffect(() => {
     // Join the stream
     joinStream({
+      brandId: brand.id,
       username: "Overlay",
       profilePicture: "https://via.placeholder.com/150",
     });
@@ -77,11 +79,11 @@ export default function OverlayPage() {
       unsubscribe(ServerToClientSocketEvents.TOKEN_TRADED, handleTokenTraded);
       unsubscribe(ServerToClientSocketEvents.VOTE_RECEIVED, handleVoteReceived);
     };
-  }, [subscribe, unsubscribe, joinStream, showPopupCallback]);
+  }, [subscribe, unsubscribe, joinStream, showPopupCallback, brand]);
 
   return (
     <div className="flex h-screen w-[100vw]">
       <div className="flex h-full w-full"> </div>
     </div>
   );
-}
+};

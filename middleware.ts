@@ -21,6 +21,14 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // skip auth check for GET requests to brandSlug (public overlay endpoints)
+  if (
+    req.nextUrl.pathname === "/api/brands/:brandSlug" &&
+    req.method === "GET"
+  ) {
+    return NextResponse.next();
+  }
+
   // Get token from auth_token cookie
   const authToken = req.cookies.get("auth_token")?.value;
 

@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   deleteBrand,
-  getBrandById,
+  getBrandBySlug,
   toggleBrandActiveStatus,
   updateBrand,
 } from "@/lib/database/queries";
 
 export const GET = async (
   _: NextRequest,
-  { params }: { params: Promise<{ brandId: string }> },
+  { params }: { params: Promise<{ brandSlug: string }> },
 ) => {
   try {
-    const { brandId } = await params;
-    const brand = await getBrandById(brandId);
+    const { brandSlug } = await params;
+    const brand = await getBrandBySlug(brandSlug);
 
     if (!brand) {
       return NextResponse.json(
@@ -42,13 +42,13 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: Promise<{ brandId: string }> },
+  { params }: { params: Promise<{ brandSlug: string }> },
 ) => {
   try {
     const data = await req.json();
 
-    const { brandId } = await params;
-    const brand = await updateBrand(brandId, data);
+    const { brandSlug } = await params;
+    const brand = await updateBrand(brandSlug, data);
 
     if (!brand) {
       return NextResponse.json(
@@ -78,11 +78,11 @@ export const PUT = async (
 
 export const DELETE = async (
   _: NextRequest,
-  { params }: { params: Promise<{ brandId: string }> },
+  { params }: { params: Promise<{ brandSlug: string }> },
 ) => {
   try {
-    const { brandId } = await params;
-    const deleted = await deleteBrand(brandId);
+    const { brandSlug } = await params;
+    const deleted = await deleteBrand(brandSlug);
 
     if (!deleted) {
       return NextResponse.json(
@@ -112,14 +112,14 @@ export const DELETE = async (
 
 export const PATCH = async (
   req: NextRequest,
-  { params }: { params: Promise<{ brandId: string }> },
+  { params }: { params: Promise<{ brandSlug: string }> },
 ) => {
   try {
     const { action } = await req.json();
-    const { brandId } = await params;
+    const { brandSlug } = await params;
 
     if (action === "toggle-active") {
-      const brand = await toggleBrandActiveStatus(brandId);
+      const brand = await toggleBrandActiveStatus(brandSlug);
 
       if (!brand) {
         return NextResponse.json(

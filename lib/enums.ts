@@ -16,6 +16,12 @@ export enum AdminPageContent {
   OVERLAY = "overlay",
 }
 
+// Brand Tabs
+export enum BrandTabs {
+  INFO = "info",
+  ACCESS = "access",
+}
+
 // Plugins Tabs
 export enum PluginsTabs {
   TIPS = "tips",

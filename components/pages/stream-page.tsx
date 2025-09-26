@@ -101,9 +101,7 @@ export const StreamPage = () => {
         results: undefined,
       };
       // Store the absolute Unix timestamp, not remaining time
-      const absoluteDeadline = Math.floor(
-        new Date(data.endTime).getTime() / 1000,
-      );
+      const absoluteDeadline = Math.floor(data.endTimeMs / 1000);
       return {
         ...base,
         id: data.id,
@@ -135,7 +133,7 @@ export const StreamPage = () => {
       id: data.id,
       prompt: data.pollQuestion,
       pollId: data.qrCodeUrl,
-      deadlineSeconds: Math.floor(new Date(data.endTime).getTime() / 1000), // This is already correct - absolute timestamp
+      deadlineSeconds: Math.floor(data.endTimeMs / 1000),
       votes: data.votes,
       voters: data.voters,
       results: data.results,
@@ -145,6 +143,7 @@ export const StreamPage = () => {
   useEffect(() => {
     if (isConnected) {
       joinStream({
+        brandId: brand.data?.id || "",
         username: user.data?.username || "",
         profilePicture: user.data?.avatarUrl || "",
       });
@@ -264,6 +263,7 @@ export const StreamPage = () => {
       if (!voteCount || voteCount === "0" || isNaN(Number(voteCount))) return;
       for (let i = 0; i < Number(voteCount); i++) {
         voteCasted({
+          brandId: brand.data?.id || "",
           position: PopupPositions.TOP_CENTER,
           username:
             baseName || user.data?.username || formatWalletAddress(address),
@@ -271,13 +271,13 @@ export const StreamPage = () => {
           voteAmount: "1",
           isBull: data.data?.isYes || false,
           promptId: poll?.pollId || "",
-          endTime: data.data?.endTime
+          endTimeMs: data.data?.endTime
             ? (() => {
                 // Convert Unix timestamp (seconds) to milliseconds
                 const date = new Date(data.data?.endTime * 1000);
-                return date;
+                return date.getTime();
               })()
-            : new Date(),
+            : new Date().getTime(),
         });
 
         // Wait for 1 second before sending the next vote
@@ -396,8 +396,7 @@ export const StreamPage = () => {
               {brand.data?.streamTitle || `The Rollup Streaming`}
             </h1>
             <ShareButton
-              linkCopied
-              miniappUrl={env.NEXT_PUBLIC_URL}
+              miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
               buttonClassName="shrink-1 w-min cursor-pointer"
             />
           </div>

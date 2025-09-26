@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { usePinataIpfsUpload } from "@/hooks/use-pinata-ipfs";
-import { NBButton } from "../../nb-button";
+import { NBButton } from "../../../nb-button";
 
 interface FileUploadProps {
   brandLogoUrl?: string | null;

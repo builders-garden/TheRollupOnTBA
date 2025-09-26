@@ -33,7 +33,7 @@ export const useTipSettings = (params?: {
     queryKey: ["tips", params],
     url,
     isProtected: true,
-    enabled: params?.enabled || true,
+    enabled: params?.enabled ?? true,
   });
 };
 

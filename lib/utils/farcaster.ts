@@ -104,6 +104,9 @@ export async function getFarcasterManifest() {
       payload: env.NEXT_PUBLIC_FARCASTER_PAYLOAD,
       signature: env.NEXT_PUBLIC_FARCASTER_SIGNATURE,
     },
+    baseBuilder: {
+      allowedAddresses: ["0xf5e33aAc21Fd4C98740A7083C90374cd9741087C"],
+    },
     miniapp: {
       version: "1",
       name: miniappName,
@@ -116,7 +119,8 @@ export async function getFarcasterManifest() {
       webhookUrl: `${appUrl}/api/webhook/farcaster`, // our farcaster webhook
       // Metadata https://github.com/farcasterxyz/miniapps/discussions/191
       subtitle: "Interactive Stream Control", // 30 characters, no emojis or special characters, short description under app name
-      description: "Control The Stream lets viewers shape live streams in real time with tips, votes, and trades—making watching interactive and participatory.", // 170 characters, no emojis or special characters, promotional message displayed on Mini App Page
+      description:
+        "Control The Stream lets viewers shape live streams in real time with tips, votes, and trades—making watching interactive and participatory.", // 170 characters, no emojis or special characters, promotional message displayed on Mini App Page
       primaryCategory: "social", // https://github.com/farcasterxyz/miniapps/blob/main/packages/miniapp-core/src/schemas/manifest.ts
       tags: ["base", "streaming", "therollup"], // up to 5 tags, filtering/search tags
       tagline: "Turn viewing into action", // 30 characters, marketing tagline should be punchy and descriptive

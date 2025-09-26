@@ -19,7 +19,8 @@ export const brandsTable = sqliteTable("brands", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => ulid()),
-  name: text("name"),
+  name: text("name").default("").notNull(),
+  slug: text("slug").default("").notNull(),
   logoUrl: text("logo_url"),
   coverUrl: text("cover_url"),
   description: text("description"),
@@ -34,9 +35,6 @@ export const brandsTable = sqliteTable("brands", {
   })
     .$type<SocialMediaUrls>()
     .default({ youtube: "", twitch: "", x: "" }),
-  walletAddresses: text("wallet_addresses", { mode: "json" })
-    .$type<Address[]>()
-    .notNull(),
   isActive: integer("is_active", { mode: "boolean" }).default(false),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
@@ -209,3 +207,21 @@ export const walletTable = sqliteTable(
 export type Wallet = typeof walletTable.$inferSelect;
 export type CreateWallet = typeof walletTable.$inferInsert;
 export type UpdateWallet = Partial<CreateWallet>;
+
+/**
+ * Admins table
+ */
+export const adminsTable = sqliteTable("admins", {
+  address: text("address").$type<Address>().primaryKey(),
+  baseName: text("base_name"),
+  ensName: text("ens_name"),
+  brandId: text("brand_id")
+    .notNull()
+    .references(() => brandsTable.id, { onDelete: "cascade" }),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type Admin = typeof adminsTable.$inferSelect;
+export type CreateAdmin = typeof adminsTable.$inferInsert;
+export type UpdateAdmin = Partial<CreateAdmin>;

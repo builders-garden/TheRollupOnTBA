@@ -45,6 +45,7 @@ export async function sendFarcasterNotification({
       targetUrl: targetUrl ?? env.NEXT_PUBLIC_URL,
       tokens,
     } satisfies SendNotificationRequest,
+    timeout: false,
   });
 
   const responseJson = await response.json();
@@ -140,6 +141,7 @@ export async function sendNotificationToAllUsers({
           targetUrl: targetUrl ?? env.NEXT_PUBLIC_URL,
           tokens: chunk.map((user) => user.farcasterNotificationDetails.token),
         } satisfies SendNotificationRequest,
+        timeout: false,
       },
     );
 

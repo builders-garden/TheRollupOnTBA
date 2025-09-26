@@ -1,6 +1,8 @@
-import { and, eq, like, sql } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
+import { Address } from "viem";
 import { db } from "@/lib/database";
 import {
+  adminsTable,
   brandsTable,
   type Brand,
   type CreateBrand,
@@ -41,12 +43,36 @@ export const getBrandById = async (brandId: string): Promise<Brand | null> => {
 export const getBrandByAddress = async (
   address: string,
 ): Promise<Brand | null> => {
+  // Get the admin address record from the database
+  const [admin] = await db
+    .select()
+    .from(adminsTable)
+    .where(eq(adminsTable.address, address as Address))
+    .limit(1);
+
+  if (!admin) return null;
+
+  // Get the brand record from the database
   const [brand] = await db
     .select()
     .from(brandsTable)
-    .where(sql`${brandsTable.walletAddresses} LIKE '%' || ${address} || '%'`)
+    .where(eq(brandsTable.id, admin?.brandId))
     .limit(1);
 
+  return brand || null;
+};
+
+/**
+ * Get a brand by slug
+ * @param slug - The brand slug
+ * @returns The brand or null if not found
+ */
+export const getBrandBySlug = async (slug: string): Promise<Brand | null> => {
+  const [brand] = await db
+    .select()
+    .from(brandsTable)
+    .where(eq(brandsTable.slug, slug))
+    .limit(1);
   return brand || null;
 };
 
@@ -98,12 +124,12 @@ export const searchBrandsByName = async (
 
 /**
  * Update a brand
- * @param brandId - The brand ID
+ * @param brandSlug - The brand ID
  * @param updateData - The data to update
  * @returns The updated brand or null if not found
  */
 export const updateBrand = async (
-  brandId: string,
+  brandSlug: string,
   updateData: UpdateBrand,
 ): Promise<Brand | null> => {
   const [updatedBrand] = await db
@@ -112,7 +138,7 @@ export const updateBrand = async (
       ...updateData,
       updatedAt: new Date().toISOString(),
     })
-    .where(eq(brandsTable.id, brandId))
+    .where(eq(brandsTable.slug, brandSlug))
     .returning();
 
   return updatedBrand || null;
@@ -120,27 +146,27 @@ export const updateBrand = async (
 
 /**
  * Delete a brand
- * @param brandId - The brand ID
+ * @param brandSlug - The brand ID
  * @returns Whether the brand was deleted
  */
-export const deleteBrand = async (brandId: string): Promise<boolean> => {
+export const deleteBrand = async (brandSlug: string): Promise<boolean> => {
   const result = await db
     .delete(brandsTable)
-    .where(eq(brandsTable.id, brandId));
+    .where(eq(brandsTable.slug, brandSlug));
 
   return result.rowsAffected > 0;
 };
 
 /**
  * Toggle brand active status
- * @param brandId - The brand ID
+ * @param brandSlug - The brand ID
  * @returns The updated brand or null if not found
  */
 export const toggleBrandActiveStatus = async (
-  brandId: string,
+  brandSlug: string,
 ): Promise<Brand | null> => {
-  const brand = await getBrandById(brandId);
+  const brand = await getBrandBySlug(brandSlug);
   if (!brand) return null;
 
-  return await updateBrand(brandId, { isActive: !brand.isActive });
+  return await updateBrand(brandSlug, { isActive: !brand.isActive });
 };

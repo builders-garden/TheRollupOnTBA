@@ -1,51 +1,36 @@
-import { Check, SquarePen, X } from "lucide-react";
+import { Check, SquarePen, Text, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Textarea } from "@/components/shadcn-ui/textarea";
 import { cn } from "@/lib/utils";
 
-interface NBTextInputProps {
-  label: string;
-  inputColor?: "accent" | "destructive";
-  icon: React.ReactNode;
-  placeholder: string;
-  value: string;
-  setValue: Dispatch<SetStateAction<string>>;
-  onConfirm?: (
-    data?: any,
-    onSuccess?: () => void,
-    onError?: () => void,
-  ) => void;
+interface TextDescriptionAreaProps {
+  description: string;
+  setDescription: Dispatch<SetStateAction<string>>;
+  onConfirm: (data?: any, onSuccess?: () => void, onError?: () => void) => void;
   isUpdating: boolean;
 }
 
-export const NBTextInput = ({
-  label,
-  inputColor = "accent",
-  icon,
-  placeholder,
-  value,
-  setValue,
-  onConfirm = () => {},
-  isUpdating = false,
-}: NBTextInputProps) => {
-  const [editingValue, setEditingValue] = useState(value);
+export const TextDescriptionArea = ({
+  description,
+  setDescription,
+  onConfirm,
+  isUpdating,
+}: TextDescriptionAreaProps) => {
+  const [editingDescription, setEditingDescription] = useState(description);
   const [isEditing, setIsEditing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Whether the input color is destructive
-  const isDestructive = inputColor === "destructive";
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Handles the edit button
   const handleEdit = () => {
-    if (isUpdating) return;
     setIsEditing(!isEditing);
-    // Focus the input after enabling edit mode
+    // Focus the textarea after enabling edit mode
     setTimeout(() => {
-      inputRef.current?.focus();
+      textareaRef.current?.focus();
     }, 0);
   };
 
-  // Handles the activation of the input
+  // Handles the activation of the textarea
   const handleActivateEditing = () => {
     if (isUpdating) return;
     setIsEditing(true);
@@ -53,19 +38,21 @@ export const NBTextInput = ({
 
   // Handle the cancel button
   const handleCancel = () => {
-    if (isUpdating) return;
     setIsEditing(false);
-    setValue(value);
-    setEditingValue(value);
+    setDescription(description);
+    setEditingDescription(description);
   };
 
   // Handle the confirm button
   const handleConfirm = () => {
-    if (isUpdating) return;
-    if (editingValue === value) return;
-    setValue(editingValue);
+    if (editingDescription === description) {
+      setIsEditing(false);
+      return;
+    }
+    setIsEditing(false);
+    setDescription(editingDescription);
     onConfirm(
-      editingValue,
+      editingDescription,
       () => {
         setIsEditing(false);
       },
@@ -77,35 +64,12 @@ export const NBTextInput = ({
 
   return (
     <div className="flex flex-col justify-start items-start gap-2.5 w-full">
-      {/* Label */}
-      <div
-        className={cn(
-          "flex justify-start items-center gap-2.5",
-          isDestructive && "text-destructive",
-        )}>
-        {icon}
-        <p className="text-base font-bold">{label}</p>
-      </div>
-
-      <div
-        className={cn(
-          "flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300",
-          isEditing && "ring-[2px]",
-          isDestructive && "border-destructive ring-destructive/40",
-        )}>
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder={placeholder}
-          disabled={isUpdating}
-          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
-          value={editingValue}
-          onFocus={handleActivateEditing}
-          onChange={(e) => {
-            setEditingValue(e.target.value);
-          }}
-        />
-
+      {/* Label and edit button */}
+      <div className="flex justify-between items-center w-full">
+        <div className="flex justify-start items-center gap-2.5">
+          <Text className="size-5" />
+          <p className="text-base font-bold">Description (200 chars)</p>
+        </div>
         <AnimatePresence mode="wait">
           {!isEditing ? (
             <motion.button
@@ -155,6 +119,24 @@ export const NBTextInput = ({
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Text description area */}
+      <div className="flex flex-col w-full justify-center items-start">
+        <Textarea
+          ref={textareaRef}
+          placeholder="Your livestream description here..."
+          disabled={isUpdating}
+          value={editingDescription}
+          onFocus={handleActivateEditing}
+          onChange={(e) => {
+            setEditingDescription(e.target.value.slice(0, 200));
+          }}
+          className="w-full h-[155px] rounded-[12px] border-[1px] border-accent p-2.5 bg-white text-base focus-visible:ring-accent/40 focus-visible:ring-[2px] disabled:opacity-100 disabled:cursor-default resize-none transition-all duration-300"
+        />
+        <p className="text-xs text-muted-foreground mt-[1px] ml-1">
+          {editingDescription.length}/200 characters
+        </p>
       </div>
     </div>
   );

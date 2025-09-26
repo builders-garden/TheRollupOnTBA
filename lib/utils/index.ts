@@ -37,7 +37,7 @@ export const checkImage = async (imageSrc: string): Promise<boolean> => {
  */
 export const validateImageUrl = async (url: string): Promise<string | null> => {
   try {
-    await ky.head(url);
+    await ky.head(url, { timeout: false });
     return url;
   } catch {
     return null;

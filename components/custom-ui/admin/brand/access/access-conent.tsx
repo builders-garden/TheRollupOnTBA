@@ -1,6 +1,6 @@
 import { Check, Copy, Loader2, Wallet } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Address, isAddress } from "viem";
 import { NBButton } from "@/components/custom-ui/nb-button";
@@ -252,7 +252,7 @@ export const AccessContent = () => {
                     <TableCell>{admin.address}</TableCell>
                     <TableCell>{admin.baseName}</TableCell>
                     <TableCell>{admin.ensName}</TableCell>
-                    <TableCell className="flex items-center justify-center gap-2.5">
+                    <TableCell className="flex items-center justify-center gap-3.5">
                       <NBButton
                         disabled={isCopying || hasCopied}
                         onClick={() => {
@@ -302,39 +302,44 @@ export const AccessContent = () => {
                           )}
                         </AnimatePresence>
                       </NBButton>
-                      <NBButton
-                        onClick={() => handleRemove(admin.address)}
-                        disabled={
-                          isDeletingAdmin ||
-                          isCreatingAdmin ||
-                          isCopying ||
-                          hasCopied ||
-                          admin.address.toLowerCase() ===
-                            connectedAdmin.address?.toLowerCase()
-                        }
-                        className="bg-destructive h-[42px]">
-                        <AnimatePresence mode="wait">
-                          {isDeletingAdmin &&
-                          addressInDeletion === admin.address ? (
-                            <motion.div
-                              key="loader"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}>
-                              <Loader2 className="size-5 text-white animate-spin" />
-                            </motion.div>
-                          ) : (
-                            <motion.div
-                              key="remove"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              className="text-base font-extrabold text-white">
-                              Remove
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </NBButton>
+                      {admin.address.toLowerCase() !==
+                      connectedAdmin.address?.toLowerCase() ? (
+                        <NBButton
+                          onClick={() => handleRemove(admin.address)}
+                          disabled={
+                            isDeletingAdmin ||
+                            isCreatingAdmin ||
+                            isCopying ||
+                            hasCopied
+                          }
+                          className="bg-destructive h-[42px] w-[100px]">
+                          <AnimatePresence mode="wait">
+                            {isDeletingAdmin &&
+                            addressInDeletion === admin.address ? (
+                              <motion.div
+                                key="loader"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}>
+                                <Loader2 className="size-5 text-white animate-spin" />
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="remove"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="text-base font-extrabold text-white">
+                                Remove
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </NBButton>
+                      ) : (
+                        <p className="text-base font-extrabold text-center text-black/50 w-[100px]">
+                          Main Admin
+                        </p>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

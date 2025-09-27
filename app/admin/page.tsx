@@ -10,6 +10,7 @@ import { BrandContent } from "@/components/custom-ui/admin/brand/brand-content";
 import { OverlayContent } from "@/components/custom-ui/admin/overlay/overlay-content";
 import { PluginsContent } from "@/components/custom-ui/admin/plugins/plugins-content";
 import { SideNavbar } from "@/components/custom-ui/admin/side-navbar";
+import { SignUpContent } from "@/components/custom-ui/admin/sign-up-content";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
 
@@ -64,6 +65,8 @@ export default function AdminPage() {
             </AnimatePresence>
           </div>
         </motion.div>
+      ) : brand.brandNotFound ? (
+        <SignUpContent key="sign-up" />
       ) : (
         <motion.div
           key="sign-in-with-base"
@@ -81,39 +84,14 @@ export default function AdminPage() {
                 height={100}
                 priority
               />
-              <AnimatePresence mode="wait">
-                {brand.brandNotFound ? (
-                  <motion.p
-                    key="brand-not-found"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="text-4xl font-bold text-center">
-                    We could not find your brand
-                    <br />
-                    <span className="text-lg opacity-50 -mt-2">
-                      Please try again with a different account
-                    </span>
-                  </motion.p>
-                ) : (
-                  <motion.p
-                    key="normal-login"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="text-4xl font-bold text-center">
-                    Mini-app Administration Page
-                    <br />
-                    <span className="text-lg opacity-50 -mt-2">
-                      Connect your Base account to access the admin functions
-                    </span>
-                  </motion.p>
-                )}
-              </AnimatePresence>
+              <p className="text-4xl font-bold text-center">
+                Mini-app Administration Page
+                <br />
+                <span className="text-lg opacity-50 -mt-2">
+                  Connect your Base account to access the admin functions
+                </span>
+              </p>
             </div>
-
             <div className="w-fit mt-3">
               <SignInWithBaseButton
                 align="center"

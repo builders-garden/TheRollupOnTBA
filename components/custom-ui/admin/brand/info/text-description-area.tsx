@@ -7,14 +7,18 @@ import { cn } from "@/lib/utils";
 interface TextDescriptionAreaProps {
   description: string;
   setDescription: Dispatch<SetStateAction<string>>;
-  onConfirm: (data?: any, onSuccess?: () => void, onError?: () => void) => void;
+  onConfirm?: (
+    data?: any,
+    onSuccess?: () => void,
+    onError?: () => void,
+  ) => void;
   isUpdating: boolean;
 }
 
 export const TextDescriptionArea = ({
   description,
   setDescription,
-  onConfirm,
+  onConfirm = () => {},
   isUpdating,
 }: TextDescriptionAreaProps) => {
   const [editingDescription, setEditingDescription] = useState(description);

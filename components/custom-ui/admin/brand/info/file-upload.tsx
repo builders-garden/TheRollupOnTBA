@@ -9,7 +9,7 @@ import { NBButton } from "../../../nb-button";
 interface FileUploadProps {
   brandLogoUrl?: string | null;
   label?: string;
-  handleUpdateDatabase: (
+  handleUpdateDatabase?: (
     data?: any,
     onSuccess?: () => void,
     onError?: () => void,
@@ -20,7 +20,7 @@ interface FileUploadProps {
 export const FileUpload = ({
   label,
   brandLogoUrl,
-  handleUpdateDatabase,
+  handleUpdateDatabase = () => {},
   isUpdatingDatabase,
 }: FileUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,13 +44,13 @@ export const FileUpload = ({
 
   // Handles the file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsUploadingFile(true);
     const file = event.target.files?.[0];
     if (!file) {
-      toast.error("File format is not supported");
+      toast.info("No file selected or file format not supported");
       return;
     }
-    console.log("Selected file:", file.name);
+
+    setIsUploadingFile(true);
 
     // First of all, upload the file to IPFS
     uploadFileToIPFS(
@@ -58,10 +58,10 @@ export const FileUpload = ({
       {
         onSuccess: (data) => {
           handleUpdateDatabase(
-            data.url!,
+            data.url,
             () => {
-              setIsUploadingFile(false);
               setPreviewUrl(data.url!);
+              setIsUploadingFile(false);
             },
             () => {
               setIsUploadingFile(false);

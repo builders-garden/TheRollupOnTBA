@@ -234,3 +234,12 @@ export const getChainLogoUrl = (chainId: string) => {
   return BASE_APP_SUPPORTED_CHAINS.find((chain) => chain.chainId === chainId)
     ?.logoUrl;
 };
+
+/**
+ * Slugify a text (replace spaces with underscores and convert to lowercase)
+ * @param text - The text to slugify
+ * @returns The slugified text
+ */
+export const slugify = (text: string) => {
+  return text.toLowerCase().replace(/ /g, "_");
+};

@@ -44,7 +44,7 @@ export const POST = async (req: NextRequest) => {
     const data = await req.json();
 
     // Basic validation
-    if (!data.name || !data.walletAddresses) {
+    if (!data.name || !data.slug) {
       return NextResponse.json(
         {
           success: false,

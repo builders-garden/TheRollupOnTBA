@@ -194,7 +194,17 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("No accounts available");
       }
 
+      // Get the admin's address, base name, and ENS name
       const address: string = addresses[0];
+      const baseName = await getBasenameName(address as Address);
+      const ensName = await getEnsName(address as Address);
+
+      // Set the admin
+      setAdmin({
+        address,
+        baseName: baseName?.normalize(),
+        ensName: ensName?.normalize(),
+      });
 
       // Step 2: Switch to Base chain
       await provider.request({
@@ -290,8 +300,8 @@ Issued At: ${new Date().toISOString()}`;
         return;
       }
 
+      // Get the admin's address, base name, and ENS name
       const address: string = addresses[0];
-
       const baseName = await getBasenameName(address as Address);
       const ensName = await getEnsName(address as Address);
 

@@ -1,45 +1,26 @@
-import { Check, Copy, Loader2, Wallet } from "lucide-react";
+import { Loader2, Wallet } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Address, isAddress } from "viem";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/shadcn-ui/table";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
-import {
-  useAdminsByBrandId,
-  useCreateAdmin,
-  useDeleteAdmin,
-} from "@/hooks/use-admins";
+import { useAdminsByBrandId, useCreateAdmin } from "@/hooks/use-admins";
 import {
   getAddressFromBaseName,
   getAddressFromEnsName,
   getBasenameName,
   getEnsName,
 } from "@/lib/ens/client";
-import { copyToClipboard } from "@/lib/utils";
 import { NBTextInput } from "../info/nb-text-input";
+import { AdminsTable } from "./admins-table";
 
 export const AccessContent = () => {
   const [textInputValue, setTextInputValue] = useState("");
   const [isUpdatingAdmin, setIsUpdatingAdmin] = useState(false);
-  const [isCopying, setIsCopying] = useState(false);
-  const [hasCopied, setHasCopied] = useState(false);
-  const [addressInDeletion, setAddressInDeletion] = useState<string | null>(
-    null,
-  );
 
-  const { brand, admin: connectedAdmin } = useAdminAuth();
+  const { brand } = useAdminAuth();
   const brandId = useMemo(() => brand.data?.id, [brand.data?.id]);
   const { mutate: createAdmin, isPending: isCreatingAdmin } = useCreateAdmin();
-  const { mutate: deleteAdmin, isPending: isDeletingAdmin } = useDeleteAdmin();
   const {
     data: admins,
     isLoading: isLoadingAdmins,
@@ -48,19 +29,6 @@ export const AccessContent = () => {
     brandId,
     enabled: !!brandId,
   });
-
-  // Handles the copy button
-  const handleCopy = (stringToCopy: string) => {
-    setIsCopying(true);
-    setTimeout(() => {
-      copyToClipboard(stringToCopy);
-      setIsCopying(false);
-      setHasCopied(true);
-      setTimeout(() => {
-        setHasCopied(false);
-      }, 1000);
-    }, 1500);
-  };
 
   // Handles the confirm button
   const handleConfirm = async (
@@ -83,13 +51,7 @@ export const AccessContent = () => {
       return;
     }
 
-    if (
-      !brandId ||
-      isCreatingAdmin ||
-      isDeletingAdmin ||
-      isLoadingAdmins ||
-      textData === ""
-    )
+    if (!brandId || isCreatingAdmin || isLoadingAdmins || textData === "")
       return;
 
     setIsUpdatingAdmin(true);
@@ -165,33 +127,6 @@ export const AccessContent = () => {
     );
   };
 
-  // Handles the remove button
-  const handleRemove = (address: string) => {
-    if (
-      isDeletingAdmin ||
-      isCreatingAdmin ||
-      isCopying ||
-      hasCopied ||
-      isUpdatingAdmin
-    )
-      return;
-    setAddressInDeletion(address);
-    deleteAdmin(
-      { address },
-      {
-        onSuccess: async () => {
-          await refetchAdmins();
-          toast.success("Admin removed successfully");
-          setAddressInDeletion(null);
-        },
-        onError: () => {
-          toast.error("Error while removing admin");
-          setAddressInDeletion(null);
-        },
-      },
-    );
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -233,118 +168,11 @@ export const AccessContent = () => {
                 resetValueAfterConfirm
               />
             </div>
-
-            <h1 className="font-bold text-xl mt-6">Current Admins</h1>
-            <Table className="text-base">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>#</TableHead>
-                  <TableHead>Address</TableHead>
-                  <TableHead>Base Name</TableHead>
-                  <TableHead>ENS Name</TableHead>
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-              <TableBody className="font-bold text-lg">
-                {admins?.data?.map((admin, index) => (
-                  <TableRow key={admin.address}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{admin.address}</TableCell>
-                    <TableCell>{admin.baseName}</TableCell>
-                    <TableCell>{admin.ensName}</TableCell>
-                    <TableCell className="flex items-center justify-center gap-3.5">
-                      <NBButton
-                        disabled={isCopying || hasCopied}
-                        onClick={() => {
-                          if (isCopying || hasCopied) return;
-                          handleCopy(admin.address);
-                        }}
-                        className="bg-accent w-fit h-[42px]">
-                        <AnimatePresence mode="wait">
-                          {isCopying && (
-                            <motion.div
-                              key="loader"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{
-                                duration: 0.15,
-                                ease: "easeInOut",
-                              }}>
-                              <Loader2 className="size-5 text-white animate-spin" />
-                            </motion.div>
-                          )}
-                          {hasCopied && (
-                            <motion.div
-                              key="check"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{
-                                duration: 0.15,
-                                ease: "easeInOut",
-                              }}>
-                              <Check className="size-5 text-white" />
-                            </motion.div>
-                          )}
-                          {!isCopying && !hasCopied && (
-                            <motion.div
-                              key="copy"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{
-                                duration: 0.15,
-                                ease: "easeInOut",
-                              }}>
-                              <Copy className="size-5 text-white" />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </NBButton>
-                      {admin.address.toLowerCase() !==
-                      connectedAdmin.address?.toLowerCase() ? (
-                        <NBButton
-                          onClick={() => handleRemove(admin.address)}
-                          disabled={
-                            isDeletingAdmin ||
-                            isCreatingAdmin ||
-                            isCopying ||
-                            hasCopied
-                          }
-                          className="bg-destructive h-[42px] w-[100px]">
-                          <AnimatePresence mode="wait">
-                            {isDeletingAdmin &&
-                            addressInDeletion === admin.address ? (
-                              <motion.div
-                                key="loader"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}>
-                                <Loader2 className="size-5 text-white animate-spin" />
-                              </motion.div>
-                            ) : (
-                              <motion.div
-                                key="remove"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="text-base font-extrabold text-white">
-                                Remove
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </NBButton>
-                      ) : (
-                        <p className="text-base font-extrabold text-center text-black/50 w-[100px]">
-                          Main Admin
-                        </p>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <AdminsTable
+              admins={admins?.data || []}
+              isCreatingAdmin={isCreatingAdmin}
+              isUpdatingAdmin={isUpdatingAdmin}
+            />
           </motion.div>
         )}
       </AnimatePresence>

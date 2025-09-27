@@ -152,6 +152,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     const newBrand = await refetchBrand();
     if (newBrand.isSuccess && newBrand.data?.brand) {
       setBrand(newBrand.data.brand);
+      setBrandNotFound(false);
     }
   }, [refetchBrand]);
 

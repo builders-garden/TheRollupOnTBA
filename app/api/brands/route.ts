@@ -5,6 +5,10 @@ import {
   getAllBrands,
   searchBrandsByName,
 } from "@/lib/database/queries";
+import {
+  getBetaAccessKey,
+  setBetaAccessKeyUsed,
+} from "@/lib/database/queries/beta-access-key.query";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -44,17 +48,39 @@ export const POST = async (req: NextRequest) => {
     const data = await req.json();
 
     // Basic validation
-    if (!data.name || !data.slug) {
+    if (!data.name || !data.slug || !data.betaAccessKey) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing required fields: name, walletAddresses",
+          error: "Missing required fields: name, slug, betaAccessKey",
         },
         { status: 400 },
       );
     }
 
+    // Search the beta access key in the database
+    const betaAccessKey = await getBetaAccessKey(data.betaAccessKey);
+
+    // If the beta access key is not found, return an error
+    if (!betaAccessKey || betaAccessKey.used) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unauthorized creation of a new brand",
+        },
+        { status: 401 },
+      );
+    }
+
+    // Create a new brand in the database
     const brand = await createBrand(data);
+
+    try {
+      // Set the beta access key as used
+      await setBetaAccessKeyUsed(data.betaAccessKey);
+    } catch (error) {
+      console.error("Set beta access key used error:", error);
+    }
 
     return NextResponse.json({
       success: true,

@@ -236,10 +236,13 @@ export const getChainLogoUrl = (chainId: string) => {
 };
 
 /**
- * Slugify a text (replace spaces with underscores and convert to lowercase)
+ * Slugify a text (replace spaces and special characters with underscores and convert to lowercase)
  * @param text - The text to slugify
  * @returns The slugified text
  */
 export const slugify = (text: string) => {
-  return text.toLowerCase().replace(/ /g, "_");
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "_");
 };

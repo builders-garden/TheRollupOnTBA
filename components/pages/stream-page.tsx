@@ -457,10 +457,9 @@ export const StreamPage = () => {
         )}
 
         {/* Featured Tokens */}
-        <FeaturedTokens
-          tokens={brand.featuredTokens.data || []}
-          user={user.data}
-        />
+        {brand.featuredTokens.data && brand.featuredTokens.data.length > 0 && (
+          <FeaturedTokens tokens={brand.featuredTokens.data} user={user.data} />
+        )}
 
         {/* About Section */}
         <AboutSection

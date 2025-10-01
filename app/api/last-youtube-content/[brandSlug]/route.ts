@@ -1,5 +1,6 @@
 import ky from "ky";
 import { NextRequest, NextResponse } from "next/server";
+import { parseStringPromise } from "xml2js";
 import { getBrandBySlug, updateBrand } from "@/lib/database/queries";
 import { YoutubeContent } from "@/lib/types/youtube-content.type";
 import { env } from "@/lib/zod";
@@ -13,10 +14,7 @@ export const GET = async (
 
     if (!brandSlug) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Brand slug is required",
-        },
+        { success: false, error: "Brand slug is required" },
         { status: 400 },
       );
     }
@@ -26,10 +24,7 @@ export const GET = async (
 
     if (!brand) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Brand not found",
-        },
+        { success: false, error: "Brand not found" },
         { status: 404 },
       );
     }
@@ -39,10 +34,7 @@ export const GET = async (
 
     if (!channelId) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Channel ID not found",
-        },
+        { success: false, error: "Channel ID not found" },
         { status: 404 },
       );
     }
@@ -53,7 +45,7 @@ export const GET = async (
       ? new Date(liveUrlExpiration) < new Date()
       : true;
 
-    // If the live url is not expired, return the live url from the database
+    // If cached live URL still valid, just return it
     if (!isLiveUrlExpired) {
       if (!brand.youtubeLiveUrl) {
         // If the live url is not found, return the live url generated from the channel id
@@ -83,7 +75,7 @@ export const GET = async (
     }
 
     try {
-      // If the live url is expired, fetch the last youtube content
+      // Try to fetch an active live event first
       const lastYoutubeContent = await ky
         .get<YoutubeContent>("https://www.googleapis.com/youtube/v3/search", {
           searchParams: {
@@ -92,36 +84,58 @@ export const GET = async (
             part: "snippet",
             key: env.YOUTUBE_API_KEY,
             maxResults: 1,
+            eventType: "live",
           },
         })
         .json();
 
-      console.log(
-        "TEST lastYoutubeContent",
-        JSON.stringify(lastYoutubeContent, null, 2),
-      );
+      let youtubeLiveUrl: string;
+      let title: string;
 
-      // Generate the youtube live url
-      const youtubeLiveUrl = `https://www.youtube.com/embed/${lastYoutubeContent.items[0].id.videoId}`;
+      if (lastYoutubeContent.items && lastYoutubeContent.items.length > 0) {
+        console.log(
+          "TEST: Live video found",
+          JSON.stringify(lastYoutubeContent.items[0], null, 2),
+        );
+        // Case 1: Live video found
+        youtubeLiveUrl = `https://www.youtube.com/embed/${lastYoutubeContent.items[0].id.videoId}`;
+        title = lastYoutubeContent.items[0].snippet.title;
+      } else {
+        // Case 2: No live → fallback to RSS XML
+        const FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+        const xml = await ky.get(FEED_URL).text();
+        const parsed = await parseStringPromise(xml);
 
-      // Get the title of the last youtube content
-      const title = lastYoutubeContent.items[0].snippet.title;
+        const entry = parsed.feed.entry?.[0];
+        if (!entry) {
+          return NextResponse.json(
+            {
+              success: true,
+              data: {
+                url: `https://www.youtube.com/embed/live_stream?channel=${channelId}`,
+                title: `${brand.name} Streaming`,
+              },
+            },
+            { status: 200 },
+          );
+        }
 
-      // Update the live url in the database
+        const videoId = entry["yt:videoId"][0];
+        title = entry.title[0];
+        youtubeLiveUrl = `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      console.log("TEST: video found in XML", youtubeLiveUrl, title);
+
+      // Save latest video/live in DB with short TTL
       await updateBrand(brandSlug, {
-        youtubeLiveUrl: youtubeLiveUrl,
-        liveUrlExpiration: new Date(Date.now() + 1000 * 60 * 2).getTime(), // 2 minutes ahead of now in unix timestamp
+        youtubeLiveUrl,
+        liveUrlExpiration: new Date(Date.now() + 1000 * 60 * 2).getTime(),
         streamTitle: title ?? `${brand.name} Streaming`,
       });
 
       return NextResponse.json(
-        {
-          success: true,
-          data: {
-            url: youtubeLiveUrl,
-            title: title ?? `${brand.name} Streaming`,
-          },
-        },
+        { success: true, data: { url: youtubeLiveUrl, title } },
         { status: 200 },
       );
     } catch (error) {
@@ -140,10 +154,7 @@ export const GET = async (
   } catch (error) {
     console.error("Get youtube content error:", error);
     return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to fetch youtube content",
-      },
+      { success: false, error: "Failed to fetch youtube content" },
       { status: 500 },
     );
   }

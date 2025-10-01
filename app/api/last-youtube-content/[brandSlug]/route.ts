@@ -93,10 +93,6 @@ export const GET = async (
       let title: string;
 
       if (lastYoutubeContent.items && lastYoutubeContent.items.length > 0) {
-        console.log(
-          "TEST: Live video found",
-          JSON.stringify(lastYoutubeContent.items[0], null, 2),
-        );
         // Case 1: Live video found
         youtubeLiveUrl = `https://www.youtube.com/embed/${lastYoutubeContent.items[0].id.videoId}`;
         title = lastYoutubeContent.items[0].snippet.title;
@@ -124,8 +120,6 @@ export const GET = async (
         title = entry.title[0];
         youtubeLiveUrl = `https://www.youtube.com/embed/${videoId}`;
       }
-
-      console.log("TEST: video found in XML", youtubeLiveUrl, title);
 
       // Save latest video/live in DB with short TTL
       await updateBrand(brandSlug, {

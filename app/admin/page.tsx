@@ -13,6 +13,7 @@ import { SideNavbar } from "@/components/custom-ui/admin/side-navbar";
 import { SignUpContent } from "@/components/custom-ui/admin/sign-up-content";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
+import { AnalyticsContent } from "@/components/custom-ui/admin/analytics/analytics-content";
 
 export default function AdminPage() {
   const [selectedPageContent, setSelectedPageContent] =
@@ -22,6 +23,7 @@ export default function AdminPage() {
   // Whether the page content is overlay or brand
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
   const isContentBrand = selectedPageContent === AdminPageContent.BRAND;
+  const isContentAnalytics = selectedPageContent === AdminPageContent.ANALYTICS;
 
   return (
     <AnimatePresence mode="wait">
@@ -59,9 +61,11 @@ export default function AdminPage() {
                 <OverlayContent key="overlay" />
               ) : isContentBrand ? (
                 <BrandContent key="brand" />
+              ) : isContentAnalytics ? (
+                <AnalyticsContent key="analytics" />
               ) : (
                 <PluginsContent key="plugins" brandId={brand.data.id} />
-              )}
+              ) }
             </AnimatePresence>
           </div>
         </motion.div>

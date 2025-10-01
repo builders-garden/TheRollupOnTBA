@@ -14,6 +14,12 @@ export enum AdminPageContent {
   BRAND = "brand",
   PLUGINS = "plugins",
   OVERLAY = "overlay",
+  ANALYTICS = "analytics",
+}
+
+// Analytics Tabs
+export enum AnalyticsTabs {
+  DATA = "data",
 }
 
 // Brand Tabs

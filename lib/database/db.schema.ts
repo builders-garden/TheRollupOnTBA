@@ -25,7 +25,9 @@ export const brandsTable = sqliteTable("brands", {
   coverUrl: text("cover_url"),
   description: text("description"),
   streamTitle: text("stream_title"),
+  youtubeChannelId: text("youtube_channel_id"),
   youtubeLiveUrl: text("youtube_live_url"),
+  liveUrlExpiration: integer("live_url_expiration"),
   activePlugins: text("active_plugins", { mode: "json" }).$type<
     ActivePlugins[]
   >(),

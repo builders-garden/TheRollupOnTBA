@@ -41,6 +41,8 @@ export const SignUpContent = () => {
       {
         name: brandName.trim(),
         slug: slugifiedBrandName,
+        isActive: true,
+        activePlugins: ["tips", "tokens", "bullmeter"],
         betaAccessKey,
       },
       {

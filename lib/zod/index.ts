@@ -12,6 +12,7 @@ export const env = createEnv({
     TURSO_DATABASE_URL: z.string().min(1),
     TURSO_DATABASE_TOKEN: z.string().min(1),
     PINATA_JWT_SECRET: z.string().min(1),
+    YOUTUBE_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_ENV: z

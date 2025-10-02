@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AnalyticsTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../../nb-button";
-import { DataContent } from "./data/data-content";
+import { TipsContent } from "./tips/tips-content";
 
 export const AnalyticsContent = () => {
   // Brand tabs states
@@ -35,14 +35,14 @@ export const AnalyticsContent = () => {
               isDataTab && "text-white",
             )}>
             <Sparkle className="size-6" />
-            <p className="text-xl font-bold">Info</p>
+            <p className="text-xl font-bold">Tips</p>
           </div>
         </NBButton>
       </div>
 
       {/* Brand Content */}
       <AnimatePresence mode="wait">
-        {isDataTab && <DataContent key="data" />}
+        {isDataTab && <TipsContent key="data" />}
       </AnimatePresence>
     </motion.div>
   );

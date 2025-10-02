@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { AdminBanner } from "@/components/custom-ui/admin/admin-banner";
+import { AnalyticsContent } from "@/components/custom-ui/admin/analytics/analytics-content";
 import { BrandContent } from "@/components/custom-ui/admin/brand/brand-content";
 import { OverlayContent } from "@/components/custom-ui/admin/overlay/overlay-content";
 import { PluginsContent } from "@/components/custom-ui/admin/plugins/plugins-content";
@@ -13,7 +14,6 @@ import { SideNavbar } from "@/components/custom-ui/admin/side-navbar";
 import { SignUpContent } from "@/components/custom-ui/admin/sign-up-content";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
-import { AnalyticsContent } from "@/components/custom-ui/admin/analytics/analytics-content";
 
 export default function AdminPage() {
   const [selectedPageContent, setSelectedPageContent] =
@@ -65,7 +65,7 @@ export default function AdminPage() {
                 <AnalyticsContent key="analytics" />
               ) : (
                 <PluginsContent key="plugins" brandId={brand.data.id} />
-              ) }
+              )}
             </AnimatePresence>
           </div>
         </motion.div>

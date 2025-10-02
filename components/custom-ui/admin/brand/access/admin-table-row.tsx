@@ -14,6 +14,7 @@ interface AdminTableRowProps {
   index: number;
   isCreatingAdmin: boolean;
   isUpdatingAdmin: boolean;
+  isLastAdmin: boolean;
 }
 
 export const AdminTableRow = ({
@@ -21,6 +22,7 @@ export const AdminTableRow = ({
   index,
   isCreatingAdmin,
   isUpdatingAdmin,
+  isLastAdmin,
 }: AdminTableRowProps) => {
   const [isCopying, setIsCopying] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
@@ -52,11 +54,19 @@ export const AdminTableRow = ({
       isCreatingAdmin ||
       isCopying ||
       hasCopied ||
-      isUpdatingAdmin
+      isUpdatingAdmin ||
+      !brand.data?.id
     )
       return;
+
+    // If there is only one admin, return an error
+    if (isLastAdmin) {
+      toast.error("Cannot delete the last admin");
+      return;
+    }
+
     deleteAdmin(
-      { address },
+      { brandId: brand.data.id, address },
       {
         onSuccess: async () => {
           await refetchAdmins();

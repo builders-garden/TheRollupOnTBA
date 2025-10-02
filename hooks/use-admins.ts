@@ -41,9 +41,9 @@ export const useCreateAdmin = () => {
 export const useDeleteAdmin = () => {
   return useApiMutation<
     { success: boolean; message: string },
-    { address: string }
+    { brandId: string; address: string }
   >({
-    url: (variables) => `/api/admins/${variables.address}`,
+    url: (variables) => `/api/admins/${variables.brandId}/${variables.address}`,
     method: "DELETE",
   });
 };

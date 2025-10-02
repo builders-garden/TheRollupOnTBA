@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BrandTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../../nb-button";
-import { AccessContent } from "./access/access-conent";
+import { AccessContent } from "./access/access-content";
 import { InfoContent } from "./info/info-content";
 
 export const BrandContent = () => {

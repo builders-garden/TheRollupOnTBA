@@ -19,6 +19,9 @@ export const AdminsTable = ({
   isCreatingAdmin,
   isUpdatingAdmin,
 }: AdminsTableProps) => {
+  // Whether there is only one admin remaining
+  const isLastAdmin = admins.length === 1;
+
   return (
     <div className="w-full">
       <h1 className="font-bold text-xl mt-6">Current Admins</h1>
@@ -40,6 +43,7 @@ export const AdminsTable = ({
               index={index}
               isCreatingAdmin={isCreatingAdmin}
               isUpdatingAdmin={isUpdatingAdmin}
+              isLastAdmin={isLastAdmin}
             />
           ))}
         </TableBody>

@@ -8,7 +8,7 @@ import {
   isAddress,
 } from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
-import { BULLMETER_ADDRESS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
+import { BULLMETER_ADDRESS, ZERO_ADDRESS } from "@/lib/constants";
 import { BullMeter, CreateBullMeter } from "@/lib/database/db.schema";
 import {
   getAddressFromBaseName,
@@ -183,7 +183,7 @@ export const useBullmeterPlugin = () => {
         const pollOwner = guests.find((guest) => guest.owner);
 
         // Get the guest address and split percent
-        let ownerAddress: Address = NATIVE_TOKEN_ADDRESS;
+        let ownerAddress: Address = ZERO_ADDRESS;
 
         if (pollOwner) {
           const pollOwnerNameOrAddress = pollOwner.nameOrAddress;
@@ -203,7 +203,7 @@ export const useBullmeterPlugin = () => {
         const liveGuest = guests.find((guest) => !guest.owner);
 
         // Get the guest address and split percent
-        let guestAddress: Address = NATIVE_TOKEN_ADDRESS;
+        let guestAddress: Address = ZERO_ADDRESS;
         let guestSplitPercent = 0.0;
 
         if (liveGuest) {
@@ -227,7 +227,7 @@ export const useBullmeterPlugin = () => {
         // the native token address and the guest split percent to 0.0 because the owner will
         // receive all the rewards
         if (guestAddress.toLowerCase() === ownerAddress.toLowerCase()) {
-          guestAddress = NATIVE_TOKEN_ADDRESS;
+          guestAddress = ZERO_ADDRESS;
           guestSplitPercent = 0.0;
         }
 

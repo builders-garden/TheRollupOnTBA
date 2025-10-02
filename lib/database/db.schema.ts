@@ -10,7 +10,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { ulid } from "ulid";
 import { Address, Hex } from "viem";
-import { NATIVE_TOKEN_ADDRESS } from "../constants";
+import { ZERO_ADDRESS } from "../constants";
 import { ActivePlugins, SocialMediaUrls } from "../types/shared.type";
 
 /**
@@ -67,7 +67,7 @@ export const bullMetersTable = sqliteTable(
     ownerAddress: text("owner_address")
       .$type<Address>()
       .notNull()
-      .default(NATIVE_TOKEN_ADDRESS),
+      .default(ZERO_ADDRESS),
     guestAddress: text("guest_address").$type<Address>(),
     guestSplitPercent: numeric("guest_split_percent"),
     totalYesVotes: integer("total_yes_votes"),

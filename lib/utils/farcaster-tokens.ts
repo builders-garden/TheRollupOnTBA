@@ -1,5 +1,5 @@
 import { FeaturedToken } from "@/lib/database/db.schema";
-import { NATIVE_TOKEN_ADDRESS } from "../constants";
+import { ZERO_ADDRESS } from "../constants";
 
 /**
  * Extended token type with CAIP-19 formatted token ID
@@ -16,7 +16,7 @@ export interface FarcasterToken extends FeaturedToken {
  */
 const formatTokenAddress = (address: string, chainId: number): string => {
   // Check if it's a native token
-  if (address === NATIVE_TOKEN_ADDRESS) {
+  if (address === ZERO_ADDRESS) {
     return `eip155:${chainId}/native`;
   }
 
@@ -30,7 +30,10 @@ const formatTokenAddress = (address: string, chainId: number): string => {
  * @param chainId - Chain ID
  * @returns CAIP-19 formatted token ID
  */
-export const formatSingleToken = (address: string, chainId?: number): string => {
+export const formatSingleToken = (
+  address: string,
+  chainId?: number,
+): string => {
   if (!chainId) {
     chainId = 8453;
   }
@@ -48,7 +51,7 @@ export const formatTokensForFarcaster = (
   return tokens.map((token) => ({
     ...token,
     formattedToken: formatTokenAddress(
-      token.address || NATIVE_TOKEN_ADDRESS,
+      token.address || ZERO_ADDRESS,
       token.chainId || 1,
     ),
   }));

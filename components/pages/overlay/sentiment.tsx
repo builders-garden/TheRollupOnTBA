@@ -12,6 +12,7 @@ import {
   PollNotificationEvent,
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket";
+import { env } from "@/lib/zod";
 
 export const OverlaySentiment = ({ brand }: { brand: Brand }) => {
   const { data: activeBullMeter, isLoading: isLoadingActiveBullMeter } =
@@ -44,7 +45,7 @@ export const OverlaySentiment = ({ brand }: { brand: Brand }) => {
               endTimeMs: (p.deadlineSeconds || 0) * 1000,
               votes: p.votes || 0,
               voters: p.voters || 0,
-              qrCodeUrl: p.pollId || "",
+              qrCodeUrl: `cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.slug}`,
               position: PopupPositions.TOP_CENTER,
               results: p.results || { bullPercent: 0, bearPercent: 0 },
             }}

@@ -28,8 +28,7 @@ export const BASE_USDC_LOGO_URL =
   "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042194";
 
 // Native token address
-export const NATIVE_TOKEN_ADDRESS =
-  "0x0000000000000000000000000000000000000000";
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 // Temporary bullmeter address on Base
 export const BULLMETER_ADDRESS = "0x7bB86545242688D51204748292433a07270863B0";

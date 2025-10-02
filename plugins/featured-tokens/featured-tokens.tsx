@@ -9,7 +9,7 @@ import {
   BASE_USDC_ADDRESS,
   BASE_USDC_LOGO_URL,
   FARCASTER_CLIENT_FID,
-  NATIVE_TOKEN_ADDRESS,
+  ZERO_ADDRESS,
 } from "@/lib/constants";
 import { FeaturedToken } from "@/lib/database/db.schema";
 import { PopupPositions } from "@/lib/enums";
@@ -37,7 +37,7 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
 
       // token details
       const tokenName = token.symbol || token.name || "";
-      const tokenAddress = token.address || NATIVE_TOKEN_ADDRESS;
+      const tokenAddress = token.address || ZERO_ADDRESS;
       const tokenChainId = token.chainId || 8453;
       const tokenImageUrl = token.logoUrl || "";
       const tokenDecimals = token.decimals || 18;
@@ -105,7 +105,7 @@ export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
   const handleShowChart = async (token: FeaturedToken) => {
     try {
       // token details
-      const tokenAddress = token.address || NATIVE_TOKEN_ADDRESS;
+      const tokenAddress = token.address || ZERO_ADDRESS;
       const tokenChainId = token.chainId || 8453;
 
       // Placeholder token addresses - replace with actual token addresses

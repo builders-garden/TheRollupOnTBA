@@ -313,8 +313,6 @@ export const useBullmeterPlugin = () => {
               deadline: Number(updatedLastPollDeadline),
             };
 
-            console.log("TEST pollData:", pollData);
-
             const response = await ky.post<{
               success: boolean;
               error?: string;

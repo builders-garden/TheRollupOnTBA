@@ -1,4 +1,4 @@
-import { Blocks, Images, LogOut, Palette, ShieldUser } from "lucide-react";
+import { Blocks, ChartBar, Images, LogOut, Palette, ShieldUser } from "lucide-react";
 import Image from "next/image";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
@@ -21,6 +21,7 @@ export const SideNavbar = ({
   const isContentPlugins = selectedPageContent === AdminPageContent.PLUGINS;
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
   const isContentBrand = selectedPageContent === AdminPageContent.BRAND;
+  const isContentAnalytics = selectedPageContent === AdminPageContent.ANALYTICS;
 
   return (
     <NBCard className="flex flex-col justify-between items-center h-full w-[264px] bg-warning p-5">
@@ -78,6 +79,15 @@ export const SideNavbar = ({
               )}>
               <Images className="size-5" />
               <p className="text-xl font-bold">Overlay</p>
+            </div>
+          </NBButton>
+          <NBButton
+            className="w-full"
+            variant={isContentAnalytics ? "default" : "ghost"}
+            onClick={() => setSelectedPageContent(AdminPageContent.ANALYTICS)}>
+            <div className={cn("flex justify-start items-center w-full gap-2", !isContentAnalytics && "text-white")}>
+              <ChartBar className="size-5" />
+              <p className="text-xl font-bold">Analytics</p>
             </div>
           </NBButton>
         </div>

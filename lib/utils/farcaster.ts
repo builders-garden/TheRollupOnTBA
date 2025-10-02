@@ -125,7 +125,7 @@ export async function getFarcasterManifest() {
       description:
         "Control The Stream lets viewers shape live streams in real time with tips, votes, and trades—making watching interactive and participatory.", // 170 characters, no emojis or special characters, promotional message displayed on Mini App Page
       primaryCategory: "social", // https://github.com/farcasterxyz/miniapps/blob/main/packages/miniapp-core/src/schemas/manifest.ts
-      tags: ["base", "streaming", "therollup"], // up to 5 tags, filtering/search tags
+      tags: ["base", "streaming"], // up to 5 tags, filtering/search tags
       tagline: "Turn viewing into action", // 30 characters, marketing tagline should be punchy and descriptive
       ogTitle: `${miniappName}`, // 30 characters, app name + short tag, Title case, no emojis
       ogDescription: "Turn viewing into action", // 100 characters, summarize core benefits in 1-2 lines

@@ -15,6 +15,7 @@ interface ShareButtonProps {
   buttonClassName?: string;
   showText?: boolean;
   miniappUrl: string;
+  copyLinkText?: string;
   handleShare?: () => void;
 }
 
@@ -24,6 +25,7 @@ export const ShareButton = ({
   buttonClassName,
   showText = false,
   miniappUrl,
+  copyLinkText,
 }: ShareButtonProps) => {
   const [linkCopied, setLinkCopied] = useState(false);
 
@@ -40,7 +42,7 @@ export const ShareButton = ({
   // Handles the copy link
   const handleCopyLink = async () => {
     setLinkCopied(true);
-    await copyToClipboard(miniappUrl);
+    await copyToClipboard(copyLinkText || miniappUrl);
     setTimeout(() => {
       setLinkCopied(false);
     }, 450);

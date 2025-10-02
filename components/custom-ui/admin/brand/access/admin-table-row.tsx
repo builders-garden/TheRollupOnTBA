@@ -27,11 +27,7 @@ export const AdminTableRow = ({
 
   const { brand, admin: connectedAdmin } = useAdminAuth();
   const { mutate: deleteAdmin, isPending: isDeletingAdmin } = useDeleteAdmin();
-  const {
-    data: admins,
-    isLoading: isLoadingAdmins,
-    refetch: refetchAdmins,
-  } = useAdminsByBrandId({
+  const { refetch: refetchAdmins } = useAdminsByBrandId({
     brandId: brand.data?.id,
     enabled: !!brand.data?.id,
   });

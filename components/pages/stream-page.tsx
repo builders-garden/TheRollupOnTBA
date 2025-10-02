@@ -11,6 +11,7 @@ import { useApprove } from "@/hooks/use-approve";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useConfetti } from "@/hooks/use-confetti";
+import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { THE_ROLLUP_HOSTS } from "@/lib/constants";
@@ -35,6 +36,7 @@ import { NBModal } from "../custom-ui/nb-modal";
 import { ShareButton } from "../custom-ui/share-button";
 import { Checkbox } from "../shadcn-ui/checkbox";
 import { Separator } from "../shadcn-ui/separator";
+import { Skeleton } from "../shadcn-ui/skeleton";
 
 // Unified poll state populated from initial fetch and socket updates
 type NormalizedPoll = {
@@ -55,6 +57,10 @@ export const StreamPage = () => {
   const { startConfetti } = useConfetti({
     duration: 250,
   });
+
+  // Get the last youtube content for this brand
+  const { data: lastYoutubeContent, isLoading: isLastYoutubeContentLoading } =
+    useLastYoutubeContent(brand.data?.slug || "");
 
   // Get active bullmeter poll for this brand
   const { data: activePoll, isLoading: isPollLoading } = useActiveBullMeter(
@@ -371,49 +377,107 @@ export const StreamPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="relative flex flex-col justify-center items-start h-full w-full no-scrollbar">
-      {brand.data?.youtubeLiveUrl ? (
-        <iframe
-          width="100%"
-          height="265px"
-          src={brand.data.youtubeLiveUrl}
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-        />
-      ) : (
-        <div className="flex justify-center items-center w-full h-[265px] bg-gray-400">
-          <p className="text-sm">No Livestream found, try again later!</p>
-        </div>
-      )}
+      <div className="flex justify-center items-center w-full h-[265px] bg-gray-300">
+        <AnimatePresence mode="wait">
+          {isLastYoutubeContentLoading ? (
+            <motion.div
+              key="youtube-stream-video-loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex justify-center items-center size-full">
+              <Loader2 className="size-7 text-black animate-spin" />
+            </motion.div>
+          ) : lastYoutubeContent?.data?.url ? (
+            <motion.div
+              key="youtube-stream-video"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="size-full">
+              <iframe
+                width="100%"
+                height="265px"
+                src={lastYoutubeContent.data.url}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="youtube-stream-video-not-found"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex justify-center items-center size-full">
+              <p className="text-sm font-bold text-center">
+                No Livestream found
+                <br />
+                try again later!
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Bottom Section */}
       <div className="flex flex-col justify-start items-center h-full w-full px-5 py-5 pb-[82px] gap-5">
         {/* Title */}
-        <div className="flex flex-col justify-center items-center w-full gap-0.5">
-          <div className="flex justify-between items-center w-full">
-            <h1 className="shrink-0 font-extrabold text-xl">
-              {brand.data?.streamTitle || `The Rollup Streaming`}
-            </h1>
-            <ShareButton
-              miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
-              buttonClassName="shrink-1 w-min cursor-pointer"
-            />
-          </div>
-          {brand.data?.logoUrl && (
-            <div className="flex justify-start items-center w-full gap-1.5">
-              <p className="text-sm">by</p>
-              <Image
-                src={brand.data.logoUrl}
-                alt={brand.data.name || ""}
-                width={20}
-                height={21}
-                className="rounded-[4px]"
-              />
-              <p className="text-md">{brand.data.name}</p>
-            </div>
+
+        <AnimatePresence mode="wait">
+          {isLastYoutubeContentLoading ? (
+            <motion.div
+              key="stream-title-loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex flex-col justify-center items-center w-full gap-0.5">
+              <Skeleton className="w-full h-[54px] bg-black/10" />
+            </motion.div>
+          ) : (
+            lastYoutubeContent?.data?.title && (
+              <motion.div
+                key="stream-title"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="flex flex-col justify-center items-center w-full gap-0.5">
+                <div className="flex justify-between items-center w-full">
+                  <h1 className="font-extrabold text-xl">
+                    {lastYoutubeContent?.data?.title || ""}
+                  </h1>
+                  <ShareButton
+                    miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
+                    copyLinkText={`cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
+                    buttonClassName="shrink-1 w-min cursor-pointer"
+                  />
+                </div>
+                {brand.data?.name && (
+                  <div className="flex justify-start items-center w-full gap-1.5">
+                    <p className="text-sm">by</p>
+                    {brand.data?.logoUrl && (
+                      <Image
+                        src={brand.data.logoUrl}
+                        alt={brand.data.name}
+                        width={21}
+                        height={21}
+                        className="rounded-[4px]"
+                      />
+                    )}
+                    <p className="text-md">{brand.data.name}</p>
+                  </div>
+                )}
+              </motion.div>
+            )
           )}
-        </div>
+        </AnimatePresence>
 
         <Separator className="w-full bg-border" />
 
@@ -464,19 +528,29 @@ export const StreamPage = () => {
         {/* About Section */}
         <AboutSection
           label="About"
-          text={brand.data?.description || ""}
+          text={brand.data?.description || "No description provided"}
           coverUrl={brand.data?.coverUrl || ""}
-          youtubeUrl={brand.data?.socialMediaUrls?.youtube || ""}
+          youtubeUrl={
+            brand.data?.youtubeChannelId
+              ? `https://www.youtube.com/channel/${brand.data?.youtubeChannelId}`
+              : undefined
+          }
           twitchUrl={brand.data?.socialMediaUrls?.twitch || ""}
           twitterUrl={brand.data?.socialMediaUrls?.x || ""}
           websiteUrl={brand.data?.websiteUrl || ""}
         />
 
         {/* Hosts Section */}
-        <HostsSection hosts={THE_ROLLUP_HOSTS} label="Hosts" />
+        {/* TODO: Make this dynamic */}
+        {brand.data?.slug === "the_rollup" && (
+          <HostsSection hosts={THE_ROLLUP_HOSTS} label="Hosts" />
+        )}
 
         {/* Newsletter CTA */}
-        <NewsletterCTA label="Subscribe to newsletter" />
+        {/* TODO: Make this dynamic */}
+        {brand.data?.slug === "the_rollup" && (
+          <NewsletterCTA label="Subscribe to newsletter" />
+        )}
       </div>
       {/* Floating Bottom Navbar */}
       {user.data && <BottomNavbar user={user.data} />}

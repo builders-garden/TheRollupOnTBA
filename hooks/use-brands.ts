@@ -61,7 +61,10 @@ export const useBrandByAddress = (address?: string) => {
 
 // Mutation hooks
 export const useCreateBrand = () => {
-  return useApiMutation<BrandApiResponse, CreateBrand>({
+  return useApiMutation<
+    BrandApiResponse,
+    CreateBrand & { betaAccessKey: string }
+  >({
     url: "/api/brands",
     method: "POST",
     body: (variables) => variables,

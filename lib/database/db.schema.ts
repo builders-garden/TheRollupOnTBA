@@ -25,7 +25,9 @@ export const brandsTable = sqliteTable("brands", {
   coverUrl: text("cover_url"),
   description: text("description"),
   streamTitle: text("stream_title"),
+  youtubeChannelId: text("youtube_channel_id"),
   youtubeLiveUrl: text("youtube_live_url"),
+  liveUrlExpiration: integer("live_url_expiration"),
   activePlugins: text("active_plugins", { mode: "json" }).$type<
     ActivePlugins[]
   >(),
@@ -225,3 +227,17 @@ export const adminsTable = sqliteTable("admins", {
 export type Admin = typeof adminsTable.$inferSelect;
 export type CreateAdmin = typeof adminsTable.$inferInsert;
 export type UpdateAdmin = Partial<CreateAdmin>;
+
+/**
+ * Beta Access Keys table
+ */
+export const betaAccessKeysTable = sqliteTable("beta_access_keys", {
+  key: text("key").primaryKey(),
+  used: integer("used", { mode: "boolean" }).default(false),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type BetaAccessKey = typeof betaAccessKeysTable.$inferSelect;
+export type CreateBetaAccessKey = typeof betaAccessKeysTable.$inferInsert;
+export type UpdateBetaAccessKey = Partial<CreateBetaAccessKey>;

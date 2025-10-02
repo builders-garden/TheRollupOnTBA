@@ -1,4 +1,4 @@
-import { Globe, Podcast, Signature, Twitch, Youtube } from "lucide-react";
+import { Globe, Signature, Twitch, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useCallback, useMemo, useState } from "react";
@@ -18,84 +18,28 @@ export const InfoContent = () => {
 
   // Social links states
   const [brandName, setBrandName] = useState(brandData?.name || "");
-  const [youtubeLiveUrl, setYoutubeLiveUrl] = useState(
-    brandData?.youtubeLiveUrl || "",
-  );
-  const [youtubeChannelUrl, setYoutubeChannelUrl] = useState(
-    brandData?.socialMediaUrls?.youtube || "",
+  const [youtubeChannelId, setYoutubeChannelId] = useState(
+    brandData?.youtubeChannelId || "",
   );
   const [twitchChannelUrl, setTwitchChannelUrl] = useState(
     brandData?.socialMediaUrls?.twitch || "",
   );
   const [xUrl, setXUrl] = useState(brandData?.socialMediaUrls?.x || "");
   const [websiteUrl, setWebsiteUrl] = useState(brandData?.websiteUrl || "");
-  const [streamTitle, setStreamTitle] = useState(brandData?.streamTitle || "");
 
   // Text area description state
   const [description, setDescription] = useState(brandData?.description || "");
 
-  // Normalize YouTube URLs to embed format
-  const normalizeYouTubeEmbedUrl = useCallback((inputUrl: string) => {
-    try {
-      const trimmed = (inputUrl || "").trim();
-      if (!trimmed) return "";
-      // Handle a leading '@' accidentally pasted before the URL
-      const sanitized = trimmed.startsWith("@") ? trimmed.slice(1) : trimmed;
-
-      const url = new URL(sanitized);
-      const host = url.hostname.toLowerCase();
-      let videoId = "";
-
-      if (host.includes("youtu.be")) {
-        // https://youtu.be/<id>
-        videoId = url.pathname.split("/").filter(Boolean)[0] || "";
-      } else if (
-        host.includes("youtube.com") ||
-        host.includes("youtube-nocookie.com") ||
-        host.includes("m.youtube.com")
-      ) {
-        const path = url.pathname;
-        const parts = path.split("/").filter(Boolean);
-        if (path === "/watch") {
-          // https://www.youtube.com/watch?v=<id>
-          videoId = url.searchParams.get("v") || "";
-        } else if (parts[0] === "live" && parts[1]) {
-          // https://www.youtube.com/live/<id>
-          videoId = parts[1];
-        } else if (parts[0] === "embed" && parts[1]) {
-          // Already embed format
-          videoId = parts[1];
-        } else if (parts[0] === "shorts" && parts[1]) {
-          // https://www.youtube.com/shorts/<id>
-          videoId = parts[1];
-        }
-      }
-
-      if (!videoId) return sanitized; // If not recognized, keep original
-      return `https://www.youtube.com/embed/${videoId}`;
-    } catch {
-      return inputUrl; // If not a valid URL, keep as-is
-    }
-  }, []);
-
   // A list of all the social links
   const socialLinks = [
     {
-      key: "yt-live-url",
-      label: "Youtube Live URL",
+      key: "yt-channel-id",
+      label: "Youtube Channel ID",
       icon: <Youtube className="size-5" />,
       inputColor: "destructive",
-      placeholder: "https://www.youtube.com/livestream",
-      value: youtubeLiveUrl,
-      setValue: setYoutubeLiveUrl,
-    },
-    {
-      key: "yt-channel-url",
-      label: "Youtube",
-      icon: <Youtube className="size-5" />,
-      placeholder: "https://www.youtube.com/@username",
-      value: youtubeChannelUrl,
-      setValue: setYoutubeChannelUrl,
+      placeholder: "e.g. UCC2UPtxxxxxxxxxxUPZJ6g",
+      value: youtubeChannelId,
+      setValue: setYoutubeChannelId,
     },
     {
       key: "twitch-channel-url",
@@ -133,11 +77,6 @@ export const InfoContent = () => {
       ) => {
         if (!brandData || !brandData?.id) return;
         let dataToUpdate: string | SocialMediaUrls = updateData;
-        // Normalize YouTube Live URL before saving
-        if (field === "youtubeLiveUrl") {
-          const normalized = normalizeYouTubeEmbedUrl(String(updateData || ""));
-          dataToUpdate = normalized;
-        }
         if (field === "socialMediaUrls" && !!socialType) {
           dataToUpdate = {
             youtube: brandData.socialMediaUrls?.youtube || "",
@@ -166,17 +105,17 @@ export const InfoContent = () => {
         }
       };
     },
-    [brandData, normalizeYouTubeEmbedUrl],
+    [brandData],
   );
 
   // Wrapper to update state with normalized value and persist to DB
-  const updateYouTubeLiveUrl = useCallback(
-    (rawUrl?: string, onSuccess?: () => void, onError?: () => void) => {
-      const normalized = normalizeYouTubeEmbedUrl(String(rawUrl || ""));
-      setYoutubeLiveUrl(normalized);
-      handleUpdateBrandField("youtubeLiveUrl")(normalized, onSuccess, onError);
+  const updateYouTubeChannelId = useCallback(
+    (channelId?: string, onSuccess?: () => void, onError?: () => void) => {
+      if (!channelId) return;
+      setYoutubeChannelId(channelId || "");
+      handleUpdateBrandField("youtubeChannelId")(channelId, onSuccess, onError);
     },
-    [handleUpdateBrandField, normalizeYouTubeEmbedUrl],
+    [handleUpdateBrandField],
   );
 
   return (
@@ -200,13 +139,10 @@ export const InfoContent = () => {
           onConfirm={handleUpdateBrandField("name")}
           isUpdating={isUpdatingBrand}
         />
-        <NBTextInput
-          label="Stream Title"
-          icon={<Podcast className="size-5" />}
-          placeholder="Your stream title here..."
-          value={streamTitle}
-          setValue={setStreamTitle}
-          onConfirm={handleUpdateBrandField("streamTitle")}
+        <TextDescriptionArea
+          description={description}
+          setDescription={setDescription}
+          onConfirm={handleUpdateBrandField("description")}
           isUpdating={isUpdatingBrand}
         />
         <FileUpload
@@ -223,14 +159,6 @@ export const InfoContent = () => {
         />
       </div>
       <div className="grid grid-cols-4 gap-5 w-full">
-        <TextDescriptionArea
-          description={description}
-          setDescription={setDescription}
-          onConfirm={handleUpdateBrandField("description")}
-          isUpdating={isUpdatingBrand}
-        />
-      </div>
-      <div className="grid grid-cols-4 gap-5 w-full">
         {socialLinks.map((link) => (
           <NBTextInput
             key={link.key}
@@ -242,17 +170,15 @@ export const InfoContent = () => {
             setValue={link.setValue}
             isUpdating={isUpdatingBrand}
             onConfirm={
-              link.key === "yt-live-url"
-                ? updateYouTubeLiveUrl
-                : link.key === "yt-channel-url"
-                  ? handleUpdateBrandField("socialMediaUrls", "youtube")
-                  : link.key === "twitch-channel-url"
-                    ? handleUpdateBrandField("socialMediaUrls", "twitch")
-                    : link.key === "x-url"
-                      ? handleUpdateBrandField("socialMediaUrls", "x")
-                      : link.key === "website-url"
-                        ? handleUpdateBrandField("websiteUrl")
-                        : handleUpdateBrandField("youtubeLiveUrl")
+              link.key === "yt-channel-id"
+                ? updateYouTubeChannelId
+                : link.key === "twitch-channel-url"
+                  ? handleUpdateBrandField("socialMediaUrls", "twitch")
+                  : link.key === "x-url"
+                    ? handleUpdateBrandField("socialMediaUrls", "x")
+                    : link.key === "website-url"
+                      ? handleUpdateBrandField("websiteUrl")
+                      : undefined
             }
           />
         ))}

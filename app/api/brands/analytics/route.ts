@@ -1,9 +1,23 @@
 import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/database";
-import { brandsTable, tipsTable, userTable } from "@/lib/database/db.schema";
+import { tipsTable, userTable } from "@/lib/database/db.schema";
 import { getAdminsByBrandId } from "@/lib/database/queries/admins.query";
-import { authenticateApi } from "@/lib/utils/authenticate-api";
+import { getBrandByAddress } from "@/lib/database/queries/brand.query";
+
+// Valid sort fields and their SQL expressions
+const sortFields = {
+  totalTips: (dir: "asc" | "desc") =>
+    sql`count(${tipsTable.id}) ${sql.raw(dir)}`,
+  totalAmount: (dir: "asc" | "desc") =>
+    sql`sum(${tipsTable.amount}) ${sql.raw(dir)}`,
+  firstTip: (dir: "asc" | "desc") =>
+    sql`min(${tipsTable.createdAt}) ${sql.raw(dir)}`,
+  lastTip: (dir: "asc" | "desc") =>
+    sql`max(${tipsTable.createdAt}) ${sql.raw(dir)}`,
+} as const;
+
+type SortField = keyof typeof sortFields;
 
 export async function GET(
   request: Request,
@@ -11,31 +25,16 @@ export async function GET(
 ) {
   try {
     // Get wallet address from headers
-    const walletAddress = request.headers.get("x-wallet-address");
-    const fid = request.headers.get("x-farcaster-fid");
+    const walletAddress = request.headers.get("x-user-wallet-address");
 
-    // Authenticate user
-    const auth = await authenticateApi(fid, walletAddress);
-    if (auth.status === "nok") {
-      return NextResponse.json(
-        { error: auth.error },
-        { status: auth.statusCode },
-      );
-    }
+    const brand = await getBrandByAddress(walletAddress!);
 
-    // Get brand ID from slug
-    const brand = await db
-      .select({ id: brandsTable.id })
-      .from(brandsTable)
-      .where(eq(brandsTable.slug, params.brandSlug))
-      .limit(1);
-
-    if (!brand[0]) {
+    if (!brand) {
       return NextResponse.json({ error: "Brand not found" }, { status: 404 });
     }
 
     // Check if user is an admin for this brand
-    const admins = await getAdminsByBrandId(brand[0].id);
+    const admins = await getAdminsByBrandId(brand.id);
     const isAdmin = admins.some(
       (admin) => admin.address.toLowerCase() === walletAddress?.toLowerCase(),
     );
@@ -47,7 +46,7 @@ export async function GET(
       );
     }
 
-    // Extract pagination parameters from URL
+    // Extract pagination and sorting parameters from URL
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
     const limit = Math.min(
@@ -56,6 +55,10 @@ export async function GET(
     );
     const offset = (page - 1) * limit;
 
+    // Get sorting parameters
+    const sortBy = searchParams.get("sortBy") as SortField;
+    const sortDir = (searchParams.get("sortDir") || "desc") as "asc" | "desc";
+
     // Get total count for pagination
     const [{ count }] = await db
       .select({
@@ -63,10 +66,10 @@ export async function GET(
       })
       .from(tipsTable)
       .innerJoin(userTable, eq(tipsTable.senderId, userTable.id))
-      .where(eq(tipsTable.receiverBrandId, brand[0].id));
+      .where(eq(tipsTable.receiverBrandId, brand.id));
 
-    // Get paginated tips for this brand with user information and aggregated amounts
-    const userTips = await db
+    // Build the query
+    const query = db
       .select({
         userId: userTable.id,
         username: userTable.username,
@@ -80,11 +83,19 @@ export async function GET(
       })
       .from(tipsTable)
       .innerJoin(userTable, eq(tipsTable.senderId, userTable.id))
-      .where(eq(tipsTable.receiverBrandId, brand[0].id))
-      .groupBy(userTable.id)
-      .orderBy(sql`totalAmount desc`)
-      .limit(limit)
-      .offset(offset);
+      .where(eq(tipsTable.receiverBrandId, brand.id))
+      .groupBy(userTable.id);
+
+    // Apply sorting if valid sort field is provided
+    if (sortBy && sortBy in sortFields) {
+      query.orderBy(sortFields[sortBy](sortDir));
+    } else {
+      // Default sorting
+      query.orderBy(sortFields.totalAmount("desc"));
+    }
+
+    // Apply pagination
+    const userTips = await query.limit(limit).offset(offset);
 
     return NextResponse.json({
       data: userTips,
@@ -94,6 +105,10 @@ export async function GET(
         limit,
         totalPages: Math.ceil(count / limit),
         hasMore: offset + userTips.length < count,
+      },
+      sort: {
+        field: sortBy || "totalAmount",
+        direction: sortDir,
       },
     });
   } catch (error) {

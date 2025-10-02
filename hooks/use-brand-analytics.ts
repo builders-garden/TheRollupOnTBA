@@ -20,30 +20,38 @@ interface BrandAnalyticsPagination {
   hasMore: boolean;
 }
 
+interface BrandAnalyticsSort {
+  field: "totalTips" | "totalAmount" | "firstTip" | "lastTip";
+  direction: "asc" | "desc";
+}
+
 interface BrandAnalyticsResponse {
   data: BrandAnalyticsUser[];
   pagination: BrandAnalyticsPagination;
+  sort: BrandAnalyticsSort;
 }
 
 interface UseBrandAnalyticsOptions {
-  brandSlug: string;
   page?: number;
   limit?: number;
+  sortBy?: BrandAnalyticsSort["field"];
+  sortDir?: BrandAnalyticsSort["direction"];
   enabled?: boolean;
 }
 
 export const useBrandAnalytics = ({
-  brandSlug,
   page = 1,
   limit = 10,
+  sortBy = "totalAmount",
+  sortDir = "desc",
   enabled = true,
 }: UseBrandAnalyticsOptions) => {
   return useApiQuery<BrandAnalyticsResponse>({
-    queryKey: ["brand-analytics", brandSlug, page, limit],
-    url: `/api/brands/${brandSlug}/analytics?page=${page}&limit=${limit}`,
+    queryKey: ["brand-analytics", page, limit, sortBy, sortDir],
+    url: `/api/brands/analytics?page=${page}&limit=${limit}&sortBy=${sortBy}&sortDir=${sortDir}`,
     enabled,
     isProtected: true,
-    // Cache analytics data for 5 minutes‘
+    // Cache analytics data for 5 minutes
     staleTime: 5 * 60 * 1000,
   });
 };

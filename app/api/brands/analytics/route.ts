@@ -19,10 +19,7 @@ const sortFields = {
 
 type SortField = keyof typeof sortFields;
 
-export async function GET(
-  request: Request,
-  { params }: { params: { brandSlug: string } },
-) {
+export async function GET(request: Request) {
   try {
     // Get wallet address from headers
     const walletAddress = request.headers.get("x-user-wallet-address");

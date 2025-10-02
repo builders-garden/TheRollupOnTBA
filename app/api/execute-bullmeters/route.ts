@@ -4,10 +4,10 @@ import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
 import { BULLMETER_ADDRESS } from "@/lib/constants";
+import { BullMeter } from "@/lib/database/db.schema";
 import { updateVoteCounts } from "@/lib/database/queries/bull-meter.query";
 import { authenticateApi } from "@/lib/utils/authenticate-api";
 import { env } from "@/lib/zod";
-import { BullMeter } from "@/lib/database/db.schema";
 
 interface VoteRequest {
   voter: string;
@@ -99,19 +99,6 @@ export const POST = async (req: NextRequest) => {
         isYes,
         Number(voteCountBigInt),
       );
-
-      if (updatedBullMeter) {
-        console.log("✅ Database updated successfully:", {
-          pollId,
-          totalYesVotes: updatedBullMeter.totalYesVotes,
-          totalNoVotes: updatedBullMeter.totalNoVotes,
-        });
-      } else {
-        console.warn(
-          "⚠️ Database update failed - bull meter not found for pollId:",
-          pollId,
-        );
-      }
     } catch (dbError) {
       console.error("❌ Database update failed:", dbError);
       // Don't fail the entire request if database update fails

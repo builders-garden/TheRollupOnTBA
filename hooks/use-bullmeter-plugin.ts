@@ -1,14 +1,24 @@
 import { createBaseAccountSDK } from "@base-org/account";
 import ky from "ky";
 import { useCallback, useState } from "react";
-import { decodeFunctionResult, encodeFunctionData } from "viem";
+import {
+  Address,
+  decodeFunctionResult,
+  encodeFunctionData,
+  isAddress,
+} from "viem";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
-import { BULLMETER_ADDRESS } from "@/lib/constants";
+import { BULLMETER_ADDRESS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
 import { BullMeter, CreateBullMeter } from "@/lib/database/db.schema";
+import {
+  getAddressFromBaseName,
+  getAddressFromEnsName,
+} from "@/lib/ens/client";
 import {
   GetAllPollsByCreatorResponse,
   ReadPollData,
 } from "@/lib/types/bullmeter.type";
+import { Guest } from "@/lib/types/poll.type";
 
 // Types for wallet_sendCalls
 interface SendCallsCall {
@@ -161,8 +171,7 @@ export const useBullmeterPlugin = () => {
       startTime: number,
       duration: number,
       maxVotePerUser: number,
-      guest: string,
-      guestSplitPercent: number,
+      guests: Guest[],
     ) => {
       setIsLoading(true);
       setError(null);
@@ -170,17 +179,69 @@ export const useBullmeterPlugin = () => {
       try {
         const { provider, address } = await getWalletConnection();
 
+        // Find the poll owner guest
+        const pollOwner = guests.find((guest) => guest.owner);
+
+        // Get the guest address and split percent
+        let ownerAddress: Address = NATIVE_TOKEN_ADDRESS;
+
+        if (pollOwner) {
+          const pollOwnerNameOrAddress = pollOwner.nameOrAddress;
+          const ownerAddressFinding = isAddress(pollOwnerNameOrAddress)
+            ? pollOwnerNameOrAddress
+            : pollOwnerNameOrAddress.includes(".base.eth")
+              ? await getAddressFromBaseName(pollOwnerNameOrAddress as Address)
+              : pollOwnerNameOrAddress.includes(".eth")
+                ? await getAddressFromEnsName(pollOwnerNameOrAddress as Address)
+                : null;
+          ownerAddress = !!ownerAddressFinding
+            ? ownerAddressFinding
+            : ownerAddress;
+        }
+
+        // Find the live guest if there is one
+        const liveGuest = guests.find((guest) => !guest.owner);
+
+        // Get the guest address and split percent
+        let guestAddress: Address = NATIVE_TOKEN_ADDRESS;
+        let guestSplitPercent = 0.0;
+
+        if (liveGuest) {
+          const liveGuestNameOrAddress = liveGuest.nameOrAddress;
+          const guestAddressFinding = isAddress(liveGuestNameOrAddress)
+            ? liveGuestNameOrAddress
+            : liveGuestNameOrAddress.includes(".base.eth")
+              ? await getAddressFromBaseName(liveGuestNameOrAddress as Address)
+              : liveGuestNameOrAddress.includes(".eth")
+                ? await getAddressFromEnsName(liveGuestNameOrAddress as Address)
+                : null;
+          guestAddress = !!guestAddressFinding
+            ? guestAddressFinding
+            : guestAddress;
+          guestSplitPercent = guestAddressFinding
+            ? Number(liveGuest.splitPercent)
+            : 0.0;
+        }
+
+        // If the guest address is the same as the owner address, set the guest address to
+        // the native token address and the guest split percent to 0.0 because the owner will
+        // receive all the rewards
+        if (guestAddress.toLowerCase() === ownerAddress.toLowerCase()) {
+          guestAddress = NATIVE_TOKEN_ADDRESS;
+          guestSplitPercent = 0.0;
+        }
+
         const encodedFunctionCall = encodeFunctionData({
           abi: bullMeterAbi,
           functionName: "createPoll",
           args: [
             question, // string calldata _question
-            BigInt(votePrice), // uint256 _votePrice (assuming 18 decimals)
+            BigInt(votePrice), // uint256 _votePrice (assuming 6 decimals for USDC)
             BigInt(startTime), // uint256 _startTime
             BigInt(duration), // uint256 _duration
             BigInt(maxVotePerUser), // uint256 _maxVotePerUser
-            guest as `0x${string}`, // address _guest
-            BigInt(guestSplitPercent), // uint256 _guestSplitPercent
+            guestAddress, // address _guest
+            BigInt(guestSplitPercent * 100), // uint256 _guestSplitPercent
           ],
         });
 
@@ -239,13 +300,20 @@ export const useBullmeterPlugin = () => {
               brandId,
               prompt: question,
               pollId: updatedLastPollId as `0x${string}`,
-              votePrice: updatedLastPollVotePrice.toString(),
+              votePrice: (
+                Number(updatedLastPollVotePrice) /
+                10 ** 6
+              ).toString(),
               duration: duration,
-              payoutAddresses: [guest as `0x${string}`],
+              ownerAddress,
+              guestAddress,
+              guestSplitPercent: guestSplitPercent.toString(),
               totalYesVotes: 0,
               totalNoVotes: 0,
               deadline: Number(updatedLastPollDeadline),
             };
+
+            console.log("TEST pollData:", pollData);
 
             const response = await ky.post<{
               success: boolean;

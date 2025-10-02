@@ -2,7 +2,6 @@ import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Address, isAddress } from "viem";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
@@ -10,11 +9,7 @@ import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { useSentimentPollSocket } from "@/hooks/use-sentiment-poll-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
-import { AVAILABLE_DURATIONS, NATIVE_TOKEN_ADDRESS } from "@/lib/constants";
-import {
-  getAddressFromBaseName,
-  getAddressFromEnsName,
-} from "@/lib/ens/client";
+import { AVAILABLE_DURATIONS } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { ReadPollData } from "@/lib/types/bullmeter.type";
 import { Duration, Guest } from "@/lib/types/poll.type";
@@ -226,43 +221,20 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
     }
 
     try {
-      // First create the Bullmeter poll on-chain
-
-      // Get the first guest (owner) for the guest address and split percent
-      const ownerGuest = guests.find((guest) => !guest.owner);
-
-      let guestAddress = NATIVE_TOKEN_ADDRESS;
-      let splitPercent = 0;
-
-      if (ownerGuest) {
-        guestAddress = isAddress(ownerGuest.nameOrAddress!)
-          ? ownerGuest.nameOrAddress
-          : (await getAddressFromBaseName(
-              ownerGuest.nameOrAddress as Address,
-            )) ||
-            (await getAddressFromEnsName(
-              ownerGuest.nameOrAddress as Address,
-            )) ||
-            "";
-        splitPercent = guestAddress ? Number(ownerGuest.splitPercent) * 100 : 0;
-      }
-
-      const createPromise = createBullmeter(
+      const result = await createBullmeter(
         brandId,
         prompt, // question
         "10000", // votePrice (0.01 USDC)
         0, // startTime (current timestamp)
         duration.seconds, // duration in seconds
         10000, // maxVotePerUser
-        guestAddress!, // guest address from UI
-        splitPercent, // guestSplitPercent from UI
+        guests, // The guests array
       ).then((res) => {
         if (!res.success) {
           throw new Error("Failed to create Bullmeter poll. Please try again.");
         }
         return res;
       });
-      const result = await createPromise;
 
       // Refetch history to get the new poll and check for live status
       const historyResponse = await getAllPollsByCreator();

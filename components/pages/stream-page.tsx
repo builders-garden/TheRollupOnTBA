@@ -5,16 +5,19 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Address } from "viem";
 import { useAccount } from "wagmi";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
+import { useMiniApp } from "@/contexts/mini-app-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
 import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
+import { useCreateBullmeterVote } from "@/hooks/use-bullmeter-votes";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { THE_ROLLUP_HOSTS } from "@/lib/constants";
+import { FARCASTER_CLIENT_FID, THE_ROLLUP_HOSTS } from "@/lib/constants";
 import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
 import {
   EndPollNotificationEvent,
@@ -51,6 +54,7 @@ type NormalizedPoll = {
 
 export const StreamPage = () => {
   const { isConnected, subscribe, unsubscribe } = useSocket();
+  const { context } = useMiniApp();
   const { joinStream, voteCasted } = useSocketUtils();
   const { brand, user } = useMiniAppAuth();
   const { address } = useAccount();
@@ -267,6 +271,27 @@ export const StreamPage = () => {
     onSuccess: async (data) => {
       const voteCount = data.data?.voteCount;
       if (!voteCount || voteCount === "0" || isNaN(Number(voteCount))) return;
+
+      // Get the platform from the context
+      const platform =
+        context?.client.clientFid === FARCASTER_CLIENT_FID.farcaster
+          ? "farcaster"
+          : "base";
+
+      // Create the bullmeter vote if the pollId is available
+      if (poll?.pollId && brand.data?.id && user.data?.id) {
+        createBullmeterVote({
+          pollId: poll.pollId as Address,
+          isBull: data.data?.isYes ?? false,
+          votes: Number(voteCount),
+          votePrice: "0.01",
+          platform,
+          senderId: user.data.id,
+          receiverBrandId: brand.data.id,
+        });
+      }
+
+      // Cast the votes to the socket in order to show them as popups in the overlay
       for (let i = 0; i < Number(voteCount); i++) {
         voteCasted({
           brandId: brand.data?.id || "",
@@ -275,7 +300,7 @@ export const StreamPage = () => {
             baseName || user.data?.username || formatWalletAddress(address),
           profilePicture: user.data?.avatarUrl || "",
           voteAmount: "1",
-          isBull: data.data?.isYes || false,
+          isBull: data.data?.isYes ?? false,
           promptId: poll?.pollId || "",
           endTimeMs: data.data?.endTime
             ? (() => {
@@ -291,6 +316,9 @@ export const StreamPage = () => {
       }
     },
   });
+
+  // Bullmeter votes creation hook
+  const { mutate: createBullmeterVote } = useCreateBullmeterVote();
 
   // Handle vote submission with approval check
   const handleVote = async (

@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "sonner";
 import { State } from "wagmi";
 import { AdminAuthProvider } from "@/contexts/auth/admin-auth-context";
 import { MiniAppAuthProvider } from "@/contexts/auth/mini-app-auth-context";
@@ -53,7 +54,10 @@ export default function Providers({ children, initialState }: ProvidersProps) {
           initialState={initialState}>
           <AdminAuthProvider>
             <SocketProvider>
-              <NotificationQueueProvider>{children}</NotificationQueueProvider>
+              <NotificationQueueProvider>
+                {children}
+                <Toaster richColors position="top-right" />
+              </NotificationQueueProvider>
             </SocketProvider>
           </AdminAuthProvider>
         </CustomWagmiProvider>
@@ -73,6 +77,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
               <SocketProvider>
                 <NotificationQueueProvider>
                   {children}
+                  <Toaster richColors position="bottom-center" />
                 </NotificationQueueProvider>
               </SocketProvider>
             </ErudaProvider>
@@ -82,7 +87,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
     );
   }
 
-  // TODO: Add a page that describes the app and the fact that it should be used in a client app
+  // Hero page
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-white to-gray-50 text-black">
       {/* Hero Section */}
@@ -103,37 +108,6 @@ export default function Providers({ children, initialState }: ProvidersProps) {
           experience. Engage with content, participate in real-time, and be part
           of the conversation.
         </p>
-
-        {/* Features Grid */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"> */}
-        {/* <div className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"> */}
-        {/* <h3 className="text-lg font-semibold mb-3">Live Interaction</h3> */}
-        {/* <p className="text-gray-600"> */}
-        {/* Engage with streams in real-time through Farcaster's interactive */}
-        {/* platform */}
-        {/* </p> */}
-        {/* </div> */}
-        {/* <div className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"> */}
-        {/* <h3 className="text-lg font-semibold mb-3">Community Driven</h3> */}
-        {/* <p className="text-gray-600"> */}
-        {/* Be part of a vibrant community shaping the future of web3 content */}
-        {/* </p> */}
-        {/* </div> */}
-        {/* <div className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"> */}
-        {/* <h3 className="text-lg font-semibold mb-3">Seamless Experience</h3> */}
-        {/* <p className="text-gray-600"> */}
-        {/* Enjoy a smooth streaming experience built for the Farcaster */}
-        {/* ecosystem */}
-        {/* </p> */}
-        {/* </div> */}
-        {/* </div> */}
-
-        {/* CTA Button */}
-        {/* <a
-          href="#"
-          className="inline-flex items-center px-8 py-3 text-lg font-medium text-white bg-purple-600 rounded-full hover:bg-purple-700 transition-colors">
-          Watch the Stream
-        </a> */}
       </div>
     </div>
   );

@@ -29,6 +29,7 @@ export const brandsTable = sqliteTable("brands", {
   youtubeChannelId: text("youtube_channel_id"),
   youtubeLiveUrl: text("youtube_live_url"),
   liveUrlExpiration: integer("live_url_expiration"),
+  isLive: integer("is_live", { mode: "boolean" }).default(false),
   activePlugins: text("active_plugins", { mode: "json" }).$type<
     ActivePlugins[]
   >(),

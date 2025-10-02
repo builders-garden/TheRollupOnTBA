@@ -477,7 +477,7 @@ export const StreamPage = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="flex flex-col justify-center items-center w-full gap-0.5">
-                <div className="flex justify-between items-center w-full">
+                <div className="flex justify-between items-center w-full gap-6">
                   <h1 className="font-extrabold text-xl">
                     {lastYoutubeContent?.data?.title || ""}
                   </h1>
@@ -487,21 +487,36 @@ export const StreamPage = () => {
                     buttonClassName="shrink-1 w-min cursor-pointer"
                   />
                 </div>
-                {brand.data?.name && (
-                  <div className="flex justify-start items-center w-full gap-1.5">
-                    <p className="text-sm">by</p>
-                    {brand.data?.logoUrl && (
-                      <Image
-                        src={brand.data.logoUrl}
-                        alt={brand.data.name}
-                        width={21}
-                        height={21}
-                        className="rounded-[4px]"
-                      />
-                    )}
-                    <p className="text-md">{brand.data.name}</p>
-                  </div>
-                )}
+                <div className="flex justify-start items-center w-full gap-2.5">
+                  {brand.data?.name && (
+                    <div className="flex justify-start items-center w-fit gap-1.5">
+                      <p className="text-sm">by</p>
+                      {brand.data?.logoUrl && (
+                        <Image
+                          src={brand.data.logoUrl}
+                          alt={brand.data.name}
+                          width={21}
+                          height={21}
+                          className="rounded-[4px]"
+                        />
+                      )}
+                      <p className="text-md">{brand.data.name}</p>
+                    </div>
+                  )}
+                  {!lastYoutubeContent?.data?.isLive && (
+                    <motion.div
+                      className="flex justify-start items-center w-full gap-0.5"
+                      animate={{ opacity: [0.15, 1, 1, 1, 0.15] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}>
+                      <div className="size-[7px] bg-destructive rounded-full" />
+                      <p className="text-xs text-destructive font-bold">LIVE</p>
+                    </motion.div>
+                  )}
+                </div>
               </motion.div>
             )
           )}

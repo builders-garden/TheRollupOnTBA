@@ -6,6 +6,7 @@ interface LastYoutubeContentResponse {
   data: {
     url: string;
     title: string;
+    isLive: boolean;
   };
 }
 

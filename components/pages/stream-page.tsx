@@ -503,7 +503,7 @@ export const StreamPage = () => {
                       <p className="text-md">{brand.data.name}</p>
                     </div>
                   )}
-                  {!lastYoutubeContent?.data?.isLive && (
+                  {lastYoutubeContent?.data?.isLive && (
                     <motion.div
                       className="flex justify-start items-center w-full gap-0.5"
                       animate={{ opacity: [0.15, 1, 1, 1, 0.15] }}

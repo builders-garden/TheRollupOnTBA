@@ -39,6 +39,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
         <NotificationQueueProvider>
           <QueryClientProvider client={queryClient}>
             {children}
+            <Toaster richColors position="top-right" />
           </QueryClientProvider>
         </NotificationQueueProvider>
       </SocketProvider>

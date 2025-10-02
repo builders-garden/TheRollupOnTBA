@@ -1,5 +1,6 @@
 import { Key, Loader2, Signature } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Address } from "viem";
@@ -139,9 +140,16 @@ export const SignUpContent = () => {
 
             <div className="flex flex-col justify-start items-start gap-2.5 w-full">
               {/* Label */}
-              <div className="flex justify-start items-center gap-2.5">
-                <Key className="size-5" />
-                <p className="text-base font-bold">Anticipated Access Key</p>
+              <div className="flex justify-between items-center gap-2.5 w-full pr-1.5">
+                <div className="flex justify-start items-center gap-2.5">
+                  <Key className="size-5" />
+                  <p className="text-base font-bold">Anticipated Access Key</p>
+                </div>
+                <Link href="https://farcaster.xyz/limone.eth" target="_blank">
+                  <p className="text-sm font-bold underline">
+                    Ask for an Access Key
+                  </p>
+                </Link>
               </div>
 
               <div className="flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300">

@@ -40,6 +40,9 @@ export const InfoContent = () => {
       placeholder: "e.g. UCC2UPtxxxxxxxxxxUPZJ6g",
       value: youtubeChannelId,
       setValue: setYoutubeChannelId,
+      infoLink: "https://support.google.com/youtube/answer/3250431?hl=en",
+      infoLinkText: "How to get it?",
+      infoLinkClassName: "text-black",
     },
     {
       key: "twitch-channel-url",
@@ -48,6 +51,9 @@ export const InfoContent = () => {
       placeholder: "https://twitch.tv/@username",
       value: twitchChannelUrl,
       setValue: setTwitchChannelUrl,
+      infoLink: undefined,
+      infoLinkText: undefined,
+      infoLinkClassName: undefined,
     },
     {
       key: "x-url",
@@ -56,6 +62,9 @@ export const InfoContent = () => {
       placeholder: "https://x.com/username",
       value: xUrl,
       setValue: setXUrl,
+      infoLink: undefined,
+      infoLinkText: undefined,
+      infoLinkClassName: undefined,
     },
     {
       key: "website-url",
@@ -64,6 +73,9 @@ export const InfoContent = () => {
       placeholder: "https://example.com/",
       value: websiteUrl,
       setValue: setWebsiteUrl,
+      infoLink: undefined,
+      infoLinkText: undefined,
+      infoLinkClassName: undefined,
     },
   ];
 
@@ -169,6 +181,9 @@ export const InfoContent = () => {
             value={link.value}
             setValue={link.setValue}
             isUpdating={isUpdatingBrand}
+            infoLink={link.infoLink}
+            infoLinkText={link.infoLinkText}
+            infoLinkClassName={link.infoLinkClassName}
             onConfirm={
               link.key === "yt-channel-id"
                 ? updateYouTubeChannelId

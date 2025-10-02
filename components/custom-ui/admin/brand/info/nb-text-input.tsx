@@ -1,5 +1,6 @@
 import { Check, SquarePen, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,9 @@ interface NBTextInputProps {
   ) => void;
   isUpdating: boolean;
   resetValueAfterConfirm?: boolean;
+  infoLink?: string;
+  infoLinkText?: string;
+  infoLinkClassName?: string;
 }
 
 export const NBTextInput = ({
@@ -29,6 +33,9 @@ export const NBTextInput = ({
   onConfirm = () => {},
   isUpdating = false,
   resetValueAfterConfirm = false,
+  infoLink,
+  infoLinkText,
+  infoLinkClassName,
 }: NBTextInputProps) => {
   const [editingValue, setEditingValue] = useState(value);
   const [isEditing, setIsEditing] = useState(false);
@@ -91,11 +98,20 @@ export const NBTextInput = ({
       {/* Label */}
       <div
         className={cn(
-          "flex justify-start items-center gap-2.5",
+          "flex justify-between items-center gap-2.5 w-full pr-1.5",
           isDestructive && "text-destructive",
         )}>
-        {icon}
-        <p className="text-base font-bold">{label}</p>
+        <div className="flex justify-start items-center gap-2.5">
+          {icon}
+          <p className="text-base font-bold">{label}</p>
+        </div>
+        {!!infoLink && !!infoLinkText && (
+          <Link href={infoLink} target="_blank">
+            <p className={cn("text-sm font-bold underline", infoLinkClassName)}>
+              {infoLinkText}
+            </p>
+          </Link>
+        )}
       </div>
 
       <div

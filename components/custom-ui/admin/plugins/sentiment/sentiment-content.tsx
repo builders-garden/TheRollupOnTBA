@@ -406,10 +406,10 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
           <div className="flex justify-between items-center gap-5 w-full">
             <div className="flex flex-col justify-start items-start gap-5 w-full">
               <FormTextInput
-                label="Prompt (up to 100 characters)"
+                label="Prompt (up to 75 characters)"
                 disabled={isLive}
                 placeholder="Type prompt here..."
-                sizeLimit={100}
+                sizeLimit={75}
                 value={prompt}
                 setValue={setPrompt}
               />

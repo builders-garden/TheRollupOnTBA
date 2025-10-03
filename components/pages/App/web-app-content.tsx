@@ -2,20 +2,20 @@
 
 import { AnimatePresence } from "motion/react";
 import { useLayoutEffect } from "react";
-import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
-import ErrorPage from "../error";
-import LoadingPage from "../loading";
-import { StreamPage } from "../stream-page";
+import { useWebAppAuth } from "@/contexts/auth/web-app-auth-context";
+import ErrorPage from "../error-page";
+import LoadingPage from "../loading-page";
+import { WebAppStreamPage } from "../web-app-stream-page";
 
-export default function MainContent({ brandSlug }: { brandSlug?: string }) {
+export default function WebAppContent({ brandSlug }: { brandSlug: string }) {
   const {
     isLoading,
     error,
     brand: { setBrandSlug },
-  } = useMiniAppAuth();
+  } = useWebAppAuth();
 
   useLayoutEffect(() => {
-    setBrandSlug(brandSlug || "the_rollup");
+    setBrandSlug(brandSlug);
   }, [brandSlug, setBrandSlug]);
 
   return (
@@ -26,7 +26,7 @@ export default function MainContent({ brandSlug }: { brandSlug?: string }) {
         ) : error ? (
           <ErrorPage key="error" errorMessage={error.message} />
         ) : (
-          <StreamPage key="stream" />
+          <WebAppStreamPage key="stream" />
         )}
       </AnimatePresence>
     </div>

@@ -224,7 +224,7 @@ export const TokensSearchModal = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
               <p className="text-lg font-bold text-destructive">
                 An error occurred, please try again later.
@@ -236,7 +236,7 @@ export const TokensSearchModal = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
               <Loader2 className="size-8 text-black animate-spin" />
             </motion.div>
@@ -246,7 +246,7 @@ export const TokensSearchModal = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
               className="flex flex-col justify-start items-center w-full gap-2">
               {fetchedTokens.map((token, index) => (
                 <NewfoundToken
@@ -265,7 +265,7 @@ export const TokensSearchModal = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
               <p className="text-lg font-bold">No tokens found</p>
             </motion.div>
@@ -275,7 +275,7 @@ export const TokensSearchModal = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
               <p className="text-lg font-bold">
                 Select a chain and start typing to search for new tokens

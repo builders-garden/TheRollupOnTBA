@@ -1,7 +1,6 @@
 "use client";
 
 import { SignInWithBaseButton } from "@base-org/account-ui/react";
-import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
@@ -12,6 +11,7 @@ import { OverlayContent } from "@/components/custom-ui/admin/overlay/overlay-con
 import { PluginsContent } from "@/components/custom-ui/admin/plugins/plugins-content";
 import { SideNavbar } from "@/components/custom-ui/admin/side-navbar";
 import { SignUpContent } from "@/components/custom-ui/admin/sign-up-content";
+import LoadingPage from "@/components/pages/loading-page";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
 
@@ -28,15 +28,7 @@ export default function AdminPage() {
   return (
     <AnimatePresence mode="wait">
       {isLoading && !isRefetching ? (
-        <motion.div
-          key="loading"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeInOut" }}
-          className="flex justify-center items-center w-full min-h-screen">
-          <Loader2 className="size-14 animate-spin" />
-        </motion.div>
+        <LoadingPage key="loading" />
       ) : !!brand.data ? (
         <motion.div
           key="admin-page"

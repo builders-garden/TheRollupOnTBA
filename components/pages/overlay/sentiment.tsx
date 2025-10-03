@@ -42,7 +42,7 @@ export const OverlaySentiment = ({ brand }: { brand: Brand }) => {
               id: poll.id,
               brandId: brand.id,
               pollQuestion: poll.prompt,
-              endTimeMs: (poll.deadlineSeconds || 0) * 1000,
+              endTimeMs: (poll.deadlineSeconds || 180) * 1000,
               votes: poll.votes || 0,
               voters: poll.voters || 0,
               qrCodeUrl: `cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.slug}`,

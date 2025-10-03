@@ -254,7 +254,10 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
           brandId,
           position: PopupPositions.TOP_CENTER,
           pollQuestion: prompt,
-          endTimeMs: (result.deadline || 0) * 1000,
+          endTimeMs:
+            result.deadline && result.deadline !== 0
+              ? result.deadline * 1000
+              : 180000, // 180 seconds
           guests,
           results: { bullPercent: 0, bearPercent: 0 },
         });

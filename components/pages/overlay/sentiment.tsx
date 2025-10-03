@@ -34,20 +34,20 @@ export const OverlaySentiment = ({ brand }: { brand: Brand }) => {
   const toastId = useMemo(() => `sentiment-poll-${brand.id}`, [brand]);
 
   const openToastFromPoll = useCallback(
-    (p: NormalizedPoll) => {
+    (poll: NormalizedPoll) => {
       toast.custom(
         () => (
           <ToastPollNotification
             data={{
-              id: p.id,
+              id: poll.id,
               brandId: brand.id,
-              pollQuestion: p.prompt,
-              endTimeMs: (p.deadlineSeconds || 0) * 1000,
-              votes: p.votes || 0,
-              voters: p.voters || 0,
+              pollQuestion: poll.prompt,
+              endTimeMs: (poll.deadlineSeconds || 0) * 1000,
+              votes: poll.votes || 0,
+              voters: poll.voters || 0,
               qrCodeUrl: `cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.slug}`,
               position: PopupPositions.TOP_CENTER,
-              results: p.results || { bullPercent: 0, bearPercent: 0 },
+              results: poll.results || { bullPercent: 0, bearPercent: 0 },
             }}
           />
         ),

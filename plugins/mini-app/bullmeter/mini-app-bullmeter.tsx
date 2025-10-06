@@ -6,7 +6,7 @@ import { NBCard } from "@/components/custom-ui/nb-card";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 
-interface BullmeterProps {
+interface MiniAppBullmeterProps {
   showLabel?: boolean;
   label?: string;
   className?: string;
@@ -27,7 +27,7 @@ interface BullmeterProps {
   button2Loading?: boolean;
 }
 
-export const Bullmeter = ({
+export const MiniAppBullmeter = ({
   showLabel = true,
   label = "Bull-meter",
   className,
@@ -46,7 +46,7 @@ export const Bullmeter = ({
   loading = false,
   button1Loading = false,
   button2Loading = false,
-}: BullmeterProps) => {
+}: MiniAppBullmeterProps) => {
   const [button1VotesNumber, setButton1VotesNumber] = useState<number>(0);
   const [button2VotesNumber, setButton2VotesNumber] = useState<number>(0);
   const [totalVotes, setTotalVotes] = useState<number>(0);

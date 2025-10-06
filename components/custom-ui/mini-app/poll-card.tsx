@@ -24,7 +24,7 @@ import {
 } from "@/lib/types/socket";
 import { User } from "@/lib/types/user.type";
 import { formatWalletAddress } from "@/lib/utils";
-import { Bullmeter } from "@/plugins/bullmeter/bullmeter";
+import { MiniAppBullmeter } from "@/plugins/mini-app/bullmeter/mini-app-bullmeter";
 import { NBButton } from "../nb-button";
 import { NBModal } from "../nb-modal";
 
@@ -388,7 +388,7 @@ export const PollCard = ({ brand, user }: PollCardProps) => {
   return (
     <div className="flex justify-center items-start w-full">
       {showPoll && poll && (
-        <Bullmeter
+        <MiniAppBullmeter
           title={poll.prompt}
           showLabel
           timeLeft={timeLeft}

@@ -9,8 +9,8 @@ import { useApprove } from "@/hooks/use-approve";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { THE_ROLLUP_HOSTS } from "@/lib/constants";
 import { env } from "@/lib/zod";
-import { FeaturedTokens } from "@/plugins/featured-tokens/featured-tokens";
-import { Tips } from "@/plugins/tips/tips";
+import { MiniAppFeaturedTokens } from "@/plugins/mini-app/featured-tokens/mini-app-featured-tokens";
+import { MiniAppTips } from "@/plugins/mini-app/tips/mini-app-tips";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
 import { HostsSection } from "../custom-ui/mini-app/hosts";
 import { MiniAppAboutSection } from "../custom-ui/mini-app/mini-app-about-section";
@@ -34,7 +34,7 @@ export const MiniAppStreamPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25, ease: "easeInOut" }}
       className="relative flex flex-col justify-center items-start h-full w-full no-scrollbar">
-      <div className="flex justify-center items-center w-full h-[265px] bg-gray-300">
+      <div className="flex justify-center items-center w-full h-[265px] bg-black/10">
         <AnimatePresence mode="wait">
           {isLastYoutubeContentLoading ? (
             <motion.div
@@ -160,7 +160,7 @@ export const MiniAppStreamPage = () => {
 
         {/* Tip Buttons */}
         {brand.tipSettings.data?.payoutAddress && (
-          <Tips
+          <MiniAppTips
             showLabel
             tips={[
               { amount: 0.01, buttonColor: "blue" },
@@ -178,7 +178,10 @@ export const MiniAppStreamPage = () => {
 
         {/* Featured Tokens */}
         {brand.featuredTokens.data && brand.featuredTokens.data.length > 0 && (
-          <FeaturedTokens tokens={brand.featuredTokens.data} user={user.data} />
+          <MiniAppFeaturedTokens
+            tokens={brand.featuredTokens.data}
+            user={user.data}
+          />
         )}
 
         {/* About Section */}

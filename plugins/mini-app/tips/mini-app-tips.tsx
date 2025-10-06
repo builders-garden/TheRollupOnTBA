@@ -15,7 +15,7 @@ import { PopupPositions } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
 
-interface TipsProps {
+interface MiniAppTipsProps {
   label?: string;
   showLabel?: boolean;
   className?: string;
@@ -36,14 +36,14 @@ interface TipsProps {
   user?: User;
 }
 
-export const Tips = ({
+export const MiniAppTips = ({
   label = "Tip",
   showLabel = true,
   tipSettings,
   tips,
   customTipButton,
   user,
-}: TipsProps) => {
+}: MiniAppTipsProps) => {
   const [isCustomTipModalOpen, setIsCustomTipModalOpen] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -276,7 +276,7 @@ export const Tips = ({
               </NBButton>
 
               <button
-                className="text-base font-bold text-black"
+                className="text-base font-bold text-black cursor-pointer"
                 onClick={handleCustomTipModalOpen}>
                 Cancel
               </button>

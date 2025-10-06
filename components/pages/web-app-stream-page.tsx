@@ -3,26 +3,43 @@ import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { basePreconf } from "viem/chains";
+import { base } from "viem/chains";
 import { useAccount } from "wagmi";
 import { useWebAppAuth } from "@/contexts/auth/web-app-auth-context";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { wagmiAdapter } from "@/lib/reown";
 import { env } from "@/lib/zod";
+import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
+import { WebAppTips } from "@/plugins/web-app/tips/web-app-tips";
 import { LogoutButton } from "../custom-ui/logout-button";
+import { PollCard } from "../custom-ui/mini-app/poll-card";
 import { NBButton } from "../custom-ui/nb-button";
 import { NBCard } from "../custom-ui/nb-card";
 import { ShareButton } from "../custom-ui/share-button";
 import { WebAppAboutSection } from "../custom-ui/web-app/web-app-about-section";
 import { ScrollArea } from "../shadcn-ui/scroll-area";
+import { Separator } from "../shadcn-ui/separator";
 import { Skeleton } from "../shadcn-ui/skeleton";
+
+// Set up metadata
+const metadata = {
+  name: "Control The Stream",
+  description: "Control The Stream",
+  url: env.NEXT_PUBLIC_URL,
+  icons: [],
+};
 
 // Create the modal
 createAppKit({
   adapters: [wagmiAdapter],
   projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
-  networks: [basePreconf],
-  defaultNetwork: basePreconf,
+  networks: [base],
+  metadata,
+  defaultNetwork: base,
+  features: {
+    analytics: true,
+    connectMethodsOrder: ["wallet"],
+  },
 });
 
 export const WebAppStreamPage = () => {
@@ -33,6 +50,8 @@ export const WebAppStreamPage = () => {
     isSigningIn,
     executeLogout,
     isLoggingOut,
+    sideBarLoading,
+    isLoading,
   } = useWebAppAuth();
   const { address: connectedAddress } = useAccount();
   const { open } = useAppKit();
@@ -47,7 +66,14 @@ export const WebAppStreamPage = () => {
   // If the user was not connected before the page loaded
   // Automatically start the sign in process
   useEffect(() => {
-    if (connectedAddress && wasNotConnected && !isSigningIn) {
+    if (
+      connectedAddress &&
+      wasNotConnected &&
+      !isSigningIn &&
+      !isLoggingOut &&
+      !sideBarLoading &&
+      !isLoading
+    ) {
       signInWithWebApp();
     }
   }, [connectedAddress]);
@@ -55,7 +81,7 @@ export const WebAppStreamPage = () => {
   // Handles the logout
   const handleLogout = () => {
     executeLogout();
-    setWasNotConnected(false);
+    setWasNotConnected(true);
   };
 
   return (
@@ -69,7 +95,7 @@ export const WebAppStreamPage = () => {
       <ScrollArea scrollBarClassName="w-0" className="w-full">
         <div className="flex flex-col justify-start items-center h-screen w-full p-6 gap-5">
           {/* Video */}
-          <div className="flex justify-center items-center min-h-[78%] aspect-video bg-gray-300 rounded-[8px] overflow-hidden">
+          <div className="flex justify-center items-center min-h-[78%] aspect-video bg-black/10 rounded-[8px] overflow-hidden">
             <AnimatePresence mode="wait">
               {isLastYoutubeContentLoading ? (
                 <motion.div
@@ -139,8 +165,8 @@ export const WebAppStreamPage = () => {
                 className="flex flex-col justify-start items-center w-full gap-5">
                 <div className="flex justify-between items-center w-full px-5">
                   <div className="flex justify-start items-center gap-5">
-                    <div className="relative flex justify-center items-center bg-gray-500 rounded-full">
-                      {brand.data?.logoUrl && (
+                    <div className="relative flex justify-center items-center bg-black/10 rounded-full">
+                      {brand.data?.logoUrl ? (
                         <Image
                           src={brand.data?.logoUrl}
                           alt={brand.data?.name || ""}
@@ -148,6 +174,12 @@ export const WebAppStreamPage = () => {
                           height={86}
                           className="rounded-full object-cover"
                         />
+                      ) : (
+                        <div className="flex justify-center items-center size-[86px] bg-black/10 rounded-full">
+                          <p className="text-5xl font-bold text-center text-black/60">
+                            {brand.data?.name?.slice(0, 1).toUpperCase() || ""}
+                          </p>
+                        </div>
                       )}
                       {lastYoutubeContent?.data?.isLive && (
                         <div className="absolute inset-0 size-[86px] border-3 border-destructive rounded-full" />
@@ -179,6 +211,7 @@ export const WebAppStreamPage = () => {
 
                 <WebAppAboutSection
                   label="About"
+                  brandSlug={brand.data?.slug || ""}
                   text={brand.data?.description || ""}
                   coverUrl={brand.data?.coverUrl || ""}
                   youtubeUrl={
@@ -200,7 +233,7 @@ export const WebAppStreamPage = () => {
       <div className="flex flex-col justify-center items-center min-h-screen h-screen w-[40%] pr-6 py-6">
         <NBCard className="flex flex-col justify-between items-center h-full w-full bg-white p-5">
           <AnimatePresence mode="wait">
-            {isSigningIn || isLoggingOut ? (
+            {isSigningIn || isLoggingOut || sideBarLoading ? (
               <motion.div
                 key="signing-in-loader"
                 initial={{ opacity: 0 }}
@@ -217,10 +250,48 @@ export const WebAppStreamPage = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="flex flex-col justify-between items-center w-full gap-5">
-                <h1 className="text-2xl font-bold text-start w-full">
-                  Interact with the stream
-                </h1>
+                className="flex flex-col justify-between items-center w-full h-full">
+                <div className="flex flex-col justify-start items-start w-full h-full gap-5">
+                  <h1 className="text-3xl font-bold w-full text-start">
+                    Interact with the stream
+                  </h1>
+
+                  <Separator className="w-full bg-border" />
+
+                  <div className="flex flex-col justify-start items-start w-full h-full gap-8">
+                    {/* Tip Buttons */}
+                    {brand.tipSettings.data?.payoutAddress && (
+                      <WebAppTips
+                        showLabel
+                        tips={[
+                          { amount: 0.01, buttonColor: "blue" },
+                          { amount: 0.25, buttonColor: "blue" },
+                          { amount: 1, buttonColor: "blue" },
+                        ]}
+                        customTipButton={{
+                          color: "blue",
+                          text: "Custom",
+                        }}
+                        tipSettings={brand.tipSettings.data}
+                        user={user.data}
+                      />
+                    )}
+
+                    {/* Featured Tokens */}
+                    {brand.featuredTokens.data &&
+                      brand.featuredTokens.data.length > 0 && (
+                        <WebAppFeaturedTokens
+                          tokens={brand.featuredTokens.data}
+                          user={user.data}
+                        />
+                      )}
+
+                    {/* Poll Card */}
+                    {brand.data && user.data && (
+                      <PollCard brand={brand.data} user={user.data} />
+                    )}
+                  </div>
+                </div>
                 {/* Logout Button on footer */}
                 <LogoutButton executeLogout={handleLogout} />
               </motion.div>

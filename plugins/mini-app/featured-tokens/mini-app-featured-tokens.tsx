@@ -17,12 +17,15 @@ import { User } from "@/lib/types/user.type";
 import { formatWalletAddress } from "@/lib/utils";
 import { formatSingleToken } from "@/lib/utils/farcaster-tokens";
 
-interface FeaturedTokensProps {
+interface MiniAppFeaturedTokensProps {
   tokens: FeaturedToken[];
   user?: User;
 }
 
-export const FeaturedTokens = ({ tokens, user }: FeaturedTokensProps) => {
+export const MiniAppFeaturedTokens = ({
+  tokens,
+  user,
+}: MiniAppFeaturedTokensProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { tokenTraded } = useSocketUtils();
   const { address } = useAccount();

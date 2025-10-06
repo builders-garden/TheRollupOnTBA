@@ -2,7 +2,7 @@ import { writeContract } from "@wagmi/core";
 import { useState } from "react";
 import { erc20Abi, parseUnits } from "viem";
 import { BASE_USDC_ADDRESS } from "@/lib/constants";
-import { wagmiConfigMiniApp } from "@/lib/reown";
+import { wagmiConfigWebApp } from "@/lib/reown";
 
 interface UseUsdcTransferProps {
   amount: string; // Amount in USDC (e.g., "1" for 1 USDC) - required
@@ -31,10 +31,9 @@ export const useUsdcTransfer = ({ amount, receiver }: UseUsdcTransferProps) => {
 
       // Parse the amount to USDC decimals (6 decimals for USDC)
       const parsedAmount = parseUnits(finalAmount, 6);
-      console.log("parsedAmount:", parsedAmount);
 
       // Send the call
-      const result = await writeContract(wagmiConfigMiniApp, {
+      const result = await writeContract(wagmiConfigWebApp, {
         abi: erc20Abi,
         functionName: "transfer",
         args: [finalReceiver as `0x${string}`, parsedAmount],

@@ -13,7 +13,7 @@ import { useMiniApp } from "@/contexts/mini-app-context";
 import { NotificationQueueProvider } from "@/contexts/notification-queue-context";
 import { SocketProvider } from "@/contexts/socket-context";
 import { CustomWagmiProvider } from "@/contexts/wagmi-provider";
-import { wagmiConfigMiniApp } from "@/lib/reown";
+import { wagmiConfigMiniApp, wagmiConfigWebApp } from "@/lib/reown";
 
 const queryClient = new QueryClient();
 
@@ -93,7 +93,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
   return (
     <NuqsAdapter>
       <CustomWagmiProvider
-        config={wagmiConfigMiniApp}
+        config={wagmiConfigWebApp}
         initialState={initialState}>
         <WebAppAuthProvider>
           <SocketProvider>

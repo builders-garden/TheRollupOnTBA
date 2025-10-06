@@ -44,6 +44,7 @@ interface WebAppAuthContextType {
   executeLogout: () => void;
   isSigningIn: boolean;
   isLoggingOut: boolean;
+  sideBarLoading: boolean;
   isLoading: boolean;
   error: Error | null;
 }
@@ -284,12 +285,12 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     executeLogout,
     signInWithWebApp: executeSignInWithWebApp,
     isSigningIn,
-    isLoading:
-      isEnvironmentLoading ||
-      (isFetchingUser && !isRefetchingUser) ||
-      isFetchingBrand ||
+    sideBarLoading:
+      isFetchingUser ||
+      isRefetchingUser ||
       isFetchingTipSettings ||
       isFetchingFeaturedTokens,
+    isLoading: isEnvironmentLoading || isFetchingBrand,
     error: error || brandError || tipSettingsError || featuredTokensError,
   };
 

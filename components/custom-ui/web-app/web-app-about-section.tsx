@@ -21,6 +21,7 @@ interface WebAppAboutSectionProps {
   twitchUrl?: string;
   twitterUrl?: string;
   websiteUrl?: string;
+  brandSlug?: string;
 }
 
 export const WebAppAboutSection = ({
@@ -31,6 +32,7 @@ export const WebAppAboutSection = ({
   twitchUrl,
   twitterUrl,
   websiteUrl,
+  brandSlug,
 }: WebAppAboutSectionProps) => {
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     undefined,
@@ -115,16 +117,22 @@ export const WebAppAboutSection = ({
             />
           )}
           <div className="flex flex-1 flex-col justify-between items-start w-full min-h-[270px]">
-            <div className="flex flex-col justify-start items-start gap-2">
-              <h1 className="text-lg font-bold">What happens here?</h1>
-              <p className="text-lg w-full text-start">{text}</p>
-            </div>
-            <HostsSection
-              hosts={THE_ROLLUP_HOSTS}
-              label="Hosts"
-              labelClassName="text-lg font-bold"
-              hostNameClassName="text-sm font-bold"
-            />
+            {text && (
+              <div className="flex flex-col justify-start items-start gap-2">
+                <h1 className="text-lg font-bold">What happens here?</h1>
+                <p className="text-lg w-full text-start">{text}</p>
+              </div>
+            )}
+
+            {/* TODO: Make this dynamic */}
+            {brandSlug === "the_rollup" && (
+              <HostsSection
+                hosts={THE_ROLLUP_HOSTS}
+                label="Hosts"
+                labelClassName="text-lg font-bold"
+                hostNameClassName="text-sm font-bold"
+              />
+            )}
           </div>
         </AccordionContent>
       </AccordionItem>

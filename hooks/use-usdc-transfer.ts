@@ -18,7 +18,12 @@ export const useUsdcTransfer = ({ amount, receiver }: UseUsdcTransferProps) => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Execute the USDC transfer using sendCalls
-  const transfer = async (customAmount?: string, customReceiver?: string) => {
+  const transfer = async (
+    customAmount?: string,
+    customReceiver?: string,
+    onSuccess?: () => void,
+    onError?: () => void,
+  ) => {
     try {
       setIsPending(true);
       setIsError(false);
@@ -44,9 +49,11 @@ export const useUsdcTransfer = ({ amount, receiver }: UseUsdcTransferProps) => {
 
       setTxHash(result);
       setIsSuccess(true);
+      onSuccess?.();
     } catch (err) {
       setIsError(true);
       setError(err instanceof Error ? err : new Error("Unknown error"));
+      onError?.();
     } finally {
       setIsPending(false);
     }

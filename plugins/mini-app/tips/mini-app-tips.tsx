@@ -60,8 +60,6 @@ export const MiniAppTips = ({
   const {
     transfer: transferUsdc,
     isLoading: isTransferLoading,
-    isSuccess: isTransferSuccess,
-    hasError: isTransferError,
     error: transferError,
   } = useUsdcTransfer({
     amount: "1", // Default value
@@ -88,34 +86,37 @@ export const MiniAppTips = ({
       ) {
         try {
           // Execute the transfer using your hook with dynamic parameters
-          await transferUsdc(amount.toString(), tipSettings.payoutAddress);
+          await transferUsdc(
+            amount.toString(),
+            tipSettings.payoutAddress,
+            () => {
+              tipSent({
+                brandId: tipSettings.brandId,
+                position: PopupPositions.TOP_CENTER,
+                username:
+                  baseName || user?.username || formatWalletAddress(address),
+                profilePicture: user?.avatarUrl || "",
+                tipAmount: amount.toString(),
+              });
+              toast.success("Tip sent successfully");
+              startConfetti();
 
-          if (isTransferSuccess) {
-            tipSent({
-              brandId: tipSettings.brandId,
-              position: PopupPositions.TOP_CENTER,
-              username:
-                baseName || user?.username || formatWalletAddress(address),
-              profilePicture: user?.avatarUrl || "",
-              tipAmount: amount.toString(),
-            });
-            toast.success("Tip sent successfully");
-            startConfetti();
-
-            // Create a tip record in the database
-            createTip({
-              senderId: user.id,
-              receiverBrandId: tipSettings.brandId,
-              receiverAddress: tipSettings.payoutAddress,
-              receiverBaseName: tipSettings.payoutBaseName,
-              receiverEnsName: tipSettings.payoutEnsName,
-              amount: amount.toString(),
-              platform: "farcaster",
-            });
-          } else if (isTransferError) {
-            console.log("Farcaster USDC transfer failed:", transferError);
-            throw transferError;
-          }
+              // Create a tip record in the database
+              createTip({
+                senderId: user.id,
+                receiverBrandId: tipSettings.brandId,
+                receiverAddress: tipSettings.payoutAddress,
+                receiverBaseName: tipSettings.payoutBaseName,
+                receiverEnsName: tipSettings.payoutEnsName,
+                amount: amount.toString(),
+                platform: "farcaster",
+              });
+            },
+            () => {
+              console.log("Farcaster USDC transfer failed:", transferError);
+              throw transferError;
+            },
+          );
         } catch (farcasterError) {
           console.log("Farcaster USDC transfer failed:", farcasterError);
           throw farcasterError; // Re-throw to be caught by outer catch

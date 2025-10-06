@@ -293,7 +293,12 @@ export const WebAppStreamPage = () => {
                   </div>
                 </div>
                 {/* Logout Button on footer */}
-                <LogoutButton executeLogout={handleLogout} />
+                <div className="flex justify-end items-center w-full">
+                  <LogoutButton
+                    executeLogout={handleLogout}
+                    className="w-1/3"
+                  />
+                </div>
               </motion.div>
             ) : connectedAddress && !wasNotConnected ? (
               <motion.div

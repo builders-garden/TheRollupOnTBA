@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/shadcn-ui/checkbox";
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
-import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
+import { useConsumeBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useCreateBullmeterVote } from "@/hooks/use-bullmeter-votes";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocket } from "@/hooks/use-socket";
@@ -78,7 +78,7 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
     isLoading: isApproving,
     isError: isApprovingError,
     checkAllowance,
-  } = useApprove({ amount: "1" });
+  } = useApprove({ amount: "1", source: "mini-app" });
 
   // Get the base name of the user
   const baseName = user.wallets.find((wallet) => wallet.baseName)?.baseName;
@@ -238,7 +238,7 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
   };
 
   // BullMeter voting hook
-  const { submitVote, isPending: isVoting } = useBullmeterApprove({
+  const { submitVote, isPending: isVoting } = useConsumeBullmeterApprove({
     onSuccess: async (data) => {
       const voteCount = data.data?.voteCount;
       if (!voteCount || voteCount === "0" || isNaN(Number(voteCount))) return;
@@ -285,6 +285,7 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     },
+    tokenType: AuthTokenType.MINI_APP_AUTH_TOKEN,
   });
 
   // Bullmeter votes creation hook

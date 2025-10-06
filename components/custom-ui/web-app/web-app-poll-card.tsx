@@ -5,15 +5,13 @@ import { toast } from "sonner";
 import { Address } from "viem";
 import { useAccount } from "wagmi";
 import { Checkbox } from "@/components/shadcn-ui/checkbox";
-import { useMiniApp } from "@/contexts/mini-app-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
-import { useBullmeterApprove } from "@/hooks/use-bullmeter-approve";
+import { useConsumeBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useCreateBullmeterVote } from "@/hooks/use-bullmeter-votes";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { FARCASTER_CLIENT_FID } from "@/lib/constants";
 import { Brand } from "@/lib/database/db.schema";
 import {
   AuthTokenType,
@@ -39,12 +37,11 @@ interface WebAppPollCardProps {
 }
 
 export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
-  const { context } = useMiniApp();
   const { isConnected, subscribe, unsubscribe } = useSocket();
   const { joinStream, voteCasted } = useSocketUtils();
   const { address } = useAccount();
   const { startConfetti } = useConfetti({
-    duration: 250,
+    duration: 500,
   });
 
   // Show/hide state for the Bullmeter poll card
@@ -72,13 +69,15 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
   // State to track the approve modal
   const [isApproveModalOpen, setIsApproveModalOpen] = useState<boolean>(false);
 
+  // Approving state
+  const [isApproving, setIsApproving] = useState<boolean>(false);
+
   // USDC approval hook
   const {
     approve,
-    isLoading: isApproving,
     isError: isApprovingError,
     checkAllowance,
-  } = useApprove({ amount: "1" });
+  } = useApprove({ amount: "1", source: "web-app" });
 
   // Get the base name of the user
   const baseName = user.wallets.find((wallet) => wallet.baseName)?.baseName;
@@ -238,16 +237,13 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
   };
 
   // BullMeter voting hook
-  const { submitVote, isPending: isVoting } = useBullmeterApprove({
+  const { submitVote, isPending: isVoting } = useConsumeBullmeterApprove({
     onSuccess: async (data) => {
       const voteCount = data.data?.voteCount;
       if (!voteCount || voteCount === "0" || isNaN(Number(voteCount))) return;
 
       // Get the platform from the context
-      const platform =
-        context?.client.clientFid === FARCASTER_CLIENT_FID.farcaster
-          ? "farcaster"
-          : "base";
+      const platform = "web-app";
 
       // Create the bullmeter vote if the pollId is available
       if (poll?.pollId && brand.id && user.id) {
@@ -285,6 +281,7 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     },
+    tokenType: AuthTokenType.WEB_APP_AUTH_TOKEN,
   });
 
   // Bullmeter votes creation hook
@@ -332,14 +329,19 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
       // If not approved, approve first
       if (!hasEnoughAllowance) {
         if (dontShowApproveModal || launchedByModal) {
+          setIsApproving(true);
           await approve();
+          // 5 seconds to ensure the transaction is fully processed
+          await new Promise((resolve) => setTimeout(resolve, 5000));
           currentAllowance = await checkAllowance();
           hasEnoughAllowance =
             currentAllowance && currentAllowance >= requiredAmount;
           if (!hasEnoughAllowance) {
+            setIsApproving(false);
             return;
           }
           setIsApproveModalOpen(false);
+          setIsApproving(false);
         } else {
           setIsApproveModalOpen(true);
           return;
@@ -367,30 +369,33 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
     } finally {
       // Clear loading state
       setLoadingButton(null);
+      setIsApproving(false);
     }
   };
 
   return (
     <div className="flex justify-center items-start w-full">
-      {showPoll && poll && (
-        <WebAppBullmeter
-          title={poll.prompt}
-          showLabel
-          timeLeft={timeLeft}
-          votePrice={0.01}
-          deadlineSeconds={poll.deadlineSeconds || undefined}
-          button1text="Bear"
-          button2text="Bull"
-          button1Color="destructive"
-          button2Color="success"
-          button1OnClick={(votesNumber) => handleVote(false, votesNumber)} // Bear vote
-          button2OnClick={(votesNumber) => handleVote(true, votesNumber)} // Bull vote
-          disabled={isApproving || isVoting}
-          loading={isApproving || isVoting}
-          button1Loading={loadingButton === "bear"}
-          button2Loading={loadingButton === "bull"}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {showPoll && poll && (
+          <WebAppBullmeter
+            title={poll.prompt}
+            showLabel
+            timeLeft={timeLeft}
+            votePrice={0.01}
+            deadlineSeconds={poll.deadlineSeconds || undefined}
+            button1text="Bear"
+            button2text="Bull"
+            button1Color="destructive"
+            button2Color="success"
+            button1OnClick={(votesNumber) => handleVote(false, votesNumber)} // Bear vote
+            button2OnClick={(votesNumber) => handleVote(true, votesNumber)} // Bull vote
+            disabled={isApproving || isVoting}
+            loading={isApproving || isVoting}
+            button1Loading={loadingButton === "bear"}
+            button2Loading={loadingButton === "bull"}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Bullmeter Approve Modal */}
       <NBModal

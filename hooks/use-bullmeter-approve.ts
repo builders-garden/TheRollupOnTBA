@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
 import { useAccount } from "wagmi";
+import { AuthTokenType } from "@/lib/enums";
 
 interface VoteRequest {
   voter: string;
@@ -23,9 +24,15 @@ interface VoteResponse {
   details?: string;
 }
 
-const executeVote = async (voteData: VoteRequest): Promise<VoteResponse> => {
+const executeVote = async (
+  voteData: VoteRequest,
+  tokenType: AuthTokenType,
+): Promise<VoteResponse> => {
   const response = await ky.post<VoteResponse>("/api/execute-bullmeters", {
     json: voteData,
+    headers: {
+      "x-token-type": tokenType,
+    },
     timeout: false,
   });
 
@@ -36,15 +43,17 @@ const executeVote = async (voteData: VoteRequest): Promise<VoteResponse> => {
   return response.json();
 };
 
-export const useBullmeterApprove = ({
+export const useConsumeBullmeterApprove = ({
   onSuccess,
+  tokenType,
 }: {
   onSuccess?: (data: VoteResponse) => void;
+  tokenType: AuthTokenType;
 }) => {
   const { address } = useAccount();
 
   const voteMutation = useMutation({
-    mutationFn: executeVote,
+    mutationFn: (variables: VoteRequest) => executeVote(variables, tokenType),
     onSuccess: (data) => {
       onSuccess?.(data);
     },

@@ -85,24 +85,28 @@ export const WebAppBullmeter = ({
   }, [debouncedButton1VotesNumber, debouncedButton2VotesNumber]);
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25, ease: "easeInOut" }}
       className={cn(
         "flex flex-col justify-center items-start w-full gap-2.5",
         className,
       )}>
-      {showLabel && <h1 className="text-sm font-bold">{label}</h1>}
+      {showLabel && <h1 className="text-2xl font-bold">{label}</h1>}
       <NBCard className={cn("w-full items-start gap-2.5", cardClassName)}>
         <div className="flex flex-col justify-center items-start gap-1.5">
           <h1 className="text-2xl font-bold leading-7">{title}</h1>
           <div className="flex justify-start items-center gap-1.5">
             <div
-              className={`size-2 rounded-full ${
+              className={`size-2.5 rounded-full ${
                 isExpired
                   ? "bg-yellow-500"
                   : "bg-green-500 animate-pulse animate-infinite animate-ease-linear"
               }`}
             />
-            <p className="text-sm font-medium">
+            <p className="text-base font-medium">
               {isExpired
                 ? "vote ended"
                 : `${timeLeft} left to vote • $${votePrice} per vote`}
@@ -219,6 +223,6 @@ export const WebAppBullmeter = ({
           </NBButton>
         </div>
       </NBCard>
-    </div>
+    </motion.div>
   );
 };

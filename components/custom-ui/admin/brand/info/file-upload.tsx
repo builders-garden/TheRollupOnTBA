@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { usePinataIpfsUpload } from "@/hooks/use-pinata-ipfs";
+import { AuthTokenType } from "@/lib/enums";
 import { NBButton } from "../../../nb-button";
 
 interface FileUploadProps {
@@ -28,7 +29,9 @@ export const FileUpload = ({
     brandLogoUrl || null,
   );
   const [isUploadingFile, setIsUploadingFile] = useState(false);
-  const { mutate: uploadFileToIPFS } = usePinataIpfsUpload();
+  const { mutate: uploadFileToIPFS } = usePinataIpfsUpload(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
 
   // Handles the file upload trigger
   const handleFileUploadTrigger = () => {

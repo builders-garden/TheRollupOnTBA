@@ -46,7 +46,7 @@ export const WebAppTips = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const { tipSent } = useSocketUtils();
   const { address } = useAccount();
-  const { startConfetti } = useConfetti({});
+  const { startConfetti } = useConfetti({ duration: 500 });
   const [isEditing, setIsEditing] = useState(false);
   const { mutate: createTip } = useCreateTip(AuthTokenType.WEB_APP_AUTH_TOKEN);
 
@@ -57,8 +57,6 @@ export const WebAppTips = ({
   const {
     transfer: transferUsdc,
     isLoading: isTransferLoading,
-    isSuccess: isTransferSuccess,
-    hasError: isTransferError,
     error: transferError,
   } = useUsdcTransfer({
     amount: "1", // Default value
@@ -82,34 +80,37 @@ export const WebAppTips = ({
 
       try {
         // Execute the transfer using your hook with dynamic parameters
-        await transferUsdc(amount.toString(), tipSettings.payoutAddress);
+        await transferUsdc(
+          amount.toString(),
+          tipSettings.payoutAddress,
+          () => {
+            tipSent({
+              brandId: tipSettings.brandId,
+              position: PopupPositions.TOP_CENTER,
+              username:
+                baseName || user?.username || formatWalletAddress(address),
+              profilePicture: user?.avatarUrl || "",
+              tipAmount: amount.toString(),
+            });
+            toast.success("Tip sent successfully");
+            startConfetti();
 
-        if (isTransferSuccess) {
-          tipSent({
-            brandId: tipSettings.brandId,
-            position: PopupPositions.TOP_CENTER,
-            username:
-              baseName || user?.username || formatWalletAddress(address),
-            profilePicture: user?.avatarUrl || "",
-            tipAmount: amount.toString(),
-          });
-          toast.success("Tip sent successfully");
-          startConfetti();
-
-          // Create a tip record in the database
-          createTip({
-            senderId: user.id,
-            receiverBrandId: tipSettings.brandId,
-            receiverAddress: tipSettings.payoutAddress,
-            receiverBaseName: tipSettings.payoutBaseName,
-            receiverEnsName: tipSettings.payoutEnsName,
-            amount: amount.toString(),
-            platform: "web-app",
-          });
-        } else if (isTransferError) {
-          console.log("USDC transfer failed:", transferError);
-          throw transferError;
-        }
+            // Create a tip record in the database
+            createTip({
+              senderId: user.id,
+              receiverBrandId: tipSettings.brandId,
+              receiverAddress: tipSettings.payoutAddress,
+              receiverBaseName: tipSettings.payoutBaseName,
+              receiverEnsName: tipSettings.payoutEnsName,
+              amount: amount.toString(),
+              platform: "web-app",
+            });
+          },
+          () => {
+            console.log("USDC transfer failed:", transferError);
+            throw transferError;
+          },
+        );
       } catch (error) {
         console.log("USDC transfer failed:", error);
         throw error;

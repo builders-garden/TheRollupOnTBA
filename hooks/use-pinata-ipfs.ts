@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
+import { AuthTokenType } from "@/lib/enums";
 
 // Types for API responses
 interface PinataApiResponse {
@@ -9,7 +10,7 @@ interface PinataApiResponse {
 }
 
 // Query hooks
-export const usePinataIpfsUpload = () => {
+export const usePinataIpfsUpload = (tokenType: AuthTokenType) => {
   return useMutation<PinataApiResponse, Error, { file: File }>({
     mutationFn: async ({ file }) => {
       const formData = new FormData();
@@ -19,6 +20,9 @@ export const usePinataIpfsUpload = () => {
         method: "POST",
         credentials: "include",
         body: formData,
+        headers: {
+          "x-token-type": tokenType,
+        },
       });
 
       if (!response.ok) {

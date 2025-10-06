@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { NBButton } from "@/components/custom-ui/nb-button";
-import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { FeaturedToken } from "@/lib/database/db.schema";
 import { User } from "@/lib/types/user.type";
 
@@ -10,8 +9,6 @@ interface WebAppFeaturedTokensProps {
 }
 
 export const WebAppFeaturedTokens = ({ tokens }: WebAppFeaturedTokensProps) => {
-  const { tokenTraded } = useSocketUtils();
-
   // Handle open token page (_blank)
   const handleOpenTokenPage = (token: FeaturedToken) => {
     if (!token.chainId) return;

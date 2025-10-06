@@ -46,10 +46,6 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  console.log("tokenType", tokenType);
-  console.log("pathname", pathname);
-  console.log("req.method", req.method);
-
   // Get token from auth_token cookie based on the token type
   // received by the header (it was set in each api call)
   const authToken =

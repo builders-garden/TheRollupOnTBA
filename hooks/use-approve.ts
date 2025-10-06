@@ -1,20 +1,23 @@
 import { readContract, sendCalls } from "@wagmi/core";
 import { useState } from "react";
 import { encodeFunctionData, erc20Abi, parseUnits } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useSendTransaction } from "wagmi";
 import { BASE_USDC_ADDRESS, BULLMETER_ADDRESS } from "@/lib/constants";
 import { wagmiConfigMiniApp } from "@/lib/reown";
 
 interface UseApproveProps {
   amount?: string; // Amount in USDC (e.g., "1" for 1 USDC)
   spender?: string; // Address to approve (defaults to BullMeter contract)
+  source: "web-app" | "mini-app"; // Source of the approval
 }
 
 export const useApprove = ({
   amount = "1",
   spender = BULLMETER_ADDRESS,
-}: UseApproveProps = {}) => {
+  source,
+}: UseApproveProps) => {
   const { address } = useAccount();
+  const { sendTransaction } = useSendTransaction();
 
   // Parse the amount to USDC decimals (6 decimals for USDC)
   const parsedAmount = parseUnits(amount, 6);
@@ -72,29 +75,51 @@ export const useApprove = ({
 
       console.log("📤 Sending approval transaction...");
 
-      // Send the call with higher gas price
-      const result = await sendCalls(wagmiConfigMiniApp, {
-        calls: [
-          {
-            to: BASE_USDC_ADDRESS as `0x${string}`,
-            data: approveData,
+      if (source === "web-app") {
+        // Wrap sendTransaction in a Promise to make it awaitable
+        await new Promise<void>((resolve, reject) => {
+          sendTransaction(
+            {
+              to: BASE_USDC_ADDRESS as `0x${string}`,
+              data: approveData,
+              value: BigInt(0),
+            },
+            {
+              onSuccess: async () => {
+                setIsSuccess(true);
+                resolve();
+              },
+              onError: (error) => {
+                reject(error);
+              },
+            },
+          );
+        });
+      } else if (source === "mini-app") {
+        // Send the call with higher gas price
+        const result = await sendCalls(wagmiConfigMiniApp, {
+          calls: [
+            {
+              to: BASE_USDC_ADDRESS as `0x${string}`,
+              data: approveData,
+            },
+          ],
+          capabilities: {
+            paymasterService: {
+              url: process.env.NEXT_PUBLIC_PAYMASTER_URL || "",
+            },
           },
-        ],
-        capabilities: {
-          paymasterService: {
-            url: process.env.NEXT_PUBLIC_PAYMASTER_URL || "",
-          },
-        },
-      });
-
-      setCallId(result.id);
-      setIsSuccess(true);
-      // Additional wait to ensure transaction is fully processed
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 more seconds
+        });
+        setCallId(result.id);
+        setIsSuccess(true);
+        // Additional wait to ensure transaction is fully processed
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // 2 more seconds
+      }
     } catch (err) {
       console.log("❌ Approval failed:", err);
       setIsError(true);
       setError(err instanceof Error ? err : new Error("Unknown error"));
+      throw err; // Re-throw the error so it can be caught by the caller
     } finally {
       setIsPending(false);
     }

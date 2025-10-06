@@ -92,8 +92,8 @@ export const Bullmeter = ({
       )}>
       {showLabel && <h1 className="text-sm font-bold">{label}</h1>}
       <NBCard className={cn("w-full items-start gap-2.5", cardClassName)}>
-        <div className="flex flex-col justify-center items-start">
-          <h1 className="text-2xl font-bold">{title}</h1>
+        <div className="flex flex-col justify-center items-start gap-1.5">
+          <h1 className="text-2xl font-bold leading-7">{title}</h1>
           <div className="flex justify-start items-center gap-1.5">
             <div
               className={`size-2 rounded-full ${

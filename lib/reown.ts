@@ -1,7 +1,9 @@
 import { farcasterMiniApp as miniAppConnector } from "@farcaster/miniapp-wagmi-connector";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { http } from "viem";
 import { basePreconf } from "viem/chains";
-import { createConfig } from "wagmi";
+import { cookieStorage, createConfig, createStorage } from "wagmi";
+import { env } from "./zod";
 
 export const wagmiConfigMiniApp = createConfig({
   ssr: undefined,
@@ -10,4 +12,13 @@ export const wagmiConfigMiniApp = createConfig({
     [basePreconf.id]: http(),
   },
   connectors: [miniAppConnector()],
+});
+
+export const wagmiAdapter = new WagmiAdapter({
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
+  ssr: false,
+  projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
+  networks: [basePreconf],
 });

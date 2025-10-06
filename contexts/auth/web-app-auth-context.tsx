@@ -6,10 +6,11 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useAccount } from "wagmi";
+import { toast } from "sonner";
+import { useAccount, useSignMessage } from "wagmi";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
-import { useAuthCheck, useFakeFarcasterSignIn } from "@/hooks/use-auth-hooks";
+import { useAuthCheck, useWebAppSignIn } from "@/hooks/use-auth-hooks";
 import { useBrandBySlug } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTipSettings } from "@/hooks/use-tip-settings";
@@ -35,6 +36,8 @@ interface WebAppAuthContextType {
       refetch: () => Promise<void>;
     };
   };
+  signInWithWebApp: () => void;
+  isSigningIn: boolean;
   isLoading: boolean;
   error: Error | null;
 }
@@ -53,12 +56,7 @@ export const useWebAppAuth = () => {
 
 export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
   // Environment context
-  const {
-    isInMiniApp,
-    isLoading: isEnvironmentLoading,
-    context: miniAppContext,
-    isMiniAppReady,
-  } = useMiniApp();
+  const { isLoading: isEnvironmentLoading } = useMiniApp();
 
   // Local state
   const [brandSlug, setBrandSlug] = useState<string>();
@@ -68,6 +66,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { signMessage } = useSignMessage();
   const { address: connectedAddress } = useAccount();
 
   // Single user query - this is the only place we fetch user data
@@ -76,7 +75,6 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     user: authUser,
     refetch: refetchUser,
     isLoading: isFetchingUser,
-    isFetched: isFetchedAuthUser,
   } = useAuthCheck(); // Always fetch to check for existing token
 
   // Fetching the brand when the user is connected
@@ -85,7 +83,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingBrand,
     error: brandError,
     refetch: refetchBrand,
-  } = useBrandBySlug({ brandSlug, enabled: !!brandSlug && !!user });
+  } = useBrandBySlug({ brandSlug, enabled: !!brandSlug });
 
   // Fetching the tip settings when the brand is connected
   const {
@@ -108,6 +106,13 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     brandId: brand?.id,
     enabled: !!brand?.id && !!user,
   });
+
+  // Auto set user logic
+  useEffect(() => {
+    if (authUser) {
+      setUser(authUser);
+    }
+  }, [authUser]);
 
   // Auto set brand logic
   useEffect(() => {
@@ -162,10 +167,10 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [refetchFeaturedTokens]);
 
-  // Farcaster sign-in mutation
-  const { mutate: fakeFarcasterSignIn } = useFakeFarcasterSignIn({
+  // Web app sign-in mutation
+  const { mutate: webAppSignIn } = useWebAppSignIn({
     onSuccess: (data) => {
-      console.log("Farcaster sign-in success:", data);
+      console.log("Web app sign-in success:", data);
       if (data.success && data.user) {
         setIsSigningIn(false);
         setError(null);
@@ -173,71 +178,55 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
       }
     },
     onError: (error: Error) => {
-      console.log("Farcaster sign-in error:", error);
+      console.log("Web app sign-in error:", error);
       setError(error);
       setIsSigningIn(false);
     },
   });
 
-  // Sign in with Farcaster (miniapp)
-  const signInWithFarcaster = useCallback(async () => {
-    if (!miniAppContext) {
-      throw new Error("Not in mini app");
-    }
+  // Handles the sign-in with web app
+  const executeSignInWithWebApp = useCallback(() => {
+    if (!connectedAddress) return;
+    setIsSigningIn(true);
 
-    try {
-      setIsSigningIn(true);
-      setError(null);
+    // The message to sign
+    const message = "Sign in to the control the stream app";
 
-      const referrerFid =
-        miniAppContext.location?.type === "cast_embed"
-          ? miniAppContext.location.cast.author.fid
-          : undefined;
-
-      // The signin is not required but this will create the user if they don't exist
-      fakeFarcasterSignIn({
-        fid: miniAppContext.user.fid,
-        referrerFid,
-        connectedAddress,
-      });
-    } catch (err) {
-      console.error("Farcaster sign-in error:", err);
-      setError(
-        err instanceof Error ? err : new Error("Farcaster sign-in failed"),
-      );
-      setIsSigningIn(false);
-    }
-  }, [miniAppContext, fakeFarcasterSignIn]);
-
-  // Auto sign-in logic
-  useEffect(() => {
-    // Wait for the miniapp to be ready and the user to be fetched
-    if (
-      !isMiniAppReady ||
-      !isFetchedAuthUser ||
-      !isInMiniApp ||
-      !miniAppContext
-    ) {
-      return;
-    }
-
-    // If we have a user from the initial fetch, set the user and return
-    // because we don't need to sign in
-    if (authUser) {
-      setUser(authUser);
-      return;
-    }
-
-    // Sign in with Farcaster if not authenticated
-    signInWithFarcaster();
-  }, [
-    isMiniAppReady,
-    isFetchedAuthUser,
-    isInMiniApp,
-    miniAppContext,
-    authUser,
-    signInWithFarcaster,
-  ]);
+    // Request a signature to the user
+    signMessage(
+      {
+        message,
+      },
+      {
+        onSuccess: (data) => {
+          // If the signature was produced, sign in with the web app
+          webAppSignIn(
+            {
+              signature: data,
+              address: connectedAddress,
+              message,
+            },
+            {
+              onSuccess: async () => {
+                await executeRefetchUser();
+                toast.success("Signed in with web app");
+                setUser(authUser);
+                setIsSigningIn(false);
+              },
+              onError: (error: Error) => {
+                toast.error("Failed to sign in with web app");
+                setIsSigningIn(false);
+              },
+            },
+          );
+        },
+        onError: (error: Error) => {
+          toast.error("Signature rejected");
+          setIsSigningIn(false);
+        },
+      },
+    );
+  }, [webAppSignIn, signMessage, connectedAddress]);
 
   const value: WebAppAuthContextType = {
     user: {
@@ -258,11 +247,11 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
         refetch: executeRefetchFeaturedTokens,
       },
     },
+    signInWithWebApp: executeSignInWithWebApp,
+    isSigningIn,
     isLoading:
       isEnvironmentLoading ||
-      (isInMiniApp && !isMiniAppReady) ||
       isFetchingUser ||
-      isSigningIn ||
       isFetchingBrand ||
       isFetchingTipSettings ||
       isFetchingFeaturedTokens,

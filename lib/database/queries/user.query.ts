@@ -3,7 +3,7 @@ import { and, eq, isNotNull } from "drizzle-orm";
 import { Address, getAddress, isAddressEqual } from "viem";
 import { db } from "@/lib/database";
 import { userTable, walletTable } from "@/lib/database/db.schema";
-import { fetchUserFromNeynar } from "@/lib/neynar";
+import { fetchUserByAddress, fetchUserFromNeynar } from "@/lib/neynar";
 import { NeynarUser } from "@/lib/types/neynar.type";
 import { User } from "@/lib/types/user.type";
 import { formatAvatarSrc } from "@/lib/utils";
@@ -301,11 +301,23 @@ export async function getOrCreateUserFromFid(
  */
 export const getOrCreateUserFromWalletAddress = async (
   address: Address,
-  farcasterUser?: NeynarUser,
 ): Promise<User> => {
+  // Search the user in the database
   const user = await getUserFromWalletAddress(address);
   if (user) return user;
-  const dbUser = await createUserFromWalletAddress(address, farcasterUser);
+
+  // If the user is not found in the database, create them
+  // But first try to fetch the user from neynar by the address
+  const farcasterUser = await fetchUserByAddress(address);
+
+  // If the user is found in neynar, create them in the database through the neynar data
+  if (farcasterUser) {
+    const dbUser = await createUserFromNeynar(farcasterUser);
+    return dbUser;
+  }
+
+  // If the user is not found in neynar, create them in the database through the wallet address
+  const dbUser = await createUserFromWalletAddress(address);
   return dbUser;
 };
 

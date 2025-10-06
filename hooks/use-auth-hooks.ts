@@ -96,6 +96,25 @@ export function useFakeFarcasterSignIn(
   });
 }
 
+export function useWebAppSignIn(
+  options?: Partial<
+    UseApiMutationOptions<
+      { success: boolean; error?: string; user?: User },
+      { signature: string; address: string; message: string }
+    >
+  >,
+) {
+  return useApiMutation<
+    { success: boolean; error?: string; user?: User },
+    { signature: string; address: string; message: string }
+  >({
+    url: "/api/auth/web-app/sign-in",
+    method: "POST",
+    body: (variables) => variables,
+    ...options,
+  });
+}
+
 export function useBaseSignIn(
   options?: Partial<
     UseApiMutationOptions<

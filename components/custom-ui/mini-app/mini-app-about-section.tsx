@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion";
 
-interface AboutSectionProps {
+interface MiniAppAboutSectionProps {
   label: string;
   text: string;
   coverUrl?: string;
@@ -20,7 +20,7 @@ interface AboutSectionProps {
   websiteUrl?: string;
 }
 
-export const AboutSection = ({
+export const MiniAppAboutSection = ({
   label,
   text,
   coverUrl,
@@ -28,7 +28,7 @@ export const AboutSection = ({
   twitchUrl,
   twitterUrl,
   websiteUrl,
-}: AboutSectionProps) => {
+}: MiniAppAboutSectionProps) => {
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     undefined,
   );

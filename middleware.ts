@@ -13,25 +13,42 @@ export default async function middleware(req: NextRequest) {
     req.nextUrl.pathname === "/api/auth/farcaster/fake-sign-in" ||
     req.nextUrl.pathname === "/api/auth/base/nonce" ||
     req.nextUrl.pathname === "/api/auth/base/sign-in" ||
+    req.nextUrl.pathname === "/api/auth/web-app/sign-in" ||
     req.nextUrl.pathname === "/api/auth/logout" ||
-    req.nextUrl.pathname === "/api/bullmeters/active/:brandId" ||
-    req.nextUrl.pathname === "/api/last-youtube-content/:brandSlug" ||
     req.nextUrl.pathname.includes("/api/og") ||
     req.nextUrl.pathname.includes("/api/webhook/farcaster")
   ) {
     return NextResponse.next();
   }
 
-  // skip auth check for GET requests to brandSlug (public overlay endpoints)
+  // skip auth check for GET requests to active bullmeters with a dynamic brandId
   if (
-    req.nextUrl.pathname === "/api/brands/:brandSlug" &&
+    /^\/api\/bullmeters\/active\/[^\/]+$/.test(req.nextUrl.pathname) &&
+    req.method === "GET"
+  ) {
+    return NextResponse.next();
+  }
+
+  // skip auth check for GET requests to youtube content with a dynamic slug
+  if (
+    /^\/api\/last-youtube-content\/[^\/]+$/.test(req.nextUrl.pathname) &&
+    req.method === "GET"
+  ) {
+    return NextResponse.next();
+  }
+
+  // skip auth check for GET requests to brand with a dynamic slug
+  if (
+    /^\/api\/brands\/[^\/]+$/.test(req.nextUrl.pathname) &&
     req.method === "GET"
   ) {
     return NextResponse.next();
   }
 
   // Get token from auth_token cookie
-  const authToken = req.cookies.get("auth_token")?.value;
+  const authToken =
+    req.cookies.get("auth_token")?.value ??
+    req.cookies.get("web_app_auth_token")?.value;
 
   if (!authToken) {
     return NextResponse.json(

@@ -135,12 +135,14 @@ export function useBaseSignIn(
 }
 
 export function useLogout(
-  options?: Partial<UseApiMutationOptions<{ success: boolean }, object>>,
+  options?: Partial<
+    UseApiMutationOptions<{ success: boolean }, { tokenType: string }>
+  >,
 ) {
-  return useApiMutation<{ success: boolean }, object>({
+  return useApiMutation<{ success: boolean }, { tokenType: string }>({
     url: "/api/auth/logout",
     method: "POST",
-    body: () => ({}),
+    body: (variables) => variables,
     ...options,
   });
 }

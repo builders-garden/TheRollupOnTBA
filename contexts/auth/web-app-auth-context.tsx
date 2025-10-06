@@ -7,10 +7,14 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { useAccount, useSignMessage } from "wagmi";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 // hooks
 import { useMiniApp } from "@/contexts/mini-app-context";
-import { useAuthCheck, useWebAppSignIn } from "@/hooks/use-auth-hooks";
+import {
+  useAuthCheck,
+  useLogout,
+  useWebAppSignIn,
+} from "@/hooks/use-auth-hooks";
 import { useBrandBySlug } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTipSettings } from "@/hooks/use-tip-settings";
@@ -37,7 +41,9 @@ interface WebAppAuthContextType {
     };
   };
   signInWithWebApp: () => void;
+  executeLogout: () => void;
   isSigningIn: boolean;
+  isLoggingOut: boolean;
   isLoading: boolean;
   error: Error | null;
 }
@@ -65,8 +71,10 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
   const [featuredTokens, setFeaturedTokens] = useState<FeaturedToken[]>([]);
   const [user, setUser] = useState<User>();
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { signMessage } = useSignMessage();
+  const { disconnect } = useDisconnect();
   const { address: connectedAddress } = useAccount();
 
   // Single user query - this is the only place we fetch user data
@@ -75,6 +83,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     user: authUser,
     refetch: refetchUser,
     isLoading: isFetchingUser,
+    isRefetching: isRefetchingUser,
   } = useAuthCheck(); // Always fetch to check for existing token
 
   // Fetching the brand when the user is connected
@@ -167,6 +176,31 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [refetchFeaturedTokens]);
 
+  // Logout mutation
+  const { mutate: logout } = useLogout({
+    onSuccess: () => {
+      setUser(undefined);
+      disconnect(
+        {},
+        {
+          onSuccess: () => {
+            setIsLoggingOut(false);
+          },
+        },
+      );
+    },
+    onError: (error: Error) => {
+      console.error("Logout error:", error);
+      setIsLoggingOut(false);
+    },
+  });
+
+  // A function to logout
+  const executeLogout = useCallback(() => {
+    setIsLoggingOut(true);
+    logout({ tokenType: "web_app_auth_token" });
+  }, [logout]);
+
   // Web app sign-in mutation
   const { mutate: webAppSignIn } = useWebAppSignIn({
     onSuccess: (data) => {
@@ -209,18 +243,17 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
             {
               onSuccess: async () => {
                 await executeRefetchUser();
-                toast.success("Signed in with web app");
-                setUser(authUser);
+                toast.success("Successfully logged in");
                 setIsSigningIn(false);
               },
-              onError: (error: Error) => {
-                toast.error("Failed to sign in with web app");
+              onError: () => {
+                toast.error("Failed to log in");
                 setIsSigningIn(false);
               },
             },
           );
         },
-        onError: (error: Error) => {
+        onError: () => {
           toast.error("Signature rejected");
           setIsSigningIn(false);
         },
@@ -247,11 +280,13 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
         refetch: executeRefetchFeaturedTokens,
       },
     },
+    isLoggingOut,
+    executeLogout,
     signInWithWebApp: executeSignInWithWebApp,
     isSigningIn,
     isLoading:
       isEnvironmentLoading ||
-      isFetchingUser ||
+      (isFetchingUser && !isRefetchingUser) ||
       isFetchingBrand ||
       isFetchingTipSettings ||
       isFetchingFeaturedTokens,

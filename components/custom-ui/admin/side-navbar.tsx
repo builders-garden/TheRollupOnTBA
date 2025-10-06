@@ -1,10 +1,11 @@
-import { Blocks, ChartBar, Images, LogOut, Palette, ShieldUser } from "lucide-react";
+import { Blocks, ChartBar, Images, Palette, ShieldUser } from "lucide-react";
 import Image from "next/image";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
 import { cn } from "@/lib/utils";
+import { LogoutButton } from "../logout-button";
 
 interface SideNavbarProps {
   selectedPageContent: AdminPageContent;
@@ -85,7 +86,11 @@ export const SideNavbar = ({
             className="w-full"
             variant={isContentAnalytics ? "default" : "ghost"}
             onClick={() => setSelectedPageContent(AdminPageContent.ANALYTICS)}>
-            <div className={cn("flex justify-start items-center w-full gap-2", !isContentAnalytics && "text-white")}>
+            <div
+              className={cn(
+                "flex justify-start items-center w-full gap-2",
+                !isContentAnalytics && "text-white",
+              )}>
               <ChartBar className="size-5" />
               <p className="text-xl font-bold">Analytics</p>
             </div>
@@ -94,12 +99,7 @@ export const SideNavbar = ({
       </div>
 
       {/* Logout Button on footer */}
-      <NBButton buttonColor="red" className="w-full" onClick={executeLogout}>
-        <div className="flex justify-start items-center w-full gap-2">
-          <LogOut className="size-5 text-destructive" />
-          <p className="text-xl font-bold text-destructive">Logout</p>
-        </div>
-      </NBButton>
+      <LogoutButton executeLogout={executeLogout} />
     </NBCard>
   );
 };

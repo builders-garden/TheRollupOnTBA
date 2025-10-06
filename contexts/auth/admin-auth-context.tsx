@@ -144,7 +144,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   // A function to logout
   const executeLogout = useCallback(() => {
     setIsLoggingOut(true);
-    logout({});
+    logout({ tokenType: "auth_token" });
   }, [logout]);
 
   // A function to refetch the brand

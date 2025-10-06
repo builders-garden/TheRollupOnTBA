@@ -2,12 +2,14 @@ import { createAppKit, useAppKit } from "@reown/appkit/react";
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { basePreconf } from "viem/chains";
 import { useAccount } from "wagmi";
 import { useWebAppAuth } from "@/contexts/auth/web-app-auth-context";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { wagmiAdapter } from "@/lib/reown";
 import { env } from "@/lib/zod";
+import { LogoutButton } from "../custom-ui/logout-button";
 import { NBButton } from "../custom-ui/nb-button";
 import { NBCard } from "../custom-ui/nb-card";
 import { ShareButton } from "../custom-ui/share-button";
@@ -24,13 +26,37 @@ createAppKit({
 });
 
 export const WebAppStreamPage = () => {
-  const { brand, user, signInWithWebApp } = useWebAppAuth();
+  const {
+    brand,
+    user,
+    signInWithWebApp,
+    isSigningIn,
+    executeLogout,
+    isLoggingOut,
+  } = useWebAppAuth();
   const { address: connectedAddress } = useAccount();
   const { open } = useAppKit();
+
+  // This state memorizes if the user was not connected before the page loaded
+  const [wasNotConnected, setWasNotConnected] = useState(!connectedAddress);
 
   // Get the last youtube content for this brand
   const { data: lastYoutubeContent, isLoading: isLastYoutubeContentLoading } =
     useLastYoutubeContent(brand.data?.slug || "");
+
+  // If the user was not connected before the page loaded
+  // Automatically start the sign in process
+  useEffect(() => {
+    if (connectedAddress && wasNotConnected && !isSigningIn) {
+      signInWithWebApp();
+    }
+  }, [connectedAddress]);
+
+  // Handles the logout
+  const handleLogout = () => {
+    executeLogout();
+    setWasNotConnected(false);
+  };
 
   return (
     <motion.div
@@ -173,37 +199,71 @@ export const WebAppStreamPage = () => {
       {/* Sidebar - fixed width and no scroll */}
       <div className="flex flex-col justify-center items-center min-h-screen h-screen w-[40%] pr-6 py-6">
         <NBCard className="flex flex-col justify-between items-center h-full w-full bg-white p-5">
-          {user.data ? (
-            <div className="flex flex-col justify-center items-center w-full gap-5">
-              <h1 className="text-2xl font-bold text-start w-full">
-                Interact with the stream
-              </h1>
-            </div>
-          ) : connectedAddress ? (
-            <div className="flex flex-col justify-center items-center w-full h-full gap-5">
-              <h1 className="text-2xl font-bold w-full text-center px-5">
-                Connect your wallet to start interacting with the stream
-              </h1>
-              <NBButton
-                onClick={() => signInWithWebApp()}
-                className="bg-accent w-fit">
-                <p className="text-base font-extrabold text-white">Sign in</p>
-              </NBButton>
-            </div>
-          ) : (
-            <div className="flex flex-col justify-center items-center w-full h-full gap-5">
-              <h1 className="text-2xl font-bold w-full text-center px-5">
-                Connect your wallet to start interacting with the stream
-              </h1>
-              <NBButton
-                onClick={() => open({ view: "Connect", namespace: "eip155" })}
-                className="bg-accent w-fit">
-                <p className="text-base font-extrabold text-white">
-                  Connect Wallet
-                </p>
-              </NBButton>
-            </div>
-          )}
+          <AnimatePresence mode="wait">
+            {isSigningIn || isLoggingOut ? (
+              <motion.div
+                key="signing-in-loader"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col justify-center items-center w-full h-full gap-5">
+                <Loader2 className="size-10 text-black animate-spin" />
+              </motion.div>
+            ) : user.data ? (
+              <motion.div
+                key="user-data"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col justify-between items-center w-full gap-5">
+                <h1 className="text-2xl font-bold text-start w-full">
+                  Interact with the stream
+                </h1>
+                {/* Logout Button on footer */}
+                <LogoutButton executeLogout={handleLogout} />
+              </motion.div>
+            ) : connectedAddress && !wasNotConnected ? (
+              <motion.div
+                key="user-data"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col justify-center items-center w-full h-full gap-5">
+                <h1 className="text-2xl font-bold w-full text-center px-5">
+                  Log in to start interacting with the stream
+                </h1>
+                <NBButton
+                  onClick={() => signInWithWebApp()}
+                  className="bg-accent w-fit">
+                  <p className="text-base font-extrabold text-white">
+                    Sign message
+                  </p>
+                </NBButton>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="user-data"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col justify-center items-center w-full h-full gap-5">
+                <h1 className="text-2xl font-bold w-full text-center px-5">
+                  Connect your wallet to start interacting with the stream
+                </h1>
+                <NBButton
+                  onClick={() => open({ view: "Connect", namespace: "eip155" })}
+                  className="bg-accent w-fit">
+                  <p className="text-base font-extrabold text-white">
+                    Connect Wallet
+                  </p>
+                </NBButton>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </NBCard>
       </div>
     </motion.div>

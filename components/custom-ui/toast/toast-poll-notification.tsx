@@ -240,17 +240,16 @@ export const ToastPollNotification = ({
           />
         ) : null}
 
-        <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 py-2 flex items-center justify-between gap-6 min-w-[1000px] min-h-[130px] border-4 border-[#E6B45E] font-grotesk text-white">
+        <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 flex items-center justify-between gap-6 min-w-[1000px] min-h-[100px] border-4 border-[#E6B45E] font-grotesk text-white">
           <div className="flex items-center gap-2 text-xl shrink-0">
-            <BullIcon className="w-10 h-10 fill-[#4CAF50]" />
+            <BullIcon className="w-[34px] h-[34px] fill-[#4CAF50]" />
             <p className="shrink-0">or</p>
-            <BearIcon className="w-10 h-10 fill-[#CF5953]" />
-            <p className="shrink-0">?</p>
+            <BearIcon className="w-[34px] h-[34px] fill-[#CF5953]" />
           </div>
-          <span className="text-3xl font-black">{data.pollQuestion}</span>
+          <span className="text-[27px] font-black">{data.pollQuestion}</span>
           <div className="flex justify-center items-center gap-5 shrink-0 w-[31%]">
             <div className="flex flex-col items-center justify-center gap-0">
-              <span className="text-[#E6B45E] font-bold text-2xl text-center">
+              <span className="text-[#E6B45E] font-bold text-[22px] text-center">
                 {timeLabel}
               </span>
               <span className="text-gray-400 text-base">
@@ -258,7 +257,7 @@ export const ToastPollNotification = ({
               </span>
             </div>
             <div className="bg-white p-1">
-              <QRCodeSVG value={data.qrCodeUrl} size={82} level="M" />
+              <QRCodeSVG value={data.qrCodeUrl} size={66} level="M" />
             </div>
           </div>
         </div>

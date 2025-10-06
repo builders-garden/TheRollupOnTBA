@@ -1,3 +1,4 @@
+import { AuthTokenType } from "@/lib/enums";
 import { useApiQuery } from "./use-api-query";
 
 interface BrandAnalyticsUser {
@@ -37,6 +38,7 @@ interface UseBrandAnalyticsOptions {
   sortBy?: BrandAnalyticsSort["field"];
   sortDir?: BrandAnalyticsSort["direction"];
   enabled?: boolean;
+  tokenType: AuthTokenType;
 }
 
 export const useBrandAnalytics = ({
@@ -45,6 +47,7 @@ export const useBrandAnalytics = ({
   sortBy = "totalAmount",
   sortDir = "desc",
   enabled = true,
+  tokenType,
 }: UseBrandAnalyticsOptions) => {
   return useApiQuery<BrandAnalyticsResponse>({
     queryKey: ["brand-analytics", page, limit, sortBy, sortDir],
@@ -53,5 +56,6 @@ export const useBrandAnalytics = ({
     isProtected: true,
     // Cache analytics data for 5 minutes
     staleTime: 5 * 60 * 1000,
+    tokenType,
   });
 };

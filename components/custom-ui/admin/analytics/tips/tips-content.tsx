@@ -19,6 +19,7 @@ import {
 } from "@/components/shadcn-ui/table";
 import { useBrandAnalytics } from "@/hooks/use-brand-analytics";
 import { useBrandAnalyticsMetrics } from "@/hooks/use-brand-analytics-metrics";
+import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
 type SortField = "totalTips" | "totalAmount" | "firstTip" | "lastTip";
@@ -86,10 +87,11 @@ export const TipsContent = () => {
     limit: MAX_ITEMS_PER_PAGE,
     sortBy,
     sortDir,
+    tokenType: AuthTokenType.ADMIN_AUTH_TOKEN,
   });
 
   const { data: metricsData, isLoading: isLoadingMetrics } =
-    useBrandAnalyticsMetrics();
+    useBrandAnalyticsMetrics(AuthTokenType.ADMIN_AUTH_TOKEN);
 
   const handleSort = (field: SortField) => {
     if (field === sortBy) {

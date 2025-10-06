@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useUpdateBrand } from "@/hooks/use-brands";
 import { UpdateBrand } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { SocialMedias, SocialMediaUrls } from "@/lib/types/shared.type";
 import { FileUpload } from "./file-upload";
 import { NBTextInput } from "./nb-text-input";
@@ -14,7 +15,9 @@ import { TextDescriptionArea } from "./text-description-area";
 export const InfoContent = () => {
   const { brand } = useAdminAuth();
   const brandData = useMemo(() => brand.data, [brand.data]);
-  const { mutate: updateBrand, isPending: isUpdatingBrand } = useUpdateBrand();
+  const { mutate: updateBrand, isPending: isUpdatingBrand } = useUpdateBrand(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
 
   // Social links states
   const [brandName, setBrandName] = useState(brandData?.name || "");

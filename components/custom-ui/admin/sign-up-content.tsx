@@ -8,6 +8,7 @@ import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useCreateAdmin } from "@/hooks/use-admins";
 import { useCreateBrand } from "@/hooks/use-brands";
 import { useCreateTipSettings } from "@/hooks/use-tip-settings";
+import { AuthTokenType } from "@/lib/enums";
 import { slugify } from "@/lib/utils";
 import { NBButton } from "../nb-button";
 
@@ -16,9 +17,15 @@ export const SignUpContent = () => {
   const [betaAccessKey, setBetaAccessKey] = useState("");
   const [isCreatingNewBrand, setIsCreatingNewBrand] = useState(false);
 
-  const { mutate: createBrand } = useCreateBrand();
-  const { mutate: createAdmin } = useCreateAdmin();
-  const { mutate: createTipSettings } = useCreateTipSettings();
+  const { mutate: createBrand } = useCreateBrand(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
+  const { mutate: createAdmin } = useCreateAdmin(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
+  const { mutate: createTipSettings } = useCreateTipSettings(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
   const { brand, admin: connectedAdmin } = useAdminAuth();
 
   // Slugified version of the brand name

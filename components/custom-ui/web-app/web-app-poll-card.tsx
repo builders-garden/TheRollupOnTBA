@@ -15,7 +15,12 @@ import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { FARCASTER_CLIENT_FID } from "@/lib/constants";
 import { Brand } from "@/lib/database/db.schema";
-import { PopupPositions, ServerToClientSocketEvents } from "@/lib/enums";
+import {
+  AuthTokenType,
+  PopupPositions,
+  ServerToClientSocketEvents,
+} from "@/lib/enums";
+import { NormalizedPoll } from "@/lib/types/bullmeter.type";
 import {
   EndPollNotificationEvent,
   PollNotificationEvent,
@@ -23,39 +28,17 @@ import {
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket";
 import { User } from "@/lib/types/user.type";
-import { formatWalletAddress } from "@/lib/utils";
-import { MiniAppBullmeter } from "@/plugins/mini-app/bullmeter/mini-app-bullmeter";
+import { calculateTimeLeft, formatWalletAddress } from "@/lib/utils";
+import { WebAppBullmeter } from "@/plugins/web-app/bullmeter/web-app-bullmeter";
 import { NBButton } from "../nb-button";
 import { NBModal } from "../nb-modal";
 
-// Helper function to calculate time left
-const calculateTimeLeft = (deadline: number | null) => {
-  if (!deadline) return "0:00";
-  const now = Math.floor(Date.now() / 1000);
-  const timeLeft = deadline - now;
-  if (timeLeft <= 0) return "0:00";
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-};
-
-// Unified poll state populated from initial fetch and socket updates
-type NormalizedPoll = {
-  id: string;
-  prompt: string;
-  pollId?: string;
-  deadlineSeconds: number | null;
-  votes?: number;
-  voters?: number;
-  results?: { bullPercent: number; bearPercent: number };
-};
-
-interface PollCardProps {
+interface WebAppPollCardProps {
   brand: Brand;
   user: User;
 }
 
-export const PollCard = ({ brand, user }: PollCardProps) => {
+export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
   const { context } = useMiniApp();
   const { isConnected, subscribe, unsubscribe } = useSocket();
   const { joinStream, voteCasted } = useSocketUtils();
@@ -305,7 +288,9 @@ export const PollCard = ({ brand, user }: PollCardProps) => {
   });
 
   // Bullmeter votes creation hook
-  const { mutate: createBullmeterVote } = useCreateBullmeterVote();
+  const { mutate: createBullmeterVote } = useCreateBullmeterVote(
+    AuthTokenType.WEB_APP_AUTH_TOKEN,
+  );
 
   // Handle vote submission with approval check
   const handleVote = async (
@@ -388,7 +373,7 @@ export const PollCard = ({ brand, user }: PollCardProps) => {
   return (
     <div className="flex justify-center items-start w-full">
       {showPoll && poll && (
-        <MiniAppBullmeter
+        <WebAppBullmeter
           title={poll.prompt}
           showLabel
           timeLeft={timeLeft}

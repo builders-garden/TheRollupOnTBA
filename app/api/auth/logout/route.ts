@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { AuthTokenType } from "@/lib/enums";
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,11 @@ export const POST = async (req: NextRequest) => {
   const { tokenType } = await req.json();
 
   const tokenToRemove =
-    tokenType === "auth_token" ? "auth_token" : "web_app_auth_token";
+    tokenType === AuthTokenType.WEB_APP_AUTH_TOKEN
+      ? AuthTokenType.WEB_APP_AUTH_TOKEN
+      : tokenType === AuthTokenType.MINI_APP_AUTH_TOKEN
+        ? AuthTokenType.MINI_APP_AUTH_TOKEN
+        : AuthTokenType.ADMIN_AUTH_TOKEN;
 
   // Create response
   const response = NextResponse.json({ success: true });

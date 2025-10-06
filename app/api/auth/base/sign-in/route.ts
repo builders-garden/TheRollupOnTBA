@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createPublicClient, http } from "viem";
 import { base } from "viem/chains";
 import { getBrandByAddress } from "@/lib/database/queries";
+import { AuthTokenType } from "@/lib/enums";
 import { env } from "@/lib/zod";
 
 const client = createPublicClient({
@@ -72,7 +73,7 @@ export const POST = async (req: NextRequest) => {
 
     // Set the auth cookie with the JWT token
     response.cookies.set({
-      name: "auth_token",
+      name: AuthTokenType.ADMIN_AUTH_TOKEN,
       value: token,
       httpOnly: true,
       secure: true,

@@ -247,3 +247,18 @@ export const slugify = (text: string) => {
     .replace(/[^a-z0-9]/g, "_")
     .replace(/_+/g, "_");
 };
+
+/**
+ * Calculate the time left for a poll
+ * @param deadline - The deadline of the poll
+ * @returns The time left for the poll
+ */
+export const calculateTimeLeft = (deadline: number | null) => {
+  if (!deadline) return "0:00";
+  const now = Math.floor(Date.now() / 1000);
+  const timeLeft = deadline - now;
+  if (timeLeft <= 0) return "0:00";
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};

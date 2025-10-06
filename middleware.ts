@@ -1,5 +1,6 @@
 import * as jose from "jose";
 import { NextRequest, NextResponse } from "next/server";
+import { AuthTokenType } from "./lib/enums";
 import { env } from "./lib/zod";
 
 export const config = {
@@ -7,23 +8,26 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+  const tokenType = req.headers.get("x-token-type");
+
   // Skip auth check for sign-in endpoint
   if (
-    req.nextUrl.pathname === "/api/auth/farcaster/sign-in" ||
-    req.nextUrl.pathname === "/api/auth/farcaster/fake-sign-in" ||
-    req.nextUrl.pathname === "/api/auth/base/nonce" ||
-    req.nextUrl.pathname === "/api/auth/base/sign-in" ||
-    req.nextUrl.pathname === "/api/auth/web-app/sign-in" ||
-    req.nextUrl.pathname === "/api/auth/logout" ||
-    req.nextUrl.pathname.includes("/api/og") ||
-    req.nextUrl.pathname.includes("/api/webhook/farcaster")
+    pathname === "/api/auth/farcaster/sign-in" ||
+    pathname === "/api/auth/farcaster/fake-sign-in" ||
+    pathname === "/api/auth/base/sign-in" ||
+    pathname === "/api/auth/web-app/sign-in" ||
+    pathname === "/api/auth/base/nonce" ||
+    pathname === "/api/auth/logout" ||
+    pathname.includes("/api/og") ||
+    pathname.includes("/api/webhook/farcaster")
   ) {
     return NextResponse.next();
   }
 
   // skip auth check for GET requests to active bullmeters with a dynamic brandId
   if (
-    /^\/api\/bullmeters\/active\/[^\/]+$/.test(req.nextUrl.pathname) &&
+    /^\/api\/bullmeters\/active\/[^\/]+$/.test(pathname) &&
     req.method === "GET"
   ) {
     return NextResponse.next();
@@ -31,24 +35,29 @@ export default async function middleware(req: NextRequest) {
 
   // skip auth check for GET requests to youtube content with a dynamic slug
   if (
-    /^\/api\/last-youtube-content\/[^\/]+$/.test(req.nextUrl.pathname) &&
+    /^\/api\/last-youtube-content\/[^\/]+$/.test(pathname) &&
     req.method === "GET"
   ) {
     return NextResponse.next();
   }
 
   // skip auth check for GET requests to brand with a dynamic slug
-  if (
-    /^\/api\/brands\/[^\/]+$/.test(req.nextUrl.pathname) &&
-    req.method === "GET"
-  ) {
+  if (/^\/api\/brands\/[^\/]+$/.test(pathname) && req.method === "GET") {
     return NextResponse.next();
   }
 
-  // Get token from auth_token cookie
+  console.log("tokenType", tokenType);
+  console.log("pathname", pathname);
+  console.log("req.method", req.method);
+
+  // Get token from auth_token cookie based on the token type
+  // received by the header (it was set in each api call)
   const authToken =
-    req.cookies.get("auth_token")?.value ??
-    req.cookies.get("web_app_auth_token")?.value;
+    tokenType === AuthTokenType.WEB_APP_AUTH_TOKEN
+      ? req.cookies.get(AuthTokenType.WEB_APP_AUTH_TOKEN)?.value
+      : tokenType === AuthTokenType.MINI_APP_AUTH_TOKEN
+        ? req.cookies.get(AuthTokenType.MINI_APP_AUTH_TOKEN)?.value
+        : req.cookies.get(AuthTokenType.ADMIN_AUTH_TOKEN)?.value;
 
   if (!authToken) {
     return NextResponse.json(

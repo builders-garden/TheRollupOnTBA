@@ -12,6 +12,7 @@ import {
   useUpdateFeaturedToken,
 } from "@/hooks/use-featured-tokens";
 import { FeaturedToken } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { cn, formatWalletAddress, getChainName } from "@/lib/utils";
 
 interface AddedTokenProps {
@@ -21,8 +22,12 @@ interface AddedTokenProps {
 
 export const AddedToken = ({ token, index }: AddedTokenProps) => {
   const { featuredTokens } = useAdminAuth();
-  const { mutate: deleteFeaturedToken } = useDeleteFeaturedToken();
-  const { mutate: updateFeaturedToken } = useUpdateFeaturedToken();
+  const { mutate: deleteFeaturedToken } = useDeleteFeaturedToken(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
+  const { mutate: updateFeaturedToken } = useUpdateFeaturedToken(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 

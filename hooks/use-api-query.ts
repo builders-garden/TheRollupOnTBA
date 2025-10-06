@@ -1,11 +1,13 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import ky from "ky";
+import { AuthTokenType } from "@/lib/enums";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 interface UseApiQueryOptions<TData, TBody = unknown>
   extends Omit<UseQueryOptions<TData>, "queryFn"> {
   url: string;
+  tokenType: AuthTokenType | null;
   method?: HttpMethod;
   body?: TBody;
   isProtected?: boolean;
@@ -19,6 +21,7 @@ export const useApiQuery = <TData, TBody = unknown>(
     url,
     method = "GET",
     body,
+    tokenType,
     isProtected = false,
     timeout = false,
     ...queryOptions
@@ -30,7 +33,8 @@ export const useApiQuery = <TData, TBody = unknown>(
       const response = await ky(url, {
         method,
         headers: {
-          ...(body && { "Content-Type": "application/json" }),
+          "Content-Type": "application/json",
+          "x-token-type": tokenType || "",
         },
         ...(isProtected && {
           credentials: "include",

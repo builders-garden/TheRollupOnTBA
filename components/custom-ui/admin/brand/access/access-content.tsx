@@ -11,6 +11,7 @@ import {
   getBasenameName,
   getEnsName,
 } from "@/lib/ens/client";
+import { AuthTokenType } from "@/lib/enums";
 import { NBTextInput } from "../info/nb-text-input";
 import { AdminsTable } from "./admins-table";
 
@@ -20,7 +21,9 @@ export const AccessContent = () => {
 
   const { brand } = useAdminAuth();
   const brandId = useMemo(() => brand.data?.id, [brand.data?.id]);
-  const { mutate: createAdmin, isPending: isCreatingAdmin } = useCreateAdmin();
+  const { mutate: createAdmin, isPending: isCreatingAdmin } = useCreateAdmin(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
   const {
     data: admins,
     isLoading: isLoadingAdmins,
@@ -28,6 +31,7 @@ export const AccessContent = () => {
   } = useAdminsByBrandId({
     brandId,
     enabled: !!brandId,
+    tokenType: AuthTokenType.ADMIN_AUTH_TOKEN,
   });
 
   // Handles the confirm button

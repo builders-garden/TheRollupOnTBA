@@ -74,3 +74,9 @@ export enum ServerToClientSocketEvents {
   UPDATE_SENTIMENT_POLL = "update_sentiment_poll",
   ERROR = "error",
 }
+
+export enum AuthTokenType {
+  WEB_APP_AUTH_TOKEN = "web_app_auth_token",
+  MINI_APP_AUTH_TOKEN = "mini_app_auth_token",
+  ADMIN_AUTH_TOKEN = "admin_auth_token",
+}

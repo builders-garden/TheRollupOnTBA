@@ -3,9 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
-import { useApprove } from "@/hooks/use-approve";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { THE_ROLLUP_HOSTS } from "@/lib/constants";
 import { env } from "@/lib/zod";
@@ -14,8 +12,8 @@ import { MiniAppTips } from "@/plugins/mini-app/tips/mini-app-tips";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
 import { HostsSection } from "../custom-ui/mini-app/hosts";
 import { MiniAppAboutSection } from "../custom-ui/mini-app/mini-app-about-section";
+import { MiniAppPollCard } from "../custom-ui/mini-app/mini-app-poll-card";
 import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
-import { PollCard } from "../custom-ui/mini-app/poll-card";
 import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
 import { Skeleton } from "../shadcn-ui/skeleton";
@@ -155,7 +153,7 @@ export const MiniAppStreamPage = () => {
 
         {/* Poll Card */}
         {brand.data && user.data && (
-          <PollCard brand={brand.data} user={user.data} />
+          <MiniAppPollCard brand={brand.data} user={user.data} />
         )}
 
         {/* Tip Buttons */}

@@ -1,3 +1,4 @@
+import { AuthTokenType } from "@/lib/enums";
 import { useApiQuery } from "./use-api-query";
 
 interface BrandAnalyticsMetrics {
@@ -10,11 +11,11 @@ interface BrandAnalyticsMetricsResponse {
   data: BrandAnalyticsMetrics;
 }
 
-export const useBrandAnalyticsMetrics = (enabled = true) => {
+export const useBrandAnalyticsMetrics = (tokenType: AuthTokenType) => {
   return useApiQuery<BrandAnalyticsMetricsResponse>({
     queryKey: ["brand-analytics-metrics"],
     url: "/api/brands/analytics/metrics",
-    enabled,
+    enabled: true,
     isProtected: true,
     // Cache metrics data for 5 minutes
     staleTime: 5 * 60 * 1000,
@@ -22,5 +23,6 @@ export const useBrandAnalyticsMetrics = (enabled = true) => {
     refetchOnWindowFocus: false,
     // Prevent automatic background refresh
     refetchInterval: false,
+    tokenType,
   });
 };

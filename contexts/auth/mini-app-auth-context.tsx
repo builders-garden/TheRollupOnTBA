@@ -14,6 +14,7 @@ import { useBrandBySlug } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTipSettings } from "@/hooks/use-tip-settings";
 import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 
 interface MiniAppAuthContextType {
@@ -79,7 +80,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     refetch: refetchUser,
     isLoading: isFetchingUser,
     isFetched: isFetchedAuthUser,
-  } = useAuthCheck(); // Always fetch to check for existing token
+  } = useAuthCheck(AuthTokenType.MINI_APP_AUTH_TOKEN); // Always fetch to check for existing token
 
   // Fetching the brand when the user is connected
   const {
@@ -87,7 +88,10 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingBrand,
     error: brandError,
     refetch: refetchBrand,
-  } = useBrandBySlug({ brandSlug, enabled: !!brandSlug && !!user });
+  } = useBrandBySlug({
+    brandSlug,
+    enabled: !!brandSlug && !!user,
+  });
 
   // Fetching the tip settings when the brand is connected
   const {
@@ -95,7 +99,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     error: tipSettingsError,
     refetch: refetchTipSettings,
-  } = useTipSettings({
+  } = useTipSettings(AuthTokenType.MINI_APP_AUTH_TOKEN, {
     brandId: brand?.id,
     enabled: !!brand?.id && !!user,
   });
@@ -106,7 +110,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingFeaturedTokens,
     error: featuredTokensError,
     refetch: refetchFeaturedTokens,
-  } = useFeaturedTokens({
+  } = useFeaturedTokens(AuthTokenType.MINI_APP_AUTH_TOKEN, {
     brandId: brand?.id,
     enabled: !!brand?.id && !!user,
   });

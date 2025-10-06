@@ -11,7 +11,7 @@ import { useCreateTip } from "@/hooks/use-tips";
 import { useUsdcTransfer } from "@/hooks/use-usdc-transfer";
 import { FARCASTER_CLIENT_FID } from "@/lib/constants";
 import { TipSettings } from "@/lib/database/db.schema";
-import { PopupPositions } from "@/lib/enums";
+import { AuthTokenType, PopupPositions } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
 
@@ -51,7 +51,7 @@ export const MiniAppTips = ({
   const { address } = useAccount();
   const { startConfetti } = useConfetti({});
   const [isEditing, setIsEditing] = useState(false);
-  const { mutate: createTip } = useCreateTip();
+  const { mutate: createTip } = useCreateTip(AuthTokenType.MINI_APP_AUTH_TOKEN);
 
   // Get the first wallet address with a base name
   const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;

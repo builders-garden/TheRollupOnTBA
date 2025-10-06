@@ -1,4 +1,5 @@
 import type { Brand, CreateBrand, UpdateBrand } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { useApiMutation } from "./use-api-mutation";
 import { useApiQuery } from "./use-api-query";
 
@@ -14,11 +15,14 @@ interface BrandApiResponse {
 }
 
 // Query hooks
-export const useBrands = (params?: {
-  active?: boolean;
-  search?: string;
-  limit?: number;
-}) => {
+export const useBrands = (
+  tokenType: AuthTokenType,
+  params?: {
+    active?: boolean;
+    search?: string;
+    limit?: number;
+  },
+) => {
   const searchParams = new URLSearchParams();
   if (params?.active !== undefined)
     searchParams.set("active", params.active.toString());
@@ -32,6 +36,7 @@ export const useBrands = (params?: {
     queryKey: ["brands", params],
     url,
     isProtected: true,
+    tokenType,
   });
 };
 
@@ -47,20 +52,25 @@ export const useBrandBySlug = ({
     url: `/api/brands/${brandSlug}`,
     enabled: enabled,
     isProtected: true,
+    tokenType: null,
   });
 };
 
-export const useBrandByAddress = (address?: string) => {
+export const useBrandByAddress = (
+  tokenType: AuthTokenType,
+  address?: string,
+) => {
   return useApiQuery<BrandApiResponse>({
     queryKey: ["brands", address],
     url: `/api/brands/addresses/${address}`,
     enabled: !!address,
     isProtected: true,
+    tokenType,
   });
 };
 
 // Mutation hooks
-export const useCreateBrand = () => {
+export const useCreateBrand = (tokenType: AuthTokenType) => {
   return useApiMutation<
     BrandApiResponse,
     CreateBrand & { betaAccessKey: string }
@@ -68,31 +78,35 @@ export const useCreateBrand = () => {
     url: "/api/brands",
     method: "POST",
     body: (variables) => variables,
+    tokenType,
   });
 };
 
-export const useUpdateBrand = () => {
+export const useUpdateBrand = (tokenType: AuthTokenType) => {
   return useApiMutation<BrandApiResponse, { brandSlug: string } & UpdateBrand>({
     url: (variables) => `/api/brands/${variables.brandSlug}`,
     method: "PUT",
     body: ({ brandSlug, ...data }) => data,
+    tokenType,
   });
 };
 
-export const useDeleteBrand = () => {
+export const useDeleteBrand = (tokenType: AuthTokenType) => {
   return useApiMutation<
     { success: boolean; message: string },
     { brandSlug: string }
   >({
     url: (variables) => `/api/brands/${variables.brandSlug}`,
     method: "DELETE",
+    tokenType,
   });
 };
 
-export const useToggleBrandActive = () => {
+export const useToggleBrandActive = (tokenType: AuthTokenType) => {
   return useApiMutation<BrandApiResponse, { brandSlug: string }>({
     url: (variables) => `/api/brands/${variables.brandSlug}`,
     method: "PATCH",
     body: () => ({ action: "toggle-active" }),
+    tokenType,
   });
 };

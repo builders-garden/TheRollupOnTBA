@@ -10,7 +10,6 @@ import {
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion";
 import { THE_ROLLUP_HOSTS } from "@/lib/constants";
-import { cn } from "@/lib/utils";
 import { HostsSection } from "../mini-app/hosts";
 
 interface WebAppAboutSectionProps {

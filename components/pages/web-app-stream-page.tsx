@@ -12,11 +12,11 @@ import { env } from "@/lib/zod";
 import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
 import { WebAppTips } from "@/plugins/web-app/tips/web-app-tips";
 import { LogoutButton } from "../custom-ui/logout-button";
-import { PollCard } from "../custom-ui/mini-app/poll-card";
 import { NBButton } from "../custom-ui/nb-button";
 import { NBCard } from "../custom-ui/nb-card";
 import { ShareButton } from "../custom-ui/share-button";
 import { WebAppAboutSection } from "../custom-ui/web-app/web-app-about-section";
+import { WebAppPollCard } from "../custom-ui/web-app/web-app-poll-card";
 import { ScrollArea } from "../shadcn-ui/scroll-area";
 import { Separator } from "../shadcn-ui/separator";
 import { Skeleton } from "../shadcn-ui/skeleton";
@@ -288,7 +288,7 @@ export const WebAppStreamPage = () => {
 
                     {/* Poll Card */}
                     {brand.data && user.data && (
-                      <PollCard brand={brand.data} user={user.data} />
+                      <WebAppPollCard brand={brand.data} user={user.data} />
                     )}
                   </div>
                 </div>

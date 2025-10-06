@@ -3,6 +3,7 @@ import type {
   TipSettings,
   UpdateTipSettings,
 } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { useApiMutation } from "./use-api-mutation";
 import { useApiQuery } from "./use-api-query";
 
@@ -12,13 +13,16 @@ interface TipSettingsApiResponse {
 }
 
 // Query hooks
-export const useTipSettings = (params?: {
-  brandId?: string;
-  payoutAddress?: string;
-  ensName?: string;
-  baseName?: string;
-  enabled?: boolean;
-}) => {
+export const useTipSettings = (
+  tokenType: AuthTokenType,
+  params?: {
+    brandId?: string;
+    payoutAddress?: string;
+    ensName?: string;
+    baseName?: string;
+    enabled?: boolean;
+  },
+) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
   if (params?.payoutAddress)
@@ -34,19 +38,21 @@ export const useTipSettings = (params?: {
     url,
     isProtected: true,
     enabled: params?.enabled ?? true,
+    tokenType,
   });
 };
 
 // Mutation hooks
-export const useCreateTipSettings = () => {
+export const useCreateTipSettings = (tokenType: AuthTokenType) => {
   return useApiMutation<TipSettingsApiResponse, CreateTipSettings>({
     url: "/api/tip-settings",
     method: "POST",
     body: (variables) => variables,
+    tokenType,
   });
 };
 
-export const useUpdateTipSettings = () => {
+export const useUpdateTipSettings = (tokenType: AuthTokenType) => {
   return useApiMutation<
     TipSettingsApiResponse,
     { tipId: string } & UpdateTipSettings
@@ -54,15 +60,17 @@ export const useUpdateTipSettings = () => {
     url: (variables) => `/api/tip-settings/${variables.tipId}`,
     method: "PUT",
     body: ({ tipId, ...data }) => data,
+    tokenType,
   });
 };
 
-export const useDeleteTipSettings = () => {
+export const useDeleteTipSettings = (tokenType: AuthTokenType) => {
   return useApiMutation<
     { success: boolean; message: string },
     { tipId: string }
   >({
     url: (variables) => `/api/tip-settings/${variables.tipId}`,
     method: "DELETE",
+    tokenType,
   });
 };

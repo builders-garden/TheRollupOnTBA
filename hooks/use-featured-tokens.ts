@@ -3,6 +3,7 @@ import type {
   FeaturedToken,
   UpdateFeaturedToken,
 } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { useApiMutation } from "./use-api-mutation";
 import { useApiQuery } from "./use-api-query";
 
@@ -18,16 +19,19 @@ interface FeaturedTokenApiResponse {
 }
 
 // Query hooks
-export const useFeaturedTokens = (params?: {
-  brandId?: string;
-  chainName?: number;
-  active?: boolean;
-  withBrand?: boolean;
-  search?: string;
-  address?: string;
-  limit?: number;
-  enabled?: boolean;
-}) => {
+export const useFeaturedTokens = (
+  tokenType: AuthTokenType,
+  params?: {
+    brandId?: string;
+    chainName?: number;
+    active?: boolean;
+    withBrand?: boolean;
+    search?: string;
+    address?: string;
+    limit?: number;
+    enabled?: boolean;
+  },
+) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
   if (params?.chainName)
@@ -48,28 +52,31 @@ export const useFeaturedTokens = (params?: {
     url,
     isProtected: true,
     enabled: params?.enabled ?? true,
+    tokenType,
   });
 };
 
-export const useFeaturedToken = (tokenId: string) => {
+export const useFeaturedToken = (tokenType: AuthTokenType, tokenId: string) => {
   return useApiQuery<FeaturedTokenApiResponse>({
     queryKey: ["featured-tokens", tokenId],
     url: `/api/featured-tokens/${tokenId}`,
     enabled: !!tokenId,
     isProtected: true,
+    tokenType,
   });
 };
 
 // Mutation hooks
-export const useCreateFeaturedTokens = () => {
+export const useCreateFeaturedTokens = (tokenType: AuthTokenType) => {
   return useApiMutation<FeaturedTokenApiResponse, CreateFeaturedToken[]>({
     url: "/api/featured-tokens",
     method: "POST",
     body: (variables) => variables,
+    tokenType,
   });
 };
 
-export const useUpdateFeaturedToken = () => {
+export const useUpdateFeaturedToken = (tokenType: AuthTokenType) => {
   return useApiMutation<
     FeaturedTokenApiResponse,
     { tokenId: string } & UpdateFeaturedToken
@@ -77,23 +84,26 @@ export const useUpdateFeaturedToken = () => {
     url: (variables) => `/api/featured-tokens/${variables.tokenId}`,
     method: "PUT",
     body: ({ tokenId, ...data }) => data,
+    tokenType,
   });
 };
 
-export const useDeleteFeaturedToken = () => {
+export const useDeleteFeaturedToken = (tokenType: AuthTokenType) => {
   return useApiMutation<
     { success: boolean; message: string },
     { tokenId: string }
   >({
     url: (variables) => `/api/featured-tokens/${variables.tokenId}`,
     method: "DELETE",
+    tokenType,
   });
 };
 
-export const useToggleFeaturedTokenActive = () => {
+export const useToggleFeaturedTokenActive = (tokenType: AuthTokenType) => {
   return useApiMutation<FeaturedTokenApiResponse, { tokenId: string }>({
     url: (variables) => `/api/featured-tokens/${variables.tokenId}`,
     method: "PATCH",
     body: () => ({ action: "toggle-active" }),
+    tokenType,
   });
 };

@@ -12,6 +12,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { useCreateFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { TokenNameToChainExplorerStringUrls } from "@/lib/constants";
 import { FeaturedToken } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { Token } from "@/lib/types/tokens.type";
 import {
   cn,
@@ -32,7 +33,9 @@ export const TokensSearchModal = ({
   disabled,
 }: TokensSearchModalProps) => {
   const { brand, featuredTokens } = useAdminAuth();
-  const { mutate: createFeaturedTokens } = useCreateFeaturedTokens();
+  const { mutate: createFeaturedTokens } = useCreateFeaturedTokens(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
 
   const [searchValue, setSearchValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);

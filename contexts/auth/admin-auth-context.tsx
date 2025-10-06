@@ -15,6 +15,7 @@ import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTipSettings } from "@/hooks/use-tip-settings";
 import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
 import { getBasenameName, getEnsName } from "@/lib/ens/client";
+import { AuthTokenType } from "@/lib/enums";
 
 interface AdminAuthContextType {
   brand: {
@@ -87,7 +88,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isFetched: isFetchedAuthBrand,
     isRefetching: isRefetchingBrand,
     error: brandError,
-  } = useAuthCheck(); // Always fetch to check for existing token
+  } = useAuthCheck(AuthTokenType.ADMIN_AUTH_TOKEN); // Always fetch to check for existing token
 
   // Single tip settings query
   const {
@@ -97,7 +98,10 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isFetched: isFetchedAuthTipSettings,
     isRefetching: isRefetchingTipSettings,
     error: tipSettingsError,
-  } = useTipSettings({ brandId: brand?.id, enabled: !!brand?.id });
+  } = useTipSettings(AuthTokenType.ADMIN_AUTH_TOKEN, {
+    brandId: brand?.id,
+    enabled: !!brand?.id,
+  });
 
   // Single featured tokens query
   const {
@@ -107,7 +111,10 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isFetched: isFetchedAuthFeaturedTokens,
     isRefetching: isRefetchingFeaturedTokens,
     error: featuredTokensError,
-  } = useFeaturedTokens({ brandId: brand?.id, enabled: !!brand?.id });
+  } = useFeaturedTokens(AuthTokenType.ADMIN_AUTH_TOKEN, {
+    brandId: brand?.id,
+    enabled: !!brand?.id,
+  });
 
   // Farcaster sign-in mutation
   const { mutate: baseSignIn } = useBaseSignIn({
@@ -144,7 +151,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   // A function to logout
   const executeLogout = useCallback(() => {
     setIsLoggingOut(true);
-    logout({ tokenType: "auth_token" });
+    logout({ tokenType: AuthTokenType.ADMIN_AUTH_TOKEN });
   }, [logout]);
 
   // A function to refetch the brand

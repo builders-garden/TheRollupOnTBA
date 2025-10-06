@@ -3,6 +3,7 @@ import type {
   CreateBullMeter,
   UpdateBullMeter,
 } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { useApiMutation } from "./use-api-mutation";
 import { useApiQuery } from "./use-api-query";
 
@@ -18,14 +19,17 @@ interface BullMeterApiResponse {
 }
 
 // Query hooks
-export const useBullMeters = (params?: {
-  brandId?: string;
-  withBrand?: boolean;
-  recent?: number;
-  minDuration?: number;
-  maxDuration?: number;
-  limit?: number;
-}) => {
+export const useBullMeters = (
+  tokenType: AuthTokenType,
+  params?: {
+    brandId?: string;
+    withBrand?: boolean;
+    recent?: number;
+    minDuration?: number;
+    maxDuration?: number;
+    limit?: number;
+  },
+) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
   if (params?.withBrand)
@@ -44,15 +48,17 @@ export const useBullMeters = (params?: {
     queryKey: ["bullmeters", params],
     url,
     isProtected: true,
+    tokenType,
   });
 };
 
-export const useBullMeter = (bullMeterId: string) => {
+export const useBullMeter = (tokenType: AuthTokenType, bullMeterId: string) => {
   return useApiQuery<BullMeterApiResponse>({
     queryKey: ["bullmeters", bullMeterId],
     url: `/api/bullmeters/${bullMeterId}`,
     enabled: !!bullMeterId,
     isProtected: true,
+    tokenType,
   });
 };
 
@@ -62,19 +68,21 @@ export const useActiveBullMeter = (brandId: string) => {
     url: `/api/bullmeters/active/${brandId}`,
     enabled: !!brandId,
     isProtected: true,
+    tokenType: null,
   });
 };
 
 // Mutation hooks
-export const useCreateBullMeter = () => {
+export const useCreateBullMeter = (tokenType: AuthTokenType) => {
   return useApiMutation<BullMeterApiResponse, CreateBullMeter>({
     url: "/api/bullmeters",
     method: "POST",
     body: (variables) => variables,
+    tokenType,
   });
 };
 
-export const useUpdateBullMeter = () => {
+export const useUpdateBullMeter = (tokenType: AuthTokenType) => {
   return useApiMutation<
     BullMeterApiResponse,
     { bullMeterId: string } & UpdateBullMeter
@@ -82,15 +90,17 @@ export const useUpdateBullMeter = () => {
     url: (variables) => `/api/bullmeters/${variables.bullMeterId}`,
     method: "PUT",
     body: ({ bullMeterId, ...data }) => data,
+    tokenType,
   });
 };
 
-export const useDeleteBullMeter = () => {
+export const useDeleteBullMeter = (tokenType: AuthTokenType) => {
   return useApiMutation<
     { success: boolean; message: string },
     { bullMeterId: string }
   >({
     url: (variables) => `/api/bullmeters/${variables.bullMeterId}`,
     method: "DELETE",
+    tokenType,
   });
 };

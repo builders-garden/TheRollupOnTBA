@@ -2,6 +2,7 @@ import { createClient, Errors } from "@farcaster/quick-auth";
 import * as jose from "jose";
 import { NextRequest, NextResponse } from "next/server";
 import { getOrCreateUserFromFid } from "@/lib/database/queries";
+import { AuthTokenType } from "@/lib/enums";
 import { env } from "@/lib/zod";
 
 const quickAuthClient = createClient();
@@ -67,7 +68,7 @@ export const POST = async (req: NextRequest) => {
 
     // Set the auth cookie with the JWT token
     response.cookies.set({
-      name: "auth_token",
+      name: AuthTokenType.MINI_APP_AUTH_TOKEN,
       value: token,
       httpOnly: true,
       secure: true,

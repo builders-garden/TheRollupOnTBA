@@ -19,6 +19,7 @@ import { useBrandBySlug } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTipSettings } from "@/hooks/use-tip-settings";
 import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 
 interface WebAppAuthContextType {
@@ -85,7 +86,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     refetch: refetchUser,
     isLoading: isFetchingUser,
     isRefetching: isRefetchingUser,
-  } = useAuthCheck(); // Always fetch to check for existing token
+  } = useAuthCheck(AuthTokenType.WEB_APP_AUTH_TOKEN); // Always fetch to check for existing token
 
   // Fetching the brand when the user is connected
   const {
@@ -93,7 +94,10 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingBrand,
     error: brandError,
     refetch: refetchBrand,
-  } = useBrandBySlug({ brandSlug, enabled: !!brandSlug });
+  } = useBrandBySlug({
+    brandSlug,
+    enabled: !!brandSlug,
+  });
 
   // Fetching the tip settings when the brand is connected
   const {
@@ -101,7 +105,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     error: tipSettingsError,
     refetch: refetchTipSettings,
-  } = useTipSettings({
+  } = useTipSettings(AuthTokenType.WEB_APP_AUTH_TOKEN, {
     brandId: brand?.id,
     enabled: !!brand?.id && !!user,
   });
@@ -112,7 +116,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingFeaturedTokens,
     error: featuredTokensError,
     refetch: refetchFeaturedTokens,
-  } = useFeaturedTokens({
+  } = useFeaturedTokens(AuthTokenType.WEB_APP_AUTH_TOKEN, {
     brandId: brand?.id,
     enabled: !!brand?.id && !!user,
   });
@@ -199,7 +203,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
   // A function to logout
   const executeLogout = useCallback(() => {
     setIsLoggingOut(true);
-    logout({ tokenType: "web_app_auth_token" });
+    logout({ tokenType: AuthTokenType.WEB_APP_AUTH_TOKEN });
   }, [logout]);
 
   // Web app sign-in mutation

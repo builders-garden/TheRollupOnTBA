@@ -13,11 +13,14 @@ import {
   getBasenameName,
   getEnsName,
 } from "@/lib/ens/client";
+import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
 export const PayoutAddressInput = () => {
   const { tipSettings, admin } = useAdminAuth();
-  const { mutate: updateTip } = useUpdateTipSettings();
+  const { mutate: updateTip } = useUpdateTipSettings(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
 
   const [textFieldValue, setTextFieldValue] = useState(
     tipSettings?.data?.payoutBaseName ||

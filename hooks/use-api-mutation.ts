@@ -1,5 +1,6 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import ky from "ky";
+import { AuthTokenType } from "@/lib/enums";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
@@ -7,6 +8,7 @@ export interface UseApiMutationOptions<TData, TVariables>
   extends Omit<UseMutationOptions<TData, Error, TVariables>, "mutationFn"> {
   url: string | ((variables: TVariables) => string);
   method?: HttpMethod;
+  tokenType: AuthTokenType | null;
   isProtected?: boolean;
   body?: (variables: TVariables) => unknown;
   timeout?: number | false;
@@ -17,6 +19,7 @@ export const useApiMutation = <TData, TVariables = unknown>(
 ) => {
   const {
     url,
+    tokenType,
     method = "POST",
     isProtected = true,
     timeout = false,
@@ -33,6 +36,9 @@ export const useApiMutation = <TData, TVariables = unknown>(
         ...(isProtected && {
           credentials: "include",
         }),
+        headers: {
+          "x-token-type": tokenType || "",
+        },
         ...(resolvedBody ? { json: resolvedBody } : {}),
         timeout,
       });

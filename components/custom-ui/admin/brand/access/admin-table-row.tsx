@@ -7,6 +7,7 @@ import { TableCell, TableRow } from "@/components/shadcn-ui/table";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useAdminsByBrandId, useDeleteAdmin } from "@/hooks/use-admins";
 import { Admin } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { copyToClipboard } from "@/lib/utils";
 
 interface AdminTableRowProps {
@@ -28,10 +29,13 @@ export const AdminTableRow = ({
   const [hasCopied, setHasCopied] = useState(false);
 
   const { brand, admin: connectedAdmin } = useAdminAuth();
-  const { mutate: deleteAdmin, isPending: isDeletingAdmin } = useDeleteAdmin();
+  const { mutate: deleteAdmin, isPending: isDeletingAdmin } = useDeleteAdmin(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+  );
   const { refetch: refetchAdmins } = useAdminsByBrandId({
     brandId: brand.data?.id,
     enabled: !!brand.data?.id,
+    tokenType: AuthTokenType.ADMIN_AUTH_TOKEN,
   });
 
   // Handles the copy button

@@ -81,3 +81,14 @@ export interface GetLastActivePollResponse {
   result?: LastActivePollData;
   error?: string;
 }
+
+// Unified poll state populated from initial fetch and socket updates
+export type NormalizedPoll = {
+  id: string;
+  prompt: string;
+  pollId?: string;
+  deadlineSeconds: number | null;
+  votes?: number;
+  voters?: number;
+  results?: { bullPercent: number; bearPercent: number };
+};

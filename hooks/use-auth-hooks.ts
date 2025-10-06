@@ -1,10 +1,14 @@
 import { Brand } from "@/lib/database/db.schema";
+import { AuthTokenType } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 import { useApiMutation, UseApiMutationOptions } from "./use-api-mutation";
 import { useApiQuery } from "./use-api-query";
 
 // Auth queries
-export function useAuthCheck(enabled: boolean = true) {
+export function useAuthCheck(
+  tokenType: AuthTokenType,
+  enabled: boolean = true,
+) {
   const {
     data,
     isPending,
@@ -24,6 +28,7 @@ export function useAuthCheck(enabled: boolean = true) {
     enabled,
     retry: false,
     refetchOnWindowFocus: false,
+    tokenType,
   });
 
   return {
@@ -64,6 +69,7 @@ export function useFarcasterSignIn(
     url: "/api/auth/farcaster/sign-in",
     method: "POST",
     body: (variables) => variables,
+    tokenType: null,
     ...options,
   });
 }
@@ -92,6 +98,7 @@ export function useFakeFarcasterSignIn(
     url: "/api/auth/farcaster/fake-sign-in",
     method: "POST",
     body: (variables) => variables,
+    tokenType: null,
     ...options,
   });
 }
@@ -111,6 +118,7 @@ export function useWebAppSignIn(
     url: "/api/auth/web-app/sign-in",
     method: "POST",
     body: (variables) => variables,
+    tokenType: null,
     ...options,
   });
 }
@@ -130,6 +138,7 @@ export function useBaseSignIn(
     url: "/api/auth/base/sign-in",
     method: "POST",
     body: (variables) => variables,
+    tokenType: null,
     ...options,
   });
 }
@@ -143,6 +152,7 @@ export function useLogout(
     url: "/api/auth/logout",
     method: "POST",
     body: (variables) => variables,
+    tokenType: null,
     ...options,
   });
 }

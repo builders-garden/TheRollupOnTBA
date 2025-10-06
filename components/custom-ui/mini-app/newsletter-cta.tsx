@@ -1,31 +1,39 @@
 import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { useSubscribeNewsletter } from "@/hooks/use-subscribe-newsletter";
+import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../nb-button";
-import { useSubscribeNewsletter } from "@/hooks/use-subscribe-newsletter";
-import { toast } from "sonner";
 
 interface NewsletterCTAProps {
   label: string;
 }
 
 export const NewsletterCTA = ({ label }: NewsletterCTAProps) => {
-  const { mutate: subscribe, isPending } = useSubscribeNewsletter();
+  const { mutate: subscribe, isPending } = useSubscribeNewsletter(
+    AuthTokenType.MINI_APP_AUTH_TOKEN,
+  );
   const [editingValue, setEditingValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubscribe = () => {
-    subscribe({ email: editingValue }, {
-      onSuccess: () => {
-        setEditingValue("");
-        toast.success("Subscribed to newsletter");
-        setIsEditing(false);
+    subscribe(
+      { email: editingValue },
+      {
+        onSuccess: () => {
+          setEditingValue("");
+          toast.success("Subscribed to newsletter");
+          setIsEditing(false);
+        },
+        onError: () => {
+          toast.error(
+            "Request failed: your email is already registered to this newsletter or is invalid!",
+          );
+          setIsEditing(false);
+        },
       },
-      onError: () => {
-        toast.error("Request failed: your email is already registered to this newsletter or is invalid!");
-        setIsEditing(false);
-      },
-    });
+    );
   };
 
   return (

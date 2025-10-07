@@ -436,7 +436,13 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
               await handleVote(isBull, currentVotesNumber, true);
             }}>
             <AnimatePresence mode="wait">
-              {isApproving || isVoting ? (
+              {!showPoll ? (
+                <motion.p
+                  key="approve-and-vote-text"
+                  className="text-base font-extrabold text-white">
+                  Poll is closed
+                </motion.p>
+              ) : isApproving || isVoting ? (
                 <motion.div
                   key="approve-and-vote-loading"
                   initial={{ opacity: 0 }}

@@ -1,4 +1,4 @@
-import { useDisconnect } from "@reown/appkit/react";
+import { createAppKit, useDisconnect } from "@reown/appkit/react";
 import {
   createContext,
   ReactNode,
@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+import { base } from "viem/chains";
 import { useAccount, useSignMessage } from "wagmi";
 import { useMiniApp } from "@/contexts/mini-app-context";
 import {
@@ -20,7 +21,30 @@ import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
 import { useTipSettings } from "@/hooks/use-tip-settings";
 import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
 import { AuthTokenType } from "@/lib/enums";
+import { wagmiAdapter } from "@/lib/reown";
 import { User } from "@/lib/types/user.type";
+import { env } from "@/lib/zod";
+
+// Set up metadata
+const metadata = {
+  name: "Control The Stream",
+  description: "Control The Stream",
+  url: env.NEXT_PUBLIC_URL,
+  icons: [],
+};
+
+// Create the modal
+createAppKit({
+  adapters: [wagmiAdapter],
+  projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
+  networks: [base],
+  metadata,
+  defaultNetwork: base,
+  features: {
+    analytics: true,
+    connectMethodsOrder: ["wallet"],
+  },
+});
 
 interface WebAppAuthContextType {
   user: {
@@ -283,11 +307,7 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     executeLogout,
     signInWithWebApp: executeSignInWithWebApp,
     isSigningIn,
-    sideBarLoading:
-      isFetchingUser ||
-      isRefetchingUser ||
-      isFetchingTipSettings ||
-      isFetchingFeaturedTokens,
+    sideBarLoading: isFetchingTipSettings || isFetchingFeaturedTokens,
     isLoading: isEnvironmentLoading || isFetchingBrand,
     error: error || brandError || tipSettingsError || featuredTokensError,
   };

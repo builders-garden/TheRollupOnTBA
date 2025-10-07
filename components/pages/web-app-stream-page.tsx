@@ -1,13 +1,11 @@
-import { createAppKit, useAppKit } from "@reown/appkit/react";
+import { useAppKit, useDisconnect } from "@reown/appkit/react";
 import { Loader2, LogOut, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { base } from "viem/chains";
 import { useAccount } from "wagmi";
 import { useWebAppAuth } from "@/contexts/auth/web-app-auth-context";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
-import { wagmiAdapter } from "@/lib/reown";
 import { formatWalletAddress } from "@/lib/utils";
 import { env } from "@/lib/zod";
 import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
@@ -22,27 +20,6 @@ import { ScrollArea } from "../shadcn-ui/scroll-area";
 import { Separator } from "../shadcn-ui/separator";
 import { Skeleton } from "../shadcn-ui/skeleton";
 
-// Set up metadata
-const metadata = {
-  name: "Control The Stream",
-  description: "Control The Stream",
-  url: env.NEXT_PUBLIC_URL,
-  icons: [],
-};
-
-// Create the modal
-createAppKit({
-  adapters: [wagmiAdapter],
-  projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
-  networks: [base],
-  metadata,
-  defaultNetwork: base,
-  features: {
-    analytics: true,
-    connectMethodsOrder: ["wallet"],
-  },
-});
-
 export const WebAppStreamPage = () => {
   const {
     brand,
@@ -55,6 +32,7 @@ export const WebAppStreamPage = () => {
     isLoading,
   } = useWebAppAuth();
   const { address: connectedAddress } = useAccount();
+  const { disconnect } = useDisconnect();
   const { open } = useAppKit();
 
   // This state memorizes if the user was not connected before the page loaded
@@ -243,39 +221,59 @@ export const WebAppStreamPage = () => {
 
             <Separator className="w-full bg-border" />
 
-            <div className="flex flex-col justify-start items-start w-full h-full gap-8">
-              {/* Tip Buttons */}
-              {brand.tipSettings.data?.payoutAddress && (
-                <WebAppTips
-                  showLabel
-                  tips={[
-                    { amount: 0.01, buttonColor: "blue" },
-                    { amount: 0.25, buttonColor: "blue" },
-                    { amount: 1, buttonColor: "blue" },
-                  ]}
-                  customTipButton={{
-                    color: "blue",
-                    text: "Custom",
-                  }}
-                  tipSettings={brand.tipSettings.data}
-                  user={user.data}
-                />
-              )}
+            <AnimatePresence mode="wait">
+              {sideBarLoading ? (
+                <motion.div
+                  key="side-bar-loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="flex justify-center items-center w-full h-full">
+                  <Loader2 className="size-8 text-black animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="side-bar-content"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="flex flex-col justify-start items-start w-full h-full gap-8">
+                  {/* Tip Buttons */}
+                  {brand.tipSettings.data?.payoutAddress && (
+                    <WebAppTips
+                      showLabel
+                      tips={[
+                        { amount: 0.01, buttonColor: "blue" },
+                        { amount: 0.25, buttonColor: "blue" },
+                        { amount: 1, buttonColor: "blue" },
+                      ]}
+                      customTipButton={{
+                        color: "blue",
+                        text: "Custom",
+                      }}
+                      tipSettings={brand.tipSettings.data}
+                      user={user.data}
+                    />
+                  )}
 
-              {/* Featured Tokens */}
-              {brand.featuredTokens.data &&
-                brand.featuredTokens.data.length > 0 && (
-                  <WebAppFeaturedTokens
-                    tokens={brand.featuredTokens.data}
-                    user={user.data}
-                  />
-                )}
+                  {/* Featured Tokens */}
+                  {brand.featuredTokens.data &&
+                    brand.featuredTokens.data.length > 0 && (
+                      <WebAppFeaturedTokens
+                        tokens={brand.featuredTokens.data}
+                        user={user.data}
+                      />
+                    )}
 
-              {/* Poll Card */}
-              {brand.data && (
-                <WebAppPollCard brand={brand.data} user={user.data} />
+                  {/* Poll Card */}
+                  {brand.data && (
+                    <WebAppPollCard brand={brand.data} user={user.data} />
+                  )}
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
           </div>
           <AnimatePresence mode="wait">
             {user.data ? (
@@ -381,7 +379,11 @@ export const WebAppStreamPage = () => {
                 transition={{ duration: 0.25, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
                 <NBButton
-                  onClick={() => open({ view: "Connect", namespace: "eip155" })}
+                  onClick={async () => {
+                    await disconnect();
+                    setWasNotConnected(true);
+                    open({ view: "Connect", namespace: "eip155" });
+                  }}
                   className="bg-accent w-full h-[42px]">
                   <AnimatePresence mode="wait">
                     {isSigningIn ? (

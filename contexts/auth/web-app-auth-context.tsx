@@ -105,12 +105,9 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Single user query - this is the only place we fetch user data
   // Always try to fetch on load to check for existing valid token
-  const {
-    user: authUser,
-    refetch: refetchUser,
-    isLoading: isFetchingUser,
-    isRefetching: isRefetchingUser,
-  } = useAuthCheck(AuthTokenType.WEB_APP_AUTH_TOKEN); // Always fetch to check for existing token
+  const { user: authUser, refetch: refetchUser } = useAuthCheck(
+    AuthTokenType.WEB_APP_AUTH_TOKEN,
+  ); // Always fetch to check for existing token
 
   // Fetching the brand when the user is connected
   const {

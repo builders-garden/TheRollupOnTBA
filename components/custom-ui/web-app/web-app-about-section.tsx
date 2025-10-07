@@ -12,6 +12,7 @@ import {
 import { THE_ROLLUP_HOSTS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { HostsSection } from "../mini-app/hosts";
+import { NewsletterCTA } from "../mini-app/newsletter-cta";
 
 interface LinksProps {
   youtubeUrl?: string;
@@ -143,34 +144,45 @@ export const WebAppAboutSection = ({
             />
           </div>
         </AccordionTrigger>
-        <AccordionContent className="flex flex-row justify-between items-start w-full gap-10 mt-2 focus-visible:outline-none">
-          {coverUrl && (
-            <Image
-              src={coverUrl}
-              alt="Cover"
-              className="w-[46%] min-h-[270px] object-cover rounded-[12px]"
-              width={1000}
-              height={200}
-            />
-          )}
-          <div className="flex flex-1 flex-col justify-between items-start w-full min-h-[270px]">
-            {text && (
-              <div className="flex flex-col justify-start items-start gap-2">
-                <h1 className="text-lg font-bold">What happens here?</h1>
-                <p className="text-lg w-full text-start">{text}</p>
-              </div>
-            )}
-
-            {/* TODO: Make this dynamic */}
-            {brandSlug === "the_rollup" && (
-              <HostsSection
-                hosts={THE_ROLLUP_HOSTS}
-                label="Hosts"
-                labelClassName="text-lg font-bold"
-                hostNameClassName="text-sm font-bold"
+        <AccordionContent className="flex flex-col justify-between items-start w-full gap-6 my-2 focus-visible:outline-none">
+          <div className="flex justify-between items-start w-full gap-10">
+            {coverUrl && (
+              <Image
+                src={coverUrl}
+                alt="Cover"
+                className="w-[46%] min-h-[270px] object-cover rounded-[12px]"
+                width={1000}
+                height={200}
               />
             )}
+            <div className="flex flex-1 flex-col justify-between items-start w-full min-h-[270px]">
+              {text && (
+                <div className="flex flex-col justify-start items-start gap-2">
+                  <h1 className="text-lg font-bold">What happens here?</h1>
+                  <p className="text-lg w-full text-start">{text}</p>
+                </div>
+              )}
+
+              {/* TODO: Make this dynamic */}
+              {brandSlug === "the_rollup" && (
+                <HostsSection
+                  hosts={THE_ROLLUP_HOSTS}
+                  label="Hosts"
+                  labelClassName="text-lg font-bold"
+                  hostNameClassName="text-sm font-bold"
+                />
+              )}
+            </div>
           </div>
+
+          {/* Newsletter CTA */}
+          {brandSlug === "the_rollup" && (
+            <NewsletterCTA
+              label="Subscribe to newsletter"
+              labelClassName="text-2xl"
+              className="w-[46%]"
+            />
+          )}
         </AccordionContent>
       </AccordionItem>
     </Accordion>

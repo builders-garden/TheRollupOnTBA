@@ -33,7 +33,7 @@ import { NBModal } from "../nb-modal";
 
 interface WebAppPollCardProps {
   brand: Brand;
-  user: User;
+  user?: User;
 }
 
 export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
@@ -58,6 +58,10 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
     brand.id,
   );
 
+  useEffect(() => {
+    console.log("TEST activePoll", activePoll);
+  }, [activePoll]);
+
   // State to track which button is loading
   const [loadingButton, setLoadingButton] = useState<"bear" | "bull" | null>(
     null,
@@ -80,7 +84,7 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
   } = useApprove({ amount: "1", source: "web-app" });
 
   // Get the base name of the user
-  const baseName = user.wallets.find((wallet) => wallet.baseName)?.baseName;
+  const baseName = user?.wallets.find((wallet) => wallet.baseName)?.baseName;
 
   // Update countdown every second
   useEffect(() => {
@@ -144,8 +148,8 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
     if (isConnected) {
       joinStream({
         brandId: brand.id,
-        username: user.username || "",
-        profilePicture: user.avatarUrl || "",
+        username: user?.username || "",
+        profilePicture: user?.avatarUrl || "",
       });
     }
 
@@ -246,7 +250,7 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
       const platform = "web-app";
 
       // Create the bullmeter vote if the pollId is available
-      if (poll?.pollId && brand.id && user.id) {
+      if (poll?.pollId && brand.id && user?.id) {
         createBullmeterVote({
           pollId: poll.pollId as Address,
           isBull: data.data?.isYes ?? false,
@@ -263,8 +267,8 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
         voteCasted({
           brandId: brand.id,
           position: PopupPositions.TOP_CENTER,
-          username: baseName || user.username || formatWalletAddress(address),
-          profilePicture: user.avatarUrl || "",
+          username: baseName || user?.username || formatWalletAddress(address),
+          profilePicture: user?.avatarUrl || "",
           voteAmount: "1",
           isBull: data.data?.isYes ?? false,
           promptId: poll?.pollId || "",
@@ -295,6 +299,11 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
     votesNumber: number,
     launchedByModal: boolean = false,
   ) => {
+    if (!address) {
+      toast.info("Please connect your wallet to vote");
+      return;
+    }
+
     const buttonType = isBull ? "bull" : "bear";
 
     // Guard: poll must exist, not expired, and have an id

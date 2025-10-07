@@ -1,3 +1,4 @@
+import { useDisconnect } from "@reown/appkit/react";
 import {
   createContext,
   ReactNode,
@@ -7,8 +8,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { useAccount, useDisconnect, useSignMessage } from "wagmi";
-// hooks
+import { useAccount, useSignMessage } from "wagmi";
 import { useMiniApp } from "@/contexts/mini-app-context";
 import {
   useAuthCheck,
@@ -105,9 +105,9 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     error: tipSettingsError,
     refetch: refetchTipSettings,
-  } = useTipSettings(AuthTokenType.WEB_APP_AUTH_TOKEN, {
+  } = useTipSettings({
     brandId: brand?.id,
-    enabled: !!brand?.id && !!user,
+    enabled: !!brand?.id,
   });
 
   // Fetching the featured tokens when the brand is connected
@@ -116,9 +116,9 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingFeaturedTokens,
     error: featuredTokensError,
     refetch: refetchFeaturedTokens,
-  } = useFeaturedTokens(AuthTokenType.WEB_APP_AUTH_TOKEN, {
+  } = useFeaturedTokens({
     brandId: brand?.id,
-    enabled: !!brand?.id && !!user,
+    enabled: !!brand?.id,
   });
 
   // Auto set user logic
@@ -183,16 +183,10 @@ export const WebAppAuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Logout mutation
   const { mutate: logout } = useLogout({
-    onSuccess: () => {
+    onSuccess: async () => {
       setUser(undefined);
-      disconnect(
-        {},
-        {
-          onSuccess: () => {
-            setIsLoggingOut(false);
-          },
-        },
-      );
+      await disconnect();
+      setIsLoggingOut(false);
     },
     onError: (error: Error) => {
       console.error("Logout error:", error);

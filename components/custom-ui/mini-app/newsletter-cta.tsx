@@ -8,11 +8,13 @@ import { NBButton } from "../nb-button";
 interface NewsletterCTAProps {
   label: string;
   labelClassName?: string;
+  className?: string;
 }
 
 export const NewsletterCTA = ({
   label,
   labelClassName,
+  className,
 }: NewsletterCTAProps) => {
   const { mutate: subscribe, isPending } = useSubscribeNewsletter(
     AuthTokenType.MINI_APP_AUTH_TOKEN,
@@ -41,7 +43,11 @@ export const NewsletterCTA = ({
   };
 
   return (
-    <div className="flex flex-col justify-center items-start w-full gap-2.5">
+    <div
+      className={cn(
+        "flex flex-col justify-center items-start w-full gap-2.5",
+        className,
+      )}>
       <h1 className={cn("text-sm font-bold", labelClassName)}>{label}</h1>
       <div className="flex justify-between items-center gap-2.5 w-full">
         <div

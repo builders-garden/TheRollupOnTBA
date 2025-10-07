@@ -99,7 +99,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingTipSettings,
     error: tipSettingsError,
     refetch: refetchTipSettings,
-  } = useTipSettings(AuthTokenType.MINI_APP_AUTH_TOKEN, {
+  } = useTipSettings({
     brandId: brand?.id,
     enabled: !!brand?.id && !!user,
   });
@@ -110,7 +110,7 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: isFetchingFeaturedTokens,
     error: featuredTokensError,
     refetch: refetchFeaturedTokens,
-  } = useFeaturedTokens(AuthTokenType.MINI_APP_AUTH_TOKEN, {
+  } = useFeaturedTokens({
     brandId: brand?.id,
     enabled: !!brand?.id && !!user,
   });

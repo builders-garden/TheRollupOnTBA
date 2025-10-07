@@ -46,6 +46,16 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // skip auth check for GET requests to tip-settings
+  if (pathname === "/api/tip-settings" && req.method === "GET") {
+    return NextResponse.next();
+  }
+
+  // skip auth check for GET requests to featured-tokens
+  if (pathname === "/api/featured-tokens" && req.method === "GET") {
+    return NextResponse.next();
+  }
+
   // Get token from auth_token cookie based on the token type
   // received by the header (it was set in each api call)
   const authToken =

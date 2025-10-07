@@ -1,5 +1,5 @@
 import { createAppKit, useAppKit } from "@reown/appkit/react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, LogOut, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -13,7 +13,6 @@ import { env } from "@/lib/zod";
 import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
 import { WebAppTips } from "@/plugins/web-app/tips/web-app-tips";
 import { LogoutButton } from "../custom-ui/logout-button";
-import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
 import { NBButton } from "../custom-ui/nb-button";
 import { NBCard } from "../custom-ui/nb-card";
 import { ShareButton } from "../custom-ui/share-button";
@@ -77,6 +76,7 @@ export const WebAppStreamPage = () => {
       !isLoading
     ) {
       signInWithWebApp();
+      setWasNotConnected(false);
     }
   }, [connectedAddress]);
 
@@ -233,136 +233,181 @@ export const WebAppStreamPage = () => {
       {/* Sidebar - fixed width and no scroll */}
       <div className="flex flex-col justify-center items-center min-h-screen h-screen w-[40%] pr-6 py-6">
         <NBCard className="flex flex-col justify-between items-center h-full w-full bg-white p-5">
+          <div className="flex flex-col justify-start items-start w-full h-full gap-5">
+            <div className="flex justify-start items-center w-full gap-2.5">
+              <Sparkles className="size-8 text-black" />
+              <h1 className="text-3xl font-bold w-full text-start">
+                Interact with the stream
+              </h1>
+            </div>
+
+            <Separator className="w-full bg-border" />
+
+            <div className="flex flex-col justify-start items-start w-full h-full gap-8">
+              {/* Tip Buttons */}
+              {brand.tipSettings.data?.payoutAddress && (
+                <WebAppTips
+                  showLabel
+                  tips={[
+                    { amount: 0.01, buttonColor: "blue" },
+                    { amount: 0.25, buttonColor: "blue" },
+                    { amount: 1, buttonColor: "blue" },
+                  ]}
+                  customTipButton={{
+                    color: "blue",
+                    text: "Custom",
+                  }}
+                  tipSettings={brand.tipSettings.data}
+                  user={user.data}
+                />
+              )}
+
+              {/* Featured Tokens */}
+              {brand.featuredTokens.data &&
+                brand.featuredTokens.data.length > 0 && (
+                  <WebAppFeaturedTokens
+                    tokens={brand.featuredTokens.data}
+                    user={user.data}
+                  />
+                )}
+
+              {/* Poll Card */}
+              {brand.data && (
+                <WebAppPollCard brand={brand.data} user={user.data} />
+              )}
+            </div>
+          </div>
           <AnimatePresence mode="wait">
-            {isSigningIn || isLoggingOut || sideBarLoading ? (
+            {user.data ? (
               <motion.div
-                key="signing-in-loader"
+                key="user-info-logout-cta"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="flex flex-col justify-center items-center w-full h-full gap-5">
-                <Loader2 className="size-10 text-black animate-spin" />
-              </motion.div>
-            ) : user.data ? (
-              <motion.div
-                key="user-data"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="flex flex-col justify-between items-center w-full h-full">
-                <div className="flex flex-col justify-start items-start w-full h-full gap-5">
-                  <div className="flex justify-start items-center w-full gap-2.5">
-                    <Sparkles className="size-8 text-black" />
-                    <h1 className="text-3xl font-bold w-full text-start">
-                      Interact with the stream
-                    </h1>
-                  </div>
-
-                  <Separator className="w-full bg-border" />
-
-                  {/* Newsletter CTA */}
-                  {brand.data?.slug === "the_rollup" && (
-                    <NewsletterCTA
-                      label="Subscribe to newsletter"
-                      labelClassName="text-2xl"
+                className="flex justify-between items-center w-full">
+                <div className="flex justify-start items-center gap-2.5 w-full">
+                  {user.data?.avatarUrl && (
+                    <Image
+                      src={user.data.avatarUrl}
+                      alt="user avatar"
+                      width={32}
+                      height={32}
+                      className="rounded-full object-cover"
                     />
                   )}
-
-                  <div className="flex flex-col justify-start items-start w-full h-full gap-8">
-                    {/* Tip Buttons */}
-                    {brand.tipSettings.data?.payoutAddress && (
-                      <WebAppTips
-                        showLabel
-                        tips={[
-                          { amount: 0.01, buttonColor: "blue" },
-                          { amount: 0.25, buttonColor: "blue" },
-                          { amount: 1, buttonColor: "blue" },
-                        ]}
-                        customTipButton={{
-                          color: "blue",
-                          text: "Custom",
-                        }}
-                        tipSettings={brand.tipSettings.data}
-                        user={user.data}
-                      />
-                    )}
-
-                    {/* Featured Tokens */}
-                    {brand.featuredTokens.data &&
-                      brand.featuredTokens.data.length > 0 && (
-                        <WebAppFeaturedTokens
-                          tokens={brand.featuredTokens.data}
-                          user={user.data}
-                        />
+                  <h1 className="text-[21px] font-bold">
+                    {user.data?.username ||
+                      formatWalletAddress(connectedAddress)}
+                  </h1>
+                </div>
+                <LogoutButton
+                  executeLogout={handleLogout}
+                  className="min-w-1/3 w-1/3 h-[42px]">
+                  <div className="flex justify-start items-center w-full gap-2">
+                    <AnimatePresence mode="wait">
+                      {isLoggingOut ? (
+                        <motion.div
+                          key="logout-loading"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <Loader2 className="size-5 text-destructive animate-spin" />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="logout-button"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          className="flex justify-start items-center w-full gap-2">
+                          <LogOut className="size-5 text-destructive" />
+                          <p className="text-xl font-bold text-destructive">
+                            Logout
+                          </p>
+                        </motion.div>
                       )}
-
-                    {/* Poll Card */}
-                    {brand.data && user.data && (
-                      <WebAppPollCard brand={brand.data} user={user.data} />
-                    )}
+                    </AnimatePresence>
                   </div>
-                </div>
-                {/* Logout Button on footer */}
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex justify-start items-center gap-2.5 w-full">
-                    {user.data?.avatarUrl && (
-                      <Image
-                        src={user.data.avatarUrl}
-                        alt="user avatar"
-                        width={32}
-                        height={32}
-                        className="rounded-full object-cover"
-                      />
-                    )}
-                    <h1 className="text-[21px] font-bold">
-                      {user.data?.username ||
-                        formatWalletAddress(connectedAddress)}
-                    </h1>
-                  </div>
-                  <LogoutButton
-                    executeLogout={handleLogout}
-                    className="w-1/3"
-                  />
-                </div>
+                </LogoutButton>
               </motion.div>
             ) : connectedAddress && !wasNotConnected ? (
               <motion.div
-                key="user-data"
+                key="user-info-logout-cta"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="flex flex-col justify-center items-center w-full h-full gap-5">
-                <h1 className="text-2xl font-bold w-full text-center px-5">
-                  Log in to start interacting with the stream
-                </h1>
+                className="flex justify-center items-center w-full">
                 <NBButton
                   onClick={() => signInWithWebApp()}
-                  className="bg-accent w-fit">
-                  <p className="text-base font-extrabold text-white">
-                    Sign message
-                  </p>
+                  className="bg-accent w-full h-[42px]">
+                  <AnimatePresence mode="wait">
+                    {isSigningIn ? (
+                      <motion.div
+                        key="signing-in"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="flex justify-center items-center w-full gap-2">
+                        <Loader2 className="size-5 text-white animate-spin" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="connect-wallet-button"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="flex justify-center items-center w-full gap-2">
+                        <p className="text-base font-extrabold text-white">
+                          Sign message
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </NBButton>
               </motion.div>
             ) : (
               <motion.div
-                key="user-data"
+                key="user-info-logout-cta"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="flex flex-col justify-center items-center w-full h-full gap-5">
-                <h1 className="text-2xl font-bold w-full text-center px-5">
-                  Connect your wallet to start interacting with the stream
-                </h1>
+                className="flex justify-center items-center w-full">
                 <NBButton
                   onClick={() => open({ view: "Connect", namespace: "eip155" })}
-                  className="bg-accent w-fit">
-                  <p className="text-base font-extrabold text-white">
-                    Connect Wallet
-                  </p>
+                  className="bg-accent w-full h-[42px]">
+                  <AnimatePresence mode="wait">
+                    {isSigningIn ? (
+                      <motion.div
+                        key="signing-in"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="flex justify-center items-center w-full gap-2">
+                        <Loader2 className="size-5 text-white animate-spin" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="connect-wallet-button"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="flex justify-center items-center w-full gap-2">
+                        <p className="text-base font-extrabold text-white">
+                          Connect Wallet
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </NBButton>
               </motion.div>
             )}

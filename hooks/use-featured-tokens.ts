@@ -19,19 +19,16 @@ interface FeaturedTokenApiResponse {
 }
 
 // Query hooks
-export const useFeaturedTokens = (
-  tokenType: AuthTokenType,
-  params?: {
-    brandId?: string;
-    chainName?: number;
-    active?: boolean;
-    withBrand?: boolean;
-    search?: string;
-    address?: string;
-    limit?: number;
-    enabled?: boolean;
-  },
-) => {
+export const useFeaturedTokens = (params?: {
+  brandId?: string;
+  chainName?: number;
+  active?: boolean;
+  withBrand?: boolean;
+  search?: string;
+  address?: string;
+  limit?: number;
+  enabled?: boolean;
+}) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
   if (params?.chainName)
@@ -52,7 +49,7 @@ export const useFeaturedTokens = (
     url,
     isProtected: true,
     enabled: params?.enabled ?? true,
-    tokenType,
+    tokenType: null,
   });
 };
 

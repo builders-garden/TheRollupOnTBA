@@ -98,7 +98,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isFetched: isFetchedAuthTipSettings,
     isRefetching: isRefetchingTipSettings,
     error: tipSettingsError,
-  } = useTipSettings(AuthTokenType.ADMIN_AUTH_TOKEN, {
+  } = useTipSettings({
     brandId: brand?.id,
     enabled: !!brand?.id,
   });
@@ -111,7 +111,7 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     isFetched: isFetchedAuthFeaturedTokens,
     isRefetching: isRefetchingFeaturedTokens,
     error: featuredTokensError,
-  } = useFeaturedTokens(AuthTokenType.ADMIN_AUTH_TOKEN, {
+  } = useFeaturedTokens({
     brandId: brand?.id,
     enabled: !!brand?.id,
   });

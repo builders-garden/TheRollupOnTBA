@@ -71,6 +71,11 @@ export const WebAppTips = ({
 
   // Handle tip payment
   const handleTipPayment = async (amount: number) => {
+    if (!address) {
+      toast.info("Please connect your wallet to tip");
+      return;
+    }
+
     if (!tipSettings.payoutAddress || !user?.id) {
       return;
     }
@@ -126,6 +131,11 @@ export const WebAppTips = ({
 
   // Handle custom tip payment
   const handleCustomTipPayment = async () => {
+    if (!address) {
+      toast.info("Please connect your wallet to tip");
+      return;
+    }
+
     const amount = parseFloat(customAmount);
     if (isNaN(amount) || amount <= 0) {
       console.error("Invalid custom amount");

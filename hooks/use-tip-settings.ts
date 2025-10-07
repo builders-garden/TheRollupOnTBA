@@ -13,16 +13,13 @@ interface TipSettingsApiResponse {
 }
 
 // Query hooks
-export const useTipSettings = (
-  tokenType: AuthTokenType,
-  params?: {
-    brandId?: string;
-    payoutAddress?: string;
-    ensName?: string;
-    baseName?: string;
-    enabled?: boolean;
-  },
-) => {
+export const useTipSettings = (params?: {
+  brandId?: string;
+  payoutAddress?: string;
+  ensName?: string;
+  baseName?: string;
+  enabled?: boolean;
+}) => {
   const searchParams = new URLSearchParams();
   if (params?.brandId) searchParams.set("brandId", params.brandId);
   if (params?.payoutAddress)
@@ -38,7 +35,7 @@ export const useTipSettings = (
     url,
     isProtected: true,
     enabled: params?.enabled ?? true,
-    tokenType,
+    tokenType: null,
   });
 };
 

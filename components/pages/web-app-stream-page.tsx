@@ -8,6 +8,7 @@ import { useAccount } from "wagmi";
 import { useWebAppAuth } from "@/contexts/auth/web-app-auth-context";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { wagmiAdapter } from "@/lib/reown";
+import { formatWalletAddress } from "@/lib/utils";
 import { env } from "@/lib/zod";
 import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
 import { WebAppTips } from "@/plugins/web-app/tips/web-app-tips";
@@ -293,7 +294,22 @@ export const WebAppStreamPage = () => {
                   </div>
                 </div>
                 {/* Logout Button on footer */}
-                <div className="flex justify-end items-center w-full">
+                <div className="flex justify-between items-center w-full">
+                  <div className="flex justify-start items-center gap-2.5 w-full">
+                    {user.data?.avatarUrl && (
+                      <Image
+                        src={user.data.avatarUrl}
+                        alt="user avatar"
+                        width={32}
+                        height={32}
+                        className="rounded-full object-cover"
+                      />
+                    )}
+                    <h1 className="text-[21px] font-bold">
+                      {user.data?.username ||
+                        formatWalletAddress(connectedAddress)}
+                    </h1>
+                  </div>
                   <LogoutButton
                     executeLogout={handleLogout}
                     className="w-1/3"

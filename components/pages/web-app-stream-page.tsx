@@ -204,8 +204,7 @@ export const WebAppStreamPage = () => {
 
                   {/* Share button */}
                   <ShareButton
-                    miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
-                    copyLinkText={`cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
+                    copyLinkText={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
                     buttonClassName="shrink-1 w-min cursor-pointer"
                     buttonSize="lg"
                   />

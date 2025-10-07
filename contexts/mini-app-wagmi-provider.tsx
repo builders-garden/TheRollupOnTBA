@@ -6,17 +6,17 @@ import { WagmiProvider } from "wagmi";
 
 const queryClient = new QueryClient();
 
-interface CustomWagmiProviderProps {
+interface MiniAppWagmiProviderProps {
   config: ResolvedRegister["config"]; // wagmi config
   children: React.ReactNode;
   initialState?: State;
 }
 
-export const CustomWagmiProvider = ({
+export const MiniAppWagmiProvider = ({
   config,
   children,
   initialState,
-}: CustomWagmiProviderProps) => {
+}: MiniAppWagmiProviderProps) => {
   return (
     <WagmiProvider config={config} initialState={initialState}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

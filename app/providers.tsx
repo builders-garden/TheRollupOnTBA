@@ -4,16 +4,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
-import { cookieToInitialState, State } from "wagmi";
 import { AdminAuthProvider } from "@/contexts/auth/admin-auth-context";
 import { MiniAppAuthProvider } from "@/contexts/auth/mini-app-auth-context";
 import { WebAppAuthProvider } from "@/contexts/auth/web-app-auth-context";
 import { ErudaProvider } from "@/contexts/eruda";
 import { useMiniApp } from "@/contexts/mini-app-context";
+import { MiniAppWagmiProvider } from "@/contexts/mini-app-wagmi-provider";
 import { NotificationQueueProvider } from "@/contexts/notification-queue-context";
 import { SocketProvider } from "@/contexts/socket-context";
-import { CustomWagmiProvider } from "@/contexts/wagmi-provider";
-import { wagmiConfigMiniApp, wagmiConfigWebApp } from "@/lib/reown";
+import { WebAppWagmiProvider } from "@/contexts/web-app-wagmi-provider";
+import { wagmiConfigMiniApp } from "@/lib/reown";
 
 const queryClient = new QueryClient();
 
@@ -31,9 +31,6 @@ export default function Providers({ children }: ProvidersProps) {
   if (isCheckingMiniAppContext) {
     return null;
   }
-
-  // Create the initial state
-  const wagmiWebAppInitialState = cookieToInitialState(wagmiConfigWebApp);
 
   // If we are not in a miniapp, and the url includes "overlay" apply the overlay wrapper
   if (!isInMiniApp && pathName.includes("overlay")) {
@@ -53,7 +50,7 @@ export default function Providers({ children }: ProvidersProps) {
   if (!isInMiniApp && pathName.includes("admin")) {
     return (
       <NuqsAdapter>
-        <CustomWagmiProvider config={wagmiConfigMiniApp}>
+        <MiniAppWagmiProvider config={wagmiConfigMiniApp}>
           <AdminAuthProvider>
             <SocketProvider>
               <NotificationQueueProvider>
@@ -62,7 +59,7 @@ export default function Providers({ children }: ProvidersProps) {
               </NotificationQueueProvider>
             </SocketProvider>
           </AdminAuthProvider>
-        </CustomWagmiProvider>
+        </MiniAppWagmiProvider>
       </NuqsAdapter>
     );
   }
@@ -71,7 +68,7 @@ export default function Providers({ children }: ProvidersProps) {
   if (isInMiniApp) {
     return (
       <NuqsAdapter>
-        <CustomWagmiProvider config={wagmiConfigMiniApp}>
+        <MiniAppWagmiProvider config={wagmiConfigMiniApp}>
           <MiniAppAuthProvider>
             <ErudaProvider>
               <SocketProvider>
@@ -82,7 +79,7 @@ export default function Providers({ children }: ProvidersProps) {
               </SocketProvider>
             </ErudaProvider>
           </MiniAppAuthProvider>
-        </CustomWagmiProvider>
+        </MiniAppWagmiProvider>
       </NuqsAdapter>
     );
   }
@@ -90,9 +87,7 @@ export default function Providers({ children }: ProvidersProps) {
   // If we are not in the miniapp, but connecting to the / path, show the web version of the app
   return (
     <NuqsAdapter>
-      <CustomWagmiProvider
-        config={wagmiConfigWebApp}
-        initialState={wagmiWebAppInitialState}>
+      <WebAppWagmiProvider>
         <WebAppAuthProvider>
           <SocketProvider>
             <NotificationQueueProvider>
@@ -101,7 +96,7 @@ export default function Providers({ children }: ProvidersProps) {
             </NotificationQueueProvider>
           </SocketProvider>
         </WebAppAuthProvider>
-      </CustomWagmiProvider>
+      </WebAppWagmiProvider>
     </NuqsAdapter>
   );
 }

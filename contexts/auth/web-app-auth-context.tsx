@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { base } from "viem/chains";
+import { basePreconf } from "viem/chains";
 import { useAccount, useSignMessage } from "wagmi";
 import { useMiniApp } from "@/contexts/mini-app-context";
 import {
@@ -37,9 +37,9 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter],
   projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
-  networks: [base],
+  networks: [basePreconf],
   metadata,
-  defaultNetwork: base,
+  defaultNetwork: basePreconf,
   features: {
     analytics: true,
     connectMethodsOrder: ["wallet"],

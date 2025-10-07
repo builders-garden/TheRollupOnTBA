@@ -1,5 +1,5 @@
 import { createAppKit, useAppKit } from "@reown/appkit/react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -253,9 +253,12 @@ export const WebAppStreamPage = () => {
                 transition={{ duration: 0.25, ease: "easeInOut" }}
                 className="flex flex-col justify-between items-center w-full h-full">
                 <div className="flex flex-col justify-start items-start w-full h-full gap-5">
-                  <h1 className="text-3xl font-bold w-full text-start">
-                    Interact with the stream
-                  </h1>
+                  <div className="flex justify-start items-center w-full gap-2.5">
+                    <Sparkles className="size-8 text-black" />
+                    <h1 className="text-3xl font-bold w-full text-start">
+                      Interact with the stream
+                    </h1>
+                  </div>
 
                   <Separator className="w-full bg-border" />
 

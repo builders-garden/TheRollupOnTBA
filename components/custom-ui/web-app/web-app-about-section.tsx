@@ -10,7 +10,74 @@ import {
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion";
 import { THE_ROLLUP_HOSTS } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { HostsSection } from "../mini-app/hosts";
+
+interface LinksProps {
+  youtubeUrl?: string;
+  twitchUrl?: string;
+  twitterUrl?: string;
+  websiteUrl?: string;
+  className?: string;
+}
+
+// A component that displays the links to the social media platforms
+const Links = ({
+  youtubeUrl,
+  twitchUrl,
+  twitterUrl,
+  websiteUrl,
+  className,
+}: LinksProps) => {
+  return (
+    <div
+      className={cn(
+        "flex justify-end items-center gap-3.5 shrink-0",
+        className,
+      )}>
+      {youtubeUrl && (
+        <Link
+          href={youtubeUrl}
+          target="_blank"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          <Youtube className="size-7" strokeWidth={1.8} />
+        </Link>
+      )}
+      {twitchUrl && (
+        <Link
+          href={twitchUrl}
+          target="_blank"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          <Twitch className="size-6" />
+        </Link>
+      )}
+      {twitterUrl && (
+        <Link
+          href={twitterUrl}
+          target="_blank"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          <Image src="/socials/x_logo.svg" alt="X" width={20} height={20} />
+        </Link>
+      )}
+      {websiteUrl && (
+        <Link
+          href={websiteUrl}
+          target="_blank"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          <Globe className="size-6" />
+        </Link>
+      )}
+    </div>
+  );
+};
 
 interface WebAppAboutSectionProps {
   label: string;
@@ -37,6 +104,18 @@ export const WebAppAboutSection = ({
     undefined,
   );
 
+  if (!text && !coverUrl) {
+    return (
+      <Links
+        youtubeUrl={youtubeUrl}
+        twitchUrl={twitchUrl}
+        twitterUrl={twitterUrl}
+        websiteUrl={websiteUrl}
+        className="w-full"
+      />
+    );
+  }
+
   return (
     <Accordion
       type="single"
@@ -56,53 +135,12 @@ export const WebAppAboutSection = ({
                 <ChevronDownIcon className="text-muted-foreground size-6 shrink-0" />
               </motion.div>
             </div>
-            <div className="flex justify-end items-center gap-3.5 shrink-0">
-              {youtubeUrl && (
-                <Link
-                  href={youtubeUrl}
-                  target="_blank"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}>
-                  <Youtube className="size-7" strokeWidth={1.8} />
-                </Link>
-              )}
-              {twitchUrl && (
-                <Link
-                  href={twitchUrl}
-                  target="_blank"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}>
-                  <Twitch className="size-6" />
-                </Link>
-              )}
-              {twitterUrl && (
-                <Link
-                  href={twitterUrl}
-                  target="_blank"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}>
-                  <Image
-                    src="/socials/x_logo.svg"
-                    alt="X"
-                    width={20}
-                    height={20}
-                  />
-                </Link>
-              )}
-              {websiteUrl && (
-                <Link
-                  href={websiteUrl}
-                  target="_blank"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}>
-                  <Globe className="size-6" />
-                </Link>
-              )}
-            </div>
+            <Links
+              youtubeUrl={youtubeUrl}
+              twitchUrl={twitchUrl}
+              twitterUrl={twitterUrl}
+              websiteUrl={websiteUrl}
+            />
           </div>
         </AccordionTrigger>
         <AccordionContent className="flex flex-row justify-between items-start w-full gap-10 mt-2 focus-visible:outline-none">

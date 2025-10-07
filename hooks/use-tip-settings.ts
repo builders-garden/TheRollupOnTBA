@@ -59,7 +59,7 @@ export const useUpdateTipSettings = (tokenType: AuthTokenType) => {
   >({
     url: (variables) => `/api/tip-settings/${variables.tipId}`,
     method: "PUT",
-    body: ({ tipId, ...data }) => data,
+    body: (data) => data,
     tokenType,
   });
 };

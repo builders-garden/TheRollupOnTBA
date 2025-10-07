@@ -300,6 +300,7 @@ export const WebAppStreamPage = () => {
                   </h1>
                 </div>
                 <LogoutButton
+                  disabled={isLoggingOut}
                   executeLogout={handleLogout}
                   className="min-w-1/3 w-1/3 h-[42px]">
                   <div className="flex justify-start items-center w-full gap-2">
@@ -342,6 +343,7 @@ export const WebAppStreamPage = () => {
                 className="flex justify-center items-center w-full">
                 <NBButton
                   onClick={() => signInWithWebApp()}
+                  disabled={isSigningIn}
                   className="bg-accent w-full h-[42px]">
                   <AnimatePresence mode="wait">
                     {isSigningIn ? (
@@ -379,6 +381,7 @@ export const WebAppStreamPage = () => {
                 transition={{ duration: 0.25, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
                 <NBButton
+                  disabled={isSigningIn}
                   onClick={async () => {
                     await disconnect();
                     setWasNotConnected(true);

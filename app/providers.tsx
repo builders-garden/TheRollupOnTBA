@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
-import { State } from "wagmi";
+import { cookieToInitialState, State } from "wagmi";
 import { AdminAuthProvider } from "@/contexts/auth/admin-auth-context";
 import { MiniAppAuthProvider } from "@/contexts/auth/mini-app-auth-context";
 import { WebAppAuthProvider } from "@/contexts/auth/web-app-auth-context";
@@ -19,10 +19,9 @@ const queryClient = new QueryClient();
 
 interface ProvidersProps {
   children: React.ReactNode;
-  initialState?: State;
 }
 
-export default function Providers({ children, initialState }: ProvidersProps) {
+export default function Providers({ children }: ProvidersProps) {
   const { isInMiniApp, isLoading: isCheckingMiniAppContext } = useMiniApp();
 
   // The current url path name
@@ -32,6 +31,9 @@ export default function Providers({ children, initialState }: ProvidersProps) {
   if (isCheckingMiniAppContext) {
     return null;
   }
+
+  // Create the initial state
+  const wagmiWebAppInitialState = cookieToInitialState(wagmiConfigWebApp);
 
   // If we are not in a miniapp, and the url includes "overlay" apply the overlay wrapper
   if (!isInMiniApp && pathName.includes("overlay")) {
@@ -51,9 +53,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
   if (!isInMiniApp && pathName.includes("admin")) {
     return (
       <NuqsAdapter>
-        <CustomWagmiProvider
-          config={wagmiConfigMiniApp}
-          initialState={initialState}>
+        <CustomWagmiProvider config={wagmiConfigMiniApp}>
           <AdminAuthProvider>
             <SocketProvider>
               <NotificationQueueProvider>
@@ -71,9 +71,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
   if (isInMiniApp) {
     return (
       <NuqsAdapter>
-        <CustomWagmiProvider
-          config={wagmiConfigMiniApp}
-          initialState={initialState}>
+        <CustomWagmiProvider config={wagmiConfigMiniApp}>
           <MiniAppAuthProvider>
             <ErudaProvider>
               <SocketProvider>
@@ -94,7 +92,7 @@ export default function Providers({ children, initialState }: ProvidersProps) {
     <NuqsAdapter>
       <CustomWagmiProvider
         config={wagmiConfigWebApp}
-        initialState={initialState}>
+        initialState={wagmiWebAppInitialState}>
         <WebAppAuthProvider>
           <SocketProvider>
             <NotificationQueueProvider>

@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 interface CustomWagmiProviderProps {
   config: ResolvedRegister["config"]; // wagmi config
   children: React.ReactNode;
-  initialState: State | undefined;
+  initialState?: State;
 }
 
 export const CustomWagmiProvider = ({

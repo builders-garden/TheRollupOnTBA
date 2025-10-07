@@ -58,10 +58,6 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
     brand.id,
   );
 
-  useEffect(() => {
-    console.log("TEST activePoll", activePoll);
-  }, [activePoll]);
-
   // State to track which button is loading
   const [loadingButton, setLoadingButton] = useState<"bear" | "bull" | null>(
     null,

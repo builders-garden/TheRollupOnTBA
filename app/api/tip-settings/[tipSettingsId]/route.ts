@@ -44,7 +44,6 @@ export const PUT = async (
   { params }: { params: Promise<{ tipSettingsId: string }> },
 ) => {
   try {
-    console.log("Update tip request received", req.body);
     const data = await req.json();
     const { tipSettingsId } = await params;
     const tipSettings = await updateTipSettings(tipSettingsId, data);

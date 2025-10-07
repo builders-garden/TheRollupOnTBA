@@ -13,6 +13,7 @@ import { env } from "@/lib/zod";
 import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
 import { WebAppTips } from "@/plugins/web-app/tips/web-app-tips";
 import { LogoutButton } from "../custom-ui/logout-button";
+import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
 import { NBButton } from "../custom-ui/nb-button";
 import { NBCard } from "../custom-ui/nb-card";
 import { ShareButton } from "../custom-ui/share-button";
@@ -261,6 +262,14 @@ export const WebAppStreamPage = () => {
                   </div>
 
                   <Separator className="w-full bg-border" />
+
+                  {/* Newsletter CTA */}
+                  {brand.data?.slug === "the_rollup" && (
+                    <NewsletterCTA
+                      label="Subscribe to newsletter"
+                      labelClassName="text-2xl"
+                    />
+                  )}
 
                   <div className="flex flex-col justify-start items-start w-full h-full gap-8">
                     {/* Tip Buttons */}

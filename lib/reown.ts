@@ -15,10 +15,7 @@ export const wagmiConfigMiniApp = createConfig({
 });
 
 export const wagmiAdapter = new WagmiAdapter({
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
-  ssr: true,
+  ssr: false,
   projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
   networks: [basePreconf],
 });

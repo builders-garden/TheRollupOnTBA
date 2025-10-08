@@ -22,6 +22,7 @@ export const WebAppWagmiProvider = ({
   // Create the initial state
   const wagmiWebAppInitialState = cookieToInitialState(
     wagmiAdapter.wagmiConfig as Config,
+    cookies,
   );
 
   return (

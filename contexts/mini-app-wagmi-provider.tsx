@@ -1,7 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { ResolvedRegister, State } from "@wagmi/core";
+import type { State } from "@wagmi/core";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfigMiniApp } from "@/lib/reown";
 

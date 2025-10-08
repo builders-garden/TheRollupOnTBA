@@ -10,6 +10,7 @@ import { useCreateBrand } from "@/hooks/use-brands";
 import { useCreateTipSettings } from "@/hooks/use-tip-settings";
 import { AuthTokenType } from "@/lib/enums";
 import { slugify } from "@/lib/utils";
+import { env } from "@/lib/zod";
 import { NBButton } from "../nb-button";
 
 export const SignUpContent = () => {
@@ -195,8 +196,10 @@ export const SignUpContent = () => {
             }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="flex flex-col justify-between items-center w-full gap-2">
-            <h1 className="text-xl font-bold">Your brand slug:</h1>
-            <p className="text-base">{slugifiedBrandName}</p>
+            <h1 className="text-xl font-bold">Your brand link:</h1>
+            <p className="text-base">
+              {env.NEXT_PUBLIC_URL}/<b>{slugifiedBrandName}</b>
+            </p>
           </motion.div>
 
           <NBButton

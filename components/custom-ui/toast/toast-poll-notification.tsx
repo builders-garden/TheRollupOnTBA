@@ -1,11 +1,14 @@
 "use client";
 
+import ky from "ky";
+import { Loader2 } from "lucide-react";
 import { AnimatePresence, easeIn, motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { NumberTicker } from "@/components/shadcn-ui/number-ticker";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { useTimer } from "@/hooks/use-timer";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { UpdatePollNotificationEvent } from "@/lib/types/socket";
 import { cn } from "@/lib/utils";
@@ -164,43 +167,42 @@ export const ToastPollNotification = ({
   const xOffset = isLeft ? 100 : isRight ? -100 : 0;
   const yOffset = isCenter ? (isTop ? 100 : -100) : 0;
 
-  const getSecondsRemaining = useMemo(() => {
-    return () => Math.max(0, Math.ceil((data.endTimeMs - Date.now()) / 1000));
-  }, [data]);
+  const [isFetchingCurrentTime, setIsFetchingCurrentTime] =
+    useState<boolean>(false);
+  const { remainingSeconds, startTimer } = useTimer({});
 
-  const [secondsLeft, setSecondsLeft] = useState<number>(getSecondsRemaining());
-
+  // On load, call an api to get the current time
   useEffect(() => {
-    setSecondsLeft(getSecondsRemaining());
-
-    let intervalId: ReturnType<typeof setInterval> | undefined;
-
-    const msUntilNextSecond = 1000 - (Date.now() % 1000);
-    const timeoutId = setTimeout(() => {
-      intervalId = setInterval(() => {
-        const next = getSecondsRemaining();
-        setSecondsLeft((prev) => {
-          if (prev !== next) {
-            return next;
-          }
-          return prev;
-        });
-        if (next <= 0 && intervalId) {
-          clearInterval(intervalId);
-        }
-      }, 1000);
-    }, msUntilNextSecond);
-
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
+    const fetchCurrentTime = async () => {
+      setIsFetchingCurrentTime(true);
+      try {
+        const res = await ky
+          .get<{
+            timestamp: number; // already unix time in milliseconds
+          }>("/api/current-time", {
+            timeout: false,
+          })
+          .json();
+        const secondsToSet = Math.max(
+          0,
+          Math.ceil((data.endTimeMs - res.timestamp) / 1000),
+        );
+        startTimer(secondsToSet);
+      } catch (err) {
+        console.error("Failed to fetch timestamp:", err);
+        startTimer(180); // fallback to 3 minutes
+      } finally {
+        setIsFetchingCurrentTime(false);
+      }
     };
-  }, [getSecondsRemaining]);
 
-  const isVotingClosed = secondsLeft <= 0;
+    fetchCurrentTime();
+  }, []);
+
+  const isVotingClosed = remainingSeconds <= 0;
   const timeLabel = isVotingClosed
     ? "Voting closed"
-    : `${formatSecondsToClock(secondsLeft)} left to vote`;
+    : `${formatSecondsToClock(remainingSeconds)} left to vote`;
 
   return (
     <AnimatePresence mode="wait" initial={true}>
@@ -233,7 +235,7 @@ export const ToastPollNotification = ({
           transition: { duration: 0.4, ease: easeIn },
         }}
         className="flex flex-col gap-1 font-overused-grotesk w-full">
-        {isVotingClosed && results ? (
+        {isVotingClosed && results && !isFetchingCurrentTime ? (
           <ResultsBar
             bearPercent={results.bearPercent}
             bullPercent={results.bullPercent}
@@ -246,16 +248,32 @@ export const ToastPollNotification = ({
             <p className="shrink-0">or</p>
             <BearIcon className="w-[34px] h-[34px] fill-[#CF5953]" />
           </div>
-          <span className="text-[27px] font-black">{data.pollQuestion}</span>
-          <div className="flex justify-center items-center gap-5 shrink-0 w-[31%]">
-            <div className="flex flex-col items-center justify-center gap-0">
-              <span className="text-[#E6B45E] font-bold text-[22px] text-center">
-                {timeLabel}
-              </span>
-              <span className="text-gray-400 text-base">
-                {votes.toString()} votes
-              </span>
-            </div>
+          <span className="text-[27px] font-black leading-8">
+            {data.pollQuestion}
+          </span>
+          <div className="flex justify-center items-center shrink-0 w-[31%]">
+            <AnimatePresence mode="wait">
+              {isFetchingCurrentTime ? (
+                <motion.div
+                  key="loader"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}
+                  className="flex justify-center items-center w-full">
+                  <Loader2 className="size-6 text-white animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.div className="flex flex-col items-center justify-center gap-0 w-full">
+                  <span className="text-[#E6B45E] font-bold text-[22px] text-center">
+                    {timeLabel}
+                  </span>
+                  <span className="text-gray-400 text-base">
+                    {votes.toString()} votes
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div className="bg-white p-1">
               <QRCodeSVG value={data.qrCodeUrl} size={66} level="M" />
             </div>

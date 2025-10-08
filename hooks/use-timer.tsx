@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface UseTimerProps {
-  initialSeconds: number;
+  initialSeconds?: number;
   onEnd?: () => Promise<void>;
 }
 
@@ -20,8 +20,9 @@ export const useTimer = ({
   onEnd,
 }: UseTimerProps): UseTimerReturn => {
   const [isTimerGoing, setIsTimerGoing] = useState(false);
-  const [remainingSeconds, setRemainingSeconds] =
-    useState<number>(initialSeconds);
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(
+    initialSeconds ?? 0,
+  );
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout>(undefined);
 
@@ -44,7 +45,7 @@ export const useTimer = ({
   };
 
   const startTimer = (customSeconds?: number) => {
-    setRemainingSeconds(customSeconds ?? initialSeconds);
+    setRemainingSeconds(customSeconds ?? initialSeconds ?? 0);
     setIsTimerGoing(true);
     setIsPaused(false);
   };

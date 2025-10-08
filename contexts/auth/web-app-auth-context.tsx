@@ -25,27 +25,6 @@ import { wagmiAdapter } from "@/lib/reown";
 import { User } from "@/lib/types/user.type";
 import { env } from "@/lib/zod";
 
-// Set up metadata
-const metadata = {
-  name: "Control The Stream",
-  description: "Control The Stream",
-  url: env.NEXT_PUBLIC_URL,
-  icons: [],
-};
-
-// Create the modal
-createAppKit({
-  adapters: [wagmiAdapter],
-  projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
-  networks: [basePreconf],
-  metadata,
-  defaultNetwork: basePreconf,
-  features: {
-    analytics: true,
-    connectMethodsOrder: ["wallet"],
-  },
-});
-
 interface WebAppAuthContextType {
   user: {
     data: User | undefined;
@@ -77,6 +56,27 @@ interface WebAppAuthContextType {
 const WebAppAuthContext = createContext<WebAppAuthContextType | undefined>(
   undefined,
 );
+
+// Set up metadata
+const metadata = {
+  name: "Control The Stream",
+  description: "Control The Stream",
+  url: env.NEXT_PUBLIC_URL,
+  icons: [],
+};
+
+// Create the modal at module level
+createAppKit({
+  adapters: [wagmiAdapter],
+  projectId: env.NEXT_PUBLIC_REOWN_PROJECT_ID,
+  networks: [basePreconf],
+  metadata,
+  defaultNetwork: basePreconf,
+  features: {
+    analytics: true,
+    connectMethodsOrder: ["wallet"],
+  },
+});
 
 export const useWebAppAuth = () => {
   const context = useContext(WebAppAuthContext);

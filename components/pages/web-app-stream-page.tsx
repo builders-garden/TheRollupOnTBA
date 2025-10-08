@@ -1,4 +1,4 @@
-import { useAppKit, useDisconnect } from "@reown/appkit/react";
+import { useAppKit } from "@reown/appkit/react";
 import { Loader2, LogOut, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
@@ -32,7 +32,6 @@ export const WebAppStreamPage = () => {
     isLoading,
   } = useWebAppAuth();
   const { address: connectedAddress } = useAccount();
-  const { disconnect } = useDisconnect();
   const { open } = useAppKit();
 
   // This state memorizes if the user was not connected before the page loaded
@@ -383,7 +382,6 @@ export const WebAppStreamPage = () => {
                 <NBButton
                   disabled={isSigningIn}
                   onClick={async () => {
-                    await disconnect();
                     setWasNotConnected(true);
                     open({ view: "Connect", namespace: "eip155" });
                   }}

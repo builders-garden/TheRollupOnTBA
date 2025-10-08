@@ -12,12 +12,17 @@ const queryClient = new QueryClient();
 
 interface WebAppWagmiProviderProps {
   children: React.ReactNode;
+  cookies: string | null;
 }
 
-export const WebAppWagmiProvider = ({ children }: WebAppWagmiProviderProps) => {
+export const WebAppWagmiProvider = ({
+  children,
+  cookies,
+}: WebAppWagmiProviderProps) => {
   // Create the initial state
   const wagmiWebAppInitialState = cookieToInitialState(
     wagmiAdapter.wagmiConfig as Config,
+    cookies,
   );
 
   return (

@@ -3,6 +3,7 @@ import { Nunito_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import Providers from "@/app/providers";
 import "./globals.css";
+import { headers } from "next/headers";
 import { MiniAppProvider } from "@/contexts/mini-app-context";
 
 const nunitoSans = Nunito_Sans({
@@ -25,12 +26,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersObj = await headers();
+  const cookies = headersObj.get("cookie");
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${nunitoSans.variable} ${overusedGrotesk.variable} font-nunito-sans size-full antialiased bg-background`}>
         <MiniAppProvider addMiniAppOnLoad={true}>
-          <Providers>{children}</Providers>
+          <Providers cookies={cookies}>{children}</Providers>
         </MiniAppProvider>
       </body>
     </html>

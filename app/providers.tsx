@@ -13,15 +13,15 @@ import { MiniAppWagmiProvider } from "@/contexts/mini-app-wagmi-provider";
 import { NotificationQueueProvider } from "@/contexts/notification-queue-context";
 import { SocketProvider } from "@/contexts/socket-context";
 import { WebAppWagmiProvider } from "@/contexts/web-app-wagmi-provider";
-import { wagmiConfigMiniApp } from "@/lib/reown";
 
 const queryClient = new QueryClient();
 
 interface ProvidersProps {
   children: React.ReactNode;
+  cookies: string | null;
 }
 
-export default function Providers({ children }: ProvidersProps) {
+export default function Providers({ children, cookies }: ProvidersProps) {
   const { isInMiniApp, isLoading: isCheckingMiniAppContext } = useMiniApp();
 
   // The current url path name
@@ -50,7 +50,7 @@ export default function Providers({ children }: ProvidersProps) {
   if (!isInMiniApp && pathName.includes("admin")) {
     return (
       <NuqsAdapter>
-        <MiniAppWagmiProvider config={wagmiConfigMiniApp}>
+        <MiniAppWagmiProvider>
           <AdminAuthProvider>
             <SocketProvider>
               <NotificationQueueProvider>
@@ -68,7 +68,7 @@ export default function Providers({ children }: ProvidersProps) {
   if (isInMiniApp) {
     return (
       <NuqsAdapter>
-        <MiniAppWagmiProvider config={wagmiConfigMiniApp}>
+        <MiniAppWagmiProvider>
           <MiniAppAuthProvider>
             <ErudaProvider>
               <SocketProvider>
@@ -87,7 +87,7 @@ export default function Providers({ children }: ProvidersProps) {
   // If we are not in the miniapp, but connecting to the / path, show the web version of the app
   return (
     <NuqsAdapter>
-      <WebAppWagmiProvider>
+      <WebAppWagmiProvider cookies={cookies}>
         <WebAppAuthProvider>
           <SocketProvider>
             <NotificationQueueProvider>

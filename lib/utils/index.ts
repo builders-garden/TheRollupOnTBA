@@ -248,6 +248,8 @@ export const slugify = (text: string) => {
     .replace(/_+/g, "_");
 };
 
+export { createMonotonicSecondsGetter, getServerOffsetMs } from "./time";
+
 /**
  * Calculate the time left for a poll
  * @param deadline - The deadline of the poll

@@ -8,7 +8,7 @@ import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { UpdatePollNotificationEvent } from "@/lib/types/socket";
-import { cn } from "@/lib/utils";
+import { cn, getServerOffsetMs } from "@/lib/utils";
 import { BearIcon } from "../icons/bear-icon";
 import { BullIcon } from "../icons/bull-icon";
 
@@ -169,10 +169,27 @@ export const ToastPollNotification = ({
   const perfStartRef = useRef<number>(performance.now());
   const initialRemainingMsRef = useRef<number>(data.endTimeMs - Date.now());
 
-  // Reset the baseline if the poll end time changes
+  // Reset the baseline if the poll end time changes, using a server time offset
   useEffect(() => {
-    perfStartRef.current = performance.now();
-    initialRemainingMsRef.current = data.endTimeMs - Date.now();
+    let cancelled = false;
+
+    // Prefer the shared util for computing server time offset
+    async function initializeCountdownBaseline() {
+      const offsetMs = await getServerOffsetMs();
+      if (cancelled) return;
+      perfStartRef.current = performance.now();
+      initialRemainingMsRef.current = data.endTimeMs - (Date.now() + offsetMs);
+      // Force an immediate recompute so UI reflects corrected baseline
+      setSecondsLeft(
+        Math.max(0, Math.ceil(initialRemainingMsRef.current / 1000)),
+      );
+    }
+
+    initializeCountdownBaseline();
+
+    return () => {
+      cancelled = true;
+    };
   }, [data.endTimeMs]);
 
   const getSecondsRemaining = useMemo(() => {

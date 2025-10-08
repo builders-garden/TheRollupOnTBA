@@ -2,7 +2,7 @@
 
 import { AnimatePresence, easeIn, motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { NumberTicker } from "@/components/shadcn-ui/number-ticker";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
@@ -164,9 +164,24 @@ export const ToastPollNotification = ({
   const xOffset = isLeft ? 100 : isRight ? -100 : 0;
   const yOffset = isCenter ? (isTop ? 100 : -100) : 0;
 
+  // Use a monotonic clock for ticking to avoid issues if the user changes system time.
+  // Compute the initial remaining time once, then decrease using performance.now().
+  const perfStartRef = useRef<number>(performance.now());
+  const initialRemainingMsRef = useRef<number>(data.endTimeMs - Date.now());
+
+  // Reset the baseline if the poll end time changes
+  useEffect(() => {
+    perfStartRef.current = performance.now();
+    initialRemainingMsRef.current = data.endTimeMs - Date.now();
+  }, [data.endTimeMs]);
+
   const getSecondsRemaining = useMemo(() => {
-    return () => Math.max(0, Math.ceil((data.endTimeMs - Date.now()) / 1000));
-  }, [data]);
+    return () => {
+      const elapsedMs = performance.now() - perfStartRef.current;
+      const remainingMs = initialRemainingMsRef.current - elapsedMs;
+      return Math.max(0, Math.ceil(remainingMs / 1000));
+    };
+  }, []);
 
   const [secondsLeft, setSecondsLeft] = useState<number>(getSecondsRemaining());
 

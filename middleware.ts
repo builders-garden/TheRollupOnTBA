@@ -19,6 +19,7 @@ export default async function middleware(req: NextRequest) {
     pathname === "/api/auth/web-app/sign-in" ||
     pathname === "/api/auth/base/nonce" ||
     pathname === "/api/auth/logout" ||
+    pathname === "/api/current-time" ||
     pathname.includes("/api/og") ||
     pathname.includes("/api/webhook/farcaster")
   ) {

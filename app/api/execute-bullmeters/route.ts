@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createWalletClient, encodeFunctionData, http } from "viem";
+import { createPublicClient, createWalletClient, encodeFunctionData, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { bullMeterAbi } from "@/lib/abi/bull-meter-abi";
@@ -72,6 +72,11 @@ export const POST = async (req: NextRequest) => {
       transport: http("https://mainnet-preconf.base.org"), //flashbot rpc
     });
 
+    const publicClient = createPublicClient({
+      chain: base,
+      transport: http(""), 
+    });
+
     // Encode the vote function call
     const data = encodeFunctionData({
       abi: bullMeterAbi,
@@ -84,12 +89,58 @@ export const POST = async (req: NextRequest) => {
       ],
     });
 
-    // Send the transaction
-    const hash = await walletClient.sendTransaction({
-      to: BULLMETER_ADDRESS as `0x${string}`,
-      data,
-      value: BigInt(0), // No ETH value needed for this function
-    });
+    let hash: `0x${string}` | undefined;
+    let retryCount = 0;
+    let nonce: number;
+    const maxRetries = 3; // Try once more with different nonce
+
+    while (retryCount <= maxRetries) {
+      try {
+        // Get current nonce
+        nonce = await publicClient.getTransactionCount({
+          address: account.address,
+          blockTag: "pending",
+        });
+
+        if (!nonce) {
+          nonce = Math.floor(Math.random() * 100);
+        }
+
+        // Send the transaction with explicit nonce
+        hash = await walletClient.sendTransaction({
+          to: BULLMETER_ADDRESS as `0x${string}`,
+          data,
+          value: BigInt(0), // No ETH value needed for this function
+          nonce: nonce + retryCount, // Increment nonce on retry
+        });
+
+        // If successful, break out of the loop
+        break;
+      } catch (error) {
+        console.error(
+          `Vote execution error (attempt ${retryCount + 1}):`,
+          error,
+        );
+
+        retryCount++;
+
+        // If we've exhausted all retries, return error
+        if (retryCount > maxRetries) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: "Failed to execute vote after retries",
+              details: error instanceof Error ? error.message : "Unknown error",
+              attempts: retryCount,
+            },
+            { status: 500 },
+          );
+        }
+
+        // Wait a bit before retrying
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    }
 
     // Update database with vote counts
     let updatedBullMeter: BullMeter | null = null;

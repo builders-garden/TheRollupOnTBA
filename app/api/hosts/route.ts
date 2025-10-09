@@ -51,6 +51,26 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    // Get the hosts by brand ID
+    const hosts = await getHostsByBrandId(data.brandId);
+
+    // Check if the host already exists
+    if (hosts.some((host) => host.fid === data.fid)) {
+      return NextResponse.json({
+        success: false,
+        error: "Host already exists",
+      });
+    }
+
+    // Check if the host limit has been reached
+    if (hosts.length >= 5) {
+      return NextResponse.json({
+        success: false,
+        error: "Host limit reached",
+      });
+    }
+
+    // Create the host
     const host = await createHost(data);
 
     return NextResponse.json({

@@ -7,7 +7,6 @@ import { NBButton } from "@/components/custom-ui/nb-button";
 import { useCreateHost, useHostsByBrandId } from "@/hooks/use-hosts";
 import { AuthTokenType } from "@/lib/enums";
 import { NeynarUser } from "@/lib/types/neynar.type";
-import { cn } from "@/lib/utils";
 
 interface NewfoundFarcasterUserProps {
   farcasterUser: NeynarUser;

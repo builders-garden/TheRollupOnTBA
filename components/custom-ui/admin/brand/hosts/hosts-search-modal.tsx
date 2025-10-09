@@ -2,18 +2,14 @@ import ky from "ky";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { isAddress } from "viem/utils";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useDebounce } from "@/hooks/use-debounce";
-import { useCreateHost } from "@/hooks/use-hosts";
 import { Host } from "@/lib/database/db.schema";
-import { AuthTokenType } from "@/lib/enums";
 import { NeynarUser } from "@/lib/types/neynar.type";
-import { cn, deepCompareZerionTokens, getChainLogoUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { NewfoundFarcasterUser } from "./newfound-farcaster-user";
 
 interface HostsSearchModalProps {

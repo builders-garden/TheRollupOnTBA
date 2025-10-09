@@ -147,8 +147,8 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
     if (isConnected) {
       const streamData = {
         brandId: brand.id,
-        username: user.username || "",
-        profilePicture: user.avatarUrl || "",
+        username: user?.username || "",
+        profilePicture: user?.avatarUrl || "",
       };
 
       joinStream(streamData);
@@ -270,6 +270,9 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
       toast.info("Please connect your wallet to vote");
       return;
     }
+    if (!user?.id) {
+      return;
+    }
 
     const buttonType = isBull ? "bull" : "bear";
 
@@ -337,9 +340,9 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
         senderId: user.id,
         receiverBrandId: brand.id,
         platform: "web-app",
-        username: baseName || user.username || formatWalletAddress(address),
+        username: baseName || user?.username || formatWalletAddress(address),
         position: PopupPositions.TOP_CENTER,
-        profilePicture: user.avatarUrl || "",
+        profilePicture: user?.avatarUrl || "",
         endTimeMs: poll.deadlineSeconds
           ? poll.deadlineSeconds * 1000
           : undefined,

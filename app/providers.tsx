@@ -39,7 +39,7 @@ export default function Providers({ children, cookies }: ProvidersProps) {
         <NotificationQueueProvider>
           <QueryClientProvider client={queryClient}>
             {children}
-            <Toaster richColors position="top-right" />
+            <Toaster richColors expand={true} position="top-right" />
           </QueryClientProvider>
         </NotificationQueueProvider>
       </SocketProvider>

@@ -203,7 +203,7 @@ export const WebAppAboutSection = ({
                 </AnimatePresence>
 
                 {/* Newsletter CTA */}
-                {brandSlug !== "the_rollup" && (
+                {brandSlug === "the_rollup" && (
                   <NewsletterCTA
                     label="Subscribe to newsletter"
                     labelClassName="text-lg"

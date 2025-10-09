@@ -2,14 +2,12 @@ import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Address } from "viem";
 import { useAccount } from "wagmi";
 import { Checkbox } from "@/components/shadcn-ui/checkbox";
 import { useMiniApp } from "@/contexts/mini-app-context";
 import { useApprove } from "@/hooks/use-approve";
 import { useActiveBullMeter } from "@/hooks/use-bull-meters";
 import { useConsumeBullmeterApprove } from "@/hooks/use-bullmeter-approve";
-import { useCreateBullmeterVote } from "@/hooks/use-bullmeter-votes";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
@@ -41,7 +39,7 @@ interface MiniAppPollCardProps {
 export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
   const { context } = useMiniApp();
   const { isConnected, subscribe, unsubscribe } = useSocket();
-  const { joinStream, voteCasted } = useSocketUtils();
+  const { joinStream } = useSocketUtils();
   const { address } = useAccount();
   const { startConfetti } = useConfetti({
     duration: 250,
@@ -239,13 +237,6 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
 
   // BullMeter voting hook
   const { submitVote, isPending: isVoting } = useConsumeBullmeterApprove({
-    onSuccess: async (data) => {
-      // The new API returns a job ID and status, so we just log the success
-      // The actual vote processing will be handled by your backend
-      // and socket events will be emitted from there
-      // If you want to show immediate feedback, you could cast votes to socket here
-      // but it's better to wait for the backend to process and emit the events
-    },
     tokenType: AuthTokenType.MINI_APP_AUTH_TOKEN,
   });
 

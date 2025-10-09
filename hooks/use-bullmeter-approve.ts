@@ -26,28 +26,6 @@ interface VoteResponse {
   pollId: string;
 }
 
-// Additional interface for job status checking
-interface JobStatusResponse {
-  status: "waiting" | "active" | "completed" | "failed" | "delayed";
-  progress: number;
-  position?: number;
-  delayReason?: string;
-  processAt?: Date;
-  error?: string;
-  result?: {
-    success: boolean;
-    processedAt: string;
-    pollId: string;
-    txHash?: string;
-    error?: string;
-    status: "transaction_sent" | "transaction_failed";
-  };
-  attemptsMade?: number;
-  attemptsRemaining?: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 const executeVote = async (
   voteData: VoteRequest,
   tokenType: AuthTokenType,

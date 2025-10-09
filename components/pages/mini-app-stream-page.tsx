@@ -4,8 +4,8 @@ import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
+import { useHostsByBrandId } from "@/hooks/use-hosts";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
-import { THE_ROLLUP_HOSTS } from "@/lib/constants";
 import { env } from "@/lib/zod";
 import { MiniAppFeaturedTokens } from "@/plugins/mini-app/featured-tokens/mini-app-featured-tokens";
 import { MiniAppTips } from "@/plugins/mini-app/tips/mini-app-tips";
@@ -24,6 +24,12 @@ export const MiniAppStreamPage = () => {
   // Get the last youtube content for this brand
   const { data: lastYoutubeContent, isLoading: isLastYoutubeContentLoading } =
     useLastYoutubeContent(brand.data?.slug || "");
+
+  // Get the hosts for this brand
+  const { data: hosts, isLoading: isLoadingHosts } = useHostsByBrandId({
+    brandId: brand.data?.id,
+    enabled: !!brand.data?.id,
+  });
 
   return (
     <motion.div
@@ -198,10 +204,20 @@ export const MiniAppStreamPage = () => {
         />
 
         {/* Hosts Section */}
-        {/* TODO: Make this dynamic */}
-        {brand.data?.slug === "the_rollup" && (
-          <HostsSection hosts={THE_ROLLUP_HOSTS} label="Hosts" />
-        )}
+        <AnimatePresence mode="wait">
+          {isLoadingHosts ? (
+            <motion.div
+              key="hosts-section-loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}>
+              <Skeleton className="w-full bg-black/10 h-[30px]" />
+            </motion.div>
+          ) : (
+            <HostsSection hosts={hosts?.data || []} label="Hosts" />
+          )}
+        </AnimatePresence>
 
         {/* Newsletter CTA */}
         {/* TODO: Make this dynamic */}

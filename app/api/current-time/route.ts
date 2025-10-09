@@ -6,7 +6,13 @@ export async function GET() {
   try {
     // Get the current time from the socket server
     const timestamp = await ky
-      .get<{ timestamp: number }>(`${env.NEXT_PUBLIC_SOCKET_URL}/current-time`)
+      .get<{ timestamp: number }>(`${env.NEXT_PUBLIC_SOCKET_URL}/current-time`, {
+        headers: {
+          "x-api-secret": env.BACKEND_SECRET,
+          "Content-Type": "application/json",
+          },
+        },
+      )
       .json();
 
     // Return the timestamp

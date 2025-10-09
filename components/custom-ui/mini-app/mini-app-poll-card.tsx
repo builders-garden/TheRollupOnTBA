@@ -240,58 +240,14 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
   // BullMeter voting hook
   const { submitVote, isPending: isVoting } = useConsumeBullmeterApprove({
     onSuccess: async (data) => {
-      const voteCount = data.data?.voteCount;
-      if (!voteCount || voteCount === "0" || isNaN(Number(voteCount))) return;
-
-      // Get the platform from the context
-      const platform =
-        context?.client.clientFid === FARCASTER_CLIENT_FID.farcaster
-          ? "farcaster"
-          : "base";
-
-      // Create the bullmeter vote if the pollId is available
-      if (poll?.pollId && brand.id && user.id) {
-        createBullmeterVote({
-          pollId: poll.pollId as Address,
-          isBull: data.data?.isYes ?? false,
-          votes: Number(voteCount),
-          votePrice: "0.01",
-          platform,
-          senderId: user.id,
-          receiverBrandId: brand.id,
-        });
-      }
-
-      // Cast the votes to the socket in order to show them as popups in the overlay
-      for (let i = 0; i < Number(voteCount); i++) {
-        voteCasted({
-          brandId: brand.id,
-          position: PopupPositions.TOP_CENTER,
-          username: baseName || user.username || formatWalletAddress(address),
-          profilePicture: user.avatarUrl || "",
-          voteAmount: "1",
-          isBull: data.data?.isYes ?? false,
-          promptId: poll?.pollId || "",
-          endTimeMs: data.data?.endTime
-            ? (() => {
-                // Convert Unix timestamp (seconds) to milliseconds
-                const date = new Date(data.data?.endTime * 1000);
-                return date.getTime();
-              })()
-            : new Date().getTime(),
-        });
-
-        // Wait for 1 second before sending the next vote
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
+      // The new API returns a job ID and status, so we just log the success
+      // The actual vote processing will be handled by your backend
+      // and socket events will be emitted from there
+      // If you want to show immediate feedback, you could cast votes to socket here
+      // but it's better to wait for the backend to process and emit the events
     },
     tokenType: AuthTokenType.MINI_APP_AUTH_TOKEN,
   });
-
-  // Bullmeter votes creation hook
-  const { mutate: createBullmeterVote } = useCreateBullmeterVote(
-    AuthTokenType.MINI_APP_AUTH_TOKEN,
-  );
 
   // Handle vote submission with approval check
   const handleVote = async (
@@ -308,7 +264,6 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
       : true;
 
     if (!poll?.pollId || isExpired) {
-      console.log("❌ No active poll found");
       return;
     }
 
@@ -358,12 +313,24 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
         : poll.pollId;
 
       // Submit the vote
-      await submitVote(pollHash, isBull, votesNumber.toString());
+      await submitVote(pollHash, isBull, votesNumber.toString(), {
+        senderId: user.id,
+        receiverBrandId: brand.id,
+        platform:
+          context?.client.clientFid === FARCASTER_CLIENT_FID.farcaster
+            ? "farcaster"
+            : "base",
+        username: baseName || user.username || formatWalletAddress(address),
+        position: PopupPositions.TOP_CENTER,
+        profilePicture: user.avatarUrl || "",
+        endTimeMs: poll.deadlineSeconds
+          ? poll.deadlineSeconds * 1000
+          : undefined,
+      });
 
       toast.success("Vote submitted");
       startConfetti();
     } catch (error) {
-      console.log("❌ Vote failed:", error);
       toast.error("Vote failed. Please try again.");
     } finally {
       // Clear loading state

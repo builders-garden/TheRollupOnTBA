@@ -4,43 +4,84 @@ import { useAccount } from "wagmi";
 import { AuthTokenType } from "@/lib/enums";
 
 interface VoteRequest {
-  voter: string;
   pollId: string;
-  isYes: boolean;
-  voteCount: string;
+  isBull: boolean;
+  votes: string;
+  votePrice: string;
+  platform: string;
+  senderId: string;
+  voterAddress: string;
+  receiverBrandId: string;
+  // Optional fields
+  username?: string;
+  position?: string;
+  profilePicture?: string;
+  endTimeMs?: number;
 }
 
 interface VoteResponse {
-  success: boolean;
-  data?: {
-    transactionHash: string;
-    pollId: string;
-    isYes: boolean;
-    voteCount: string;
-    message: string;
-    endTime: number;
-  };
+  jobId: string;
+  status: "queued";
+  message: string;
+  pollId: string;
+}
+
+// Additional interface for job status checking
+interface JobStatusResponse {
+  status: "waiting" | "active" | "completed" | "failed" | "delayed";
+  progress: number;
+  position?: number;
+  delayReason?: string;
+  processAt?: Date;
   error?: string;
-  details?: string;
+  result?: {
+    success: boolean;
+    processedAt: string;
+    pollId: string;
+    txHash?: string;
+    error?: string;
+    status: "transaction_sent" | "transaction_failed";
+  };
+  attemptsMade?: number;
+  attemptsRemaining?: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const executeVote = async (
   voteData: VoteRequest,
   tokenType: AuthTokenType,
 ): Promise<VoteResponse> => {
-  const response = await ky.post<VoteResponse>("/api/execute-bullmeters", {
-    json: voteData,
-    headers: {
-      "x-token-type": tokenType,
-    },
-    timeout: false,
-  });
+  // Use the internal API endpoint instead of calling socket server directly
+  const apiUrl = "/api/bullmeter/vote";
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  try {
+    const response = await ky.post<VoteResponse>(apiUrl, {
+      json: voteData,
+      headers: {
+        "Content-Type": "application/json",
+        "x-token-type": tokenType || "",
+      },
+      credentials: "include", // Include cookies for authentication
+      timeout: 30000, // 30 second timeout
+    });
+
+    if (!response.ok) {
+      console.error("❌ HTTP error! status:", response.status);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+
+    return responseData;
+  } catch (error) {
+    console.error("💥 Vote execution failed:", error);
+    if (error instanceof Error) {
+      console.error("💥 Error message:", error.message);
+      console.error("💥 Error stack:", error.stack);
+    }
+    throw error;
   }
-
-  return response.json();
 };
 
 export const useConsumeBullmeterApprove = ({
@@ -66,15 +107,32 @@ export const useConsumeBullmeterApprove = ({
     pollId: string,
     isYes: boolean,
     voteCount: string,
+    additionalData: {
+      senderId: string;
+      receiverBrandId: string;
+      platform?: string;
+      username?: string;
+      position?: string;
+      profilePicture?: string;
+      endTimeMs?: number;
+    },
   ) => {
     if (!address) {
       throw new Error("No wallet connected");
     }
     return voteMutation.mutateAsync({
-      voter: address,
+      voterAddress: address,
       pollId,
-      isYes,
-      voteCount,
+      isBull: isYes,
+      votes: voteCount,
+      votePrice: "0.01",
+      platform: additionalData.platform || "mini-app",
+      senderId: additionalData.senderId,
+      receiverBrandId: additionalData.receiverBrandId,
+      username: additionalData.username,
+      position: additionalData.position,
+      profilePicture: additionalData.profilePicture,
+      endTimeMs: additionalData.endTimeMs,
     });
   };
 

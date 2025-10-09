@@ -16,6 +16,10 @@ export const HostsContent = () => {
     enabled: !!brandId,
   });
 
+  // Disabled state for the hosts search modal
+  const disabledModalButton =
+    isLoadingHosts || (!!hosts?.data?.length && hosts.data.length >= 5);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -43,13 +47,13 @@ export const HostsContent = () => {
             transition={{ duration: 0.15, ease: "easeInOut" }}
             className="flex flex-col justify-start items-start w-full h-full gap-5">
             <h1 className="font-bold text-2xl">
-              Select the hosts that will show up in the stream description
+              Select up to 5 hosts that will show up in the stream description
               section
             </h1>
             <div className="flex flex-col gap-2.5 w-1/2">
               <HostsSearchModal
                 addedHosts={hosts?.data || []}
-                disabled={isLoadingHosts}
+                disabled={disabledModalButton}
               />
             </div>
 

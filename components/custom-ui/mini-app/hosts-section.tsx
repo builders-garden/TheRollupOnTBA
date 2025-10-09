@@ -1,17 +1,14 @@
 import sdk from "@farcaster/miniapp-sdk";
 import Image from "next/image";
+import { Host } from "@/lib/database/db.schema";
 import { cn } from "@/lib/utils";
 
 interface AboutSectionProps {
-  hosts: {
-    name: string;
-    pictureUrl: string;
-    fid: number;
-    farcasterUsername: string;
-  }[];
+  hosts: Host[];
   label: string;
   labelClassName?: string;
   hostNameClassName?: string;
+  fromWebApp?: boolean;
 }
 
 export const HostsSection = ({
@@ -19,12 +16,20 @@ export const HostsSection = ({
   label,
   labelClassName,
   hostNameClassName,
+  fromWebApp = false,
 }: AboutSectionProps) => {
   // Handles opening the Farcaster profile
-  const handleOpenFarcasterProfile = async (fid: number) => {
-    await sdk.actions.viewProfile({
-      fid,
-    });
+  const handleOpenFarcasterProfile = async (
+    fid?: number,
+    farcasterUsername?: string,
+  ) => {
+    if (fromWebApp && farcasterUsername) {
+      window.open(`https://farcaster.xyz/${farcasterUsername}`, "_blank");
+    } else if (!!fid && !fromWebApp) {
+      await sdk.actions.viewProfile({
+        fid,
+      });
+    }
   };
 
   return (
@@ -33,18 +38,18 @@ export const HostsSection = ({
       <div className="flex justify-start items-center w-full gap-5">
         {hosts.map((host) => (
           <div
-            key={host.name}
+            key={host.fid}
             className="flex flex-col justify-center items-center cursor-pointer gap-2"
             onClick={() => handleOpenFarcasterProfile(host.fid)}>
             <Image
-              src={host.pictureUrl}
-              alt={host.name}
+              src={host.avatarUrl || ""}
+              alt={host.farcasterUsername || ""}
               width={244}
               height={244}
               className="size-14 rounded-[12px] object-cover"
             />
             <p className={cn("text-xs font-bold", hostNameClassName)}>
-              {host.name}
+              {host.farcasterUsername}
             </p>
           </div>
         ))}

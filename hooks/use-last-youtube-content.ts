@@ -18,5 +18,6 @@ export const useLastYoutubeContent = (brandSlug: string) => {
     isProtected: true,
     refetchInterval: 1000 * 60, // Refetch every minute
     tokenType: null,
+    refetchOnWindowFocus: false,
   });
 };

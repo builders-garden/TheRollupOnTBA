@@ -74,7 +74,7 @@ export const WebAppStreamPage = () => {
       <ScrollArea scrollBarClassName="w-0" className="w-full">
         <div className="flex flex-col justify-start items-center h-screen w-full p-6 gap-5">
           {/* Video */}
-          <div className="flex justify-center items-center min-h-[78%] aspect-video bg-black/10 rounded-[8px] overflow-hidden">
+          <div className="flex justify-center items-center w-full aspect-video bg-black/10 rounded-[8px] overflow-hidden">
             <AnimatePresence mode="wait">
               {isLastYoutubeContentLoading ? (
                 <motion.div
@@ -83,7 +83,7 @@ export const WebAppStreamPage = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="flex justify-center items-center size-full">
+                  className="flex justify-center items-center w-full h-full">
                   <Loader2 className="size-10 text-black animate-spin" />
                 </motion.div>
               ) : lastYoutubeContent?.data?.url ? (
@@ -131,7 +131,7 @@ export const WebAppStreamPage = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25, ease: "easeInOut" }}
-                className="flex justify-center items-center size-full">
+                className="flex justify-center items-center w-full flex-1">
                 <Skeleton className="w-full h-full bg-black/10" />
               </motion.div>
             ) : (
@@ -200,6 +200,7 @@ export const WebAppStreamPage = () => {
                   websiteUrl={brand.data?.websiteUrl || ""}
                   twitchUrl={brand.data?.socialMediaUrls?.twitch || ""}
                   twitterUrl={brand.data?.socialMediaUrls?.x || ""}
+                  brandId={brand.data?.id || ""}
                 />
               </motion.div>
             )}
@@ -208,7 +209,7 @@ export const WebAppStreamPage = () => {
       </ScrollArea>
 
       {/* Sidebar - fixed width and no scroll */}
-      <div className="flex flex-col justify-center items-center min-h-screen h-screen w-[40%] pr-6 py-6">
+      <div className="flex flex-col justify-center items-center min-h-screen h-screen w-[31%] pr-6 py-6">
         <NBCard className="flex flex-col justify-between items-center h-full w-full bg-white p-5">
           <div className="flex flex-col justify-start items-start w-full h-full gap-5">
             <div className="flex justify-start items-center w-full gap-2.5">

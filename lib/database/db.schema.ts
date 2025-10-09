@@ -221,6 +221,25 @@ export type CreateFarcasterUser = typeof userTable.$inferInsert;
 export type UpdateFarcasterUser = Partial<CreateFarcasterUser>;
 
 /**
+ * Hosts table
+ */
+export const hostsTable = sqliteTable("hosts", {
+  fid: integer("fid").primaryKey(),
+  farcasterUsername: text("farcaster_username"),
+  avatarUrl: text("avatar_url"),
+  custodyAddress: text("custody_address"),
+  brandId: text("brand_id")
+    .notNull()
+    .references(() => brandsTable.id, { onDelete: "cascade" }),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type Host = typeof hostsTable.$inferSelect;
+export type CreateHost = typeof hostsTable.$inferInsert;
+export type UpdateHost = Partial<CreateHost>;
+
+/**
  * Wallet table
  */
 export const walletTable = sqliteTable(

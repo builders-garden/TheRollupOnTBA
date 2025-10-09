@@ -1,5 +1,5 @@
 import { ChevronDownIcon, Globe, Twitch, Youtube } from "lucide-react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,9 +9,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion";
-import { THE_ROLLUP_HOSTS } from "@/lib/constants";
+import { Skeleton } from "@/components/shadcn-ui/skeleton";
+import { useHostsByBrandId } from "@/hooks/use-hosts";
 import { cn } from "@/lib/utils";
-import { HostsSection } from "../mini-app/hosts";
+import { HostsSection } from "../mini-app/hosts-section";
 import { NewsletterCTA } from "../mini-app/newsletter-cta";
 
 interface LinksProps {
@@ -89,6 +90,7 @@ interface WebAppAboutSectionProps {
   twitterUrl?: string;
   websiteUrl?: string;
   brandSlug?: string;
+  brandId?: string;
 }
 
 export const WebAppAboutSection = ({
@@ -100,10 +102,16 @@ export const WebAppAboutSection = ({
   twitterUrl,
   websiteUrl,
   brandSlug,
+  brandId,
 }: WebAppAboutSectionProps) => {
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     undefined,
   );
+
+  const { data: hosts, isLoading: isLoadingHosts } = useHostsByBrandId({
+    brandId: brandId,
+    enabled: !!brandId,
+  });
 
   if (!text && !coverUrl) {
     return (
@@ -144,13 +152,13 @@ export const WebAppAboutSection = ({
             />
           </div>
         </AccordionTrigger>
-        <AccordionContent className="flex flex-col justify-between items-start w-full gap-6 my-2 focus-visible:outline-none">
-          <div className="flex justify-between items-start w-full gap-10">
+        <AccordionContent className="flex flex-col justify-between items-start w-full h-full gap-6 my-2 focus-visible:outline-none">
+          <div className="flex justify-between items-start w-full h-full gap-10">
             {coverUrl && (
               <Image
                 src={coverUrl}
                 alt="Cover"
-                className="w-[46%] min-h-[270px] object-cover rounded-[12px]"
+                className="w-[33%] object-cover rounded-[12px]"
                 width={1000}
                 height={200}
               />
@@ -163,26 +171,48 @@ export const WebAppAboutSection = ({
                 </div>
               )}
 
-              {/* TODO: Make this dynamic */}
-              {brandSlug === "the_rollup" && (
-                <HostsSection
-                  hosts={THE_ROLLUP_HOSTS}
-                  label="Hosts"
-                  labelClassName="text-lg font-bold"
-                  hostNameClassName="text-sm font-bold"
-                />
-              )}
+              <div className="flex justify-between items-center w-full pr-2 gap-5">
+                <AnimatePresence mode="wait">
+                  {isLoadingHosts ? (
+                    <motion.div
+                      key="loading-hosts"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-full">
+                      <Skeleton className="w-full bg-black/10" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="hosts-section"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-full">
+                      <HostsSection
+                        hosts={hosts?.data || []}
+                        label="Hosts"
+                        labelClassName="text-lg font-bold"
+                        hostNameClassName="text-sm font-bold"
+                        fromWebApp
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Newsletter CTA */}
+                {brandSlug !== "the_rollup" && (
+                  <NewsletterCTA
+                    label="Subscribe to newsletter"
+                    labelClassName="text-lg"
+                    className="w-full"
+                  />
+                )}
+              </div>
             </div>
           </div>
-
-          {/* Newsletter CTA */}
-          {brandSlug === "the_rollup" && (
-            <NewsletterCTA
-              label="Subscribe to newsletter"
-              labelClassName="text-2xl"
-              className="w-[46%]"
-            />
-          )}
         </AccordionContent>
       </AccordionItem>
     </Accordion>

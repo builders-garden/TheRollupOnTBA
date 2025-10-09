@@ -161,13 +161,13 @@ export const InfoContent = () => {
           isUpdating={isUpdatingBrand}
         />
         <FileUpload
-          label="Logo"
+          label="Logo (512x512)"
           brandLogoUrl={brandData?.logoUrl}
           handleUpdateDatabase={handleUpdateBrandField("logoUrl")}
           isUpdatingDatabase={isUpdatingBrand}
         />
         <FileUpload
-          label="Cover Image"
+          label="Cover Image (1500x1000)"
           brandLogoUrl={brandData?.coverUrl}
           handleUpdateDatabase={handleUpdateBrandField("coverUrl")}
           isUpdatingDatabase={isUpdatingBrand}

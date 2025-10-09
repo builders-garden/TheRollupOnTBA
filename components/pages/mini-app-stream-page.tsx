@@ -10,7 +10,7 @@ import { env } from "@/lib/zod";
 import { MiniAppFeaturedTokens } from "@/plugins/mini-app/featured-tokens/mini-app-featured-tokens";
 import { MiniAppTips } from "@/plugins/mini-app/tips/mini-app-tips";
 import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
-import { HostsSection } from "../custom-ui/mini-app/hosts";
+import { HostsSection } from "../custom-ui/mini-app/hosts-section";
 import { MiniAppAboutSection } from "../custom-ui/mini-app/mini-app-about-section";
 import { MiniAppPollCard } from "../custom-ui/mini-app/mini-app-poll-card";
 import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";

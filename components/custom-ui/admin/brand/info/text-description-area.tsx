@@ -13,6 +13,7 @@ interface TextDescriptionAreaProps {
     onError?: () => void,
   ) => void;
   isUpdating: boolean;
+  limit?: number;
 }
 
 export const TextDescriptionArea = ({
@@ -20,6 +21,7 @@ export const TextDescriptionArea = ({
   setDescription,
   onConfirm = () => {},
   isUpdating,
+  limit = 200,
 }: TextDescriptionAreaProps) => {
   const [editingDescription, setEditingDescription] = useState(description);
   const [isEditing, setIsEditing] = useState(false);
@@ -72,7 +74,7 @@ export const TextDescriptionArea = ({
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center gap-2.5">
           <Text className="size-5" />
-          <p className="text-base font-bold">Description (200 chars)</p>
+          <p className="text-base font-bold">Description ({limit} chars)</p>
         </div>
         <AnimatePresence mode="wait">
           {!isEditing ? (
@@ -134,12 +136,12 @@ export const TextDescriptionArea = ({
           value={editingDescription}
           onFocus={handleActivateEditing}
           onChange={(e) => {
-            setEditingDescription(e.target.value.slice(0, 200));
+            setEditingDescription(e.target.value.slice(0, limit));
           }}
           className="w-full h-[155px] rounded-[12px] border-[1px] border-accent p-2.5 bg-white text-base focus-visible:ring-accent/40 focus-visible:ring-[2px] disabled:opacity-100 disabled:cursor-default resize-none transition-all duration-300"
         />
         <p className="text-xs text-muted-foreground mt-[1px] ml-1">
-          {editingDescription.length}/200 characters
+          {editingDescription.length}/{limit} characters
         </p>
       </div>
     </div>

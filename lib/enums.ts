@@ -26,6 +26,7 @@ export enum AnalyticsTabs {
 export enum BrandTabs {
   INFO = "info",
   ACCESS = "access",
+  HOSTS = "hosts",
 }
 
 // Plugins Tabs

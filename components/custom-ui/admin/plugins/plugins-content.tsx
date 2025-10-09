@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { NBButton } from "../../nb-button";
 import { SentimentContent } from "./sentiment/sentiment-content";
 import { TipsContent } from "./tips/tips-content";
-import { TokensContent } from "./tokens/tokens-conent";
+import { TokensContent } from "./tokens/tokens-content";
 
 export const PluginsContent = ({ brandId }: { brandId: string }) => {
   const [selectedTab, setSelectedTab] = useState<PluginsTabs>(PluginsTabs.TIPS);

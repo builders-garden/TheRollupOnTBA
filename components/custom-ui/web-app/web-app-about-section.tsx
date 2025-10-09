@@ -181,7 +181,7 @@ export const WebAppAboutSection = ({
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
                       className="w-full">
-                      <Skeleton className="w-full bg-black/10" />
+                      <Skeleton className="w-full bg-black/10 h-[122px]" />
                     </motion.div>
                   ) : (
                     <motion.div

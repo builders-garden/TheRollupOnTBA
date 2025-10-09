@@ -58,7 +58,8 @@ export const HostsContent = () => {
             </div>
 
             <div className="flex justify-start items-center gap-2.5 w-full">
-              {hosts?.data?.length &&
+              {hosts?.data &&
+                hosts.data.length > 0 &&
                 hosts.data.map((host, index) => (
                   <AddedHost
                     key={host.fid}

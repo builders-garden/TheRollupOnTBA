@@ -16,12 +16,12 @@ export const HostsSection = ({
   label,
   labelClassName,
   hostNameClassName,
-  fromWebApp = false,
+  fromWebApp,
 }: AboutSectionProps) => {
   // Handles opening the Farcaster profile
   const handleOpenFarcasterProfile = async (
+    farcasterUsername: string | null,
     fid?: number,
-    farcasterUsername?: string,
   ) => {
     if (fromWebApp && farcasterUsername) {
       window.open(`https://farcaster.xyz/${farcasterUsername}`, "_blank");
@@ -40,7 +40,9 @@ export const HostsSection = ({
           <div
             key={host.fid}
             className="flex flex-col justify-center items-center cursor-pointer gap-2"
-            onClick={() => handleOpenFarcasterProfile(host.fid)}>
+            onClick={() =>
+              handleOpenFarcasterProfile(host.farcasterUsername, host.fid)
+            }>
             <Image
               src={host.avatarUrl || ""}
               alt={host.farcasterUsername || ""}

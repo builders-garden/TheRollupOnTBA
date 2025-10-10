@@ -59,20 +59,25 @@ export async function GET(
       return defaultResponse;
     }
 
-    const bgImageUrl =
-      brand.coverUrl ?? `${env.NEXT_PUBLIC_URL}/images/feed.png`;
-    const bgImageType = getImageType(bgImageUrl);
-    // satori only supports jpeg and png
-    if (bgImageType !== "jpeg" && bgImageType !== "png") {
-      console.error("Invalid image type", bgImageType);
-      return defaultResponse;
+    const bgImageUrl = brand.coverUrl;
+    let bgImageType;
+    let bgImage;
+
+    if (bgImageUrl) {
+      bgImageType = getImageType(bgImageUrl);
+      // satori only supports jpeg and png
+      if (bgImageType !== "jpeg" && bgImageType !== "png") {
+        console.error("Invalid image type", bgImageType);
+        return defaultResponse;
+      }
+      bgImage = await loadImage(bgImageUrl);
     }
-    const bgImage = await loadImage(bgImageUrl);
 
     // Generate and return the image response with the composed elements
     return new ImageResponse(
       (
         <BrandOGImage
+          brand={brand}
           coverImage={bgImage}
           coverImageType={bgImageType}
           width={width}

@@ -1,17 +1,40 @@
 /* eslint-disable @next/next/no-img-element */
+import { Brand } from "@/lib/database/db.schema";
+import { ProfileBar } from "./brand-details";
+import { DefaultOGImage } from "./default-og-image";
+
 interface BrandOGImageProps {
-  coverImage: ArrayBuffer;
-  coverImageType: string;
+  brand: Brand;
+  coverImage?: ArrayBuffer;
+  coverImageType?: string;
   width: number;
   height: number;
 }
 
 export const BrandOGImage = ({
+  brand,
   coverImage,
   coverImageType,
   width,
   height,
 }: BrandOGImageProps) => {
+  if (!coverImage || !coverImageType) {
+    return (
+      <div
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+          backgroundColor: "#FFFFFF",
+        }}>
+        <ProfileBar brand={brand} />
+      </div>
+    );
+  }
+
   return (
     <div
       style={{

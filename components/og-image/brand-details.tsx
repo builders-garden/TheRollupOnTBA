@@ -15,31 +15,31 @@ export const ProfileBar = ({ brand }: ProfileBarProps) => {
         display: "flex",
         flexDirection: "column",
         width: "100%",
-        justifyContent: "space-between",
+        justifyContent: "center",
         alignItems: "center",
-        gap: "10px",
+        gap: "20px",
       }}>
       <div
         style={{
           display: "flex",
           width: "100%",
-          justifyContent: "flex-start",
+          justifyContent: "center",
           alignItems: "center",
         }}>
         {/* User */}
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-start",
+            justifyContent: "center",
             alignItems: "center",
-            gap: "13px",
+            gap: "40px",
           }}>
           {userAvatarSrc ? (
             <img
               src={userAvatarSrc ?? ""}
               alt={brand.name ?? "Brand pfp"}
-              width="260px"
-              height="260px"
+              width="170px"
+              height="170px"
               style={{
                 borderRadius: "50%",
               }}
@@ -52,12 +52,11 @@ export const ProfileBar = ({ brand }: ProfileBarProps) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              alignItems: "flex-start",
-              gap: "0px",
+              alignItems: "center",
             }}>
             <p
               style={{
-                color: "white",
+                color: "black",
                 fontSize: "82px",
                 fontWeight: "extrabold",
               }}>
@@ -76,8 +75,8 @@ export const ProfileBar = ({ brand }: ProfileBarProps) => {
 
 const DefaultPfp = () => {
   return (
-    <div tw="flex justify-center items-center w-[57px] h-[57px] p-[10px]">
-      <svg width="47px" height="47px" viewBox="0 0 512 512" fill="white">
+    <div tw="flex justify-center items-center w-[170px] h-[170px] p-[10px]">
+      <svg width="170px" height="170px" viewBox="0 0 512 512" fill="white">
         <g>
           <path
             className="st0"

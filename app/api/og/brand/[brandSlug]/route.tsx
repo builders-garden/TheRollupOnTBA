@@ -73,7 +73,6 @@ export async function GET(
     return new ImageResponse(
       (
         <BrandOGImage
-          brand={brand}
           coverImage={bgImage}
           coverImageType={bgImageType}
           width={width}

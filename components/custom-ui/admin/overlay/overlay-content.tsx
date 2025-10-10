@@ -40,23 +40,6 @@ export const OverlayContent = () => {
               <p className="text-xl font-bold">Popups</p>
             </div>
           </NBButton>
-          {/* <NBButton
-            className={cn(
-              "rounded-full w-fit",
-              isSentimentResultsTab && "bg-accent",
-            )}
-            variant={isSentimentResultsTab ? "default" : "outline"}
-            showShadow={isSentimentResultsTab}
-            onClick={() => setSelectedTab(OverlayTabs.SENTIMENT_RESULTS)}>
-            <div
-              className={cn(
-                "flex justify-start items-center w-full gap-2",
-                isSentimentResultsTab && "text-white",
-              )}>
-              <Sparkle className="size-6" />
-              <p className="text-xl font-bold">Sentiment Results</p>
-            </div>
-          </NBButton> */}
         </div>
       </div>
 

@@ -1,9 +1,5 @@
-import { Brand } from "@/lib/database/db.schema";
-import { ProfileBar } from "./brand-details";
-
 /* eslint-disable @next/next/no-img-element */
 interface BrandOGImageProps {
-  brand: Brand;
   coverImage: ArrayBuffer;
   coverImageType: string;
   width: number;
@@ -11,7 +7,6 @@ interface BrandOGImageProps {
 }
 
 export const BrandOGImage = ({
-  brand,
   coverImage,
   coverImageType,
   width,
@@ -63,35 +58,6 @@ export const BrandOGImage = ({
               filter: "none",
             }}
           />
-          {/* Dark gradient overlay - darkens the bottom area */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.9) 100%)",
-              display: "flex",
-            }}
-          />
-          {/* Brand section - positioned at bottom-left */}
-          <div
-            style={{
-              position: "absolute",
-              left: 50,
-              bottom: 50,
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "flex-start",
-              flexDirection: "column",
-              gap: "15px",
-              width: "100%",
-              minWidth: "350px",
-            }}>
-            <ProfileBar brand={brand} />
-          </div>
         </div>
       </div>
     </div>

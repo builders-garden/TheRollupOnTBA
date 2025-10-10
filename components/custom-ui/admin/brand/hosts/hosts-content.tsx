@@ -50,14 +50,12 @@ export const HostsContent = () => {
               Select up to 5 hosts that will show up in the stream description
               section
             </h1>
-            <div className="flex flex-col gap-2.5 w-1/2">
-              <HostsSearchModal
-                addedHosts={hosts?.data || []}
-                disabled={disabledModalButton}
-              />
-            </div>
+            <HostsSearchModal
+              addedHosts={hosts?.data || []}
+              disabled={disabledModalButton}
+            />
 
-            <div className="flex justify-start items-center gap-2.5 w-full">
+            <div className="flex justify-start items-center gap-5 w-full">
               {hosts?.data &&
                 hosts.data.length > 0 &&
                 hosts.data.map((host, index) => (

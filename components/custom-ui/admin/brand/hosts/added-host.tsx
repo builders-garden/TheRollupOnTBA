@@ -56,17 +56,17 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
         ease: "easeInOut",
         layout: { duration: 0.185, ease: "easeOut" },
       }}>
-      <NBCard key={host.fid} className="gap-3">
+      <NBCard key={host.fid} className="gap-3 bg-white">
         <Image
-          src={host.avatarUrl || "/images/coin.svg"}
+          src={host.avatarUrl || ""}
           alt={host.farcasterUsername || ""}
           priority
           width={256}
           height={256}
-          className="size-32 aspect-square rounded-sm"
+          className="size-[140px] aspect-square rounded-sm"
         />
         <div className="flex flex-col justify-start items-center gap-0.5">
-          <p className="text-lg font-bold">{host.farcasterUsername}</p>
+          <p className="text-lg font-bold">{host.farcasterDisplayName}</p>
           <p className="text-sm opacity-50 font-bold">{host.fid.toString()}</p>
         </div>
         <NBButton

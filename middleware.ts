@@ -48,7 +48,11 @@ export default async function middleware(req: NextRequest) {
   }
 
   // skip auth check for GET requests to brand with a dynamic slug
-  if (/^\/api\/brands\/[^\/]+$/.test(pathname) && req.method === "GET") {
+  if (
+    /^\/api\/brands\/[^\/]+$/.test(pathname) &&
+    !pathname.startsWith("/api/brands/analytics") &&
+    req.method === "GET"
+  ) {
     return NextResponse.next();
   }
 

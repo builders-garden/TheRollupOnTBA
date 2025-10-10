@@ -56,19 +56,6 @@ export const useBrandBySlug = ({
   });
 };
 
-export const useBrandByAddress = (
-  tokenType: AuthTokenType,
-  address?: string,
-) => {
-  return useApiQuery<BrandApiResponse>({
-    queryKey: ["brands", address],
-    url: `/api/brands/addresses/${address}`,
-    enabled: !!address,
-    isProtected: true,
-    tokenType,
-  });
-};
-
 // Mutation hooks
 export const useCreateBrand = (tokenType: AuthTokenType) => {
   return useApiMutation<

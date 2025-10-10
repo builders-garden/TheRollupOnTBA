@@ -158,12 +158,12 @@ export const WebAppAboutSection = ({
               <Image
                 src={coverUrl}
                 alt="Cover"
-                className="w-[33%] object-cover rounded-[12px]"
+                className="h-[250px] w-auto object-cover rounded-[12px]"
                 width={1000}
                 height={200}
               />
             )}
-            <div className="flex flex-1 flex-col justify-between items-start w-full min-h-[270px]">
+            <div className="flex flex-1 flex-col justify-between items-start w-full h-[250px]">
               {text && (
                 <div className="flex flex-col justify-start items-start gap-2">
                   <h1 className="text-lg font-bold">What happens here?</h1>

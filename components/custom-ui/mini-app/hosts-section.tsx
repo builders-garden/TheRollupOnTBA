@@ -25,7 +25,7 @@ export const HostsSection = ({
   ) => {
     if (fromWebApp && farcasterUsername) {
       window.open(`https://farcaster.xyz/${farcasterUsername}`, "_blank");
-    } else if (!!fid && !fromWebApp) {
+    } else if (fid && !fromWebApp) {
       await sdk.actions.viewProfile({
         fid,
       });
@@ -51,7 +51,7 @@ export const HostsSection = ({
               className="size-14 rounded-[12px] object-cover"
             />
             <p className={cn("text-xs font-bold", hostNameClassName)}>
-              {host.farcasterUsername}
+              {host.farcasterDisplayName}
             </p>
           </div>
         ))}

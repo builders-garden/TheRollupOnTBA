@@ -44,6 +44,7 @@ export const NewfoundFarcasterUser = ({
       fid: farcasterUser.fid,
       brandId: brandId,
       farcasterUsername: farcasterUser.username,
+      farcasterDisplayName: farcasterUser.display_name,
       avatarUrl: farcasterUser.pfp_url,
       custodyAddress: farcasterUser.custody_address,
     };
@@ -75,7 +76,7 @@ export const NewfoundFarcasterUser = ({
       className="flex justify-between items-center w-full rounded-[12px] p-2.5 border-[1px] border-transparent">
       <div className="flex justify-start items-center gap-2.5">
         <Image
-          src={farcasterUser.pfp_url || "/images/coin.svg"}
+          src={farcasterUser.pfp_url || ""}
           alt={farcasterUser.fid.toString()}
           className="size-10 rounded-full"
           priority

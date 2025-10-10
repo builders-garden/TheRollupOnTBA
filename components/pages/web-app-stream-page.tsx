@@ -112,7 +112,7 @@ export const WebAppStreamPage = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   className="flex justify-center items-center size-full">
-                  <p className="text-sm font-bold text-center">
+                  <p className="text-lg font-bold text-center">
                     No Livestream found
                     <br />
                     try again later!

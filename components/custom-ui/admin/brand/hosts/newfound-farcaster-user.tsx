@@ -29,7 +29,11 @@ export const NewfoundFarcasterUser = ({
 }: NewfoundFarcasterUserProps) => {
   const [isCreatingFromThisUser, setIsCreatingFromThisUser] = useState(false);
 
-  const { mutate: createHost } = useCreateHost(AuthTokenType.ADMIN_AUTH_TOKEN);
+  const { mutate: createHost } = useCreateHost(
+    AuthTokenType.ADMIN_AUTH_TOKEN,
+    brandId || "",
+  );
+
   const { refetch: refetchHosts } = useHostsByBrandId({
     brandId,
     enabled: !!brandId,

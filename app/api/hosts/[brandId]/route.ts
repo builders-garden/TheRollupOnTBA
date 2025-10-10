@@ -4,10 +4,12 @@ import {
   getHostsByBrandId,
 } from "@/lib/database/queries/hosts.query";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async (
+  _: NextRequest,
+  { params }: { params: Promise<{ brandId: string }> },
+) => {
   try {
-    const { searchParams } = new URL(req.url);
-    const brandId = searchParams.get("brandId");
+    const { brandId } = await params;
 
     // Validation
     if (!brandId) {

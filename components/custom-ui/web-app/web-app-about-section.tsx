@@ -190,7 +190,7 @@ export const WebAppAboutSection = ({
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="w-full">
+                      className="flex flex-1 justify-start items-center">
                       <HostsSection
                         hosts={hosts?.data || []}
                         label="Hosts"
@@ -207,7 +207,7 @@ export const WebAppAboutSection = ({
                   <NewsletterCTA
                     label="Subscribe to newsletter"
                     labelClassName="text-lg"
-                    className="w-full"
+                    className="w-[50%]"
                   />
                 )}
               </div>

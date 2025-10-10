@@ -3,6 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
+import { useEffect } from "react";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useHostsByBrandId } from "@/hooks/use-hosts";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
@@ -30,6 +31,10 @@ export const MiniAppStreamPage = () => {
     brandId: brand.data?.id,
     enabled: !!brand.data?.id,
   });
+
+  useEffect(() => {
+    console.log("TEST", hosts);
+  }, [hosts]);
 
   return (
     <motion.div

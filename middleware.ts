@@ -34,6 +34,11 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // skip auth check for GET requests to hosts with a dynamic brandId
+  if (/^\/api\/hosts\/[^\/]+$/.test(pathname) && req.method === "GET") {
+    return NextResponse.next();
+  }
+
   // skip auth check for GET requests to youtube content with a dynamic slug
   if (
     /^\/api\/last-youtube-content\/[^\/]+$/.test(pathname) &&

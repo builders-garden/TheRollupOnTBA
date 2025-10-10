@@ -35,11 +35,11 @@ export const HostsSection = ({
   return (
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
       <h1 className={cn("text-sm font-bold", labelClassName)}>{label}</h1>
-      <div className="flex justify-start items-center w-full gap-5">
+      <div className="sm:flex sm:justify-start sm:items-center grid grid-cols-4 w-full gap-4">
         {hosts.map((host) => (
           <div
             key={host.fid}
-            className="flex flex-col justify-center items-center cursor-pointer gap-2"
+            className="flex flex-col justify-start items-center cursor-pointer gap-2 shrink-0"
             onClick={() =>
               handleOpenFarcasterProfile(host.farcasterUsername, host.fid)
             }>

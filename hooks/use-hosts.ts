@@ -24,7 +24,7 @@ export const useHostsByBrandId = ({
 }) => {
   return useApiQuery<HostsApiResponse>({
     queryKey: ["hosts", brandId],
-    url: `/api/hosts?brandId=${brandId}`,
+    url: `/api/hosts/${brandId}`,
     enabled: enabled,
     isProtected: true,
     tokenType: null,
@@ -32,9 +32,9 @@ export const useHostsByBrandId = ({
 };
 
 // Mutation hooks
-export const useCreateHost = (tokenType: AuthTokenType) => {
+export const useCreateHost = (tokenType: AuthTokenType, brandId: string) => {
   return useApiMutation<HostApiResponse, CreateHost>({
-    url: "/api/hosts",
+    url: `/api/hosts/${brandId}`,
     method: "POST",
     body: (variables) => variables,
     tokenType,

@@ -19,7 +19,7 @@ export enum AdminPageContent {
 
 // Analytics Tabs
 export enum AnalyticsTabs {
-  DATA = "data",
+  TIPS = "tips",
 }
 
 // Brand Tabs

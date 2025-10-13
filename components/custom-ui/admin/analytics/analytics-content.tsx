@@ -9,11 +9,11 @@ import { TipsContent } from "./tips/tips-content";
 export const AnalyticsContent = () => {
   // Brand tabs states
   const [selectedTab, setSelectedTab] = useState<AnalyticsTabs>(
-    AnalyticsTabs.DATA,
+    AnalyticsTabs.TIPS,
   );
 
-  // Whether the tab is info or access
-  const isDataTab = selectedTab === AnalyticsTabs.DATA;
+  // Whether the tab is tips
+  const isTipsTab = selectedTab === AnalyticsTabs.TIPS;
 
   return (
     <motion.div
@@ -25,14 +25,14 @@ export const AnalyticsContent = () => {
       {/* Tabs Buttons */}
       <div className="flex justify-start items-center w-full py-5 px-2.5 gap-5 border-b-[1px] border-border">
         <NBButton
-          className={cn("rounded-full w-fit", isDataTab && "bg-accent")}
-          variant={isDataTab ? "default" : "outline"}
-          showShadow={isDataTab}
-          onClick={() => setSelectedTab(AnalyticsTabs.DATA)}>
+          className={cn("rounded-full w-fit", isTipsTab && "bg-accent")}
+          variant={isTipsTab ? "default" : "outline"}
+          showShadow={isTipsTab}
+          onClick={() => setSelectedTab(AnalyticsTabs.TIPS)}>
           <div
             className={cn(
               "flex justify-start items-center w-full gap-2",
-              isDataTab && "text-white",
+              isTipsTab && "text-white",
             )}>
             <Sparkle className="size-6" />
             <p className="text-xl font-bold">Tips</p>
@@ -42,7 +42,7 @@ export const AnalyticsContent = () => {
 
       {/* Brand Content */}
       <AnimatePresence mode="wait">
-        {isDataTab && <TipsContent key="data" />}
+        {isTipsTab && <TipsContent key="tips" />}
       </AnimatePresence>
     </motion.div>
   );

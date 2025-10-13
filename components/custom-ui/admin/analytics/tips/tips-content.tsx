@@ -3,6 +3,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronsUpDown,
   ChevronUp,
   Loader2,
 } from "lucide-react";
@@ -42,20 +43,40 @@ const SortableTableHeader = ({
   const isCurrentSort = field === currentSortField;
 
   return (
-    <TableHead>
+    <TableHead className="w-[18.75%]">
       <button
         onClick={() => onSort(field)}
         className={cn(
-          "flex items-center gap-1 hover:text-accent-foreground",
+          "flex items-center gap-1 hover:text-accent-foreground cursor-pointer w-full",
           isCurrentSort && "text-accent-foreground",
         )}>
         {label}
-        {isCurrentSort &&
-          (currentSortDir === "asc" ? (
-            <ChevronUp className="size-4 text-accent" />
+        <AnimatePresence mode="wait">
+          {isCurrentSort ? (
+            <motion.div
+              key="current-sort"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15, ease: "easeInOut" }}>
+              <ChevronUp
+                className={cn(
+                  "size-4 text-accent transition-all duration-200",
+                  currentSortDir === "desc" && "rotate-180",
+                )}
+              />
+            </motion.div>
           ) : (
-            <ChevronDown className="size-4 text-accent" />
-          ))}
+            <motion.div
+              key="not-sorted"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15, ease: "easeInOut" }}>
+              <ChevronsUpDown className="size-4 text-accent" />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </button>
     </TableHead>
   );
@@ -185,10 +206,10 @@ export const TipsContent = () => {
                 />
               )}
             </AnimatePresence>
-            <Table>
+            <Table className="table-fixed">
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
+                  <TableHead className="w-[25%]">User</TableHead>
                   <SortableTableHeader
                     field="totalTips"
                     label="Total Tips"

@@ -11,7 +11,6 @@ import {
 import { ulid } from "ulid";
 import { Address, Hex } from "viem";
 import { ZERO_ADDRESS } from "../constants";
-import { ActivePlugins, SocialMediaUrls } from "../types/shared.type";
 
 /**
  * Brands table
@@ -30,15 +29,10 @@ export const brandsTable = sqliteTable("brands", {
   youtubeLiveUrl: text("youtube_live_url"),
   liveUrlExpiration: integer("live_url_expiration"),
   isLive: integer("is_live", { mode: "boolean" }).default(false),
-  activePlugins: text("active_plugins", { mode: "json" }).$type<
-    ActivePlugins[]
-  >(),
   websiteUrl: text("website_url"),
-  socialMediaUrls: text("social_media_urls", {
-    mode: "json",
-  })
-    .$type<SocialMediaUrls>()
-    .default({ youtube: "", twitch: "", x: "" }),
+  twitchUrl: text("twitch_url"),
+  xUrl: text("x_url"),
+  telegramUrl: text("telegram_url"),
   isActive: integer("is_active", { mode: "boolean" }).default(false),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
@@ -47,6 +41,12 @@ export const brandsTable = sqliteTable("brands", {
 export type Brand = typeof brandsTable.$inferSelect;
 export type CreateBrand = typeof brandsTable.$inferInsert;
 export type UpdateBrand = Partial<CreateBrand>;
+export type BrandSocialDatabaseProperty =
+  | "youtubeChannelId"
+  | "twitchUrl"
+  | "xUrl"
+  | "websiteUrl"
+  | "telegramUrl";
 
 /**
  * Bull Meters table

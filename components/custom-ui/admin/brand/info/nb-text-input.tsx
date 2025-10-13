@@ -101,7 +101,7 @@ export const NBTextInput = ({
           "flex justify-between items-center gap-2.5 w-full pr-1.5",
           isDestructive && "text-destructive",
         )}>
-        <div className="flex justify-start items-center gap-2.5">
+        <div className="flex justify-start items-center gap-2.5 h-[24px]">
           {icon}
           <p className="text-base font-bold">{label}</p>
         </div>

@@ -50,7 +50,11 @@ export const HostsSection = ({
               height={244}
               className="size-14 rounded-[12px] object-cover"
             />
-            <p className={cn("text-xs font-bold", hostNameClassName)}>
+            <p
+              className={cn(
+                "text-xs font-bold text-center",
+                hostNameClassName,
+              )}>
               {host.farcasterDisplayName}
             </p>
           </div>

@@ -1,16 +1,37 @@
-import { Globe, Signature, Twitch, Youtube } from "lucide-react";
+import { Globe, Send, Signature, Twitch, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useUpdateBrand } from "@/hooks/use-brands";
-import { UpdateBrand } from "@/lib/database/db.schema";
+import {
+  BrandSocialDatabaseProperty,
+  UpdateBrand,
+} from "@/lib/database/db.schema";
 import { AuthTokenType } from "@/lib/enums";
-import { SocialMedias, SocialMediaUrls } from "@/lib/types/shared.type";
 import { FileUpload } from "./file-upload";
 import { NBTextInput } from "./nb-text-input";
 import { TextDescriptionArea } from "./text-description-area";
+
+interface BrandSocialFields {
+  key: BrandSocialDatabaseProperty;
+  label: string;
+  icon: React.ReactNode;
+  inputColor?: "accent" | "destructive";
+  placeholder: string;
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
+  infoLink?: string;
+  infoLinkText?: string;
+  infoLinkClassName?: string;
+}
 
 export const InfoContent = () => {
   const { brand } = useAdminAuth();
@@ -19,24 +40,24 @@ export const InfoContent = () => {
     AuthTokenType.ADMIN_AUTH_TOKEN,
   );
 
-  // Social links states
   const [brandName, setBrandName] = useState(brandData?.name || "");
   const [youtubeChannelId, setYoutubeChannelId] = useState(
     brandData?.youtubeChannelId || "",
   );
-  const [twitchChannelUrl, setTwitchChannelUrl] = useState(
-    brandData?.socialMediaUrls?.twitch || "",
-  );
-  const [xUrl, setXUrl] = useState(brandData?.socialMediaUrls?.x || "");
+
+  // Social links states
+  const [twitchUrl, setTwitchUrl] = useState(brandData?.twitchUrl || "");
+  const [xUrl, setXUrl] = useState(brandData?.xUrl || "");
   const [websiteUrl, setWebsiteUrl] = useState(brandData?.websiteUrl || "");
+  const [telegramUrl, setTelegramUrl] = useState(brandData?.telegramUrl || "");
 
   // Text area description state
   const [description, setDescription] = useState(brandData?.description || "");
 
-  // A list of all the social links
-  const socialLinks = [
+  // A list of all the social fields
+  const socialFields: BrandSocialFields[] = [
     {
-      key: "yt-channel-id",
+      key: "youtubeChannelId",
       label: "Youtube Channel ID",
       icon: <Youtube className="size-5" />,
       inputColor: "destructive",
@@ -48,18 +69,18 @@ export const InfoContent = () => {
       infoLinkClassName: "text-black",
     },
     {
-      key: "twitch-channel-url",
+      key: "twitchUrl",
       label: "Twitch",
       icon: <Twitch className="size-5" />,
       placeholder: "https://twitch.tv/@username",
-      value: twitchChannelUrl,
-      setValue: setTwitchChannelUrl,
+      value: twitchUrl,
+      setValue: setTwitchUrl,
       infoLink: undefined,
       infoLinkText: undefined,
       infoLinkClassName: undefined,
     },
     {
-      key: "x-url",
+      key: "xUrl",
       label: "",
       icon: <Image src="/socials/x_logo.svg" alt="X" width={18} height={18} />,
       placeholder: "https://x.com/username",
@@ -70,7 +91,7 @@ export const InfoContent = () => {
       infoLinkClassName: undefined,
     },
     {
-      key: "website-url",
+      key: "websiteUrl",
       label: "Website",
       icon: <Globe className="size-5" />,
       placeholder: "https://example.com/",
@@ -80,29 +101,31 @@ export const InfoContent = () => {
       infoLinkText: undefined,
       infoLinkClassName: undefined,
     },
+    {
+      key: "telegramUrl",
+      label: "Telegram",
+      icon: <Send className="size-5" />,
+      placeholder: "https://t.me/username",
+      value: telegramUrl,
+      setValue: setTelegramUrl,
+      infoLink: undefined,
+      infoLinkText: undefined,
+      infoLinkClassName: undefined,
+    },
   ];
 
   // A generic function to update a brand field
   const handleUpdateBrandField = useCallback(
-    (field: keyof UpdateBrand, socialType?: SocialMedias) => {
+    (field: keyof UpdateBrand) => {
       return (
         updateData: string,
         onSuccess?: () => void,
         onError?: () => void,
       ) => {
         if (!brandData || !brandData?.id) return;
-        let dataToUpdate: string | SocialMediaUrls = updateData;
-        if (field === "socialMediaUrls" && !!socialType) {
-          dataToUpdate = {
-            youtube: brandData.socialMediaUrls?.youtube || "",
-            twitch: brandData.socialMediaUrls?.twitch || "",
-            x: brandData.socialMediaUrls?.x || "",
-            [socialType]: updateData,
-          };
-        }
         try {
           updateBrand(
-            { brandSlug: brandData.slug, [field]: dataToUpdate },
+            { brandSlug: brandData.slug, [field]: updateData },
             {
               onSuccess: async () => {
                 await brand.refetch();
@@ -121,16 +144,6 @@ export const InfoContent = () => {
       };
     },
     [brandData],
-  );
-
-  // Wrapper to update state with normalized value and persist to DB
-  const updateYouTubeChannelId = useCallback(
-    (channelId?: string, onSuccess?: () => void, onError?: () => void) => {
-      if (!channelId) return;
-      setYoutubeChannelId(channelId || "");
-      handleUpdateBrandField("youtubeChannelId")(channelId, onSuccess, onError);
-    },
-    [handleUpdateBrandField],
   );
 
   return (
@@ -174,7 +187,7 @@ export const InfoContent = () => {
         />
       </div>
       <div className="grid grid-cols-4 gap-5 w-full">
-        {socialLinks.map((link) => (
+        {socialFields.map((link) => (
           <NBTextInput
             key={link.key}
             label={link.label}
@@ -187,17 +200,7 @@ export const InfoContent = () => {
             infoLink={link.infoLink}
             infoLinkText={link.infoLinkText}
             infoLinkClassName={link.infoLinkClassName}
-            onConfirm={
-              link.key === "yt-channel-id"
-                ? updateYouTubeChannelId
-                : link.key === "twitch-channel-url"
-                  ? handleUpdateBrandField("socialMediaUrls", "twitch")
-                  : link.key === "x-url"
-                    ? handleUpdateBrandField("socialMediaUrls", "x")
-                    : link.key === "website-url"
-                      ? handleUpdateBrandField("websiteUrl")
-                      : undefined
-            }
+            onConfirm={handleUpdateBrandField(link.key)}
           />
         ))}
       </div>

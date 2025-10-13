@@ -197,9 +197,10 @@ export const WebAppStreamPage = () => {
                       ? `https://www.youtube.com/channel/${brand.data?.youtubeChannelId}`
                       : undefined
                   }
+                  twitchUrl={brand.data?.twitchUrl || ""}
+                  twitterUrl={brand.data?.xUrl || ""}
+                  telegramUrl={brand.data?.telegramUrl || ""}
                   websiteUrl={brand.data?.websiteUrl || ""}
-                  twitchUrl={brand.data?.socialMediaUrls?.twitch || ""}
-                  twitterUrl={brand.data?.socialMediaUrls?.x || ""}
                   brandId={brand.data?.id || ""}
                 />
               </motion.div>

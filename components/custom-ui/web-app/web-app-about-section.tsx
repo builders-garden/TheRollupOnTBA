@@ -1,4 +1,4 @@
-import { ChevronDownIcon, Globe, Twitch, Youtube } from "lucide-react";
+import { ChevronDownIcon, Globe, Send, Twitch, Youtube } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,6 +20,7 @@ interface LinksProps {
   twitchUrl?: string;
   twitterUrl?: string;
   websiteUrl?: string;
+  telegramUrl?: string;
   className?: string;
 }
 
@@ -29,6 +30,7 @@ const Links = ({
   twitchUrl,
   twitterUrl,
   websiteUrl,
+  telegramUrl,
   className,
 }: LinksProps) => {
   return (
@@ -77,6 +79,16 @@ const Links = ({
           <Globe className="size-6" />
         </Link>
       )}
+      {telegramUrl && (
+        <Link
+          href={telegramUrl}
+          target="_blank"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
+          <Send className="size-6" />
+        </Link>
+      )}
     </div>
   );
 };
@@ -89,6 +101,7 @@ interface WebAppAboutSectionProps {
   twitchUrl?: string;
   twitterUrl?: string;
   websiteUrl?: string;
+  telegramUrl?: string;
   brandSlug?: string;
   brandId?: string;
 }
@@ -101,6 +114,7 @@ export const WebAppAboutSection = ({
   twitchUrl,
   twitterUrl,
   websiteUrl,
+  telegramUrl,
   brandSlug,
   brandId,
 }: WebAppAboutSectionProps) => {
@@ -149,6 +163,7 @@ export const WebAppAboutSection = ({
               twitchUrl={twitchUrl}
               twitterUrl={twitterUrl}
               websiteUrl={websiteUrl}
+              telegramUrl={telegramUrl}
             />
           </div>
         </AccordionTrigger>

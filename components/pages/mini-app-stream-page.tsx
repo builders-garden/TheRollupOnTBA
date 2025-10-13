@@ -197,9 +197,10 @@ export const MiniAppStreamPage = () => {
               ? `https://www.youtube.com/channel/${brand.data?.youtubeChannelId}`
               : undefined
           }
-          twitchUrl={brand.data?.socialMediaUrls?.twitch || ""}
-          twitterUrl={brand.data?.socialMediaUrls?.x || ""}
+          twitchUrl={brand.data?.twitchUrl || ""}
+          twitterUrl={brand.data?.xUrl || ""}
           websiteUrl={brand.data?.websiteUrl || ""}
+          telegramUrl={brand.data?.telegramUrl || ""}
         />
 
         {/* Hosts Section */}

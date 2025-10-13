@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Brand } from "@/lib/database/db.schema";
 import { ProfileBar } from "./brand-details";
-import { DefaultOGImage } from "./default-og-image";
 
 interface BrandOGImageProps {
   brand: Brand;

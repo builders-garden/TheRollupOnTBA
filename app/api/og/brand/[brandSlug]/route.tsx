@@ -5,7 +5,6 @@ import { DefaultOGImage } from "@/components/og-image/default-og-image";
 import { FARCASTER_EMBED_SIZE, OG_IMAGE_SIZE } from "@/lib/constants";
 import { getBrandBySlug } from "@/lib/database/queries";
 import { getFonts, getImageType, loadImage } from "@/lib/utils/og-image";
-import { env } from "@/lib/zod";
 
 // Force dynamic rendering to ensure fresh image generation on each request
 export const dynamic = "force-dynamic";

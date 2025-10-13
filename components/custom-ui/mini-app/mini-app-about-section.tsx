@@ -1,4 +1,4 @@
-import { ChevronDownIcon, Globe, Twitch, Youtube } from "lucide-react";
+import { ChevronDownIcon, Globe, Send, Twitch, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,6 +18,7 @@ interface MiniAppAboutSectionProps {
   twitchUrl?: string;
   twitterUrl?: string;
   websiteUrl?: string;
+  telegramUrl?: string;
 }
 
 export const MiniAppAboutSection = ({
@@ -28,6 +29,7 @@ export const MiniAppAboutSection = ({
   twitchUrl,
   twitterUrl,
   websiteUrl,
+  telegramUrl,
 }: MiniAppAboutSectionProps) => {
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     undefined,
@@ -96,6 +98,16 @@ export const MiniAppAboutSection = ({
                     e.stopPropagation();
                   }}>
                   <Globe className="size-4.5" />
+                </Link>
+              )}
+              {telegramUrl && (
+                <Link
+                  href={telegramUrl}
+                  target="_blank"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}>
+                  <Send className="size-4.5" />
                 </Link>
               )}
             </div>

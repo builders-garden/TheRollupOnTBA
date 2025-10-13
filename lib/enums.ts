@@ -15,6 +15,7 @@ export enum AdminPageContent {
   PLUGINS = "plugins",
   OVERLAY = "overlay",
   ANALYTICS = "analytics",
+  NOTIFICATIONS = "notifications",
 }
 
 // Analytics Tabs
@@ -41,6 +42,12 @@ export enum PluginsTabs {
 export enum OverlayTabs {
   POPUPS = "popups",
   SENTIMENT_RESULTS = "sentiment_results",
+}
+
+// Notifications Tabs
+export enum NotificationsTabs {
+  SEND = "send",
+  HISTORY = "history",
 }
 
 // Popup Positions

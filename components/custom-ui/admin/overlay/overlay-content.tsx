@@ -21,7 +21,7 @@ export const OverlayContent = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className="flex flex-col justify-start items-center w-full h-full">
       {/* Tabs Buttons */}
       <div className="flex justify-between items-center w-full px-2.5 border-b-[1px] border-border">

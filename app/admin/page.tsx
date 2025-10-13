@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AdminBanner } from "@/components/custom-ui/admin/admin-banner";
 import { AnalyticsContent } from "@/components/custom-ui/admin/analytics/analytics-content";
 import { BrandContent } from "@/components/custom-ui/admin/brand/brand-content";
+import { NotificationsContent } from "@/components/custom-ui/admin/notifications/notifications-content";
 import { OverlayContent } from "@/components/custom-ui/admin/overlay/overlay-content";
 import { PluginsContent } from "@/components/custom-ui/admin/plugins/plugins-content";
 import { SideNavbar } from "@/components/custom-ui/admin/side-navbar";
@@ -20,10 +21,12 @@ export default function AdminPage() {
     useState<AdminPageContent>(AdminPageContent.BRAND);
   const { brand, isLoading, isRefetching, signInWithBase } = useAdminAuth();
 
-  // Whether the page content is overlay or brand
+  // Whether the page content is overlay, brand, analytics or notifications
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
   const isContentBrand = selectedPageContent === AdminPageContent.BRAND;
   const isContentAnalytics = selectedPageContent === AdminPageContent.ANALYTICS;
+  const isContentNotifications =
+    selectedPageContent === AdminPageContent.NOTIFICATIONS;
 
   return (
     <AnimatePresence mode="wait">
@@ -35,7 +38,7 @@ export default function AdminPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeInOut" }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
           className="flex justify-between items-stretch w-full min-h-screen">
           <div className="w-fit py-5 px-6">
             <SideNavbar
@@ -55,6 +58,8 @@ export default function AdminPage() {
                 <BrandContent key="brand" />
               ) : isContentAnalytics ? (
                 <AnalyticsContent key="analytics" />
+              ) : isContentNotifications ? (
+                <NotificationsContent key="notifications" />
               ) : (
                 <PluginsContent key="plugins" brandId={brand.data.id} />
               )}
@@ -69,7 +74,7 @@ export default function AdminPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeInOut" }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
           className="flex justify-center items-center w-full min-h-screen">
           <div className="flex flex-col items-center justify-center w-full px-10 gap-7">
             <div className="flex flex-col items-center justify-center w-full gap-4">

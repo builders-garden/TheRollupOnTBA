@@ -170,7 +170,7 @@ export const TipsContent = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeInOut" }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
           className="flex flex-col justify-start items-center w-full p-5 gap-5">
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full relative">

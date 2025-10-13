@@ -68,7 +68,7 @@ export const WebAppStreamPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className="flex justify-between items-center min-h-screen w-full">
       {/* Video and info area - scrollable vertically */}
       <ScrollArea scrollBarClassName="w-0" className="w-full">
@@ -82,7 +82,7 @@ export const WebAppStreamPage = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex justify-center items-center w-full h-full">
                   <Loader2 className="size-10 text-black animate-spin" />
                 </motion.div>
@@ -92,7 +92,7 @@ export const WebAppStreamPage = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="size-full">
                   <iframe
                     width="100%"
@@ -110,7 +110,7 @@ export const WebAppStreamPage = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex justify-center items-center size-full">
                   <p className="text-lg font-bold text-center">
                     No Livestream found
@@ -130,7 +130,7 @@ export const WebAppStreamPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full flex-1">
                 <Skeleton className="w-full h-full bg-black/10" />
               </motion.div>
@@ -140,7 +140,7 @@ export const WebAppStreamPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex flex-col justify-start items-center w-full gap-5">
                 <div className="flex justify-between items-center w-full px-5">
                   <div className="flex justify-start items-center gap-5">
@@ -229,7 +229,7 @@ export const WebAppStreamPage = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex justify-center items-center w-full h-full">
                   <Loader2 className="size-8 text-black animate-spin" />
                 </motion.div>
@@ -239,7 +239,7 @@ export const WebAppStreamPage = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex flex-col justify-start items-start w-full h-full gap-8">
                   {/* Tip Buttons */}
                   {brand.tipSettings.data?.payoutAddress && (
@@ -283,7 +283,7 @@ export const WebAppStreamPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-between items-center w-full">
                 <div className="flex justify-start items-center gap-2.5 w-full">
                   {user.data?.avatarUrl && (
@@ -312,7 +312,7 @@ export const WebAppStreamPage = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
                           className="flex justify-center items-center w-full gap-2">
                           <Loader2 className="size-5 text-destructive animate-spin" />
                         </motion.div>
@@ -322,7 +322,7 @@ export const WebAppStreamPage = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.25, ease: "easeInOut" }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
                           className="flex justify-start items-center w-full gap-2">
                           <LogOut className="size-5 text-destructive" />
                           <p className="text-xl font-bold text-destructive">
@@ -340,7 +340,7 @@ export const WebAppStreamPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
                 <NBButton
                   onClick={() => signInWithWebApp()}
@@ -353,7 +353,7 @@ export const WebAppStreamPage = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
                         <Loader2 className="size-5 text-white animate-spin" />
                       </motion.div>
@@ -363,7 +363,7 @@ export const WebAppStreamPage = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
                         <p className="text-base font-extrabold text-white">
                           Sign message
@@ -379,7 +379,7 @@ export const WebAppStreamPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
                 <NBButton
                   disabled={isSigningIn}
@@ -395,7 +395,7 @@ export const WebAppStreamPage = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
                         <Loader2 className="size-5 text-white animate-spin" />
                       </motion.div>
@@ -405,7 +405,7 @@ export const WebAppStreamPage = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
                         <p className="text-base font-extrabold text-white">
                           Connect Wallet

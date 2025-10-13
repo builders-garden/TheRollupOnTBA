@@ -12,7 +12,7 @@ export default function LoadingPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25, ease: "easeInOut" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
         className="flex flex-col min-h-screen h-full items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin" />
       </motion.div>
@@ -24,7 +24,7 @@ export default function LoadingPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25, ease: "easeInOut" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
         className="flex justify-center items-center w-full min-h-screen">
         <Loader2 className="size-14 animate-spin" />
       </motion.div>

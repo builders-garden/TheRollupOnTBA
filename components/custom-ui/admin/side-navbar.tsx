@@ -1,4 +1,11 @@
-import { Blocks, ChartBar, Images, Palette, ShieldUser } from "lucide-react";
+import {
+  Bell,
+  Blocks,
+  ChartBar,
+  Images,
+  Palette,
+  ShieldUser,
+} from "lucide-react";
 import Image from "next/image";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBCard } from "@/components/custom-ui/nb-card";
@@ -18,11 +25,13 @@ export const SideNavbar = ({
 }: SideNavbarProps) => {
   const { executeLogout } = useAdminAuth();
 
-  // Whether the page content is plugins, overlay or brand
+  // Whether the page content is plugins, overlay, brand, analytics or notifications
   const isContentPlugins = selectedPageContent === AdminPageContent.PLUGINS;
   const isContentOverlay = selectedPageContent === AdminPageContent.OVERLAY;
   const isContentBrand = selectedPageContent === AdminPageContent.BRAND;
   const isContentAnalytics = selectedPageContent === AdminPageContent.ANALYTICS;
+  const isContentNotifications =
+    selectedPageContent === AdminPageContent.NOTIFICATIONS;
 
   return (
     <NBCard className="flex flex-col justify-between items-center h-full w-[264px] bg-warning p-5">
@@ -93,6 +102,21 @@ export const SideNavbar = ({
               )}>
               <ChartBar className="size-5" />
               <p className="text-xl font-bold">Analytics</p>
+            </div>
+          </NBButton>
+          <NBButton
+            className="w-full"
+            variant={isContentNotifications ? "default" : "ghost"}
+            onClick={() =>
+              setSelectedPageContent(AdminPageContent.NOTIFICATIONS)
+            }>
+            <div
+              className={cn(
+                "flex justify-start items-center w-full gap-2",
+                !isContentNotifications && "text-white",
+              )}>
+              <Bell className="size-5" />
+              <p className="text-xl font-bold">Notifications</p>
             </div>
           </NBButton>
         </div>

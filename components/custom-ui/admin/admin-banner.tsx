@@ -27,7 +27,7 @@ export const AdminBanner = ({ selectedPageContent }: AdminBannerProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: "easeInOut" }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
           key={selectedPageContent}
           className="font-bold text-4xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           {capitalizeFirstLetter(selectedPageContent)}
@@ -37,7 +37,7 @@ export const AdminBanner = ({ selectedPageContent }: AdminBannerProps) => {
         <motion.button
           whileHover={{ scale: 1.015 }}
           whileTap={{ scale: 0.985 }}
-          transition={{ duration: 0.25, ease: "easeInOut" }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
           onClick={() => {
             copyToClipboard(env.NEXT_PUBLIC_URL + "/" + brand.data?.slug);
           }}

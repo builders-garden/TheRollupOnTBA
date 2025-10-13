@@ -95,7 +95,7 @@ export const FileUpload = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleFileUploadTrigger}
@@ -126,7 +126,7 @@ export const FileUpload = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[86%]">
               <Loader2 className="size-7 animate-spin" />
             </motion.div>
@@ -136,7 +136,7 @@ export const FileUpload = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-start items-center w-full">
               <NBButton
                 onClick={handleFileUploadTrigger}
@@ -150,7 +150,7 @@ export const FileUpload = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-start items-center w-fit">
               <Image
                 src={previewUrl}

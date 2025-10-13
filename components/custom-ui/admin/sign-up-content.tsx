@@ -107,7 +107,7 @@ export const SignUpContent = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className="flex justify-center items-center w-full min-h-screen">
       <div className="flex flex-col items-center justify-center w-[60%] gap-10">
         <div className="flex flex-col gap-7 w-full">
@@ -193,7 +193,7 @@ export const SignUpContent = () => {
                 },
               },
             }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             className="flex flex-col justify-between items-center w-full gap-2">
             <h1 className="text-xl font-bold">Your brand link:</h1>
             <p className="text-base">

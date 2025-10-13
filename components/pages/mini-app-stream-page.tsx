@@ -35,7 +35,7 @@ export const MiniAppStreamPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className="relative flex flex-col justify-center items-start h-full w-full no-scrollbar">
       <div className="flex justify-center items-center w-full h-[265px] bg-black/10">
         <AnimatePresence mode="wait">
@@ -45,7 +45,7 @@ export const MiniAppStreamPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center size-full">
               <Loader2 className="size-7 text-black animate-spin" />
             </motion.div>
@@ -55,7 +55,7 @@ export const MiniAppStreamPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="size-full">
               <iframe
                 width="100%"
@@ -73,7 +73,7 @@ export const MiniAppStreamPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center size-full">
               <p className="text-sm font-bold text-center">
                 No Livestream found
@@ -96,7 +96,7 @@ export const MiniAppStreamPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex flex-col justify-center items-center w-full gap-0.5">
               <Skeleton className="w-full h-[54px] bg-black/10" />
             </motion.div>
@@ -107,7 +107,7 @@ export const MiniAppStreamPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex flex-col justify-center items-center w-full gap-0.5">
                 <div className="flex justify-between items-center w-full gap-6">
                   <h1 className="font-extrabold text-xl">
@@ -211,7 +211,7 @@ export const MiniAppStreamPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}>
+              transition={{ duration: 0.2, ease: "easeInOut" }}>
               <Skeleton className="w-full bg-black/10 h-[30px]" />
             </motion.div>
           ) : (

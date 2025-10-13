@@ -1,9 +1,11 @@
 import { relations } from "drizzle-orm/relations";
 import {
   adminsTable,
+  brandNotificationsTable,
   brandsTable,
   bullMetersTable,
   featuredTokensTable,
+  notificationSubscriptionsTable,
   tipSettingsTable,
   userTable,
   walletTable,
@@ -13,6 +15,8 @@ export const brandsRelations = relations(brandsTable, ({ many }) => ({
   bullMeters: many(bullMetersTable),
   tips: many(tipSettingsTable),
   featuredTokens: many(featuredTokensTable),
+  notificationSubscriptions: many(notificationSubscriptionsTable),
+  brandNotifications: many(brandNotificationsTable),
 }));
 
 export const bullMetersRelations = relations(bullMetersTable, ({ one }) => ({
@@ -41,6 +45,7 @@ export const featuredTokensRelations = relations(
 
 export const userRelations = relations(userTable, ({ many }) => ({
   wallets: many(walletTable),
+  notificationSubscriptions: many(notificationSubscriptionsTable),
 }));
 
 export const walletRelations = relations(walletTable, ({ one }) => ({
@@ -56,3 +61,27 @@ export const adminRelations = relations(adminsTable, ({ one }) => ({
     references: [brandsTable.id],
   }),
 }));
+
+export const notificationSubscriptionsRelations = relations(
+  notificationSubscriptionsTable,
+  ({ one }) => ({
+    user: one(userTable, {
+      fields: [notificationSubscriptionsTable.userId],
+      references: [userTable.id],
+    }),
+    brand: one(brandsTable, {
+      fields: [notificationSubscriptionsTable.brandId],
+      references: [brandsTable.id],
+    }),
+  }),
+);
+
+export const brandNotificationsRelations = relations(
+  brandNotificationsTable,
+  ({ one }) => ({
+    brand: one(brandsTable, {
+      fields: [brandNotificationsTable.brandId],
+      references: [brandsTable.id],
+    }),
+  }),
+);

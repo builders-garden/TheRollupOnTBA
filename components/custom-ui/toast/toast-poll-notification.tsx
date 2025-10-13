@@ -222,7 +222,7 @@ export const ToastPollNotification = ({
           transition: {
             duration: 0.9,
             ease: [0.19, 1.0, 0.22, 1.0],
-            opacity: { duration: 0.25 },
+            opacity: { duration: 0.2 },
             scale: { times: [0, 0.6, 1], duration: 0.9 },
             rotate: { times: [0, 0.6, 1], duration: 0.9 },
           },

@@ -61,7 +61,7 @@ export const BottomNavbar = ({ user }: BottomNavbarProps) => {
           />
           <motion.div
             animate={{ scale: isNavbarOpen ? 1 : 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             className="size-1 bg-accent rounded-full"
           />
           <motion.div
@@ -78,7 +78,7 @@ export const BottomNavbar = ({ user }: BottomNavbarProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center shrink-0 font-bold">
               {baseName || formatWalletAddress(address)}
             </motion.div>

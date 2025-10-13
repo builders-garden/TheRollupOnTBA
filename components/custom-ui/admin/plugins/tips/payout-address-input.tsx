@@ -141,7 +141,7 @@ export const PayoutAddressInput = () => {
   return (
     <div className="flex flex-col justify-start items-start gap-5 w-fit">
       <div className="flex justify-start items-center gap-2.5">
-        <Wallet className="size-4" />
+        <Wallet className="size-5" />
         <p className="text-base font-bold">Payout Address</p>
       </div>
       <div className="flex w-fit justify-start items-center gap-5">
@@ -231,7 +231,7 @@ export const PayoutAddressInput = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}>
+              transition={{ duration: 0.2, ease: "easeInOut" }}>
               <NBButton
                 className="bg-success w-fit shrink-0"
                 disabled={isUpdating}

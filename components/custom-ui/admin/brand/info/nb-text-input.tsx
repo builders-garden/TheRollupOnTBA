@@ -21,6 +21,10 @@ interface NBTextInputProps {
   infoLink?: string;
   infoLinkText?: string;
   infoLinkClassName?: string;
+  sizeLimit?: number;
+  withConfirmButtons?: boolean;
+  className?: string;
+  showCharacterCount?: boolean;
 }
 
 export const NBTextInput = ({
@@ -36,6 +40,10 @@ export const NBTextInput = ({
   infoLink,
   infoLinkText,
   infoLinkClassName,
+  sizeLimit,
+  withConfirmButtons = true,
+  className,
+  showCharacterCount = false,
 }: NBTextInputProps) => {
   const [editingValue, setEditingValue] = useState(value);
   const [isEditing, setIsEditing] = useState(false);
@@ -94,7 +102,11 @@ export const NBTextInput = ({
   };
 
   return (
-    <div className="flex flex-col justify-start items-start gap-2.5 w-full">
+    <div
+      className={cn(
+        "flex flex-col justify-start items-start gap-2.5 w-full",
+        className,
+      )}>
       {/* Label */}
       <div
         className={cn(
@@ -103,7 +115,7 @@ export const NBTextInput = ({
         )}>
         <div className="flex justify-start items-center gap-2.5 h-[24px]">
           {icon}
-          <p className="text-base font-bold">{label}</p>
+          <p className="text-base font-bold leading-0">{label}</p>
         </div>
         {!!infoLink && !!infoLinkText && (
           <Link href={infoLink} target="_blank">
@@ -128,60 +140,76 @@ export const NBTextInput = ({
           className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
           value={editingValue}
           onFocus={handleActivateEditing}
+          onBlur={() => {
+            if (!withConfirmButtons) {
+              setIsEditing(false);
+            }
+          }}
           onChange={(e) => {
-            setEditingValue(e.target.value);
+            setEditingValue(e.target.value.slice(0, sizeLimit));
+            if (!withConfirmButtons) {
+              setValue(e.target.value.slice(0, sizeLimit));
+            }
           }}
         />
 
-        <AnimatePresence mode="wait">
-          {!isEditing ? (
-            <motion.button
-              key={`SquarePen-button`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              disabled={isUpdating}
-              whileHover={{ scale: isUpdating ? 1 : 1.05 }}
-              whileTap={{ scale: isUpdating ? 1 : 0.95 }}
-              transition={{ duration: 0.15, ease: "easeInOut" }}
-              className="shrink-0 cursor-pointer"
-              onClick={handleEdit}>
-              <SquarePen
-                className={cn("size-5", isUpdating && "animate-pulse")}
-              />
-            </motion.button>
-          ) : (
-            <motion.div
-              key="cancel-confirm-buttons"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15, ease: "easeInOut" }}
-              className="flex justify-center items-center gap-1.5">
+        {showCharacterCount && (
+          <p className="text-sm text-muted-foreground ml-1">
+            {editingValue.length}/{sizeLimit}
+          </p>
+        )}
+
+        {withConfirmButtons && (
+          <AnimatePresence mode="wait">
+            {!isEditing ? (
               <motion.button
+                key={`SquarePen-button`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 disabled={isUpdating}
                 whileHover={{ scale: isUpdating ? 1 : 1.05 }}
                 whileTap={{ scale: isUpdating ? 1 : 0.95 }}
-                className="cursor-pointer"
-                onClick={handleCancel}>
-                <X className={cn("size-5", isUpdating && "animate-pulse")} />
-              </motion.button>
-              <motion.button
-                disabled={isUpdating}
-                whileHover={{ scale: isUpdating ? 1 : 1.05 }}
-                whileTap={{ scale: isUpdating ? 1 : 0.95 }}
-                className="cursor-pointer"
-                onClick={handleConfirm}>
-                <Check
-                  className={cn(
-                    "size-5 text-success",
-                    isUpdating && "animate-pulse",
-                  )}
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="shrink-0 cursor-pointer"
+                onClick={handleEdit}>
+                <SquarePen
+                  className={cn("size-5", isUpdating && "animate-pulse")}
                 />
               </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            ) : (
+              <motion.div
+                key="cancel-confirm-buttons"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="flex justify-center items-center gap-1.5">
+                <motion.button
+                  disabled={isUpdating}
+                  whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                  whileTap={{ scale: isUpdating ? 1 : 0.95 }}
+                  className="cursor-pointer"
+                  onClick={handleCancel}>
+                  <X className={cn("size-5", isUpdating && "animate-pulse")} />
+                </motion.button>
+                <motion.button
+                  disabled={isUpdating}
+                  whileHover={{ scale: isUpdating ? 1 : 1.05 }}
+                  whileTap={{ scale: isUpdating ? 1 : 0.95 }}
+                  className="cursor-pointer"
+                  onClick={handleConfirm}>
+                  <Check
+                    className={cn(
+                      "size-5 text-success",
+                      isUpdating && "animate-pulse",
+                    )}
+                  />
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </div>
     </div>
   );

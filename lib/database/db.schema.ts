@@ -296,3 +296,59 @@ export const betaAccessKeysTable = sqliteTable("beta_access_keys", {
 export type BetaAccessKey = typeof betaAccessKeysTable.$inferSelect;
 export type CreateBetaAccessKey = typeof betaAccessKeysTable.$inferInsert;
 export type UpdateBetaAccessKey = Partial<CreateBetaAccessKey>;
+
+/**
+ * Notification subscriptions table
+ */
+export const notificationSubscriptionsTable = sqliteTable(
+  "notification_subscriptions",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    brandId: text("brand_id")
+      .notNull()
+      .references(() => brandsTable.id, { onDelete: "cascade" }),
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    uniqueIndex("notification_subscriptions_user_brand_unique").on(
+      t.userId,
+      t.brandId,
+    ),
+  ],
+);
+
+export type NotificationSubscription =
+  typeof notificationSubscriptionsTable.$inferSelect;
+export type CreateNotificationSubscription =
+  typeof notificationSubscriptionsTable.$inferInsert;
+export type UpdateNotificationSubscription =
+  Partial<CreateNotificationSubscription>;
+
+/**
+ * Brand Notifications table
+ */
+export const brandNotificationsTable = sqliteTable("brand_notifications", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => ulid()),
+  brandId: text("brand_id")
+    .notNull()
+    .references(() => brandsTable.id, { onDelete: "cascade" }),
+  title: text("title"),
+  body: text("body"),
+  targetUrl: text("target_url"),
+  totalTargetUsers: integer("total_target_users"),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+});
+
+export type BrandNotification = typeof brandNotificationsTable.$inferSelect;
+export type CreateBrandNotification =
+  typeof brandNotificationsTable.$inferInsert;
+export type UpdateBrandNotification = Partial<CreateBrandNotification>;

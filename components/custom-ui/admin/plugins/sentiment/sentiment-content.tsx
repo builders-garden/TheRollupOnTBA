@@ -370,7 +370,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-5">
       <h1 className="font-bold text-2xl">
         Create quick bull/bear polls where viewers pay to vote on a statement
@@ -398,7 +398,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                 },
               },
             }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             className="flex justify-center items-center w-full">
             <NBCard className="w-full bg-success rounded-full py-0.5">
               <p className="text-2xl font-bold text-white">

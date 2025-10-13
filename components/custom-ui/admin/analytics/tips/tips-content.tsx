@@ -1,6 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsUpDown,

@@ -18,12 +18,12 @@ import {
   TableRow,
 } from "@/components/shadcn-ui/table";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
-import { useTipsAnalytics } from "@/hooks/use-brand-analytics";
-import { useTipsAnalyticsMetrics } from "@/hooks/use-brand-analytics-metrics";
+import { usePollsAnalytics } from "@/hooks/use-brand-analytics";
+import { usePollsAnalyticsMetrics } from "@/hooks/use-brand-analytics-metrics";
 import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
-type SortField = "totalTips" | "totalAmount" | "firstTip" | "lastTip";
+type SortField = "totalVotes" | "totalAmount" | "firstVote" | "lastVote";
 
 interface SortableTableHeaderProps {
   field: SortField;
@@ -95,17 +95,17 @@ const StatsCard = ({
   </div>
 );
 
-// Max items per page for tips analytics
+// Max items per page for votes analytics
 const MAX_ITEMS_PER_PAGE = 10;
 
-export const TipsContent = () => {
+export const PollsContent = () => {
   const { brand } = useAdminAuth();
 
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortField>("totalAmount");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
-  const { data, isLoading, error } = useTipsAnalytics({
+  const { data, isLoading, error } = usePollsAnalytics({
     page,
     limit: MAX_ITEMS_PER_PAGE,
     sortBy,
@@ -116,7 +116,7 @@ export const TipsContent = () => {
   });
 
   const { data: metricsData, isLoading: isLoadingMetrics } =
-    useTipsAnalyticsMetrics({
+    usePollsAnalyticsMetrics({
       tokenType: AuthTokenType.ADMIN_AUTH_TOKEN,
       brandId: brand?.data?.id,
       enabled: !!brand?.data?.id,
@@ -142,7 +142,7 @@ export const TipsContent = () => {
     <AnimatePresence mode="wait">
       {isInitialLoad ? (
         <motion.div
-          key="loading-tips-content"
+          key="loading-votes-content"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -152,7 +152,7 @@ export const TipsContent = () => {
         </motion.div>
       ) : error ? (
         <motion.div
-          key="error-tips-content"
+          key="error-votes-content"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -166,7 +166,7 @@ export const TipsContent = () => {
         </motion.div>
       ) : (
         <motion.div
-          key="tips-content"
+          key="votes-content"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -187,12 +187,12 @@ export const TipsContent = () => {
               )}
             </AnimatePresence>
             <StatsCard
-              title="Total Tips Received"
-              value={metricsData?.data.totalTips || 0}
+              title="Total Votes"
+              value={metricsData?.data.totalVotes || 0}
             />
             <StatsCard
-              title="Unique Tippers"
-              value={metricsData?.data.uniqueTippers || 0}
+              title="Unique Voters"
+              value={metricsData?.data.uniqueVoters || 0}
             />
             <StatsCard
               title="Total Amount (USDC)"
@@ -219,8 +219,8 @@ export const TipsContent = () => {
                 <TableRow>
                   <TableHead className="w-[25%]">User</TableHead>
                   <SortableTableHeader
-                    field="totalTips"
-                    label="Total Tips"
+                    field="totalVotes"
+                    label="Total Votes"
                     currentSortField={sortBy}
                     currentSortDir={sortDir}
                     onSort={handleSort}
@@ -233,15 +233,15 @@ export const TipsContent = () => {
                     onSort={handleSort}
                   />
                   <SortableTableHeader
-                    field="firstTip"
-                    label="First Tip"
+                    field="firstVote"
+                    label="First Vote"
                     currentSortField={sortBy}
                     currentSortDir={sortDir}
                     onSort={handleSort}
                   />
                   <SortableTableHeader
-                    field="lastTip"
-                    label="Last Tip"
+                    field="lastVote"
+                    label="Last Vote"
                     currentSortField={sortBy}
                     currentSortDir={sortDir}
                     onSort={handleSort}
@@ -269,15 +269,15 @@ export const TipsContent = () => {
                           user.username}
                       </a>
                     </TableCell>
-                    <TableCell>{user.totalTips}</TableCell>
+                    <TableCell>{user.totalVotes}</TableCell>
                     <TableCell>{user.totalAmount} USDC</TableCell>
                     <TableCell>
-                      {formatDistanceToNow(new Date(user.firstTip), {
+                      {formatDistanceToNow(new Date(user.firstVote), {
                         addSuffix: true,
                       })}
                     </TableCell>
                     <TableCell>
-                      {formatDistanceToNow(new Date(user.lastTip), {
+                      {formatDistanceToNow(new Date(user.lastVote), {
                         addSuffix: true,
                       })}
                     </TableCell>

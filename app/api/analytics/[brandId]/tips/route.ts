@@ -1,9 +1,9 @@
 import { eq, sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/database";
 import { tipsTable, userTable } from "@/lib/database/db.schema";
 import { getAdminsByBrandId } from "@/lib/database/queries/admins.query";
-import { getBrandByAddress } from "@/lib/database/queries/brand.query";
+import { getBrandById } from "@/lib/database/queries/brand.query";
 
 // Valid sort fields and their SQL expressions
 const sortFields = {
@@ -19,12 +19,23 @@ const sortFields = {
 
 type SortField = keyof typeof sortFields;
 
-export async function GET(request: Request) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ brandId: string }> },
+) {
   try {
-    // Get wallet address from headers
+    // Get wallet address from headers and brand id from params
     const walletAddress = request.headers.get("x-user-wallet-address");
+    const { brandId } = await params;
 
-    const brand = await getBrandByAddress(walletAddress!);
+    if (!brandId || !walletAddress) {
+      return NextResponse.json(
+        { error: "Brand ID and wallet address are required" },
+        { status: 400 },
+      );
+    }
+
+    const brand = await getBrandById(brandId);
 
     if (!brand) {
       return NextResponse.json({ error: "Brand not found" }, { status: 404 });

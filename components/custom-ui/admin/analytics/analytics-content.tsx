@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnalyticsTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { NBButton } from "../../nb-button";
+import { PollsContent } from "./polls/polls-content";
 import { TipsContent } from "./tips/tips-content";
 
 export const AnalyticsContent = () => {
@@ -12,8 +13,9 @@ export const AnalyticsContent = () => {
     AnalyticsTabs.TIPS,
   );
 
-  // Whether the tab is tips
+  // Whether the tab is tips or bullmeter votes
   const isTipsTab = selectedTab === AnalyticsTabs.TIPS;
+  const isPollsTab = selectedTab === AnalyticsTabs.POLLS;
 
   return (
     <motion.div
@@ -38,11 +40,26 @@ export const AnalyticsContent = () => {
             <p className="text-xl font-bold">Tips</p>
           </div>
         </NBButton>
+        <NBButton
+          className={cn("rounded-full w-fit", isPollsTab && "bg-accent")}
+          variant={isPollsTab ? "default" : "outline"}
+          showShadow={isPollsTab}
+          onClick={() => setSelectedTab(AnalyticsTabs.POLLS)}>
+          <div
+            className={cn(
+              "flex justify-start items-center w-full gap-2",
+              isPollsTab && "text-white",
+            )}>
+            <Sparkle className="size-6" />
+            <p className="text-xl font-bold">Polls</p>
+          </div>
+        </NBButton>
       </div>
 
       {/* Brand Content */}
       <AnimatePresence mode="wait">
         {isTipsTab && <TipsContent key="tips" />}
+        {isPollsTab && <PollsContent key="polls" />}
       </AnimatePresence>
     </motion.div>
   );

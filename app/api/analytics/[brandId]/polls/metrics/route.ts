@@ -1,16 +1,27 @@
 import { eq, sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/database";
-import { tipsTable } from "@/lib/database/db.schema";
+import { bullMeterVotesTable } from "@/lib/database/db.schema";
 import { getAdminsByBrandId } from "@/lib/database/queries/admins.query";
-import { getBrandByAddress } from "@/lib/database/queries/brand.query";
+import { getBrandById } from "@/lib/database/queries/brand.query";
 
-export async function GET(request: Request) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ brandId: string }> },
+) {
   try {
-    // Get wallet address from headers
+    // Get wallet address from headers and brand id from params
     const walletAddress = request.headers.get("x-user-wallet-address");
+    const { brandId } = await params;
 
-    const brand = await getBrandByAddress(walletAddress!);
+    if (!brandId || !walletAddress) {
+      return NextResponse.json(
+        { error: "Brand ID and wallet address are required" },
+        { status: 400 },
+      );
+    }
+
+    const brand = await getBrandById(brandId);
 
     if (!brand) {
       return NextResponse.json({ error: "Brand not found" }, { status: 404 });
@@ -32,18 +43,18 @@ export async function GET(request: Request) {
     // Get overall metrics in a single query
     const [metrics] = await db
       .select({
-        totalTips: sql<number>`count(${tipsTable.id})`,
-        totalAmount: sql<number>`sum(${tipsTable.amount})`,
-        uniqueTippers: sql<number>`count(distinct ${tipsTable.senderId})`,
+        totalVotes: sql<number>`count(${bullMeterVotesTable.id})`,
+        totalAmount: sql<number>`sum(${bullMeterVotesTable.votePrice} * ${bullMeterVotesTable.votes})`,
+        uniqueVoters: sql<number>`count(distinct ${bullMeterVotesTable.senderId})`,
       })
-      .from(tipsTable)
-      .where(eq(tipsTable.receiverBrandId, brand.id));
+      .from(bullMeterVotesTable)
+      .where(eq(bullMeterVotesTable.receiverBrandId, brand.id));
 
     return NextResponse.json({
       data: {
-        totalTips: metrics.totalTips || 0,
+        totalVotes: metrics.totalVotes || 0,
         totalAmount: metrics.totalAmount || 0,
-        uniqueTippers: metrics.uniqueTippers || 0,
+        uniqueVoters: metrics.uniqueVoters || 0,
       },
     });
   } catch (error) {

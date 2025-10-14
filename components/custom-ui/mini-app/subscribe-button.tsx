@@ -61,11 +61,11 @@ export const SubscribeButton = () => {
       {
         onSuccess: async () => {
           await user.isSubscribedToBrand.refetch();
-          toast.success("Subscribed to brand");
+          toast.success("Subscribed to brand notifications");
           setIsToggling(false);
         },
         onError: () => {
-          toast.error("Failed to subscribe to brand");
+          toast.info("Failed to subscribe to brand notifications");
           setIsToggling(false);
         },
       },

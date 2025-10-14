@@ -113,12 +113,12 @@ export const SendNotificationModal = ({
           <Image
             src={brand.logoUrl}
             alt="brand logo"
-            width={110}
-            height={110}
-            className="size-[110px] object-contain rounded-[12px] shrink-0"
+            width={90}
+            height={90}
+            className="size-[90px] object-contain rounded-[12px] shrink-0"
           />
         ) : (
-          <div className="flex justify-center items-center size-[110px] bg-black/10 rounded-[12px] shrink-0">
+          <div className="flex justify-center items-center size-[90px] bg-black/10 rounded-[12px] shrink-0">
             <p className="text-5xl font-bold text-center text-black/60">
               {brand?.name?.slice(0, 1).toUpperCase() || ""}
             </p>

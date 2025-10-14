@@ -19,6 +19,10 @@ export async function POST(
   const { brandId } = await params;
   const body = await req.json();
 
+  console.log("[notify/brandId] walletAddress", walletAddress);
+  console.log("[notify/brandId] brandId", brandId);
+  console.log("[notify/brandId] body", body);
+
   if (!brandId || !walletAddress || !body) {
     return NextResponse.json(
       { error: "Brand ID, wallet address and body are required" },
@@ -28,8 +32,10 @@ export async function POST(
 
   // Verify the request body
   const parsed = schema.safeParse(body);
-  if (!parsed.success)
+  if (!parsed.success) {
+    console.log("[notify/brandId] parsed error");
     return NextResponse.json({ error: parsed.error.message }, { status: 400 });
+  }
 
   try {
     // Check if user is an admin for this brand
@@ -71,11 +77,12 @@ export async function POST(
       { status: 200 },
     );
   } catch (error) {
+    console.error("[notify/brandId] error", error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 400 },
+      { status: 500 },
     );
   }
 }

@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { useHostsByBrandId } from "@/hooks/use-hosts";
 import { cn } from "@/lib/utils";
 import { HostsSection } from "../mini-app/hosts-section";
-import { NewsletterCTA } from "../mini-app/newsletter-cta";
+import { NewsletterCTA } from "../newsletter-cta";
 
 interface LinksProps {
   youtubeUrl?: string;

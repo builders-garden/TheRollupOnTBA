@@ -225,7 +225,7 @@ export const MiniAppTips = ({
             }
             isOpen={isCustomTipModalOpen}
             setIsOpen={handleCustomTipModalOpen}
-            contentClassName="p-2.5 rounded-[12px]">
+            contentClassName="p-4 sm:p-6 rounded-[12px] sm:max-w-2xl">
             <h1 className="text-2xl font-bold text-center">
               Choose custom tip
             </h1>

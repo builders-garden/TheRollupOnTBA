@@ -355,7 +355,8 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
       <NBModal
         trigger={<div />}
         isOpen={isApproveModalOpen}
-        setIsOpen={setIsApproveModalOpen}>
+        setIsOpen={setIsApproveModalOpen}
+        contentClassName="p-4 sm:p-6 rounded-[12px] sm:max-w-2xl">
         <h1 className="text-base font-extrabold w-full text-center">
           Approve USDC to Vote
         </h1>

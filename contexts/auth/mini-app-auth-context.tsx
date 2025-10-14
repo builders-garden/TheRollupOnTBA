@@ -12,6 +12,7 @@ import { useMiniApp } from "@/contexts/mini-app-context";
 import { useAuthCheck, useFakeFarcasterSignIn } from "@/hooks/use-auth-hooks";
 import { useBrandBySlug } from "@/hooks/use-brands";
 import { useFeaturedTokens } from "@/hooks/use-featured-tokens";
+import { useUserIsSubscribedToBrand } from "@/hooks/use-notification-subscriptions";
 import { useTipSettings } from "@/hooks/use-tip-settings";
 import { Brand, FeaturedToken, TipSettings } from "@/lib/database/db.schema";
 import { AuthTokenType } from "@/lib/enums";
@@ -21,6 +22,10 @@ interface MiniAppAuthContextType {
   user: {
     data: User | undefined;
     refetch: () => Promise<void>;
+    isSubscribedToBrand: {
+      data: boolean;
+      refetch: () => Promise<void>;
+    };
   };
   brand: {
     brandSlug: string | undefined;
@@ -93,6 +98,19 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     enabled: !!brandSlug && !!user,
   });
 
+  // Fetching if the user is already subscribed to the brand
+  const {
+    data: isSubscribedToBrandData,
+    isLoading: isFetchingIsSubscribedToBrand,
+    error: isSubscribedToBrandError,
+    refetch: refetchIsSubscribedToBrand,
+  } = useUserIsSubscribedToBrand({
+    tokenType: AuthTokenType.MINI_APP_AUTH_TOKEN,
+    brandId: brand?.id,
+    userId: user?.id,
+    enabled: !!brand?.id && !!user?.id,
+  });
+
   // Fetching the tip settings when the brand is connected
   const {
     data: tipSettingsData,
@@ -151,6 +169,11 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(newUser.data.user);
     }
   }, [refetchUser]);
+
+  // Handles the refetching of the user brand subscription
+  const executeRefetchUserBrandSubscription = useCallback(async () => {
+    await refetchIsSubscribedToBrand();
+  }, [refetchIsSubscribedToBrand]);
 
   // Handles the refetching of the tip settings
   const executeRefetchTipSettings = useCallback(async () => {
@@ -249,6 +272,10 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
     user: {
       data: user,
       refetch: executeRefetchUser,
+      isSubscribedToBrand: {
+        data: Boolean(isSubscribedToBrandData?.data),
+        refetch: executeRefetchUserBrandSubscription,
+      },
     },
     brand: {
       data: brand,
@@ -271,8 +298,14 @@ export const MiniAppAuthProvider = ({ children }: { children: ReactNode }) => {
       isSigningIn ||
       isFetchingBrand ||
       isFetchingTipSettings ||
-      isFetchingFeaturedTokens,
-    error: error || brandError || tipSettingsError || featuredTokensError,
+      isFetchingFeaturedTokens ||
+      isFetchingIsSubscribedToBrand,
+    error:
+      error ||
+      brandError ||
+      tipSettingsError ||
+      featuredTokensError ||
+      isSubscribedToBrandError,
   };
 
   return (

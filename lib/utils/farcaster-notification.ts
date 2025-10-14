@@ -90,14 +90,15 @@ export async function sendFarcasterNotification({
 }
 
 /**
- * Send a notification to a Farcaster user.
+ * Send a notification to a list of Farcaster users.
  *
  * @param title - The title of the notification
  * @param body - The body of the notification
  * @param targetUrl - The URL to redirect to when the notification is clicked (optional)
- * @returns The result of the notification
+ * @param users - The users to send the notification to
+ * @returns The result of the notification sent to the users
  */
-export async function sendNotificationToAllUsers({
+export async function sendNotificationToUsers({
   title,
   body,
   targetUrl,
@@ -120,6 +121,7 @@ export async function sendNotificationToAllUsers({
       errorFids: [],
     };
 
+  // Creates chunks of 100 users
   const chunkedUsers = [];
   for (let i = 0; i < users.length; i += 100) {
     chunkedUsers.push(users.slice(i, i + 100));

@@ -272,14 +272,20 @@ export const PollsContent = () => {
                     <TableCell>{user.totalVotes}</TableCell>
                     <TableCell>{user.totalAmount} USDC</TableCell>
                     <TableCell>
-                      {formatDistanceToNow(new Date(user.firstVote), {
-                        addSuffix: true,
-                      })}
+                      {user.firstVote
+                        ? formatDistanceToNow(new Date(user.firstVote + "Z"), {
+                            addSuffix: true,
+                            includeSeconds: true,
+                          })
+                        : "Unknown"}
                     </TableCell>
                     <TableCell>
-                      {formatDistanceToNow(new Date(user.lastVote), {
-                        addSuffix: true,
-                      })}
+                      {user.lastVote
+                        ? formatDistanceToNow(new Date(user.lastVote + "Z"), {
+                            addSuffix: true,
+                            includeSeconds: true,
+                          })
+                        : "Unknown"}
                     </TableCell>
                   </TableRow>
                 ))}

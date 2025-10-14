@@ -110,8 +110,8 @@ export const ShareButton = ({
               buttonSize === "sm"
                 ? "size-5"
                 : buttonSize === "default"
-                  ? "size-7"
-                  : "size-8",
+                  ? "size-6"
+                  : "size-7",
             )}
           />
           {showText ? "Share" : null}

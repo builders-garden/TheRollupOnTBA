@@ -272,14 +272,20 @@ export const TipsContent = () => {
                     <TableCell>{user.totalTips}</TableCell>
                     <TableCell>{user.totalAmount} USDC</TableCell>
                     <TableCell>
-                      {formatDistanceToNow(new Date(user.firstTip), {
-                        addSuffix: true,
-                      })}
+                      {user.firstTip
+                        ? formatDistanceToNow(new Date(user.firstTip + "Z"), {
+                            addSuffix: true,
+                            includeSeconds: true,
+                          })
+                        : "Unknown"}
                     </TableCell>
                     <TableCell>
-                      {formatDistanceToNow(new Date(user.lastTip), {
-                        addSuffix: true,
-                      })}
+                      {user.lastTip
+                        ? formatDistanceToNow(new Date(user.lastTip + "Z"), {
+                            includeSeconds: true,
+                            addSuffix: true,
+                          })
+                        : "Unknown"}
                     </TableCell>
                   </TableRow>
                 ))}

@@ -1,17 +1,23 @@
 import { Loader2, PencilLine, Text } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { useEffect, useMemo, useState } from "react";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
+import { useDebounce } from "@/hooks/use-debounce";
 import { useNotificationSubscriptionsAmount } from "@/hooks/use-notification-subscriptions";
 import { AuthTokenType } from "@/lib/enums";
 import { NBTextInput } from "../../brand/info/nb-text-input";
+import { SendNotificationModal } from "./send-notification-modal";
 
 export const SendContent = () => {
   const { brand } = useAdminAuth();
 
-  const [notificationTitle, setNotificationTitle] = useState("");
-  const [notificationBody, setNotificationBody] = useState("");
+  const [notificationTitle, setNotificationTitle] = useState(
+    localStorage.getItem("cts-notificationTitle") || "",
+  );
+  const [notificationBody, setNotificationBody] = useState(
+    localStorage.getItem("cts-notificationBody") || "",
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Get the total number of notification subscriptions for the brand
   const {
@@ -29,6 +35,16 @@ export const SendContent = () => {
     () => subscriptionsCount?.data,
     [subscriptionsCount?.data],
   );
+
+  // Debounce the notification title and body
+  const debouncedNotificationTitle = useDebounce(notificationTitle, 1000);
+  const debouncedNotificationBody = useDebounce(notificationBody, 1000);
+
+  // When the debounced notification title or body changes, set them in the local storage
+  useEffect(() => {
+    localStorage.setItem("cts-notificationTitle", debouncedNotificationTitle);
+    localStorage.setItem("cts-notificationBody", debouncedNotificationBody);
+  }, [debouncedNotificationTitle, debouncedNotificationBody]);
 
   return (
     <AnimatePresence mode="wait">
@@ -66,12 +82,12 @@ export const SendContent = () => {
           className="flex flex-col justify-start items-start w-full h-full py-5 pr-5 gap-8">
           <div className="flex flex-col justify-start items-start w-full gap-1">
             <h1 className="font-bold text-2xl">
-              Send notifications to users subscribed to your brand
+              Send notifications to all the users subscribed to your brand
             </h1>
             <p className="text-base text-muted-foreground">
               {usersCount === 0
                 ? `Currently no user is subscribed`
-                : `${usersCount} users are subscribed to your brand`}
+                : `${usersCount} user${usersCount === 1 ? " is" : "s are"} subscribed to your brand`}
             </p>
           </div>
 
@@ -100,18 +116,14 @@ export const SendContent = () => {
             />
           </div>
 
-          <NBButton
-            className="w-fit px-5 bg-accent h-[42px]"
-            disabled={
-              notificationTitle.length === 0 ||
-              notificationBody.length === 0 ||
-              isCountingSubscriptions
-            }
-            onClick={() => {}}>
-            <p className="text-base font-extrabold text-white">
-              Send Notifications
-            </p>
-          </NBButton>
+          <SendNotificationModal
+            notificationTitle={notificationTitle}
+            notificationBody={notificationBody}
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            brand={brand.data}
+            totalTargetUsers={usersCount ?? 0}
+          />
         </motion.div>
       )}
     </AnimatePresence>

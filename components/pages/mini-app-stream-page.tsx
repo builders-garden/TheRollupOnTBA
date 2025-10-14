@@ -13,7 +13,8 @@ import { BottomNavbar } from "../custom-ui/mini-app/bottom-navbar";
 import { HostsSection } from "../custom-ui/mini-app/hosts-section";
 import { MiniAppAboutSection } from "../custom-ui/mini-app/mini-app-about-section";
 import { MiniAppPollCard } from "../custom-ui/mini-app/mini-app-poll-card";
-import { NewsletterCTA } from "../custom-ui/mini-app/newsletter-cta";
+import { SubscribeButton } from "../custom-ui/mini-app/subscribe-button";
+import { NewsletterCTA } from "../custom-ui/newsletter-cta";
 import { ShareButton } from "../custom-ui/share-button";
 import { Separator } from "../shadcn-ui/separator";
 import { Skeleton } from "../shadcn-ui/skeleton";
@@ -109,15 +110,18 @@ export const MiniAppStreamPage = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex flex-col justify-center items-center w-full gap-0.5">
-                <div className="flex justify-between items-center w-full gap-6">
-                  <h1 className="font-extrabold text-xl">
+                <div className="flex justify-between items-start w-full gap-8">
+                  <h1 className="font-extrabold text-xl leading-tight">
                     {lastYoutubeContent?.data?.title || ""}
                   </h1>
-                  <ShareButton
-                    miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
-                    copyLinkText={`cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
-                    buttonClassName="shrink-1 w-min cursor-pointer"
-                  />
+                  <div className="flex flex-col justify-center items-center w-min gap-4">
+                    <ShareButton
+                      miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
+                      copyLinkText={`cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
+                      buttonClassName="shrink-1 w-min cursor-pointer"
+                    />
+                    <SubscribeButton />
+                  </div>
                 </div>
                 <div className="flex justify-start items-center w-full gap-2.5">
                   {brand.data?.name && (
@@ -137,7 +141,7 @@ export const MiniAppStreamPage = () => {
                   )}
                   {lastYoutubeContent?.data?.isLive && (
                     <motion.div
-                      className="flex justify-start items-center w-full gap-0.5"
+                      className="flex justify-start items-center w-fit gap-0.5"
                       animate={{ opacity: [0.15, 1, 1, 1, 0.15] }}
                       transition={{
                         duration: 2,

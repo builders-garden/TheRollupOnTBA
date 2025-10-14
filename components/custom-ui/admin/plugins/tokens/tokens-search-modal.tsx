@@ -171,7 +171,7 @@ export const TokensSearchModal = ({
       }
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
-      contentClassName="p-4 rounded-[12px] sm:max-w-2xl">
+      contentClassName="p-4 sm:p-6 rounded-[12px] sm:max-w-2xl">
       <h1 className="text-2xl font-bold text-center">Search for a token</h1>
 
       {/* Search and filter by chain */}

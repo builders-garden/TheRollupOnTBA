@@ -33,7 +33,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${nunitoSans.variable} ${overusedGrotesk.variable} font-nunito-sans size-full antialiased bg-background`}>
-        <MiniAppProvider addMiniAppOnLoad={true}>
+        <MiniAppProvider>
           <Providers cookies={cookies}>{children}</Providers>
         </MiniAppProvider>
       </body>

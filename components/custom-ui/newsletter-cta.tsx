@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useSubscribeNewsletter } from "@/hooks/use-subscribe-newsletter";
 import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
-import { NBButton } from "../nb-button";
+import { NBButton } from "./nb-button";
 
 interface NewsletterCTAProps {
   label: string;

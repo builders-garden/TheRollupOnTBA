@@ -42,13 +42,7 @@ export function useMiniApp() {
   return context;
 }
 
-export function MiniAppProvider({
-  addMiniAppOnLoad,
-  children,
-}: {
-  addMiniAppOnLoad?: boolean;
-  children: ReactNode;
-}) {
+export function MiniAppProvider({ children }: { children: ReactNode }) {
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [context, setContext] = useState<MiniAppCoreContext>();
@@ -69,7 +63,7 @@ export function MiniAppProvider({
     async (passedContext: MiniAppCoreContext | undefined = undefined) => {
       const usedContext = passedContext || context;
       // If the mini app was already added or the context is not set, return
-      if (!usedContext || usedContext.client.added) return;
+      if (!usedContext || usedContext.client.added) return null;
       try {
         const result = await miniappSdk.actions.addMiniApp();
         if (result) {
@@ -109,11 +103,6 @@ export function MiniAppProvider({
         }
         setIsMiniAppReady(true);
 
-        // If is is flagged, try to add the mini app on load
-        if (addMiniAppOnLoad) {
-          await handleAddMiniApp(tmpContext);
-        }
-
         // Try to get the capabilities of the mini app client
         try {
           const tmpCapabilities = await miniappSdk.getCapabilities();
@@ -134,7 +123,7 @@ export function MiniAppProvider({
     } finally {
       setIsLoading(false);
     }
-  }, [addMiniAppOnLoad, handleAddMiniApp]);
+  }, [handleAddMiniApp]);
 
   // Until the mini app is not ready, try to load it
   useEffect(() => {

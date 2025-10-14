@@ -2,7 +2,12 @@ import { MiniAppNotificationDetails } from "@farcaster/miniapp-core";
 import { and, eq, isNotNull } from "drizzle-orm";
 import { Address, getAddress, isAddressEqual } from "viem";
 import { db } from "@/lib/database";
-import { userTable, walletTable } from "@/lib/database/db.schema";
+import {
+  notificationSubscriptionsTable,
+  User as StandardDbUser,
+  userTable,
+  walletTable,
+} from "@/lib/database/db.schema";
 import { fetchUserByAddress, fetchUserFromNeynar } from "@/lib/neynar";
 import { NeynarUser } from "@/lib/types/neynar.type";
 import { User } from "@/lib/types/user.type";
@@ -415,4 +420,24 @@ export const updateUser = async (userId: string, newUser: Partial<User>) => {
     .update(userTable)
     .set(newUser)
     .where(eq(userTable.id, userId));
+};
+
+/**
+ * Get all the subscribed users to a brand
+ * @param brandId - The brand ID
+ * @returns All the subscribed users to the brand
+ */
+export const getAllSubscribedUsersToBrand = async (
+  brandId: string,
+): Promise<StandardDbUser[]> => {
+  const users = await db
+    .select()
+    .from(userTable)
+    .innerJoin(
+      notificationSubscriptionsTable,
+      eq(userTable.id, notificationSubscriptionsTable.userId),
+    )
+    .where(eq(notificationSubscriptionsTable.brandId, brandId));
+
+  return users.map((user) => user.user);
 };

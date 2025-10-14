@@ -87,7 +87,7 @@ export const SendContent = () => {
             <p className="text-base text-muted-foreground">
               {usersCount === 0
                 ? `Currently no user is subscribed`
-                : `${usersCount} user${usersCount === 1 ? " is" : "s are"} subscribed to your brand`}
+                : `${usersCount} user${usersCount === 1 ? " is" : "s are"} subscribed to your brand notifications`}
             </p>
           </div>
 

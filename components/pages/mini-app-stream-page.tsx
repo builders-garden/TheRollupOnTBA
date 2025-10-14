@@ -114,7 +114,7 @@ export const MiniAppStreamPage = () => {
                   <h1 className="font-extrabold text-xl leading-tight">
                     {lastYoutubeContent?.data?.title || ""}
                   </h1>
-                  <div className="flex flex-col justify-center items-center w-min gap-4">
+                  <div className="flex justify-end items-start w-min gap-4">
                     <ShareButton
                       miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
                       copyLinkText={`cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}

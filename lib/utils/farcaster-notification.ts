@@ -133,6 +133,7 @@ export async function sendNotificationToUsers({
   const errorFids = [];
 
   for (const chunk of chunkedUsers) {
+    console.log("[sendNotificationToUsers] chunk", chunk);
     const response = await ky.post<SendNotificationResponse>(
       chunk[0].farcasterNotificationDetails.url,
       {
@@ -147,6 +148,7 @@ export async function sendNotificationToUsers({
       },
     );
 
+    console.log("[sendNotificationToUsers] response", response);
     if (response.status === 200) {
       const responseJson = await response.json();
       const responseBody =

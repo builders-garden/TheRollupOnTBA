@@ -115,12 +115,12 @@ export const MiniAppStreamPage = () => {
                     {lastYoutubeContent?.data?.title || ""}
                   </h1>
                   <div className="flex justify-end items-start w-min gap-4">
+                    <SubscribeButton />
                     <ShareButton
                       miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
                       copyLinkText={`cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
                       buttonClassName="shrink-1 w-min cursor-pointer"
                     />
-                    <SubscribeButton />
                   </div>
                 </div>
                 <div className="flex justify-start items-center w-full gap-2.5">

@@ -45,8 +45,6 @@ export async function sendFarcasterNotification({
     tokens,
   } satisfies SendNotificationRequest;
 
-  console.log("[sendFarcasterNotification] request body", requestBody);
-
   const response = await ky.post(url, {
     json: requestBody,
     timeout: false,
@@ -137,8 +135,6 @@ export async function sendNotificationToUsers({
   const errorFids = [];
 
   for (const chunk of chunkedUsers) {
-    console.log("[sendNotificationToUsers] chunk", chunk);
-
     const requestBody = {
       notificationId: uuidv4(),
       title,
@@ -147,14 +143,17 @@ export async function sendNotificationToUsers({
       tokens: chunk.map((user) => user.farcasterNotificationDetails.token),
     } satisfies SendNotificationRequest;
 
-    console.log("[sendNotificationToUsers] request body", requestBody);
+    const response = await ky.post<SendNotificationResponse>(
+      chunk[0].farcasterNotificationDetails.url,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        json: requestBody,
+        timeout: false,
+      },
+    );
 
-    const response = await ky.post(chunk[0].farcasterNotificationDetails.url, {
-      json: requestBody,
-      timeout: false,
-    });
-
-    console.log("[sendNotificationToUsers] response", response);
     if (response.status === 200) {
       const responseJson = await response.json();
       const responseBody =

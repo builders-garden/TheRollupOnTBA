@@ -123,17 +123,41 @@ export async function sendNotificationToUsers({
       errorFids: [],
     };
 
-  // Creates chunks of 100 users
-  const chunkedUsers = [];
-  for (let i = 0; i < users.length; i += 100) {
-    chunkedUsers.push(users.slice(i, i + 100));
-  }
+  // For each user, store it in an object that divides the users by the notification details url
+  const usersByNotificationUrl = users.reduce(
+    (acc, user) => {
+      acc[user.farcasterNotificationDetails.url] =
+        acc[user.farcasterNotificationDetails.url] || [];
+      acc[user.farcasterNotificationDetails.url].push(user);
+      return acc;
+    },
+    {} as {
+      [key: string]: {
+        farcasterFid: number;
+        farcasterNotificationDetails: MiniAppNotificationDetails;
+      }[];
+    },
+  );
 
+  // Prepare the arrays to store the results
   const successfulTokens = [];
   const invalidTokens = [];
   const rateLimitedTokens = [];
   const errorFids = [];
 
+  // For each url create user chunks
+  const chunkedUsers = [];
+  for (const url in usersByNotificationUrl) {
+    const urlUsers = usersByNotificationUrl[url];
+    const urlUsersLength = urlUsers.length;
+
+    // Creates chunks of 100 users url by url
+    for (let i = 0; i < urlUsersLength; i += 100) {
+      chunkedUsers.push(urlUsers.slice(i, i + 100));
+    }
+  }
+
+  // For each chunk, send the notification
   for (const chunk of chunkedUsers) {
     const requestBody = {
       notificationId: uuidv4(),
@@ -143,9 +167,10 @@ export async function sendNotificationToUsers({
       tokens: chunk.map((user) => user.farcasterNotificationDetails.token),
     } satisfies SendNotificationRequest;
 
-    console.log("[sendNotificationToUsers] requestBody", requestBody);
+    // I'm sure every user in the chunk has the same url so we can use the first one
+    const fetchUrl = chunk[0].farcasterNotificationDetails.url;
 
-    const response = await fetch(chunk[0].farcasterNotificationDetails.url, {
+    const response = await fetch(fetchUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

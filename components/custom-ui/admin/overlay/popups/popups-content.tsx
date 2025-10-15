@@ -35,13 +35,15 @@ export const PopupsContent = () => {
       username: "test.base.eth",
       profilePicture: "https://picsum.photos/200",
       text:
-        type === "tip"
+        type === "tip" || type === "tip-message"
           ? "sent a $5 tip"
-          : type === "tip-message"
-            ? "sent a $5 tip"
-            : type === "trade"
-              ? "bought some $HIGHER"
-              : "is bullish",
+          : type === "trade"
+            ? "bought some $HIGHER"
+            : "is bullish",
+      customMessage:
+        type === "tip-message"
+          ? "Text custom message of 44 characters to test"
+          : "",
     };
     const isRightSide =
       selectedPopupPosition === PopupPositions.TOP_RIGHT ||
@@ -51,7 +53,7 @@ export const PopupsContent = () => {
     toast.custom(
       () => <ToastNotification data={testData} slideOffset={slideOffset} />,
       {
-        duration: 2000,
+        duration: type === "tip-message" ? 7500 : 2000,
         position: selectedPopupPosition,
       },
     );
@@ -178,7 +180,7 @@ export const PopupsContent = () => {
               <p className="text-base font-medium opacity-50">
                 Test popups by clicking the buttons below
               </p>
-              <div className="grid grid-cols-4 gap-2.5 w-full">
+              <div className="grid grid-cols-5 gap-2.5 w-full">
                 <NBButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("tip")}>

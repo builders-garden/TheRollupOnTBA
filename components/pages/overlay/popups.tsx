@@ -18,14 +18,18 @@ export const OverlayPopups = ({ brand }: { brand: Brand }) => {
   const { joinStream } = useSocketUtils();
 
   const showPopupCallback = useCallback(
-    (data: {
-      username: string;
-      profilePicture: string;
-      text?: string;
-      position: PopupPositions;
-    }) => {
+    (
+      data: {
+        username: string;
+        profilePicture: string;
+        text?: string;
+        position: PopupPositions;
+        customMessage?: string;
+      },
+      duration?: number,
+    ) => {
       toast.custom(() => <ToastNotification data={data} slideOffset={100} />, {
-        duration: 2000,
+        duration: duration || 2000,
         position: PopupPositions.TOP_CENTER,
       });
     },
@@ -42,12 +46,16 @@ export const OverlayPopups = ({ brand }: { brand: Brand }) => {
 
     // Create event handlers
     const handleTipReceived = (data: TipReceivedEvent) => {
-      showPopupCallback({
-        username: data.username,
-        profilePicture: data.profilePicture,
-        text: `sent a $${data.tipAmount} tip`,
-        position: data.position,
-      });
+      showPopupCallback(
+        {
+          username: data.username,
+          profilePicture: data.profilePicture,
+          text: `sent a $${data.tipAmount} tip`,
+          position: data.position,
+          customMessage: data.customMessage,
+        },
+        data.customMessage ? 7500 : 2000,
+      );
     };
 
     const handleTokenTraded = (data: TokenTradedEvent) => {

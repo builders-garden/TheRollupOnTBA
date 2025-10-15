@@ -8,7 +8,11 @@ import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useCreateTip } from "@/hooks/use-tips";
 import { useUsdcTransfer } from "@/hooks/use-usdc-transfer";
-import { FARCASTER_CLIENT_FID } from "@/lib/constants";
+import {
+  FARCASTER_CLIENT_FID,
+  MAX_TIP_CUSTOM_MESSAGE_LENGTH,
+  MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE,
+} from "@/lib/constants";
 import { TipSettings } from "@/lib/database/db.schema";
 import { AuthTokenType, PopupPositions } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
@@ -71,7 +75,11 @@ export const MiniAppTips = ({
 
     // If the custom text is over 64 characters or the amount is less than 5$, set it to empty
     let customTextToUse = customText;
-    if ((customText?.length && customText.length > 64) || amount < 5) {
+    if (
+      (customText?.length &&
+        customText.length > MAX_TIP_CUSTOM_MESSAGE_LENGTH) ||
+      amount < MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE
+    ) {
       customTextToUse = "";
     }
 

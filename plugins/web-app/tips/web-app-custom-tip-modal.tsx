@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
+import {
+  MAX_TIP_CUSTOM_MESSAGE_LENGTH,
+  MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE,
+} from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface WebAppCustomTipModalProps {
@@ -33,17 +37,18 @@ export const WebAppCustomTipModal = ({
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
 
-  // Whether the custom amount is over 5$
-  const isAmountOver5 = parseFloat(customAmount) >= 5;
+  // Whether the custom amount is over the minimum amount for a custom message
+  const isAmountOverTheMinimum =
+    parseFloat(customAmount) >= MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE;
 
-  // If the amount goes below 5$, set the custom text to empty
+  // If the amount goes below the minimum amount for a custom message, set the custom text to empty
   useEffect(() => {
-    if (!isAmountOver5) {
+    if (!isAmountOverTheMinimum) {
       setTimeout(() => {
         setCustomText("");
       }, 300);
     }
-  }, [isAmountOver5]);
+  }, [isAmountOverTheMinimum]);
 
   // Handles Custom Tip Modal Open
   const handleCustomTipModalOpen = () => {
@@ -103,7 +108,8 @@ export const WebAppCustomTipModal = ({
       <div className="flex flex-col justify-center items-center w-full gap-1">
         <h1 className="text-2xl font-bold text-center">Choose custom tip</h1>
         <p className="text-sm text-muted-foreground text-center">
-          You can add a custom message by tipping 5$ or more
+          You can add a custom message by tipping{" "}
+          {MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE}$ or more
         </p>
       </div>
 
@@ -144,18 +150,18 @@ export const WebAppCustomTipModal = ({
             key="custom-text-input"
             initial={{ opacity: 0, height: 0, marginBottom: "-10px" }}
             animate={{
-              opacity: isAmountOver5 ? 1 : 0,
-              height: isAmountOver5 ? "44px" : 0,
-              marginBottom: isAmountOver5 ? 0 : "-10px",
+              opacity: isAmountOverTheMinimum ? 1 : 0,
+              height: isAmountOverTheMinimum ? "44px" : 0,
+              marginBottom: isAmountOverTheMinimum ? 0 : "-10px",
               transition: {
                 height: {
-                  delay: isAmountOver5 ? 0 : 0.25,
+                  delay: isAmountOverTheMinimum ? 0 : 0.25,
                 },
                 opacity: {
-                  delay: isAmountOver5 ? 0.25 : 0,
+                  delay: isAmountOverTheMinimum ? 0.25 : 0,
                 },
                 marginBottom: {
-                  delay: isAmountOver5 ? 0 : 0.25,
+                  delay: isAmountOverTheMinimum ? 0 : 0.25,
                 },
               },
             }}
@@ -170,23 +176,25 @@ export const WebAppCustomTipModal = ({
                 placeholder="Your custom message..."
                 className="w-full h-[42px] focus-visible:ring-none focus-visible:border-none rounded-[12px] transition-all duration-300 outline-none focus:ring-none focus:ring-0 focus:border-none"
                 type="text"
-                disabled={!customAmount || !isAmountOver5}
+                disabled={!customAmount || !isAmountOverTheMinimum}
                 min={0}
                 value={customText}
                 onFocus={() => setIsEditingCustomText(true)}
                 onBlur={() => setIsEditingCustomText(false)}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (value.length <= 64) {
+                  if (value.length <= MAX_TIP_CUSTOM_MESSAGE_LENGTH) {
                     setCustomText(value);
                   } else {
-                    setCustomText(value.slice(0, 64));
+                    setCustomText(
+                      value.slice(0, MAX_TIP_CUSTOM_MESSAGE_LENGTH),
+                    );
                   }
                 }}
               />
 
               <p className="text-sm text-muted-foreground ml-3 mr-2">
-                {customText.length}/64
+                {customText.length}/{MAX_TIP_CUSTOM_MESSAGE_LENGTH}
               </p>
             </div>
           </motion.div>

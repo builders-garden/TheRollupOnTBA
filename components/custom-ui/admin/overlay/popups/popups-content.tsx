@@ -42,7 +42,7 @@ export const PopupsContent = () => {
             : "is bullish",
       customMessage:
         type === "tip-message"
-          ? "Text custom message of 44 characters to test"
+          ? "This is a custom message of 41 characters"
           : "",
     };
     const isRightSide =

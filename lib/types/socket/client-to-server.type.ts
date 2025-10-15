@@ -13,6 +13,7 @@ export type TipSentEvent = {
   username: string;
   profilePicture: string;
   tipAmount: string;
+  customText: string;
 };
 
 export type TokenTradedEvent = {

@@ -14,6 +14,7 @@ import { TipSettings } from "@/lib/database/db.schema";
 import { AuthTokenType, PopupPositions } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
+import { MiniAppCustomTipModal } from "./mini-app-custom-tip-modal";
 
 interface MiniAppTipsProps {
   label?: string;
@@ -44,13 +45,10 @@ export const MiniAppTips = ({
   customTipButton,
   user,
 }: MiniAppTipsProps) => {
-  const [isCustomTipModalOpen, setIsCustomTipModalOpen] = useState(false);
-  const [customAmount, setCustomAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const { tipSent } = useSocketUtils();
   const { address } = useAccount();
   const { startConfetti } = useConfetti({});
-  const [isEditing, setIsEditing] = useState(false);
   const { mutate: createTip } = useCreateTip(AuthTokenType.MINI_APP_AUTH_TOKEN);
 
   // Get the first wallet address with a base name
@@ -66,16 +64,16 @@ export const MiniAppTips = ({
     receiver: tipSettings.payoutAddress || "",
   });
 
-  // Handles Custom Tip Modal Open
-  const handleCustomTipModalOpen = () => {
-    setIsCustomTipModalOpen(!isCustomTipModalOpen);
-    setCustomAmount("");
-  };
-
   // Handle tip payment
-  const handleTipPayment = async (amount: number) => {
+  const handleTipPayment = async (amount: number, customText?: string) => {
     if (!tipSettings.payoutAddress || !user?.id) {
       return;
+    }
+
+    // If the custom text is over 64 characters or the amount is less than 5$, set it to empty
+    let customTextToUse = customText;
+    if ((customText?.length && customText.length > 64) || amount < 5) {
+      customTextToUse = "";
     }
 
     try {
@@ -97,6 +95,7 @@ export const MiniAppTips = ({
                   baseName || user?.username || formatWalletAddress(address),
                 profilePicture: user?.avatarUrl || "",
                 tipAmount: amount.toString(),
+                customText: customTextToUse || "",
               });
               toast.success("Tip sent successfully");
               startConfetti();
@@ -110,6 +109,7 @@ export const MiniAppTips = ({
                 receiverEnsName: tipSettings.payoutEnsName,
                 amount: amount.toString(),
                 platform: "farcaster",
+                customText: customTextToUse,
               });
             },
             () => {
@@ -150,6 +150,7 @@ export const MiniAppTips = ({
           username: baseName || user?.username || formatWalletAddress(address),
           profilePicture: user?.avatarUrl || "",
           tipAmount: amount.toString(),
+          customText: customTextToUse || "",
         });
         toast.success("Tip sent successfully");
         startConfetti();
@@ -163,6 +164,7 @@ export const MiniAppTips = ({
           receiverEnsName: tipSettings.payoutEnsName,
           amount: amount.toString(),
           platform: "base",
+          customText: customTextToUse,
         });
       } else {
         console.log("Base payment status:", status);
@@ -175,19 +177,6 @@ export const MiniAppTips = ({
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  // Handle custom tip payment
-  const handleCustomTipPayment = async () => {
-    const amount = parseFloat(customAmount);
-    if (isNaN(amount) || amount <= 0) {
-      console.error("Invalid custom amount");
-      return;
-    }
-
-    await handleTipPayment(amount);
-    setIsCustomTipModalOpen(false);
-    setCustomAmount("");
   };
 
   return (
@@ -208,81 +197,12 @@ export const MiniAppTips = ({
         ))}
 
         {!!customTipButton && (
-          <NBModal
-            trigger={
-              <NBButton
-                buttonColor={customTipButton.color}
-                disabled={isProcessing || isTransferLoading}
-                className={cn("w-full", customTipButton.buttonClassName)}>
-                <p
-                  className={cn(
-                    "text-base font-extrabold",
-                    customTipButton.textClassName,
-                  )}>
-                  {customTipButton.text}
-                </p>
-              </NBButton>
-            }
-            isOpen={isCustomTipModalOpen}
-            setIsOpen={handleCustomTipModalOpen}
-            contentClassName="p-4 sm:p-6 rounded-[12px] sm:max-w-2xl">
-            <h1 className="text-2xl font-bold text-center">
-              Choose custom tip
-            </h1>
-            <div
-              className={cn(
-                "flex justify-center items-center w-full gap-1 rounded-[12px] pl-2 border-accent border-[1px] ring-accent/40 transition-all duration-300",
-                isEditing && "ring-[2px]",
-              )}>
-              <p>$</p>
-              <input
-                placeholder="0.01"
-                className="w-full h-[42px] focus-visible:ring-none focus-visible:border-none rounded-[12px] transition-all duration-300 outline-none focus:ring-none focus:ring-0 focus:border-none"
-                type="number"
-                min={0}
-                value={customAmount}
-                onFocus={() => setIsEditing(true)}
-                onBlur={() => setIsEditing(false)}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Allow empty string or valid numbers >= 0
-                  if (
-                    value === "" ||
-                    (!isNaN(Number(value)) && Number(value) >= 0)
-                  ) {
-                    setCustomAmount(value);
-                  } else {
-                    setCustomAmount("");
-                  }
-                }}
-              />
-            </div>
-
-            <div className="flex flex-col justify-center items-center w-full gap-5">
-              <NBButton
-                key="confirm"
-                className="w-full bg-accent"
-                onClick={handleCustomTipPayment}
-                disabled={
-                  isProcessing ||
-                  isTransferLoading ||
-                  !customAmount ||
-                  parseFloat(customAmount) <= 0
-                }>
-                <p className="text-base font-extrabold text-white">
-                  {isProcessing || isTransferLoading
-                    ? "Processing..."
-                    : "Confirm"}
-                </p>
-              </NBButton>
-
-              <button
-                className="text-base font-bold text-black cursor-pointer"
-                onClick={handleCustomTipModalOpen}>
-                Cancel
-              </button>
-            </div>
-          </NBModal>
+          <MiniAppCustomTipModal
+            customTipButton={customTipButton}
+            isProcessing={isProcessing}
+            isTransferLoading={isTransferLoading}
+            handleTipPayment={handleTipPayment}
+          />
         )}
       </div>
     </div>

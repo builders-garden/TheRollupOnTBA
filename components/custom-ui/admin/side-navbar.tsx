@@ -107,6 +107,7 @@ export const SideNavbar = ({
           <NBButton
             className="w-full"
             variant={isContentNotifications ? "default" : "ghost"}
+            disabled={true}
             onClick={() =>
               setSelectedPageContent(AdminPageContent.NOTIFICATIONS)
             }>

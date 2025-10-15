@@ -31,6 +31,7 @@ export const MiniAppStreamPage = () => {
     brandId: brand.data?.id,
     enabled: !!brand.data?.id,
   });
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -120,6 +121,7 @@ export const MiniAppStreamPage = () => {
                       miniappUrl={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
                       copyLinkText={`cbwallet://miniapp?url=${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
                       buttonClassName="shrink-1 w-min cursor-pointer"
+                      brandName={brand.data?.name}
                     />
                   </div>
                 </div>

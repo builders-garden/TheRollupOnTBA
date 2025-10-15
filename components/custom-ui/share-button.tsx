@@ -18,6 +18,7 @@ interface ShareButtonProps {
   miniappUrl?: string;
   copyLinkText?: string;
   handleShare?: () => void;
+  brandName?: string;
 }
 
 export const ShareButton = ({
@@ -27,6 +28,7 @@ export const ShareButton = ({
   showText = false,
   miniappUrl,
   copyLinkText,
+  brandName,
 }: ShareButtonProps) => {
   const [linkCopied, setLinkCopied] = useState(false);
 
@@ -35,7 +37,9 @@ export const ShareButton = ({
     if (!miniappUrl) return;
     const embedsTuple: [string] = [miniappUrl];
     const composeCastParams = {
-      text: "Watch this stream by The Rollup",
+      text: brandName
+        ? `Watch this livestream by ${brandName}!`
+        : "Watch this livestream!",
       embeds: embedsTuple,
     };
     sdk.actions.composeCast(composeCastParams);

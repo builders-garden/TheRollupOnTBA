@@ -1,3 +1,3 @@
-# The Rollup on TBA
- 
-A streaming service for The Rollup 
+# Control the Stream
+
+A service to manage your streams and interact with your favourite streamers

@@ -184,6 +184,7 @@ export const WebAppStreamPage = () => {
                     copyLinkText={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}`}
                     buttonClassName="shrink-1 w-min cursor-pointer"
                     buttonSize="lg"
+                    brandName={brand.data?.name}
                   />
                 </div>
 

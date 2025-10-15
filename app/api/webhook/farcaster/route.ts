@@ -55,8 +55,8 @@ export async function POST(request: NextRequest) {
         await setUserNotificationDetails(fid, event.notificationDetails);
         await sendFarcasterNotification({
           fid,
-          title: `Welcome to The Rollup Mini-app!`,
-          body: `Enjoy The Rollup streams directly in mini app`,
+          title: `Welcome to Control the Stream!`,
+          body: `Enjoy your favourite streams and interact with them in real time!`,
           notificationDetails: event.notificationDetails,
         });
       } else {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       await sendFarcasterNotification({
         fid,
         title: `Ding ding dong`,
-        body: `Thank you for enabling notifications for Farcaster Mini-app Starter!`,
+        body: `Thank you for enabling notifications for Control the Stream!`,
         notificationDetails: event.notificationDetails,
       });
       break;

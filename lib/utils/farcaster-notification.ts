@@ -143,18 +143,14 @@ export async function sendNotificationToUsers({
       tokens: chunk.map((user) => user.farcasterNotificationDetails.token),
     } satisfies SendNotificationRequest;
 
+    console.log("[sendNotificationToUsers] requestBody", requestBody);
+
     const response = await fetch(chunk[0].farcasterNotificationDetails.url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        notificationId: uuidv4(),
-        title,
-        body,
-        targetUrl: targetUrl ?? env.NEXT_PUBLIC_URL,
-        tokens: chunk.map((user) => user.farcasterNotificationDetails.token),
-      } satisfies SendNotificationRequest),
+      body: JSON.stringify(requestBody),
     });
 
     if (response.status === 200) {

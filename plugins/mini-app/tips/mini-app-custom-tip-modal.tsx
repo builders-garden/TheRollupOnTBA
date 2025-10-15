@@ -1,4 +1,11 @@
 import { AnimatePresence, motion } from "motion/react";
+import {
+  CensorContext,
+  englishDataset,
+  englishRecommendedTransformers,
+  RegExpMatcher,
+  TextCensor,
+} from "obscenity";
 import { useEffect, useState } from "react";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
@@ -7,6 +14,14 @@ import {
   MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE,
 } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+
+// Obscenity matcher and censor for filtering custom text from slurs and other bad words
+const matcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
+const asteriskStrategy = (ctx: CensorContext) => "*".repeat(ctx.matchLength);
+const censor = new TextCensor().setStrategy(asteriskStrategy);
 
 interface MiniAppCustomTipModalProps {
   customTipButton: {
@@ -66,9 +81,11 @@ export const MiniAppCustomTipModal = ({
       return;
     }
 
-    // TODO: call AI to filter custom text from slurs and other bad words
+    // Filter custom text from slurs and other bad words
+    const matches = matcher.getAllMatches(customText);
+    const censoredText = censor.applyTo(customText, matches);
 
-    await handleTipPayment(amount, customText);
+    await handleTipPayment(amount, censoredText);
     setIsCustomTipModalOpen(false);
     setTimeout(() => {
       setCustomAmount("");

@@ -78,13 +78,13 @@ export const WebAppTips = ({
     // If the custom text is over the maximum length of a custom message of a tip or the amount
     // is less than the minimum amount for a custom message, set it to empty
     let customTextToUse = customText;
-    if (
-      (customText?.length &&
-        customText.length > MAX_TIP_CUSTOM_MESSAGE_LENGTH) ||
-      amount < MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE
-    ) {
-      customTextToUse = "";
-    }
+    // if (
+    //   (customText?.length &&
+    //     customText.length > MAX_TIP_CUSTOM_MESSAGE_LENGTH) ||
+    //   amount < MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE
+    // ) {
+    //   customTextToUse = "";
+    // }
 
     try {
       setIsProcessing(true);

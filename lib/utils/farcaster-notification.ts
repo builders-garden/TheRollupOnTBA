@@ -2,7 +2,6 @@ import {
   MiniAppNotificationDetails,
   sendNotificationResponseSchema,
   type SendNotificationRequest,
-  type SendNotificationResponse,
 } from "@farcaster/miniapp-sdk";
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";

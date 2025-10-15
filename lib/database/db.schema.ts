@@ -152,7 +152,7 @@ export const tipsTable = sqliteTable("tips", {
   platform: text("platform")
     .$type<"farcaster" | "base" | "web-app" | null>()
     .default(null),
-  customText: text("custom_text"),
+  customMessage: text("custom_message"),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });

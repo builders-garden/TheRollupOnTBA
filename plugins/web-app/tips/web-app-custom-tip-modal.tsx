@@ -69,6 +69,8 @@ export const WebAppCustomTipModal = ({
       return;
     }
 
+    // TODO: call AI to filter custom text from slurs and other bad words
+
     await handleTipPayment(amount, customText);
     setIsCustomTipModalOpen(false);
     setTimeout(() => {

@@ -27,7 +27,7 @@ export default function Providers({ children, cookies }: ProvidersProps) {
   // The current url path name
   const pathName = usePathname();
 
-  // TODO: If we are checking the miniapp context, show nothing
+  // If we are checking the miniapp context, show nothing
   if (isCheckingMiniAppContext) {
     return null;
   }

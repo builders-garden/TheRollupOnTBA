@@ -93,7 +93,7 @@ export const WebAppTips = ({
                 baseName || user?.username || formatWalletAddress(address),
               profilePicture: user?.avatarUrl || "",
               tipAmount: amount.toString(),
-              customText: customTextToUse || "",
+              customMessage: customTextToUse || "",
             });
             toast.success("Tip sent successfully");
             startConfetti();
@@ -107,7 +107,7 @@ export const WebAppTips = ({
               receiverEnsName: tipSettings.payoutEnsName,
               amount: amount.toString(),
               platform: "web-app",
-              customText: customTextToUse,
+              customMessage: customTextToUse,
             });
           },
           () => {

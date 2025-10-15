@@ -27,7 +27,9 @@ export const PopupsContent = () => {
     PopupPositions.TOP_CENTER,
   );
 
-  const handleTestNotification = (type: "tip" | "trade" | "vote") => {
+  const handleTestNotification = (
+    type: "tip" | "tip-message" | "trade" | "vote",
+  ) => {
     if (!brand.data?.id) return;
     const testData = {
       username: "test.base.eth",
@@ -35,9 +37,11 @@ export const PopupsContent = () => {
       text:
         type === "tip"
           ? "sent a $5 tip"
-          : type === "trade"
-            ? "bought some $HIGHER"
-            : "is bullish",
+          : type === "tip-message"
+            ? "sent a $5 tip"
+            : type === "trade"
+              ? "bought some $HIGHER"
+              : "is bullish",
     };
     const isRightSide =
       selectedPopupPosition === PopupPositions.TOP_RIGHT ||
@@ -58,6 +62,16 @@ export const PopupsContent = () => {
         username: testData.username,
         profilePicture: testData.profilePicture,
         tipAmount: "5",
+        customMessage: "",
+      });
+    } else if (type === "tip-message") {
+      tipSent({
+        brandId: brand.data.id,
+        position: selectedPopupPosition,
+        username: testData.username,
+        profilePicture: testData.profilePicture,
+        tipAmount: "5",
+        customMessage: "Test custom message",
       });
     } else if (type === "trade") {
       tokenTraded({
@@ -169,6 +183,13 @@ export const PopupsContent = () => {
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("tip")}>
                   <p className="text-base font-extrabold text-accent">Tip</p>
+                </NBButton>
+                <NBButton
+                  className="w-full shrink-0"
+                  onClick={() => handleTestNotification("tip-message")}>
+                  <p className="text-base font-extrabold text-accent">
+                    Tip with message
+                  </p>
                 </NBButton>
                 <NBButton
                   className="w-full shrink-0"

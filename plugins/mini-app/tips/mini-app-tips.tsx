@@ -4,7 +4,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
 import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBModal } from "@/components/custom-ui/nb-modal";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useCreateTip } from "@/hooks/use-tips";
@@ -95,7 +94,7 @@ export const MiniAppTips = ({
                   baseName || user?.username || formatWalletAddress(address),
                 profilePicture: user?.avatarUrl || "",
                 tipAmount: amount.toString(),
-                customText: customTextToUse || "",
+                customMessage: customTextToUse || "",
               });
               toast.success("Tip sent successfully");
               startConfetti();
@@ -109,7 +108,7 @@ export const MiniAppTips = ({
                 receiverEnsName: tipSettings.payoutEnsName,
                 amount: amount.toString(),
                 platform: "farcaster",
-                customText: customTextToUse,
+                customMessage: customTextToUse,
               });
             },
             () => {
@@ -150,7 +149,7 @@ export const MiniAppTips = ({
           username: baseName || user?.username || formatWalletAddress(address),
           profilePicture: user?.avatarUrl || "",
           tipAmount: amount.toString(),
-          customText: customTextToUse || "",
+          customMessage: customTextToUse || "",
         });
         toast.success("Tip sent successfully");
         startConfetti();
@@ -164,7 +163,7 @@ export const MiniAppTips = ({
           receiverEnsName: tipSettings.payoutEnsName,
           amount: amount.toString(),
           platform: "base",
-          customText: customTextToUse,
+          customMessage: customTextToUse,
         });
       } else {
         console.log("Base payment status:", status);

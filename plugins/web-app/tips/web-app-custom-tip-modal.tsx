@@ -38,7 +38,8 @@ export const WebAppCustomTipModal = ({
   const [customAmount, setCustomAmount] = useState<string>("");
 
   // Whether the custom amount is over the minimum amount for a custom message
-  const isAmountOverTheMinimum = parseFloat(customAmount) >= 0.01; //MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE;
+  const isAmountOverTheMinimum =
+    parseFloat(customAmount) >= MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE;
 
   // If the amount goes below the minimum amount for a custom message, set the custom text to empty
   useEffect(() => {

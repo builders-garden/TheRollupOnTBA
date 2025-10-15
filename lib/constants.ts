@@ -34,7 +34,7 @@ export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const BULLMETER_ADDRESS = "0x7bB86545242688D51204748292433a07270863B0";
 
 // The maximum length of a custom message of a tip
-export const MAX_TIP_CUSTOM_MESSAGE_LENGTH = 64;
+export const MAX_TIP_CUSTOM_MESSAGE_LENGTH = 100;
 
 // The minimum amount of a tip to add a custom message
 export const MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE = 5;

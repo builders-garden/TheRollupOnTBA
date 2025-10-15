@@ -67,7 +67,9 @@ export const ToastNotification = ({
 
         {data.customMessage && (
           <div className="flex justify-center items-center gap-3 w-full">
-            <p className="text-white text-lg italic">"{data.customMessage}"</p>
+            <p className="text-white text-lg italic">
+              &quot;{data.customMessage}&quot;
+            </p>
           </div>
         )}
       </motion.div>

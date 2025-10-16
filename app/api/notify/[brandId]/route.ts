@@ -46,31 +46,64 @@ export async function POST(
       );
     }
 
-    // Get all the subscribed users to the brand that have a Farcaster ID and notification details (farcaster or base)
-    const users = (await getAllSubscribedUsersToBrand(brandId)).filter(
-      (user) =>
-        !!user.farcasterFid &&
-        (!!user.farcasterNotificationDetails || !!user.baseNotificationDetails),
-    );
+    // Get all the subscribed users (fid and farcaster notification details)
+    // to the brand that have a Farcaster ID and farcaster notification details
+    const farcasterUsers = (await getAllSubscribedUsersToBrand(brandId))
+      .filter(
+        (user) => !!user.farcasterFid && !!user.farcasterNotificationDetails,
+      )
+      .map((user) => ({
+        fid: user.farcasterFid!,
+        notificationDetails: user.farcasterNotificationDetails!,
+      }));
 
-    const result = await sendNotificationToUsers({
+    // Get all the subscribed users (fid and base notification details)
+    // to the brand that have a Farcaster ID and base notification details
+    const baseUsers = (await getAllSubscribedUsersToBrand(brandId))
+      .filter((user) => !!user.farcasterFid && !!user.baseNotificationDetails)
+      .map((user) => ({
+        fid: user.farcasterFid!,
+        notificationDetails: user.baseNotificationDetails!,
+      }));
+
+    // Send the notification to the users on the Farcaster client
+    const farcasterResult = await sendNotificationToUsers({
       title: parsed.data.title,
       body: parsed.data.body,
       targetUrl: parsed.data.targetUrl,
-      users: users.map((user) => ({
-        fid: user.farcasterFid!,
-        farcasterNotificationDetails: user.farcasterNotificationDetails!,
-        baseNotificationDetails: user.baseNotificationDetails!,
-      })),
+      users: farcasterUsers,
+    });
+
+    // Send the notification to the users on the Base client
+    const baseResult = await sendNotificationToUsers({
+      title: parsed.data.title,
+      body: parsed.data.body,
+      targetUrl: parsed.data.targetUrl,
+      users: baseUsers,
     });
 
     return NextResponse.json(
       {
-        message: result.message,
-        successfulTokens: result.successfulTokens,
-        invalidTokens: result.invalidTokens,
-        rateLimitedTokens: result.rateLimitedTokens,
-        errorFids: result.errorFids,
+        message: {
+          base: baseResult.message,
+          farcaster: farcasterResult.message,
+        },
+        successfulTokens: {
+          base: baseResult.successfulTokens,
+          farcaster: farcasterResult.successfulTokens,
+        },
+        invalidTokens: {
+          base: baseResult.invalidTokens,
+          farcaster: farcasterResult.invalidTokens,
+        },
+        rateLimitedTokens: {
+          base: baseResult.rateLimitedTokens,
+          farcaster: farcasterResult.rateLimitedTokens,
+        },
+        errorFids: {
+          base: baseResult.errorFids,
+          farcaster: farcasterResult.errorFids,
+        },
       },
       { status: 200 },
     );

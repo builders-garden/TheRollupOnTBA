@@ -109,56 +109,60 @@ export async function sendNotificationToUsers({
   body: string;
   targetUrl?: string;
   users?: {
-    farcasterFid: number;
+    fid: number;
     farcasterNotificationDetails: MiniAppNotificationDetails;
+    baseNotificationDetails: MiniAppNotificationDetails;
   }[];
 }) {
   if (!users)
     return {
       message: "No users found",
-      successfulTokens: [],
-      invalidTokens: [],
-      rateLimitedTokens: [],
-      errorFids: [],
+      successfulTokens: {
+        farcaster: [],
+        base: [],
+      },
+      invalidTokens: {
+        farcaster: [],
+        base: [],
+      },
+      rateLimitedTokens: {
+        farcaster: [],
+        base: [],
+      },
+      errorFids: {
+        farcaster: [],
+        base: [],
+      },
     };
 
-  // For each user, store it in an object that divides the users by the notification details url
-  const usersByNotificationUrl = users.reduce(
-    (acc, user) => {
-      acc[user.farcasterNotificationDetails.url] =
-        acc[user.farcasterNotificationDetails.url] || [];
-      acc[user.farcasterNotificationDetails.url].push(user);
-      return acc;
-    },
-    {} as {
-      [key: string]: {
-        farcasterFid: number;
-        farcasterNotificationDetails: MiniAppNotificationDetails;
-      }[];
-    },
-  );
-
   // Prepare the arrays to store the results
-  const successfulTokens = [];
-  const invalidTokens = [];
-  const rateLimitedTokens = [];
-  const errorFids = [];
+  const successfulTokens: Record<"farcaster" | "base", string[]> = {
+    farcaster: [],
+    base: [],
+  };
+  const invalidTokens: Record<"farcaster" | "base", string[]> = {
+    farcaster: [],
+    base: [],
+  };
+  const rateLimitedTokens: Record<"farcaster" | "base", string[]> = {
+    farcaster: [],
+    base: [],
+  };
+  const errorFids: Record<"farcaster" | "base", number[]> = {
+    farcaster: [],
+    base: [],
+  };
 
-  // For each url create user chunks
+  // Creates chunks of 100 users
   const chunkedUsers = [];
-  for (const url in usersByNotificationUrl) {
-    const urlUsers = usersByNotificationUrl[url];
-    const urlUsersLength = urlUsers.length;
-
-    // Creates chunks of 100 users url by url
-    for (let i = 0; i < urlUsersLength; i += 100) {
-      chunkedUsers.push(urlUsers.slice(i, i + 100));
-    }
+  for (let i = 0; i < users.length; i += 100) {
+    chunkedUsers.push(users.slice(i, i + 100));
   }
 
-  // For each chunk, send the notification
+  // For each chunk, send the notification to both farcaster and base
   for (const chunk of chunkedUsers) {
-    const requestBody = {
+    // 1. First flow will send farcaster notifications
+    const farcasterRequestBody = {
       notificationId: uuidv4(),
       title,
       body,
@@ -166,54 +170,134 @@ export async function sendNotificationToUsers({
       tokens: chunk.map((user) => user.farcasterNotificationDetails.token),
     } satisfies SendNotificationRequest;
 
-    // I'm sure every user in the chunk has the same url so we can use the first one
-    const fetchUrl = chunk[0].farcasterNotificationDetails.url;
+    // Get the first user's farcaster notification details url because it's the same for all users in the chunk
+    const farcasterFetchUrl = chunk[0].farcasterNotificationDetails.url;
 
-    const response = await fetch(fetchUrl, {
+    const farcasterResponse = await fetch(farcasterFetchUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(farcasterRequestBody),
     });
 
-    if (response.status === 200) {
-      const responseJson = await response.json();
-      console.log("[sendNotificationToUsers] responseJson", responseJson);
-      const responseBody =
-        sendNotificationResponseSchema.safeParse(responseJson);
-      if (!responseBody.success) {
+    if (farcasterResponse.status === 200) {
+      const farcasterResponseJson = await farcasterResponse.json();
+      console.log(
+        "[sendNotificationToUsers/farcaster] responseJson",
+        farcasterResponseJson,
+      );
+      const farcasterResponseBody = sendNotificationResponseSchema.safeParse(
+        farcasterResponseJson,
+      );
+      if (!farcasterResponseBody.success) {
         console.error(
-          `Error sending notification to chunk: malformed response`,
-          responseBody.error.errors,
+          `Error sending farcaster notification to chunk: malformed response`,
+          farcasterResponseBody.error.errors,
         );
-        errorFids.push(...chunk.map((user) => user.farcasterFid));
+        errorFids.farcaster.push(...chunk.map((user) => user.fid));
         continue;
       }
 
-      if (responseBody.data.result.invalidTokens.length > 0) {
+      if (farcasterResponseBody.data.result.invalidTokens.length > 0) {
         console.error(
-          `Error sending notification to chunk: invalid tokens`,
-          responseBody.data.result.invalidTokens,
+          `Error sending farcaster notification to chunk: invalid tokens`,
+          farcasterResponseBody.data.result.invalidTokens,
         );
-        invalidTokens.push(...responseBody.data.result.invalidTokens);
+        invalidTokens.farcaster.push(
+          ...farcasterResponseBody.data.result.invalidTokens,
+        );
       }
 
-      if (responseBody.data.result.rateLimitedTokens.length > 0) {
+      if (farcasterResponseBody.data.result.rateLimitedTokens.length > 0) {
         console.warn(
-          `Error sending notification to chunk: rate limited`,
-          responseBody.data.result.rateLimitedTokens,
+          `Error sending farcaster notification to chunk: rate limited`,
+          farcasterResponseBody.data.result.rateLimitedTokens,
         );
-        rateLimitedTokens.push(...responseBody.data.result.rateLimitedTokens);
+        rateLimitedTokens.farcaster.push(
+          ...farcasterResponseBody.data.result.rateLimitedTokens,
+        );
       }
 
-      successfulTokens.push(...responseBody.data.result.successfulTokens);
+      successfulTokens.farcaster.push(
+        ...farcasterResponseBody.data.result.successfulTokens,
+      );
     } else {
-      console.log("[sendNotificationToUsers] error", await response.json());
-      errorFids.push(...chunk.map((user) => user.farcasterFid));
+      console.log(
+        "[sendNotificationToUsers/farcaster] error",
+        await farcasterResponse.json(),
+      );
+      errorFids.farcaster.push(...chunk.map((user) => user.fid));
+    }
+
+    // 2. Second flow will send base notifications
+    const baseRequestBody = {
+      notificationId: uuidv4(),
+      title,
+      body,
+      targetUrl: targetUrl ?? env.NEXT_PUBLIC_URL,
+      tokens: chunk.map((user) => user.baseNotificationDetails.token),
+    } satisfies SendNotificationRequest;
+
+    // Get the first user's base notification details url because it's the same for all users in the chunk
+    const baseFetchUrl = chunk[0].baseNotificationDetails.url;
+
+    const baseResponse = await fetch(baseFetchUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(baseRequestBody),
+    });
+
+    if (baseResponse.status === 200) {
+      const baseResponseJson = await baseResponse.json();
+      console.log(
+        "[sendNotificationToUsers/base] responseJson",
+        baseResponseJson,
+      );
+      const baseResponseBody =
+        sendNotificationResponseSchema.safeParse(baseResponseJson);
+      if (!baseResponseBody.success) {
+        console.error(
+          `Error sending base notification to chunk: malformed response`,
+          baseResponseBody.error.errors,
+        );
+        errorFids.base.push(...chunk.map((user) => user.fid));
+        continue;
+      }
+
+      if (baseResponseBody.data.result.invalidTokens.length > 0) {
+        console.error(
+          `Error sending base notification to chunk: invalid tokens`,
+          baseResponseBody.data.result.invalidTokens,
+        );
+        invalidTokens.base.push(...baseResponseBody.data.result.invalidTokens);
+      }
+
+      if (baseResponseBody.data.result.rateLimitedTokens.length > 0) {
+        console.warn(
+          `Error sending base notification to chunk: rate limited`,
+          baseResponseBody.data.result.rateLimitedTokens,
+        );
+        rateLimitedTokens.base.push(
+          ...baseResponseBody.data.result.rateLimitedTokens,
+        );
+      }
+
+      successfulTokens.base.push(
+        ...baseResponseBody.data.result.successfulTokens,
+      );
+    } else {
+      console.log(
+        "[sendNotificationToUsers/base] error",
+        await baseResponse.json(),
+      );
+      errorFids.base.push(...chunk.map((user) => user.fid));
     }
   }
 
+  // Return the results
   return {
     message: "Sent notifications to all users",
     successfulTokens,

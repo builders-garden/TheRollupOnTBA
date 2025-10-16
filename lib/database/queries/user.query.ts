@@ -142,6 +142,7 @@ export const getUserFromId = async (userId: string): Promise<User | null> => {
       farcasterDisplayName: userTable.farcasterDisplayName,
       farcasterAvatarUrl: userTable.farcasterAvatarUrl,
       farcasterNotificationDetails: userTable.farcasterNotificationDetails,
+      baseNotificationDetails: userTable.baseNotificationDetails,
       farcasterWallets: userTable.farcasterWallets,
       farcasterReferrerFid: userTable.farcasterReferrerFid,
       userCreatedAt: userTable.createdAt,
@@ -175,6 +176,7 @@ export const getUserFromId = async (userId: string): Promise<User | null> => {
     farcasterDisplayName: firstRow.farcasterDisplayName,
     farcasterAvatarUrl: firstRow.farcasterAvatarUrl,
     farcasterNotificationDetails: firstRow.farcasterNotificationDetails,
+    baseNotificationDetails: firstRow.baseNotificationDetails,
     farcasterWallets: firstRow.farcasterWallets,
     farcasterReferrerFid: firstRow.farcasterReferrerFid,
     createdAt: firstRow.userCreatedAt,
@@ -214,6 +216,7 @@ export async function getUserFromFid(fid: number): Promise<User | null> {
       farcasterDisplayName: userTable.farcasterDisplayName,
       farcasterAvatarUrl: userTable.farcasterAvatarUrl,
       farcasterNotificationDetails: userTable.farcasterNotificationDetails,
+      baseNotificationDetails: userTable.baseNotificationDetails,
       farcasterWallets: userTable.farcasterWallets,
       farcasterReferrerFid: userTable.farcasterReferrerFid,
       userCreatedAt: userTable.createdAt,
@@ -247,6 +250,7 @@ export async function getUserFromFid(fid: number): Promise<User | null> {
     farcasterDisplayName: firstRow.farcasterDisplayName,
     farcasterAvatarUrl: firstRow.farcasterAvatarUrl,
     farcasterNotificationDetails: firstRow.farcasterNotificationDetails,
+    baseNotificationDetails: firstRow.baseNotificationDetails,
     farcasterWallets: firstRow.farcasterWallets,
     farcasterReferrerFid: firstRow.farcasterReferrerFid,
     createdAt: firstRow.userCreatedAt,
@@ -333,52 +337,102 @@ export const getOrCreateUserFromWalletAddress = async (
  */
 export const getUserNotificationDetails = async (
   fid: number,
-): Promise<MiniAppNotificationDetails | null> => {
+): Promise<{
+  farcasterNotificationDetails: MiniAppNotificationDetails;
+  baseNotificationDetails: MiniAppNotificationDetails;
+} | null> => {
   const notificationDetails = await db.query.userTable.findFirst({
     where: eq(userTable.farcasterFid, fid),
     columns: {
       farcasterNotificationDetails: true,
+      baseNotificationDetails: true,
     },
   });
   if (!notificationDetails) return null;
 
   try {
-    return notificationDetails.farcasterNotificationDetails;
+    return {
+      farcasterNotificationDetails:
+        notificationDetails.farcasterNotificationDetails!,
+      baseNotificationDetails: notificationDetails.baseNotificationDetails!,
+    };
   } catch (error) {
     return null;
   }
 };
 
 /**
- * Set the notification details for a user
+ * Set the farcaster notification details for a user
  * @param fid - The Farcaster FID of the user
  * @param notificationDetails - The notification details to set
  * @returns The updated user
  */
-export const setUserNotificationDetails = async (
+export const setUserFarcasterNotificationDetails = async (
   fid: number,
   notificationDetails: MiniAppNotificationDetails,
 ) => {
-  return await db
+  const updatedUser = await db
     .update(userTable)
     .set({
       farcasterNotificationDetails: notificationDetails,
     })
-    .where(eq(userTable.farcasterFid, fid));
+    .where(eq(userTable.farcasterFid, fid))
+    .returning();
+
+  return updatedUser[0];
 };
 
 /**
- * Delete the notification details for a user
+ * Set the base notification details for a user
+ * @param fid - The Farcaster FID of the user
+ * @param notificationDetails - The notification details to set
+ * @returns The updated user
+ */
+export const setUserBaseNotificationDetails = async (
+  fid: number,
+  notificationDetails: MiniAppNotificationDetails,
+) => {
+  const updatedUser = await db
+    .update(userTable)
+    .set({ baseNotificationDetails: notificationDetails })
+    .where(eq(userTable.farcasterFid, fid))
+    .returning();
+
+  return updatedUser[0];
+};
+
+/**
+ * Delete the farcaster notification details for a user
  * @param fid - The Farcaster FID of the user
  * @returns The updated user
  */
-export const deleteUserNotificationDetails = async (fid: number) => {
-  return await db
+export const deleteUserFarcasterNotificationDetails = async (fid: number) => {
+  const updatedUser = await db
     .update(userTable)
     .set({
       farcasterNotificationDetails: null,
     })
-    .where(eq(userTable.farcasterFid, fid));
+    .where(eq(userTable.farcasterFid, fid))
+    .returning();
+
+  return updatedUser[0];
+};
+
+/**
+ * Delete the base notification details for a user
+ * @param fid - The Farcaster FID of the user
+ * @returns The updated user
+ */
+export const deleteUserBaseNotificationDetails = async (fid: number) => {
+  const updatedUser = await db
+    .update(userTable)
+    .set({
+      baseNotificationDetails: null,
+    })
+    .where(eq(userTable.farcasterFid, fid))
+    .returning();
+
+  return updatedUser[0];
 };
 
 /**
@@ -389,6 +443,7 @@ export const getAllUsersNotificationDetails = async (): Promise<
   | {
       farcasterFid: number;
       farcasterNotificationDetails: MiniAppNotificationDetails;
+      baseNotificationDetails: MiniAppNotificationDetails;
     }[]
   | null
 > => {
@@ -400,12 +455,14 @@ export const getAllUsersNotificationDetails = async (): Promise<
     columns: {
       farcasterFid: true,
       farcasterNotificationDetails: true,
+      baseNotificationDetails: true,
     },
   });
   if (!userNotificationDetails) return null;
   return userNotificationDetails.map((user) => ({
     farcasterFid: user.farcasterFid!,
     farcasterNotificationDetails: user.farcasterNotificationDetails!,
+    baseNotificationDetails: user.baseNotificationDetails!,
   }));
 };
 

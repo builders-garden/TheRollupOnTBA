@@ -46,9 +46,11 @@ export async function POST(
       );
     }
 
-    // Get all the subscribed users to the brand that have a Farcaster ID and notification details
+    // Get all the subscribed users to the brand that have a Farcaster ID and notification details (farcaster or base)
     const users = (await getAllSubscribedUsersToBrand(brandId)).filter(
-      (user) => !!user.farcasterFid && !!user.farcasterNotificationDetails,
+      (user) =>
+        !!user.farcasterFid &&
+        (!!user.farcasterNotificationDetails || !!user.baseNotificationDetails),
     );
 
     const result = await sendNotificationToUsers({
@@ -56,8 +58,9 @@ export async function POST(
       body: parsed.data.body,
       targetUrl: parsed.data.targetUrl,
       users: users.map((user) => ({
-        farcasterFid: user.farcasterFid!,
+        fid: user.farcasterFid!,
         farcasterNotificationDetails: user.farcasterNotificationDetails!,
+        baseNotificationDetails: user.baseNotificationDetails!,
       })),
     });
 

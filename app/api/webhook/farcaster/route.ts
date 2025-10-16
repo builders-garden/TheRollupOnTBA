@@ -1,15 +1,56 @@
 import {
+  MiniAppNotificationDetails,
   ParseWebhookEvent,
   parseWebhookEvent,
   verifyAppKeyWithNeynar,
 } from "@farcaster/miniapp-node";
 import { NextRequest } from "next/server";
+import { FARCASTER_CLIENT_FID } from "@/lib/constants";
 import {
-  deleteUserNotificationDetails,
+  deleteUserBaseNotificationDetails,
+  deleteUserFarcasterNotificationDetails,
   getOrCreateUserFromFid,
-  setUserNotificationDetails,
+  setUserBaseNotificationDetails,
+  setUserFarcasterNotificationDetails,
 } from "@/lib/database/queries";
 import { sendFarcasterNotification } from "@/lib/utils/farcaster-notification";
+
+/**
+ * A function to delete the notification details for a user given the Farcaster FID and the app FID
+ * @param fid - The Farcaster FID of the user
+ * @param appFid - The app FID of the user
+ * @returns void
+ */
+const deleteNotificationDetails = async (fid: number, appFid: number) => {
+  if (appFid === FARCASTER_CLIENT_FID.farcaster) {
+    await deleteUserFarcasterNotificationDetails(fid);
+  } else if (appFid === FARCASTER_CLIENT_FID.base) {
+    await deleteUserBaseNotificationDetails(fid);
+  } else {
+    console.error(`[webhook/farcaster] Invalid app FID: ${appFid}`);
+  }
+};
+
+/**
+ * A function to set the notification details for a user given the Farcaster FID and the app FID and the notification details
+ * @param fid - The Farcaster FID of the user
+ * @param appFid - The app FID of the user
+ * @param notificationDetails - The notification details to set
+ * @returns void
+ */
+const setNotificationDetails = async (
+  fid: number,
+  appFid: number,
+  notificationDetails: MiniAppNotificationDetails,
+) => {
+  if (appFid === FARCASTER_CLIENT_FID.farcaster) {
+    await setUserFarcasterNotificationDetails(fid, notificationDetails);
+  } else if (appFid === FARCASTER_CLIENT_FID.base) {
+    await setUserBaseNotificationDetails(fid, notificationDetails);
+  } else {
+    console.error(`[webhook/farcaster] Invalid app FID: ${appFid}`);
+  }
+};
 
 export async function POST(request: NextRequest) {
   const requestJson = await request.json();
@@ -46,13 +87,14 @@ export async function POST(request: NextRequest) {
 
   console.log("[webhook/farcaster] parsed event data", data);
   const fid = data.fid;
+  const appFid = data.appFid;
   const event = data.event;
   await getOrCreateUserFromFid(fid);
 
   switch (event.event) {
     case "miniapp_added":
       if (event.notificationDetails) {
-        await setUserNotificationDetails(fid, event.notificationDetails);
+        await setNotificationDetails(fid, appFid, event.notificationDetails);
         await sendFarcasterNotification({
           fid,
           title: `Welcome to Control the Stream!`,
@@ -60,19 +102,19 @@ export async function POST(request: NextRequest) {
           notificationDetails: event.notificationDetails,
         });
       } else {
-        await deleteUserNotificationDetails(fid);
+        await deleteNotificationDetails(fid, appFid);
       }
 
       break;
     case "miniapp_removed": {
       console.log("[webhook/farcaster] miniapp_removed", event);
-      await deleteUserNotificationDetails(fid);
+      await deleteNotificationDetails(fid, appFid);
 
       break;
     }
     case "notifications_enabled": {
       console.log("[webhook/farcaster] notifications_enabled", event);
-      await setUserNotificationDetails(fid, event.notificationDetails);
+      await setNotificationDetails(fid, appFid, event.notificationDetails);
 
       await sendFarcasterNotification({
         fid,
@@ -84,7 +126,7 @@ export async function POST(request: NextRequest) {
     }
     case "notifications_disabled": {
       console.log("[webhook/farcaster] notifications_disabled", event);
-      await deleteUserNotificationDetails(fid);
+      await deleteNotificationDetails(fid, appFid);
 
       break;
     }

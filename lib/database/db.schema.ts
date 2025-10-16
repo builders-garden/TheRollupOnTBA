@@ -207,6 +207,9 @@ export const userTable = sqliteTable(
     farcasterNotificationDetails: text("farcaster_notification_details", {
       mode: "json",
     }).$type<MiniAppNotificationDetails | null>(),
+    baseNotificationDetails: text("base_notification_details", {
+      mode: "json",
+    }).$type<MiniAppNotificationDetails | null>(),
     farcasterWallets: text("farcaster_wallets", { mode: "json" }).$type<
       Address[]
     >(),

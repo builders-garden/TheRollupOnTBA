@@ -44,12 +44,46 @@ export const ToastNotification = ({
     },
   } as const;
 
-  return (
-    <AnimatePresence mode="popLayout" initial={false}>
-      <motion.div
-        {...motionProps}
-        className="bg-[#1B2541] rounded-3xl shadow-lg p-4 flex flex-col justify-center items-center gap-2 min-w-[500px] border-8 border-[#E6B45E] font-overused-grotesk cursor-default">
-        <div className="flex justify-start items-center gap-3 w-full">
+  if (data.customMessage) {
+    return (
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          {...motionProps}
+          className="bg-[#1B2541] rounded-3xl shadow-lg p-4 flex flex-col justify-center items-center gap-3 min-w-[500px] border-8 border-[#E6B45E] font-overused-grotesk cursor-default">
+          <div className="flex justify-start items-center gap-3 w-full">
+            <img
+              src={data.profilePicture}
+              alt={data.username}
+              className="w-8 h-8 rounded-full object-cover shrink-0"
+            />
+            <div className="flex justify-start items-center gap-2 text-white overflow-hidden w-full">
+              <p className="text-lg font-medium truncate">
+                {data.username}{" "}
+                {data.text && (
+                  <span className="shrink-0 font-normal pr-1 italic">
+                    {data.text}
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+
+          {data.customMessage && (
+            <div className="flex justify-center items-center gap-3 w-full">
+              <p className="text-white text-2xl font-medium italic">
+                &quot;{data.customMessage}&quot;
+              </p>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    );
+  } else {
+    return (
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          {...motionProps}
+          className="bg-[#1B2541] rounded-3xl shadow-lg p-4 flex justify-start items-center gap-3 min-w-[500px] border-8 border-[#E6B45E] font-overused-grotesk cursor-default">
           <img
             src={data.profilePicture}
             alt={data.username}
@@ -63,16 +97,8 @@ export const ToastNotification = ({
               )}
             </p>
           </div>
-        </div>
-
-        {data.customMessage && (
-          <div className="flex justify-center items-center gap-3 w-full">
-            <p className="text-white text-lg italic">
-              &quot;{data.customMessage}&quot;
-            </p>
-          </div>
-        )}
-      </motion.div>
-    </AnimatePresence>
-  );
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
 };

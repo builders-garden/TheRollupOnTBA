@@ -129,6 +129,7 @@ export const WebAppTips = ({
         throw error;
       }
     } catch (error) {
+      toast.error("Payment of tip failed");
       console.log(
         `Payment failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );

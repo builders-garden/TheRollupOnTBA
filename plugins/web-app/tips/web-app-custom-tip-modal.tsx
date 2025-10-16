@@ -1,28 +1,16 @@
 import { AnimatePresence, motion } from "motion/react";
-import {
-  CensorContext,
-  englishDataset,
-  englishRecommendedTransformers,
-  RegExpMatcher,
-  TextCensor,
-} from "obscenity";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NBButton } from "@/components/custom-ui/nb-button";
 import { NBModal } from "@/components/custom-ui/nb-modal";
+import { useAiTextCensor } from "@/hooks/use-ai-text-censor";
+import { censorTextLocally } from "@/lib/ai-censor";
 import {
   MAX_TIP_CUSTOM_MESSAGE_LENGTH,
   MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE,
 } from "@/lib/constants";
+import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
-
-// Obscenity matcher and censor for filtering custom text from slurs and other bad words
-const matcher = new RegExpMatcher({
-  ...englishDataset.build(),
-  ...englishRecommendedTransformers,
-});
-const asteriskStrategy = (ctx: CensorContext) => "*".repeat(ctx.matchLength);
-const censor = new TextCensor().setStrategy(asteriskStrategy);
 
 interface WebAppCustomTipModalProps {
   customTipButton: {
@@ -51,6 +39,10 @@ export const WebAppCustomTipModal = ({
 
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
+
+  const { mutate: censorTextWithAI } = useAiTextCensor(
+    AuthTokenType.WEB_APP_AUTH_TOKEN,
+  );
 
   // Whether the custom amount is over the minimum amount for a custom message
   const isAmountOverTheMinimum =
@@ -90,17 +82,21 @@ export const WebAppCustomTipModal = ({
     }
 
     // Filter custom text from slurs and other bad words
-    const matches = matcher.getAllMatches(customText);
-    const censoredText = censor.applyTo(customText, matches);
-
-    await handleTipPayment(amount, censoredText);
-    setIsCustomTipModalOpen(false);
-    setTimeout(() => {
-      setCustomAmount("");
-      setCustomText("");
-      setIsEditingAmount(false);
-      setIsEditingCustomText(false);
-    }, 300);
+    censorTextWithAI(
+      { text: customText },
+      {
+        onSuccess: async (data) => {
+          const censoredText = data.censoredText;
+          await handleTipPayment(amount, censoredText);
+          handleCustomTipModalOpen();
+        },
+        onError: async () => {
+          const censoredText = censorTextLocally(customText);
+          await handleTipPayment(amount, censoredText);
+          handleCustomTipModalOpen();
+        },
+      },
+    );
   };
 
   return (

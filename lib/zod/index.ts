@@ -14,6 +14,7 @@ export const env = createEnv({
     PINATA_JWT_SECRET: z.string().min(1),
     YOUTUBE_API_KEY: z.string().min(1),
     BACKEND_SECRET: z.string().min(1),
+    OPENAI_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_ENV: z

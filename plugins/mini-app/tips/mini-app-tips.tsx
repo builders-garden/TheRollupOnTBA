@@ -177,10 +177,10 @@ export const MiniAppTips = ({
         console.log("Base payment status:", status);
       }
     } catch (error) {
+      toast.error("Payment of tip failed");
       console.log(
         `Payment failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
-      // You can add error notification here
     } finally {
       setIsProcessing(false);
     }

@@ -13,7 +13,7 @@ import {
   setUserBaseNotificationDetails,
   setUserFarcasterNotificationDetails,
 } from "@/lib/database/queries";
-import { sendFarcasterNotification } from "@/lib/utils/farcaster-notification";
+import { sendNotification } from "@/lib/utils/farcaster-notification";
 
 /**
  * A function to delete the notification details for a user given the Farcaster FID and the app FID
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     case "miniapp_added":
       if (event.notificationDetails) {
         await setNotificationDetails(fid, appFid, event.notificationDetails);
-        await sendFarcasterNotification({
+        await sendNotification({
           fid,
           title: `Welcome to Control the Stream!`,
           body: `Enjoy your favourite streams and interact with them in real time!`,
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       console.log("[webhook/farcaster] notifications_enabled", event);
       await setNotificationDetails(fid, appFid, event.notificationDetails);
 
-      await sendFarcasterNotification({
+      await sendNotification({
         fid,
         title: `Ding ding dong`,
         body: `Thank you for enabling notifications for Control the Stream!`,

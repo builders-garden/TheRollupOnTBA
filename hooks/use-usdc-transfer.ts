@@ -1,15 +1,22 @@
-import { writeContract } from "@wagmi/core";
+import { Config, writeContract } from "@wagmi/core";
 import { useState } from "react";
 import { erc20Abi, parseUnits } from "viem";
+import { useAccount } from "wagmi";
 import { BASE_USDC_ADDRESS } from "@/lib/constants";
-import { wagmiConfigWebApp } from "@/lib/reown";
 
 interface UseUsdcTransferProps {
   amount: string; // Amount in USDC (e.g., "1" for 1 USDC) - required
   receiver: string; // Address to receive USDC - required
+  wagmiConfig: Config;
 }
 
-export const useUsdcTransfer = ({ amount, receiver }: UseUsdcTransferProps) => {
+export const useUsdcTransfer = ({
+  amount,
+  receiver,
+  wagmiConfig,
+}: UseUsdcTransferProps) => {
+  const { address } = useAccount();
+
   // State for tracking the call
   const [txHash, setTxHash] = useState<string | undefined>();
   const [isPending, setIsPending] = useState(false);
@@ -37,8 +44,13 @@ export const useUsdcTransfer = ({ amount, receiver }: UseUsdcTransferProps) => {
       // Parse the amount to USDC decimals (6 decimals for USDC)
       const parsedAmount = parseUnits(finalAmount, 6);
 
+      console.log("address", address);
+      console.log("finalReceiver", finalReceiver);
+      console.log("parsedAmount", parsedAmount);
+      console.log("BASE_USDC_ADDRESS", BASE_USDC_ADDRESS);
+
       // Send the call
-      const result = await writeContract(wagmiConfigWebApp, {
+      const result = await writeContract(wagmiConfig, {
         abi: erc20Abi,
         functionName: "transfer",
         args: [finalReceiver as `0x${string}`, parsedAmount],

@@ -12,6 +12,7 @@ import {
 } from "@/lib/constants";
 import { TipSettings } from "@/lib/database/db.schema";
 import { AuthTokenType, PopupPositions } from "@/lib/enums";
+import { wagmiConfigWebApp } from "@/lib/reown";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
 import { WebAppCustomTipModal } from "./web-app-custom-tip-modal";
@@ -62,6 +63,7 @@ export const WebAppTips = ({
   } = useUsdcTransfer({
     amount: "1", // Default value
     receiver: tipSettings.payoutAddress || "",
+    wagmiConfig: wagmiConfigWebApp,
   });
 
   // Handle tip payment

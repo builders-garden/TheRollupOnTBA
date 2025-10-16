@@ -18,6 +18,7 @@ import { AuthTokenType, PopupPositions } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
 import { MiniAppCustomTipModal } from "./mini-app-custom-tip-modal";
+import { wagmiConfigMiniApp } from "@/lib/reown";
 
 interface MiniAppTipsProps {
   label?: string;
@@ -65,6 +66,7 @@ export const MiniAppTips = ({
   } = useUsdcTransfer({
     amount: "1", // Default value
     receiver: tipSettings.payoutAddress || "",
+    wagmiConfig: wagmiConfigMiniApp,
   });
 
   // Handle tip payment

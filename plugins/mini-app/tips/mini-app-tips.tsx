@@ -42,8 +42,8 @@ interface MiniAppTipsProps {
   };
   tipSettings: TipSettings;
   user?: User;
-  brandName: string;
-  brandSlug: string;
+  brandName?: string;
+  brandSlug?: string;
 }
 
 export const MiniAppTips = ({
@@ -118,8 +118,8 @@ export const MiniAppTips = ({
                   label: "Share",
                   onClick: () => {
                     createFarcasterIntentUrl(
-                      `I just tipped ${amount} to ${brandName}!`,
-                      `${env.NEXT_PUBLIC_URL}/${brandSlug}`,
+                      `I just tipped ${amount} ${brandName ? `to ${brandName}` : "on ControlTheStream"}!`,
+                      `${env.NEXT_PUBLIC_URL}${brandSlug ? `/${brandSlug}` : ""}`,
                     );
                   },
                 },
@@ -189,8 +189,8 @@ export const MiniAppTips = ({
             ),
             onClick: () => {
               createFarcasterIntentUrl(
-                `I just tipped ${amount} to ${brandName}!`,
-                `${env.NEXT_PUBLIC_URL}/${brandSlug}`,
+                `I just tipped ${amount} ${brandName ? `to ${brandName}` : "on ControlTheStream"}!`,
+                `${env.NEXT_PUBLIC_URL}${brandSlug ? `/${brandSlug}` : ""}`,
               );
             },
           },

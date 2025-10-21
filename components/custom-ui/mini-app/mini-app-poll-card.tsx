@@ -331,8 +331,8 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
           ),
           onClick: () => {
             createFarcasterIntentUrl(
-              `I just voted a poll in ${brand.name}'s livestream!`,
-              `${env.NEXT_PUBLIC_URL}/${brand.slug}`,
+              `I just voted a poll in ${brand.name ? `${brand.name}'s` : "a"} livestream!`,
+              `${env.NEXT_PUBLIC_URL}${brand.slug ? `/${brand.slug}` : ""}`,
             );
           },
         },

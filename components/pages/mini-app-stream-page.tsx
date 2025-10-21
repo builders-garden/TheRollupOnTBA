@@ -182,6 +182,8 @@ export const MiniAppStreamPage = () => {
             }}
             tipSettings={brand.tipSettings.data}
             user={user.data}
+            brandName={brand.data?.name}
+            brandSlug={brand.data?.slug}
           />
         )}
 

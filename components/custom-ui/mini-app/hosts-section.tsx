@@ -38,13 +38,13 @@ export const HostsSection = ({
       <div className="sm:flex sm:justify-start sm:items-center grid grid-cols-4 w-full gap-4">
         {hosts.map((host) => (
           <div
-            key={host.fid}
+            key={host.farcasterFid}
             className="flex flex-col justify-start items-center cursor-pointer gap-2 shrink-0"
             onClick={() =>
-              handleOpenFarcasterProfile(host.farcasterUsername, host.fid)
+              handleOpenFarcasterProfile(host.farcasterUsername, host.farcasterFid)
             }>
             <Image
-              src={host.avatarUrl || ""}
+              src={host.farcasterAvatarUrl || ""}
               alt={host.farcasterUsername || ""}
               width={244}
               height={244}

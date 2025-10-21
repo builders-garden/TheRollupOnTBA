@@ -30,7 +30,7 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
     if (!brandId) return;
     setIsDeleting(true);
     deleteHost(
-      { brandId: host.brandId, fid: host.fid },
+      { brandId: host.brandId, fid: host.farcasterFid },
       {
         onSuccess: async () => {
           await refetchHosts();
@@ -56,9 +56,9 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
         ease: "easeInOut",
         layout: { duration: 0.185, ease: "easeOut" },
       }}>
-      <NBCard key={host.fid} className="gap-3 bg-white">
+      <NBCard key={host.farcasterFid} className="gap-3 bg-white">
         <Image
-          src={host.avatarUrl || ""}
+          src={host.farcasterAvatarUrl || ""}
           alt={host.farcasterUsername || ""}
           priority
           width={256}
@@ -67,7 +67,7 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
         />
         <div className="flex flex-col justify-start items-center gap-0.5">
           <p className="text-lg font-bold">{host.farcasterDisplayName}</p>
-          <p className="text-sm opacity-50 font-bold">{host.fid.toString()}</p>
+          <p className="text-sm opacity-50 font-bold">{host.farcasterFid.toString()}</p>
         </div>
         <NBButton
           className="w-full bg-destructive h-[42px]"

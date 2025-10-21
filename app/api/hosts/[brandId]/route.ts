@@ -57,7 +57,7 @@ export const POST = async (req: NextRequest) => {
     const hosts = await getHostsByBrandId(data.brandId);
 
     // Check if the host already exists
-    if (hosts.some((host) => host.fid === data.fid)) {
+    if (hosts.some((host) => host.farcasterFid === data.farcasterFid)) {
       return NextResponse.json({
         success: false,
         error: "Host already exists",

@@ -45,11 +45,11 @@ export const NewfoundFarcasterUser = ({
     setIsCreatingFromThisUser(true);
     setIsCreatingHost(true);
     const newHostData = {
-      fid: farcasterUser.fid,
+      farcasterFid: farcasterUser.fid,
       brandId: brandId,
       farcasterUsername: farcasterUser.username,
       farcasterDisplayName: farcasterUser.display_name,
-      avatarUrl: farcasterUser.pfp_url,
+      farcasterAvatarUrl: farcasterUser.pfp_url,
       custodyAddress: farcasterUser.custody_address,
     };
 

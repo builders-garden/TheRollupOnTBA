@@ -55,7 +55,7 @@ export const HostsSearchModal = ({
           // Filter out farcaster users that are already added as hosts
           const cleanedFarcasterUsers = response.users.filter(
             (farcasterUser) =>
-              !addedHosts.some((host) => host.fid === farcasterUser.fid),
+              !addedHosts.some((host) => host.farcasterFid === farcasterUser.fid),
           );
           setFetchedFarcasterUsers(cleanedFarcasterUsers);
         }

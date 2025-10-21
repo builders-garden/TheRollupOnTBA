@@ -228,10 +228,13 @@ export type UpdateFarcasterUser = Partial<CreateFarcasterUser>;
  * Hosts table
  */
 export const hostsTable = sqliteTable("hosts", {
-  fid: integer("fid").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => ulid()),
+  farcasterFid: integer("farcaster_fid").notNull(),
   farcasterUsername: text("farcaster_username"),
   farcasterDisplayName: text("farcaster_display_name"),
-  avatarUrl: text("avatar_url"),
+  farcasterAvatarUrl: text("farcaster_avatar_url"),
   custodyAddress: text("custody_address"),
   brandId: text("brand_id")
     .notNull()

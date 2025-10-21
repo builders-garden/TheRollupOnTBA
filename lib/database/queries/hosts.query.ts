@@ -37,5 +37,7 @@ export const deleteHostByFidAndBrandId = async (
 ): Promise<void> => {
   await db
     .delete(hostsTable)
-    .where(and(eq(hostsTable.fid, fid), eq(hostsTable.brandId, brandId)));
+    .where(
+      and(eq(hostsTable.farcasterFid, fid), eq(hostsTable.brandId, brandId)),
+    );
 };

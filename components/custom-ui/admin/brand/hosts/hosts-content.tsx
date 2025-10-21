@@ -60,7 +60,7 @@ export const HostsContent = () => {
                 hosts.data.length > 0 &&
                 hosts.data.map((host, index) => (
                   <AddedHost
-                    key={host.fid}
+                    key={host.farcasterFid}
                     host={host}
                     index={index}
                     brandId={brandId}

@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -27,6 +27,8 @@ import {
 } from "@/lib/types/socket";
 import { User } from "@/lib/types/user.type";
 import { calculateTimeLeft, formatWalletAddress } from "@/lib/utils";
+import { createFarcasterIntentUrl } from "@/lib/utils/farcaster";
+import { env } from "@/lib/zod";
 import { MiniAppBullmeter } from "@/plugins/mini-app/bullmeter/mini-app-bullmeter";
 import { NBButton } from "../nb-button";
 import { NBModal } from "../nb-modal";
@@ -319,7 +321,24 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
           : undefined,
       });
 
-      toast.success("Vote submitted");
+      toast.success("Vote submitted", {
+        action: {
+          label: (
+            <div className="flex justify-center items-center gap-1.5">
+              <p>Share</p>
+              <ExternalLink className="size-3" />
+            </div>
+          ),
+          onClick: () => {
+            createFarcasterIntentUrl(
+              `I just voted a poll in ${brand.name}'s livestream!`,
+              `${env.NEXT_PUBLIC_URL}/${brand.slug}`,
+            );
+          },
+        },
+        duration: 10000, // 10 seconds
+      });
+
       startConfetti();
     } catch (error) {
       toast.error("Vote failed. Please try again.");

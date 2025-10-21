@@ -1,5 +1,6 @@
 import { getPaymentStatus, pay } from "@base-org/account";
 import { sdk } from "@farcaster/miniapp-sdk";
+import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
@@ -15,10 +16,12 @@ import {
 } from "@/lib/constants";
 import { TipSettings } from "@/lib/database/db.schema";
 import { AuthTokenType, PopupPositions } from "@/lib/enums";
+import { wagmiConfigMiniApp } from "@/lib/reown";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
+import { createFarcasterIntentUrl } from "@/lib/utils/farcaster";
+import { env } from "@/lib/zod";
 import { MiniAppCustomTipModal } from "./mini-app-custom-tip-modal";
-import { wagmiConfigMiniApp } from "@/lib/reown";
 
 interface MiniAppTipsProps {
   label?: string;
@@ -39,6 +42,8 @@ interface MiniAppTipsProps {
   };
   tipSettings: TipSettings;
   user?: User;
+  brandName: string;
+  brandSlug: string;
 }
 
 export const MiniAppTips = ({
@@ -48,6 +53,8 @@ export const MiniAppTips = ({
   tips,
   customTipButton,
   user,
+  brandName,
+  brandSlug,
 }: MiniAppTipsProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { tipSent } = useSocketUtils();
@@ -106,7 +113,18 @@ export const MiniAppTips = ({
                 tipAmount: amount.toString(),
                 customMessage: customTextToUse || "",
               });
-              toast.success("Tip sent successfully");
+              toast.success("Tip sent successfully", {
+                action: {
+                  label: "Share",
+                  onClick: () => {
+                    createFarcasterIntentUrl(
+                      `I just tipped ${amount} to ${brandName}!`,
+                      `${env.NEXT_PUBLIC_URL}/${brandSlug}`,
+                    );
+                  },
+                },
+                duration: 10000, // 10 seconds
+              });
               startConfetti();
 
               // Create a tip record in the database
@@ -161,7 +179,23 @@ export const MiniAppTips = ({
           tipAmount: amount.toString(),
           customMessage: customTextToUse || "",
         });
-        toast.success("Tip sent successfully");
+        toast.success("Tip sent successfully", {
+          action: {
+            label: (
+              <div className="flex justify-center items-center gap-1.5">
+                <p>Share</p>
+                <ExternalLink className="size-3" />
+              </div>
+            ),
+            onClick: () => {
+              createFarcasterIntentUrl(
+                `I just tipped ${amount} to ${brandName}!`,
+                `${env.NEXT_PUBLIC_URL}/${brandSlug}`,
+              );
+            },
+          },
+          duration: 10000, // 10 seconds
+        });
         startConfetti();
 
         // Create a tip record in the database

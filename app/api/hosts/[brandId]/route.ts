@@ -42,12 +42,14 @@ export const POST = async (req: NextRequest) => {
   try {
     const data = await req.json();
 
+    console.log("data", data);
+
     // Basic validation
-    if (!data.fid || !data.brandId) {
+    if (!data.farcasterFid || !data.brandId) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing required fields: fid, brandId",
+          error: "Missing required fields: farcasterFid, brandId",
         },
         { status: 400 },
       );

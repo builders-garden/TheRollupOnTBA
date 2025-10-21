@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { AVAILABLE_DURATIONS } from "@/lib/constants";
 import { Duration } from "@/lib/types/poll.type";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ export const FormDurationSelection = ({
 
       <div className="grid grid-cols-2 gap-2.5 w-full">
         {AVAILABLE_DURATIONS.map((duration) => (
-          <NBButton
+          <CTSButton
             key={duration.value}
             onClick={() => setSelectedDuration(duration)}
             className={cn(
@@ -38,11 +38,11 @@ export const FormDurationSelection = ({
             <p
               className={cn(
                 "text-base font-bold",
-                selectedDuration === duration && "text-white",
+                selectedDuration === duration && "text-foreground",
               )}>
               {duration.label}
             </p>
-          </NBButton>
+          </CTSButton>
         ))}
       </div>
     </div>

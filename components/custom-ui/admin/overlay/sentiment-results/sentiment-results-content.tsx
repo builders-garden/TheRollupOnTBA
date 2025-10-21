@@ -2,7 +2,7 @@ import { addSeconds } from "date-fns";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useSocket } from "@/hooks/use-socket";
@@ -99,7 +99,7 @@ export const SentimentResultsContent = () => {
             </p>
             <div className="grid grid-cols-3 gap-2.5 w-full">
               {AVAILABLE_POPUP_POSITIONS.map((position) => (
-                <NBButton
+                <CTSButton
                   key={position.value}
                   className={cn(
                     "w-full shrink-0",
@@ -109,11 +109,12 @@ export const SentimentResultsContent = () => {
                   <p
                     className={cn(
                       "text-base font-extrabold text-success",
-                      selectedPopupPosition === position.value && "text-white",
+                      selectedPopupPosition === position.value &&
+                        "text-foreground",
                     )}>
                     {position.label}
                   </p>
-                </NBButton>
+                </CTSButton>
               ))}
             </div>
           </div>
@@ -121,9 +122,9 @@ export const SentimentResultsContent = () => {
             <p className="text-base font-medium opacity-50">
               Test by clicking the button below
             </p>
-            <NBButton className="w-fit" onClick={handleTestPollNotification}>
+            <CTSButton className="w-fit" onClick={handleTestPollNotification}>
               <p className="text-base font-extrabold text-accent">Test Poll</p>
-            </NBButton>
+            </CTSButton>
           </div>
         </div>
         {/* Note: Toasts render at the viewport edge using Sonner. Use buttons above to test. */}

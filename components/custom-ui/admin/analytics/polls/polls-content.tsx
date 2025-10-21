@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import {
   Table,
   TableBody,
@@ -296,25 +296,25 @@ export const PollsContent = () => {
           {/* Pagination Controls */}
           {data?.pagination?.totalPages && data.pagination.totalPages > 0 ? (
             <div className="flex justify-center items-center gap-4 pt-4">
-              <NBButton
+              <CTSButton
                 variant="outline"
                 className="p-2"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}>
                 <ChevronLeft className="size-4" />
-              </NBButton>
+              </CTSButton>
 
               <span className="text-sm">
                 Page {data?.pagination.page} of {data?.pagination.totalPages}
               </span>
 
-              <NBButton
+              <CTSButton
                 variant="outline"
                 className="p-2"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data?.pagination.hasMore}>
                 <ChevronRight className="size-4" />
-              </NBButton>
+              </CTSButton>
             </div>
           ) : null}
         </motion.div>

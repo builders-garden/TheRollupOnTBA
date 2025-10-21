@@ -4,7 +4,7 @@ import { useAccount } from "wagmi";
 import { useUsdcBalance } from "@/hooks/use-usdc-balance";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
-import { NBButton } from "../nb-button";
+import { CTSButton } from "../cts-button";
 
 interface BottomNavbarProps {
   user: User;
@@ -30,7 +30,7 @@ export const BottomNavbar = ({ user }: BottomNavbarProps) => {
         isNavbarOpen && "bg-background/90",
       )}>
       <div className="flex justify-between items-center w-full">
-        <NBButton
+        <CTSButton
           className="rounded-full py-1 w-[106px] shrink-0"
           onClick={handleNavbarOpen}>
           <div className="flex justify-center items-center w-full gap-1.5">
@@ -47,7 +47,7 @@ export const BottomNavbar = ({ user }: BottomNavbarProps) => {
               ${Number(usdcBalance?.formatted).toFixed(1)}
             </p>
           </div>
-        </NBButton>
+        </CTSButton>
         <div className="flex justify-center items-center w-full gap-1.5 flex-shrink-1">
           <motion.div
             animate={{ scale: isNavbarOpen ? 1 : 0 }}

@@ -73,8 +73,10 @@ export const TextDescriptionArea = ({
       {/* Label and edit button */}
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center gap-2.5">
-          <Text className="size-5" />
-          <p className="text-base font-bold">Description ({limit} chars)</p>
+          <Text className="size-5 text-muted-foreground" />
+          <p className="text-base font-bold text-muted-foreground">
+            Description ({limit} chars)
+          </p>
         </div>
         <AnimatePresence mode="wait">
           {!isEditing ? (
@@ -90,7 +92,10 @@ export const TextDescriptionArea = ({
               className="shrink-0 cursor-pointer"
               onClick={handleEdit}>
               <SquarePen
-                className={cn("size-5", isUpdating && "animate-pulse")}
+                className={cn(
+                  "size-5 text-muted-foreground",
+                  isUpdating && "animate-pulse",
+                )}
               />
             </motion.button>
           ) : (
@@ -107,7 +112,12 @@ export const TextDescriptionArea = ({
                 whileTap={{ scale: isUpdating ? 1 : 0.95 }}
                 className="cursor-pointer"
                 onClick={handleCancel}>
-                <X className={cn("size-5", isUpdating && "animate-pulse")} />
+                <X
+                  className={cn(
+                    "size-5 text-muted-foreground",
+                    isUpdating && "animate-pulse",
+                  )}
+                />
               </motion.button>
               <motion.button
                 disabled={isUpdating}
@@ -138,7 +148,7 @@ export const TextDescriptionArea = ({
           onChange={(e) => {
             setEditingDescription(e.target.value.slice(0, limit));
           }}
-          className="w-full h-[155px] rounded-[12px] border-[1px] border-accent p-2.5 bg-white text-base focus-visible:ring-accent/40 focus-visible:ring-[2px] disabled:opacity-100 disabled:cursor-default resize-none transition-all duration-300"
+          className="w-full h-[155px] rounded-[12px] border-[1px] border-muted focus-visible:border-muted-foreground/40 p-2.5 text-base focus-visible:ring-muted-foreground/40 focus-visible:ring-[2px] disabled:opacity-100 disabled:cursor-default resize-none transition-all duration-300"
         />
         <p className="text-xs text-muted-foreground mt-[1px] ml-1">
           {editingDescription.length}/{limit} characters

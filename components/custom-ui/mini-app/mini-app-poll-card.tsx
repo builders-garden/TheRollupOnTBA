@@ -30,8 +30,8 @@ import { calculateTimeLeft, formatWalletAddress } from "@/lib/utils";
 import { createFarcasterIntentUrl } from "@/lib/utils/farcaster";
 import { env } from "@/lib/zod";
 import { MiniAppBullmeter } from "@/plugins/mini-app/bullmeter/mini-app-bullmeter";
-import { NBButton } from "../nb-button";
-import { NBModal } from "../nb-modal";
+import { CTSButton } from "../cts-button";
+import { CTSModal } from "../cts-modal";
 
 interface MiniAppPollCardProps {
   brand: Brand;
@@ -371,7 +371,7 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
       )}
 
       {/* Bullmeter Approve Modal */}
-      <NBModal
+      <CTSModal
         trigger={<div />}
         isOpen={isApproveModalOpen}
         setIsOpen={setIsApproveModalOpen}
@@ -403,7 +403,7 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
         </div>
 
         <div className="flex flex-col justify-center items-center w-full mt-2 gap-5">
-          <NBButton
+          <CTSButton
             className="w-full bg-accent h-[42px]"
             disabled={isApproving || isVoting || !showPoll}
             onClick={async () => {
@@ -417,7 +417,7 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
               {!showPoll ? (
                 <motion.p
                   key="approve-and-vote-text"
-                  className="text-base font-extrabold text-white">
+                  className="text-base font-extrabold text-foreground">
                   Poll is closed
                 </motion.p>
               ) : isApproving || isVoting ? (
@@ -427,24 +427,24 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.p
                   key="approve-and-vote-text"
-                  className="text-base font-extrabold text-white">
+                  className="text-base font-extrabold text-foreground">
                   Approve and Vote
                 </motion.p>
               )}
             </AnimatePresence>
-          </NBButton>
+          </CTSButton>
           <button
             className="text-base font-bold text-black cursor-pointer"
             onClick={() => setIsApproveModalOpen(false)}>
             Cancel
           </button>
         </div>
-      </NBModal>
+      </CTSModal>
     </div>
   );
 };

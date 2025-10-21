@@ -12,7 +12,7 @@ import {
   getEnsName,
 } from "@/lib/ens/client";
 import { AuthTokenType } from "@/lib/enums";
-import { NBTextInput } from "../info/nb-text-input";
+import { CTSTextInput } from "../info/cts-text-input";
 import { AdminsTable } from "./admins-table";
 
 export const AccessContent = () => {
@@ -161,7 +161,7 @@ export const AccessContent = () => {
               Select the admins that can access and edit your brand
             </h1>
             <div className="flex flex-col gap-2.5 w-1/2">
-              <NBTextInput
+              <CTSTextInput
                 label="New Admin"
                 icon={<Wallet className="size-5" />}
                 placeholder="Add an address or a Base name..."

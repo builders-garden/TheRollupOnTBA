@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useCreateTip } from "@/hooks/use-tips";
@@ -145,7 +145,7 @@ export const WebAppTips = ({
       {showLabel && <h1 className="text-2xl font-bold">{label}</h1>}
       <div className="grid grid-cols-2 w-full gap-2.5">
         {tips.map((tip) => (
-          <NBButton
+          <CTSButton
             key={tip.amount}
             buttonColor={tip.buttonColor}
             onClick={() => handleTipPayment(tip.amount)}
@@ -154,7 +154,7 @@ export const WebAppTips = ({
             <p className={cn("text-lg font-extrabold", tip.textClassName)}>
               ${tip.amount}
             </p>
-          </NBButton>
+          </CTSButton>
         ))}
 
         {!!customTipButton && (

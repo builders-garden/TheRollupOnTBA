@@ -26,8 +26,8 @@ import {
 import { User } from "@/lib/types/user.type";
 import { calculateTimeLeft, formatWalletAddress } from "@/lib/utils";
 import { WebAppBullmeter } from "@/plugins/web-app/bullmeter/web-app-bullmeter";
-import { NBButton } from "../nb-button";
-import { NBModal } from "../nb-modal";
+import { CTSButton } from "../cts-button";
+import { CTSModal } from "../cts-modal";
 
 interface WebAppPollCardProps {
   brand: Brand;
@@ -373,7 +373,7 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
       </AnimatePresence>
 
       {/* Bullmeter Approve Modal */}
-      <NBModal
+      <CTSModal
         trigger={<div />}
         isOpen={isApproveModalOpen}
         setIsOpen={setIsApproveModalOpen}
@@ -405,7 +405,7 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
         </div>
 
         <div className="flex flex-col justify-center items-center w-full mt-2 gap-5">
-          <NBButton
+          <CTSButton
             className="w-full bg-accent h-[42px]"
             disabled={isApproving || isVoting || !showPoll}
             onClick={async () => {
@@ -423,24 +423,24 @@ export const WebAppPollCard = ({ brand, user }: WebAppPollCardProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.p
                   key="approve-and-vote-text"
-                  className="text-base font-extrabold text-white">
+                  className="text-base font-extrabold text-foreground">
                   Approve and Vote
                 </motion.p>
               )}
             </AnimatePresence>
-          </NBButton>
+          </CTSButton>
           <button
             className="text-base font-bold text-black cursor-pointer"
             onClick={() => setIsApproveModalOpen(false)}>
             Cancel
           </button>
         </div>
-      </NBModal>
+      </CTSModal>
     </div>
   );
 };

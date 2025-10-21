@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { usePinataIpfsUpload } from "@/hooks/use-pinata-ipfs";
 import { AuthTokenType } from "@/lib/enums";
-import { NBButton } from "../../../nb-button";
+import { CTSButton } from "../../../cts-button";
 
 interface FileUploadProps {
   brandLogoUrl?: string | null;
@@ -84,7 +84,7 @@ export const FileUpload = ({
     <div className="flex flex-col justify-start items-start gap-2.5 w-full">
       {/* Label and edit button */}
       <div className="flex justify-between items-center w-full">
-        <div className="flex justify-start items-center gap-2.5">
+        <div className="flex justify-start items-center gap-2.5 text-muted-foreground">
           <LucideImage className="size-5" />
           <p className="text-base font-bold">{label ?? "Logo"}</p>
         </div>
@@ -100,7 +100,7 @@ export const FileUpload = ({
               whileTap={{ scale: 0.95 }}
               onClick={handleFileUploadTrigger}
               className="cursor-pointer shrink-0">
-              <PenBoxIcon className="size-5" />
+              <PenBoxIcon className="size-5 text-muted-foreground" />
             </motion.button>
           )}
         </AnimatePresence>
@@ -138,11 +138,9 @@ export const FileUpload = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-start items-center w-full">
-              <NBButton
-                onClick={handleFileUploadTrigger}
-                className="w-full bg-accent">
-                <p className="text-base font-bold text-white">Upload</p>
-              </NBButton>
+              <CTSButton onClick={handleFileUploadTrigger} className="w-full">
+                <p className="text-base font-bold">Upload</p>
+              </CTSButton>
             </motion.div>
           ) : (
             <motion.div
@@ -151,13 +149,13 @@ export const FileUpload = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="flex justify-start items-center w-fit">
+              className="flex justify-center items-center w-full rounded-[12px] bg-card h-[172px] px-4">
               <Image
                 src={previewUrl}
                 alt={`${label ?? "Logo"} preview`}
                 width={100}
                 height={100}
-                className="w-fit h-[155px] object-contain"
+                className="w-fit h-[112px] object-contain"
               />
             </motion.div>
           )}

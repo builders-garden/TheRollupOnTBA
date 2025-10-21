@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { useCreateHost, useHostsByBrandId } from "@/hooks/use-hosts";
 import { AuthTokenType } from "@/lib/enums";
 import { NeynarUser } from "@/lib/types/neynar.type";
@@ -94,7 +94,7 @@ export const NewfoundFarcasterUser = ({
           </p>
         </div>
       </div>
-      <NBButton
+      <CTSButton
         onClick={() => {
           handleAddHost(farcasterUser);
         }}
@@ -108,7 +108,7 @@ export const NewfoundFarcasterUser = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15, ease: "easeInOut" }}>
-              <Loader2 className="size-4 text-white animate-spin" />
+              <Loader2 className="size-4 text-foreground animate-spin" />
             </motion.div>
           ) : (
             <motion.div
@@ -118,12 +118,12 @@ export const NewfoundFarcasterUser = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15, ease: "easeInOut" }}
               className="flex justify-center items-center gap-1.5">
-              <Plus className="size-4 text-white" />
-              <p className="text-sm text-white font-extrabold">Add Host</p>
+              <Plus className="size-4 text-foreground" />
+              <p className="text-sm text-foreground font-extrabold">Add Host</p>
             </motion.div>
           )}
         </AnimatePresence>
-      </NBButton>
+      </CTSButton>
     </motion.div>
   );
 };

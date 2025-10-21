@@ -3,7 +3,7 @@ import { ArrowDownUp, ChartColumn } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import {
   BASE_USDC_ADDRESS,
@@ -143,21 +143,21 @@ export const MiniAppFeaturedTokens = ({
               </p>
             </div>
             <div className="flex justify-end items-center w-full gap-2">
-              <NBButton
+              <CTSButton
                 onClick={() => handleSwapToken(token)}
                 className="bg-accent size-[24px] p-0 rounded-[4px]"
                 disabled={isProcessing}>
                 <ArrowDownUp
-                  className="size-4 shrink-0 text-white"
+                  className="size-4 shrink-0 text-foreground"
                   strokeWidth={1.5}
                 />
-              </NBButton>
-              <NBButton
+              </CTSButton>
+              <CTSButton
                 onClick={() => handleShowChart(token)}
                 className="size-[24px] p-0 rounded-[4px]"
                 disabled={isProcessing}>
                 <ChartColumn className="size-4 shrink-0" strokeWidth={1.5} />
-              </NBButton>
+              </CTSButton>
             </div>
           </div>
         ))}

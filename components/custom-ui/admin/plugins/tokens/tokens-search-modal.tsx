@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { isAddress } from "viem/utils";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBModal } from "@/components/custom-ui/nb-modal";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSModal } from "@/components/custom-ui/cts-modal";
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -158,16 +158,16 @@ export const TokensSearchModal = ({
   };
 
   return (
-    <NBModal
+    <CTSModal
       trigger={
-        <NBButton className="bg-accent w-[200px]" disabled={disabled}>
-          <div className="flex justify-center items-center w-full gap-1.5 text-white">
+        <CTSButton className="bg-accent w-[200px]" disabled={disabled}>
+          <div className="flex justify-center items-center w-full gap-1.5 text-foreground">
             <Plus className="size-4.5" />
             <p className="text-base font-extrabold text-nowrap">
               Add more tokens
             </p>
           </div>
-        </NBButton>
+        </CTSButton>
       }
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
@@ -297,7 +297,7 @@ export const TokensSearchModal = ({
 
       {/* Bottom modal buttons */}
       <div className="flex flex-col justify-center items-center w-full gap-5">
-        <NBButton
+        <CTSButton
           key="confirm"
           className="w-full bg-accent h-[42px]"
           disabled={selectedTokens.length === 0 || isCreatingFeaturedTokens}
@@ -310,7 +310,7 @@ export const TokensSearchModal = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <Loader2 className="size-5 text-white animate-spin" />
+                <Loader2 className="size-5 text-foreground animate-spin" />
               </motion.div>
             ) : (
               <motion.div
@@ -319,17 +319,19 @@ export const TokensSearchModal = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <p className="text-base text-white font-extrabold">Confirm</p>
+                <p className="text-base text-foreground font-extrabold">
+                  Confirm
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
-        </NBButton>
+        </CTSButton>
         <button
           className="text-base font-bold text-black cursor-pointer"
           onClick={() => setIsModalOpen(false)}>
           Cancel
         </button>
       </div>
-    </NBModal>
+    </CTSModal>
   );
 };

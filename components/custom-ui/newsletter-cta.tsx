@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useSubscribeNewsletter } from "@/hooks/use-subscribe-newsletter";
 import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
-import { NBButton } from "./nb-button";
+import { CTSButton } from "./cts-button";
 
 interface NewsletterCTAProps {
   label: string;
@@ -68,14 +68,14 @@ export const NewsletterCTA = ({
             }}
           />
         </div>
-        <NBButton
+        <CTSButton
           className="bg-accent w-fit"
           disabled={editingValue === "" || isPending}
           onClick={handleSubscribe}>
-          <p className="text-base font-extrabold text-white">
+          <p className="text-base font-extrabold text-foreground">
             {isPending ? "Subscribing..." : "Subscribe"}
           </p>
-        </NBButton>
+        </CTSButton>
       </div>
     </div>
   );

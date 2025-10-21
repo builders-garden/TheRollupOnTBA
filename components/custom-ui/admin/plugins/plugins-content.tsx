@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { PluginsTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
-import { NBButton } from "../../nb-button";
+import { CTSButton } from "../../cts-button";
 import { SentimentContent } from "./sentiment/sentiment-content";
 import { TipsContent } from "./tips/tips-content";
 import { TokensContent } from "./tokens/tokens-content";
@@ -25,7 +25,7 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
       className="flex flex-col justify-start items-center w-full">
       {/* Tabs Buttons */}
       <div className="flex justify-start items-center w-full py-5 px-2.5 gap-5 border-b-[1px] border-border">
-        <NBButton
+        <CTSButton
           className={cn("rounded-full w-fit", isTipsTab && "bg-accent")}
           variant={isTipsTab ? "default" : "outline"}
           showShadow={isTipsTab}
@@ -33,13 +33,13 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
           <div
             className={cn(
               "flex justify-start items-center w-full gap-2",
-              isTipsTab && "text-white",
+              isTipsTab && "text-foreground",
             )}>
             <Sparkle className="size-6" />
             <p className="text-xl font-bold">Tips</p>
           </div>
-        </NBButton>
-        <NBButton
+        </CTSButton>
+        <CTSButton
           className={cn("rounded-full w-fit", isSentimentTab && "bg-accent")}
           variant={isSentimentTab ? "default" : "outline"}
           showShadow={isSentimentTab}
@@ -47,13 +47,13 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
           <div
             className={cn(
               "flex justify-start items-center w-full gap-2",
-              isSentimentTab && "text-white",
+              isSentimentTab && "text-foreground",
             )}>
             <Sparkle className="size-6" />
             <p className="text-xl font-bold">Sentiment</p>
           </div>
-        </NBButton>
-        <NBButton
+        </CTSButton>
+        <CTSButton
           className={cn("rounded-full w-fit", isTokensTab && "bg-accent")}
           variant={isTokensTab ? "default" : "outline"}
           showShadow={isTokensTab}
@@ -61,12 +61,12 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
           <div
             className={cn(
               "flex justify-start items-center w-full gap-2",
-              isTokensTab && "text-white",
+              isTokensTab && "text-foreground",
             )}>
             <Sparkle className="size-6" />
             <p className="text-xl font-bold">Tokens</p>
           </div>
-        </NBButton>
+        </CTSButton>
       </div>
 
       {/* Plugins Content */}

@@ -5,7 +5,7 @@ import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useNotificationSubscriptionsAmount } from "@/hooks/use-notification-subscriptions";
 import { AuthTokenType } from "@/lib/enums";
-import { NBTextInput } from "../../brand/info/nb-text-input";
+import { CTSTextInput } from "../../brand/info/cts-text-input";
 import { SendNotificationModal } from "./send-notification-modal";
 
 export const SendContent = () => {
@@ -92,7 +92,7 @@ export const SendContent = () => {
           </div>
 
           <div className="flex flex-col justify-start items-start w-[44%] gap-6">
-            <NBTextInput
+            <CTSTextInput
               label="Title (32 chars)"
               icon={<PencilLine className="size-5" />}
               placeholder="Enter the notification title"
@@ -103,7 +103,7 @@ export const SendContent = () => {
               withConfirmButtons={false}
               showCharacterCount={true}
             />
-            <NBTextInput
+            <CTSTextInput
               label="Message (128 chars)"
               icon={<Text className="size-5" />}
               placeholder="Enter the notification body message"

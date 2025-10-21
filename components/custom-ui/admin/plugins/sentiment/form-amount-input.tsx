@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useState } from "react";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { cn } from "@/lib/utils";
 
 interface FormAmountInputProps {
@@ -41,7 +41,7 @@ export const FormAmountInput = ({
       {label && (
         <div className="flex justify-start items-center gap-2.5 w-full">
           <p className="text-base font-bold shrink-0 w-fit">{label}</p>
-          <NBButton
+          <CTSButton
             variant="outline"
             disabled={disabled}
             onClick={() => {
@@ -50,7 +50,7 @@ export const FormAmountInput = ({
             showShadow={false}
             className="w-fit px-2.5 py-0.5 rounded-full">
             <p className="text-xs font-extrabold">Default $0.01</p>
-          </NBButton>
+          </CTSButton>
         </div>
       )}
 

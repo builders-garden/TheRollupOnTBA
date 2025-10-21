@@ -66,7 +66,12 @@ const Links = ({
           onClick={(e) => {
             e.stopPropagation();
           }}>
-          <Image src="/socials/x_logo.svg" alt="X" width={20} height={20} />
+          <Image
+            src="/socials/x_logo_black.svg"
+            alt="X"
+            width={20}
+            height={20}
+          />
         </Link>
       )}
       {websiteUrl && (

@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useCreateTip } from "@/hooks/use-tips";
@@ -227,7 +227,7 @@ export const MiniAppTips = ({
       {showLabel && <h1 className="text-sm font-bold">{label}</h1>}
       <div className="grid grid-cols-4 w-full gap-2.5">
         {tips.map((tip) => (
-          <NBButton
+          <CTSButton
             key={tip.amount}
             buttonColor={tip.buttonColor}
             onClick={() => handleTipPayment(tip.amount)}
@@ -236,7 +236,7 @@ export const MiniAppTips = ({
             <p className={cn("text-base font-extrabold", tip.textClassName)}>
               ${tip.amount}
             </p>
-          </NBButton>
+          </CTSButton>
         ))}
 
         {!!customTipButton && (

@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBCard } from "@/components/custom-ui/nb-card";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSCard } from "@/components/custom-ui/cts-card";
 import { useDeleteHost, useHostsByBrandId } from "@/hooks/use-hosts";
 import { Host } from "@/lib/database/db.schema";
 import { AuthTokenType } from "@/lib/enums";
@@ -56,7 +56,7 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
         ease: "easeInOut",
         layout: { duration: 0.185, ease: "easeOut" },
       }}>
-      <NBCard key={host.farcasterFid} className="gap-3 bg-white">
+      <CTSCard key={host.farcasterFid} className="gap-3 bg-white">
         <Image
           src={host.farcasterAvatarUrl || ""}
           alt={host.farcasterUsername || ""}
@@ -67,9 +67,11 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
         />
         <div className="flex flex-col justify-start items-center gap-0.5">
           <p className="text-lg font-bold">{host.farcasterDisplayName}</p>
-          <p className="text-sm opacity-50 font-bold">{host.farcasterFid.toString()}</p>
+          <p className="text-sm opacity-50 font-bold">
+            {host.farcasterFid.toString()}
+          </p>
         </div>
-        <NBButton
+        <CTSButton
           className="w-full bg-destructive h-[42px]"
           onClick={handleDeleteHost}>
           <AnimatePresence mode="wait">
@@ -80,7 +82,7 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <Loader2 className="size-5 text-white animate-spin" />
+                <Loader2 className="size-5 text-foreground animate-spin" />
               </motion.div>
             ) : (
               <motion.div
@@ -89,12 +91,14 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <p className="text-base font-extrabold text-white">Remove</p>
+                <p className="text-base font-extrabold text-foreground">
+                  Remove
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
-        </NBButton>
-      </NBCard>
+        </CTSButton>
+      </CTSCard>
     </motion.div>
   );
 };

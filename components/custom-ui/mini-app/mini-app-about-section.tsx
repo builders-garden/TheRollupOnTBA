@@ -83,7 +83,7 @@ export const MiniAppAboutSection = ({
                     e.stopPropagation();
                   }}>
                   <Image
-                    src="/socials/x_logo.svg"
+                    src="/socials/x_logo_black.svg"
                     alt="X"
                     width={15}
                     height={15}

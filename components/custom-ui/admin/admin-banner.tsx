@@ -1,6 +1,5 @@
 import { Copy } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
 import { capitalizeFirstLetter, copyToClipboard } from "@/lib/utils";
@@ -13,23 +12,15 @@ interface AdminBannerProps {
 export const AdminBanner = ({ selectedPageContent }: AdminBannerProps) => {
   const { brand } = useAdminAuth();
   return (
-    <div className="relative flex justify-center items-center w-full border-b-[1px] border-border">
-      <Image
-        src="/images/admin_page_banner.svg"
-        alt="Admin page banner"
-        width={106}
-        height={73}
-        priority
-        className="h-auto w-full"
-      />
+    <div className="flex justify-between items-center w-full h-[73px]">
       <AnimatePresence mode="wait">
         <motion.h1
+          key={selectedPageContent}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          key={selectedPageContent}
-          className="font-bold text-4xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          className="font-bold text-4xl">
           {capitalizeFirstLetter(selectedPageContent)}
         </motion.h1>
       </AnimatePresence>
@@ -41,7 +32,7 @@ export const AdminBanner = ({ selectedPageContent }: AdminBannerProps) => {
           onClick={() => {
             copyToClipboard(env.NEXT_PUBLIC_URL + "/" + brand.data?.slug);
           }}
-          className="absolute flex justify-center items-center gap-1.5 right-6 top-1/2 -translate-y-1/2 bg-white/90 border border-border rounded-md px-3 py-1 text-[16px] font-medium cursor-pointer">
+          className="flex justify-center items-center gap-1.5 bg-foreground text-background border border-border rounded-md px-3 py-1 text-[16px] font-medium cursor-pointer">
           <p>
             Miniapp URL: {env.NEXT_PUBLIC_URL}/<b>{brand.data.slug}</b>
           </p>

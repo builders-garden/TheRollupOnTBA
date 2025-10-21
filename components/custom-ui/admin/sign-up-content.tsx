@@ -11,7 +11,7 @@ import { useCreateTipSettings } from "@/hooks/use-tip-settings";
 import { AuthTokenType } from "@/lib/enums";
 import { slugify } from "@/lib/utils";
 import { env } from "@/lib/zod";
-import { NBButton } from "../nb-button";
+import { CTSButton } from "../cts-button";
 
 export const SignUpContent = () => {
   const [brandName, setBrandName] = useState("");
@@ -201,7 +201,7 @@ export const SignUpContent = () => {
             </p>
           </motion.div>
 
-          <NBButton
+          <CTSButton
             className="bg-success h-[42px] w-full"
             disabled={isCreatingNewBrand || !brandName || !betaAccessKey}
             onClick={handleCreateBrand}>
@@ -213,7 +213,7 @@ export const SignUpContent = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -222,11 +222,13 @@ export const SignUpContent = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-base font-bold text-white">Create Brand</p>
+                  <p className="text-base font-bold text-foreground">
+                    Create Brand
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
-          </NBButton>
+          </CTSButton>
         </div>
       </div>
     </motion.div>

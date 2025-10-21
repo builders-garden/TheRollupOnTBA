@@ -1,7 +1,7 @@
 import { Trash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction } from "react";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { Switch } from "@/components/shadcn-ui/switch";
 import { Guest } from "@/lib/types/poll.type";
 import { cn } from "@/lib/utils";
@@ -107,11 +107,11 @@ export const GuestPayout = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}>
-              <NBButton
+              <CTSButton
                 onClick={handleAddGuest}
                 disabled={isGuestCountAtLimit || disabled}>
                 <p className="text-sm font-extrabold">Add guest</p>
-              </NBButton>
+              </CTSButton>
             </motion.div>
           )}
         </AnimatePresence>

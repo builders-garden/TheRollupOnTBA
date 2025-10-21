@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { FeaturedToken } from "@/lib/database/db.schema";
 import { User } from "@/lib/types/user.type";
 
@@ -21,7 +21,7 @@ export const WebAppFeaturedTokens = ({ tokens }: WebAppFeaturedTokensProps) => {
       <h1 className="text-2xl font-bold">Featured Tokens</h1>
       <div className="grid grid-cols-2 w-full gap-2.5">
         {tokens.map((token, index) => (
-          <NBButton
+          <CTSButton
             key={index}
             onClick={() => handleOpenTokenPage(token)}
             className="flex justify-between items-center w-full">
@@ -45,7 +45,7 @@ export const WebAppFeaturedTokens = ({ tokens }: WebAppFeaturedTokensProps) => {
                 ${token.symbol || token.name || ""}
               </p>
             </div>
-          </NBButton>
+          </CTSButton>
         ))}
       </div>
     </div>

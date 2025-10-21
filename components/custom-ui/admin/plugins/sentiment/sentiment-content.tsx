@@ -2,8 +2,8 @@ import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBCard } from "@/components/custom-ui/nb-card";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSCard } from "@/components/custom-ui/cts-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { useSentimentPollSocket } from "@/hooks/use-sentiment-poll-socket";
@@ -377,7 +377,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
         and see live sentiment results.
       </h1>
       {/* New poll form */}
-      <NBCard className="gap-5 w-[64%] p-5">
+      <CTSCard className="gap-5 w-[64%] p-5">
         <div className="flex flex-col gap-3 justify-center items-center w-full h-full p-2.5">
           <motion.div
             key="live-banner"
@@ -400,11 +400,11 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
             }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="flex justify-center items-center w-full">
-            <NBCard className="w-full bg-success rounded-full py-0.5">
-              <p className="text-2xl font-bold text-white">
+            <CTSCard className="w-full bg-success rounded-full py-0.5">
+              <p className="text-2xl font-bold text-foreground">
                 LIVE • {timeString} LEFT TO VOTE
               </p>
-            </NBCard>
+            </CTSCard>
           </motion.div>
           <div className="flex justify-between items-center gap-5 w-full">
             <div className="flex flex-col justify-start items-start gap-5 w-full">
@@ -432,7 +432,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
             />
           </div>
           <div className="flex justify-between items-center w-full gap-2.5">
-            <NBButton
+            <CTSButton
               className="w-full h-[42px]"
               disabled={isExtendingPoll || isTerminatingPoll || isCreatingPoll}
               onClick={isLive ? handleExtendLivePoll : handleReset}>
@@ -468,8 +468,8 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                   </motion.p>
                 )}
               </AnimatePresence>
-            </NBButton>
-            <NBButton
+            </CTSButton>
+            <CTSButton
               className="w-full bg-accent h-[42px]"
               disabled={
                 isConfirmButtonDisabled || isTerminatingPoll || isCreatingPoll
@@ -483,7 +483,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}>
-                    <Loader2 className="size-5 text-white animate-spin" />
+                    <Loader2 className="size-5 text-foreground animate-spin" />
                   </motion.div>
                 ) : isLive ? (
                   <motion.p
@@ -492,7 +492,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}
-                    className="text-base font-extrabold text-white">
+                    className="text-base font-extrabold text-foreground">
                     End voting
                   </motion.p>
                 ) : (
@@ -502,15 +502,15 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}
-                    className="text-base font-extrabold text-white">
+                    className="text-base font-extrabold text-foreground">
                     Confirm
                   </motion.p>
                 )}
               </AnimatePresence>
-            </NBButton>
+            </CTSButton>
           </div>
         </div>
-      </NBCard>
+      </CTSCard>
 
       {/* Polls history */}
       <PollsHistory

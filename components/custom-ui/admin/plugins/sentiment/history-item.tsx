@@ -96,14 +96,14 @@ export const HistoryItem = ({
             style={{
               width: `${bearWidth}%`,
             }}>
-            <p className="text-base font-extrabold text-white">
+            <p className="text-base font-extrabold text-foreground">
               {bearPercent}%
             </p>
           </div>
         )}
         {bullPercent > 0 && (
           <div className="flex flex-col w-full justify-center items-center border bg-success rounded-[12px] py-1 px-2.5 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <p className="text-base font-extrabold text-white">
+            <p className="text-base font-extrabold text-foreground">
               {bullPercent}%
             </p>
           </div>

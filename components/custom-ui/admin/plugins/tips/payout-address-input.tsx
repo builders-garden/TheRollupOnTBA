@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Address, isAddress } from "viem";
 import { CopyButton } from "@/components/custom-ui/copy-button";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useUpdateTipSettings } from "@/hooks/use-tip-settings";
 import {
@@ -232,14 +232,14 @@ export const PayoutAddressInput = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}>
-              <NBButton
+              <CTSButton
                 className="bg-success w-fit shrink-0"
                 disabled={isUpdating}
                 onClick={() => setEditingTextFieldValue(admin.baseName || "")}>
-                <p className="text-base font-extrabold text-white">
+                <p className="text-base font-extrabold text-foreground">
                   Set to connected account ({admin.baseName})
                 </p>
-              </NBButton>
+              </CTSButton>
             </motion.div>
           )}
         </AnimatePresence>

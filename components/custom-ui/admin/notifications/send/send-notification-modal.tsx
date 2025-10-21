@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBModal } from "@/components/custom-ui/nb-modal";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSModal } from "@/components/custom-ui/cts-modal";
 import { useCreateBrandNotification } from "@/hooks/use-brand-notifications";
 import { useSendBrandNotification } from "@/hooks/use-send-notification";
 import { Brand } from "@/lib/database/db.schema";
@@ -91,15 +91,15 @@ export const SendNotificationModal = ({
   };
 
   return (
-    <NBModal
+    <CTSModal
       trigger={
-        <NBButton
+        <CTSButton
           className="w-fit px-5 bg-accent h-[42px]"
           disabled={isSendingNotification}>
-          <p className="text-base font-extrabold text-white">
+          <p className="text-base font-extrabold text-foreground">
             Send Notifications
           </p>
-        </NBButton>
+        </CTSButton>
       }
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
@@ -133,7 +133,7 @@ export const SendNotificationModal = ({
       </div>
 
       <div className="flex flex-col justify-center items-center w-full gap-5">
-        <NBButton
+        <CTSButton
           key="confirm"
           onClick={handleSendNotifications}
           disabled={isSendingNotification}
@@ -146,7 +146,7 @@ export const SendNotificationModal = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <Loader2 className="size-5 text-white animate-spin" />
+                <Loader2 className="size-5 text-foreground animate-spin" />
               </motion.div>
             ) : (
               <motion.p
@@ -155,12 +155,12 @@ export const SendNotificationModal = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}
-                className="text-base font-extrabold text-white">
+                className="text-base font-extrabold text-foreground">
                 Send Notification
               </motion.p>
             )}
           </AnimatePresence>
-        </NBButton>
+        </CTSButton>
 
         <button
           className="text-base font-bold text-black cursor-pointer"
@@ -168,6 +168,6 @@ export const SendNotificationModal = ({
           Cancel
         </button>
       </div>
-    </NBModal>
+    </CTSModal>
   );
 };

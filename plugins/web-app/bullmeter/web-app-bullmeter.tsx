@@ -1,8 +1,8 @@
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBCard } from "@/components/custom-ui/nb-card";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSCard } from "@/components/custom-ui/cts-card";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 
@@ -95,7 +95,7 @@ export const WebAppBullmeter = ({
         className,
       )}>
       {showLabel && <h1 className="text-2xl font-bold">{label}</h1>}
-      <NBCard className={cn("w-full items-start gap-2.5", cardClassName)}>
+      <CTSCard className={cn("w-full items-start gap-2.5", cardClassName)}>
         <div className="flex flex-col justify-center items-start gap-1.5">
           <h1 className="text-2xl font-bold leading-7">{title}</h1>
           <div className="flex justify-start items-center gap-1.5">
@@ -116,7 +116,7 @@ export const WebAppBullmeter = ({
 
         <div className="flex justify-between items-center w-full gap-2.5">
           {/* Button 1 */}
-          <NBButton
+          <CTSButton
             onClick={() => {
               if (
                 button1VotesNumber >= MAX_VOTES - totalVotes ||
@@ -152,7 +152,7 @@ export const WebAppBullmeter = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -161,15 +161,15 @@ export const WebAppBullmeter = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-white text-2xl font-extrabold">
+                  <p className="text-foreground text-2xl font-extrabold">
                     {button1text}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
-          </NBButton>
+          </CTSButton>
           {/* Button 2 */}
-          <NBButton
+          <CTSButton
             onClick={() => {
               if (
                 button2VotesNumber >= MAX_VOTES - totalVotes ||
@@ -205,7 +205,7 @@ export const WebAppBullmeter = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -214,15 +214,15 @@ export const WebAppBullmeter = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-white text-2xl font-extrabold">
+                  <p className="text-foreground text-2xl font-extrabold">
                     {button2text}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
-          </NBButton>
+          </CTSButton>
         </div>
-      </NBCard>
+      </CTSCard>
     </motion.div>
   );
 };

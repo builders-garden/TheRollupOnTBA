@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBCard } from "@/components/custom-ui/nb-card";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSCard } from "@/components/custom-ui/cts-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import {
   useDeleteFeaturedToken,
@@ -82,7 +82,7 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
         ease: "easeInOut",
         layout: { duration: 0.185, ease: "easeOut" },
       }}>
-      <NBCard className="p-5 gap-2.5 flex-1 min-w-[300px]">
+      <CTSCard className="p-5 gap-2.5 flex-1 min-w-[300px]">
         {/* Visibility indicator */}
         <div className="flex justify-start items-center w-full gap-1">
           {isVisible ? (
@@ -145,7 +145,7 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
 
         {/* Delete and show/hide buttons */}
         <div className="flex justify-between items-center w-full gap-2.5">
-          <NBButton
+          <CTSButton
             className="w-full bg-destructive h-[42px]"
             onClick={handleDeleteToken}>
             <AnimatePresence mode="wait">
@@ -156,7 +156,7 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -165,12 +165,14 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-base font-extrabold text-white">Remove</p>
+                  <p className="text-base font-extrabold text-foreground">
+                    Remove
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
-          </NBButton>
-          <NBButton
+          </CTSButton>
+          <CTSButton
             className="w-full bg-accent h-[42px]"
             onClick={handleShowHideToken}>
             <AnimatePresence mode="wait">
@@ -181,7 +183,7 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -190,15 +192,15 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-base font-extrabold text-white">
+                  <p className="text-base font-extrabold text-foreground">
                     {isVisible ? "Hide" : "Show"}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
-          </NBButton>
+          </CTSButton>
         </div>
-      </NBCard>
+      </CTSCard>
     </motion.div>
   );
 };

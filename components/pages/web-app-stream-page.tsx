@@ -10,9 +10,9 @@ import { formatWalletAddress } from "@/lib/utils";
 import { env } from "@/lib/zod";
 import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
 import { WebAppTips } from "@/plugins/web-app/tips/web-app-tips";
+import { CTSButton } from "../custom-ui/cts-button";
+import { CTSCard } from "../custom-ui/cts-card";
 import { LogoutButton } from "../custom-ui/logout-button";
-import { NBButton } from "../custom-ui/nb-button";
-import { NBCard } from "../custom-ui/nb-card";
 import { ShareButton } from "../custom-ui/share-button";
 import { WebAppAboutSection } from "../custom-ui/web-app/web-app-about-section";
 import { WebAppPollCard } from "../custom-ui/web-app/web-app-poll-card";
@@ -165,7 +165,9 @@ export const WebAppStreamPage = () => {
                       )}
                       {lastYoutubeContent?.data?.isLive && (
                         <div className="absolute flex justify-center items-center -bottom-1 left-1/2 transform -translate-x-1/2 bg-destructive rounded-sm w-fit px-2 py-[1px]">
-                          <p className="text-base text-white font-bold">LIVE</p>
+                          <p className="text-base text-foreground font-bold">
+                            LIVE
+                          </p>
                         </div>
                       )}
                     </div>
@@ -212,7 +214,7 @@ export const WebAppStreamPage = () => {
 
       {/* Sidebar - fixed width and no scroll */}
       <div className="flex flex-col justify-center items-center min-h-screen h-screen w-[31%] pr-6 py-6">
-        <NBCard className="flex flex-col justify-between items-center h-full w-full bg-white p-5">
+        <CTSCard className="flex flex-col justify-between items-center h-full w-full bg-white p-5">
           <div className="flex flex-col justify-start items-start w-full h-full gap-5">
             <div className="flex justify-start items-center w-full gap-2.5">
               <Sparkles className="size-8 text-black" />
@@ -343,7 +345,7 @@ export const WebAppStreamPage = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
-                <NBButton
+                <CTSButton
                   onClick={() => signInWithWebApp()}
                   disabled={isSigningIn}
                   className="bg-accent w-full h-[42px]">
@@ -356,7 +358,7 @@ export const WebAppStreamPage = () => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
-                        <Loader2 className="size-5 text-white animate-spin" />
+                        <Loader2 className="size-5 text-foreground animate-spin" />
                       </motion.div>
                     ) : (
                       <motion.div
@@ -366,13 +368,13 @@ export const WebAppStreamPage = () => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
-                        <p className="text-base font-extrabold text-white">
+                        <p className="text-base font-extrabold text-foreground">
                           Sign message
                         </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </NBButton>
+                </CTSButton>
               </motion.div>
             ) : (
               <motion.div
@@ -382,7 +384,7 @@ export const WebAppStreamPage = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
-                <NBButton
+                <CTSButton
                   disabled={isSigningIn}
                   onClick={async () => {
                     setWasNotConnected(true);
@@ -398,7 +400,7 @@ export const WebAppStreamPage = () => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
-                        <Loader2 className="size-5 text-white animate-spin" />
+                        <Loader2 className="size-5 text-foreground animate-spin" />
                       </motion.div>
                     ) : (
                       <motion.div
@@ -408,17 +410,17 @@ export const WebAppStreamPage = () => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2, ease: "easeInOut" }}
                         className="flex justify-center items-center w-full gap-2">
-                        <p className="text-base font-extrabold text-white">
+                        <p className="text-base font-extrabold text-foreground">
                           Connect Wallet
                         </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </NBButton>
+                </CTSButton>
               </motion.div>
             )}
           </AnimatePresence>
-        </NBCard>
+        </CTSCard>
       </div>
     </motion.div>
   );

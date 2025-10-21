@@ -16,8 +16,8 @@ import {
   UpdateBrand,
 } from "@/lib/database/db.schema";
 import { AuthTokenType } from "@/lib/enums";
+import { CTSTextInput } from "./cts-text-input";
 import { FileUpload } from "./file-upload";
-import { NBTextInput } from "./nb-text-input";
 import { TextDescriptionArea } from "./text-description-area";
 
 interface BrandSocialFields {
@@ -66,7 +66,7 @@ export const InfoContent = () => {
       setValue: setYoutubeChannelId,
       infoLink: "https://support.google.com/youtube/answer/3250431?hl=en",
       infoLinkText: "How to get it?",
-      infoLinkClassName: "text-black",
+      infoLinkClassName: "text-muted-foreground",
     },
     {
       key: "twitchUrl",
@@ -82,7 +82,9 @@ export const InfoContent = () => {
     {
       key: "xUrl",
       label: "",
-      icon: <Image src="/socials/x_logo.svg" alt="X" width={18} height={18} />,
+      icon: (
+        <Image src="/socials/x_logo_black.svg" alt="X" width={18} height={18} />
+      ),
       placeholder: "https://x.com/username",
       value: xUrl,
       setValue: setXUrl,
@@ -158,7 +160,7 @@ export const InfoContent = () => {
         see during your stream
       </h1>
       <div className="grid grid-cols-4 gap-5 w-full">
-        <NBTextInput
+        <CTSTextInput
           label="Brand Name"
           icon={<Signature className="size-5" />}
           placeholder="Your brand's name here..."
@@ -188,7 +190,7 @@ export const InfoContent = () => {
       </div>
       <div className="grid grid-cols-4 gap-5 w-full">
         {socialFields.map((link) => (
-          <NBTextInput
+          <CTSTextInput
             key={link.key}
             label={link.label}
             inputColor={link.inputColor as "accent" | "destructive"}

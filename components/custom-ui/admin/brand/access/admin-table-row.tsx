@@ -2,7 +2,7 @@ import { Check, Copy, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { TableCell, TableRow } from "@/components/shadcn-ui/table";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useAdminsByBrandId, useDeleteAdmin } from "@/hooks/use-admins";
@@ -90,7 +90,7 @@ export const AdminTableRow = ({
       <TableCell>{admin.baseName}</TableCell>
       <TableCell>{admin.ensName}</TableCell>
       <TableCell className="flex items-center justify-center gap-3.5">
-        <NBButton
+        <CTSButton
           disabled={isCopying || hasCopied}
           onClick={() => {
             if (isCopying || hasCopied) return;
@@ -108,7 +108,7 @@ export const AdminTableRow = ({
                   duration: 0.15,
                   ease: "easeInOut",
                 }}>
-                <Loader2 className="size-5 text-white animate-spin" />
+                <Loader2 className="size-5 text-foreground animate-spin" />
               </motion.div>
             )}
             {hasCopied && (
@@ -121,7 +121,7 @@ export const AdminTableRow = ({
                   duration: 0.15,
                   ease: "easeInOut",
                 }}>
-                <Check className="size-5 text-white" />
+                <Check className="size-5 text-foreground" />
               </motion.div>
             )}
             {!isCopying && !hasCopied && (
@@ -134,14 +134,14 @@ export const AdminTableRow = ({
                   duration: 0.15,
                   ease: "easeInOut",
                 }}>
-                <Copy className="size-5 text-white" />
+                <Copy className="size-5 text-foreground" />
               </motion.div>
             )}
           </AnimatePresence>
-        </NBButton>
+        </CTSButton>
         {admin.address.toLowerCase() !==
           connectedAdmin.address?.toLowerCase() && (
-          <NBButton
+          <CTSButton
             onClick={() => handleRemove(admin.address)}
             disabled={
               isDeletingAdmin || isCreatingAdmin || isCopying || hasCopied
@@ -154,7 +154,7 @@ export const AdminTableRow = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}>
-                  <Loader2 className="size-5 text-white animate-spin" />
+                  <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -162,12 +162,12 @@ export const AdminTableRow = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-base font-extrabold text-white">
+                  className="text-base font-extrabold text-foreground">
                   Remove
                 </motion.div>
               )}
             </AnimatePresence>
-          </NBButton>
+          </CTSButton>
         )}
       </TableCell>
     </TableRow>

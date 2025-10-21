@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-interface NBTextInputProps {
+interface CTSTextInputProps {
   label: string;
   inputColor?: "accent" | "destructive";
   icon: React.ReactNode;
@@ -27,7 +27,7 @@ interface NBTextInputProps {
   showCharacterCount?: boolean;
 }
 
-export const NBTextInput = ({
+export const CTSTextInput = ({
   label,
   inputColor = "accent",
   icon,
@@ -44,7 +44,7 @@ export const NBTextInput = ({
   withConfirmButtons = true,
   className,
   showCharacterCount = false,
-}: NBTextInputProps) => {
+}: CTSTextInputProps) => {
   const [editingValue, setEditingValue] = useState(value);
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -113,7 +113,7 @@ export const NBTextInput = ({
           "flex justify-between items-center gap-2.5 w-full pr-1.5",
           isDestructive && "text-destructive",
         )}>
-        <div className="flex justify-start items-center gap-2.5 h-[24px]">
+        <div className="flex justify-start items-center gap-2.5 h-[24px] text-muted-foreground">
           {icon}
           <p className="text-base font-bold leading-0">{label}</p>
         </div>
@@ -128,8 +128,8 @@ export const NBTextInput = ({
 
       <div
         className={cn(
-          "flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300",
-          isEditing && "ring-[2px]",
+          "flex w-full justify-start items-center gap-2.5 rounded-full border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
+          isEditing && "ring-[2px] border-muted-foreground/40",
           isDestructive && "border-destructive ring-destructive/40",
         )}>
         <input
@@ -137,7 +137,7 @@ export const NBTextInput = ({
           type="text"
           placeholder={placeholder}
           disabled={isUpdating}
-          className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-base"
+          className="w-full h-full outline-none focus:ring-none text-base"
           value={editingValue}
           onFocus={handleActivateEditing}
           onBlur={() => {
@@ -174,7 +174,10 @@ export const NBTextInput = ({
                 className="shrink-0 cursor-pointer"
                 onClick={handleEdit}>
                 <SquarePen
-                  className={cn("size-5", isUpdating && "animate-pulse")}
+                  className={cn(
+                    "size-5 text-muted-foreground",
+                    isUpdating && "animate-pulse",
+                  )}
                 />
               </motion.button>
             ) : (
@@ -191,7 +194,12 @@ export const NBTextInput = ({
                   whileTap={{ scale: isUpdating ? 1 : 0.95 }}
                   className="cursor-pointer"
                   onClick={handleCancel}>
-                  <X className={cn("size-5", isUpdating && "animate-pulse")} />
+                  <X
+                    className={cn(
+                      "size-5 text-muted-foreground",
+                      isUpdating && "animate-pulse",
+                    )}
+                  />
                 </motion.button>
                 <motion.button
                   disabled={isUpdating}

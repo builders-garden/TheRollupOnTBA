@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBModal } from "@/components/custom-ui/nb-modal";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSModal } from "@/components/custom-ui/cts-modal";
 import { useAiTextCensor } from "@/hooks/use-ai-text-censor";
 import { censorTextLocally } from "@/lib/ai-censor";
 import {
@@ -100,9 +100,9 @@ export const WebAppCustomTipModal = ({
   };
 
   return (
-    <NBModal
+    <CTSModal
       trigger={
-        <NBButton
+        <CTSButton
           buttonColor={customTipButton.color}
           disabled={isProcessing || isTransferLoading}
           className={cn("w-full", customTipButton.buttonClassName)}>
@@ -113,7 +113,7 @@ export const WebAppCustomTipModal = ({
             )}>
             {customTipButton.text}
           </p>
-        </NBButton>
+        </CTSButton>
       }
       isOpen={isCustomTipModalOpen}
       setIsOpen={handleCustomTipModalOpen}
@@ -215,7 +215,7 @@ export const WebAppCustomTipModal = ({
       </div>
 
       <div className="flex flex-col justify-center items-center w-full gap-5">
-        <NBButton
+        <CTSButton
           key="confirm"
           className="w-full bg-accent"
           onClick={handleCustomTipPayment}
@@ -225,10 +225,10 @@ export const WebAppCustomTipModal = ({
             !customAmount ||
             parseFloat(customAmount) <= 0
           }>
-          <p className="text-base font-extrabold text-white">
+          <p className="text-base font-extrabold text-foreground">
             {isProcessing || isTransferLoading ? "Processing..." : "Confirm"}
           </p>
-        </NBButton>
+        </CTSButton>
 
         <button
           className="text-base font-bold text-black cursor-pointer"
@@ -236,6 +236,6 @@ export const WebAppCustomTipModal = ({
           Cancel
         </button>
       </div>
-    </NBModal>
+    </CTSModal>
   );
 };

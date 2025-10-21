@@ -2,8 +2,8 @@ import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBCard } from "@/components/custom-ui/nb-card";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSCard } from "@/components/custom-ui/cts-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useBullmeterClaim } from "@/hooks/use-bullmeter-claim";
 import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
@@ -173,21 +173,21 @@ export const PollsHistory = ({
         <p className="text-xl font-bold">History</p>
         <div className="flex items-center gap-3">
           {claimablePolls && claimablePolls.totalPolls > 0 && (
-            <NBCard className="bg-warning/20 border-warning/30 px-3 py-1">
+            <CTSCard className="bg-warning/20 border-warning/30 px-3 py-1">
               <p className="text-sm font-medium text-warning">
                 {claimablePolls.totalPolls} claimable poll
                 {claimablePolls.totalPolls !== 1 ? "s" : ""}
               </p>
-            </NBCard>
+            </CTSCard>
           )}
-          <NBButton
+          <CTSButton
             className="bg-warning hover:bg-warning/90 shrink-0"
             disabled={isClaiming}
             onClick={handleClaimAll}>
-            <p className="font-extrabold text-white">
+            <p className="font-extrabold text-foreground">
               {isClaiming ? "Claiming..." : "Claim All"}
             </p>
-          </NBButton>
+          </CTSButton>
         </div>
       </div>
 
@@ -237,23 +237,23 @@ export const PollsHistory = ({
             {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-4 mt-4">
-                <NBButton
+                <CTSButton
                   className="px-4 py-2 text-sm font-semibold"
                   disabled={currentPage === 1}
                   onClick={handlePreviousPage}>
                   Previous
-                </NBButton>
+                </CTSButton>
 
                 <p className="text-sm font-semibold">
                   {currentPage} of {totalPages}
                 </p>
 
-                <NBButton
+                <CTSButton
                   className="px-4 py-2 text-sm font-semibold"
                   disabled={currentPage === totalPages}
                   onClick={handleNextPage}>
                   Next
-                </NBButton>
+                </CTSButton>
               </div>
             )}
           </motion.div>

@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CopyButton } from "@/components/custom-ui/copy-button";
-import { NBButton } from "@/components/custom-ui/nb-button";
+import { CTSButton } from "@/components/custom-ui/cts-button";
 import { ToastNotification } from "@/components/custom-ui/toast/toast-notification";
 import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-notification";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
@@ -181,35 +181,35 @@ export const PopupsContent = () => {
                 Test popups by clicking the buttons below
               </p>
               <div className="grid grid-cols-5 gap-2.5 w-full">
-                <NBButton
+                <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("tip")}>
                   <p className="text-base font-extrabold text-accent">Tip</p>
-                </NBButton>
-                <NBButton
+                </CTSButton>
+                <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("tip-message")}>
                   <p className="text-base font-extrabold text-accent">
                     Tip with message
                   </p>
-                </NBButton>
-                <NBButton
+                </CTSButton>
+                <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("trade")}>
                   <p className="text-base font-extrabold text-accent">Trade</p>
-                </NBButton>
-                <NBButton
+                </CTSButton>
+                <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("vote")}>
                   <p className="text-base font-extrabold text-accent">Vote</p>
-                </NBButton>
-                <NBButton
+                </CTSButton>
+                <CTSButton
                   className="w-full shrink-0"
                   onClick={handleTestPollNotification}>
                   <p className="text-base font-extrabold text-accent">
                     Bull-Meter Poll
                   </p>
-                </NBButton>
+                </CTSButton>
               </div>
             </div>
           </div>

@@ -46,7 +46,7 @@ export default function AdminPage() {
               setSelectedPageContent={setSelectedPageContent}
             />
           </div>
-          <div className="flex flex-col justify-start items-center w-full">
+          <div className="flex flex-col justify-start items-center w-full py-5 pr-5">
             {/* Banner */}
             <AdminBanner selectedPageContent={selectedPageContent} />
 
@@ -79,8 +79,8 @@ export default function AdminPage() {
           <div className="flex flex-col items-center justify-center w-full px-10 gap-7">
             <div className="flex flex-col items-center justify-center w-full gap-4">
               <Image
-                src="/images/rollup_logo_black.png"
-                alt="The Rollup logo"
+                src="/images/cts_logo.svg"
+                alt="The Control The Stream logo"
                 width={560}
                 height={100}
                 priority

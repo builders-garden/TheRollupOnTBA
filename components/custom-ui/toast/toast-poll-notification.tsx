@@ -76,12 +76,12 @@ const ResultsBar = ({
           damping: 60,
           delay: 0.45,
         }}>
-        <span className="flex items-center gap-1 text-white font-overused-grotesk font-black text-2xl">
+        <span className="flex items-center gap-1 text-foreground font-overused-grotesk font-black text-2xl">
           <BearIcon className="w-8 h-8" />{" "}
           <NumberTicker
             value={normalizedBear}
             startValue={50}
-            className="whitespace-pre-wrap text-white font-overused-grotesk font-black text-2xl tracking-tighter shrink-0"
+            className="whitespace-pre-wrap text-foreground font-overused-grotesk font-black text-2xl tracking-tighter shrink-0"
             delay={0.45}
           />
           %
@@ -101,12 +101,12 @@ const ResultsBar = ({
           damping: 60,
           delay: 0.45,
         }}>
-        <span className="flex items-center gap-1 text-white font-overused-grotesk font-black text-2xl">
+        <span className="flex items-center gap-1 text-foreground font-overused-grotesk font-black text-2xl">
           <BullIcon className="w-8 h-8 fill-white" />{" "}
           <NumberTicker
             value={normalizedBull}
             startValue={50}
-            className="whitespace-pre-wrap text-white font-overused-grotesk font-black text-2xl tracking-tighter shrink-0"
+            className="whitespace-pre-wrap text-foreground font-overused-grotesk font-black text-2xl tracking-tighter shrink-0"
             delay={0.45}
           />
           %
@@ -242,7 +242,7 @@ export const ToastPollNotification = ({
           />
         ) : null}
 
-        <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 flex items-center justify-between gap-6 min-w-[1000px] min-h-[100px] border-4 border-[#E6B45E] font-grotesk text-white">
+        <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 flex items-center justify-between gap-6 min-w-[1000px] min-h-[100px] border-4 border-[#E6B45E] font-grotesk text-foreground">
           <div className="flex items-center gap-2 text-xl shrink-0">
             <BullIcon className="w-[34px] h-[34px] fill-[#4CAF50]" />
             <p className="shrink-0">or</p>
@@ -261,7 +261,7 @@ export const ToastPollNotification = ({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}
                   className="flex justify-center items-center w-full">
-                  <Loader2 className="size-6 text-white animate-spin" />
+                  <Loader2 className="size-6 text-foreground animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div className="flex flex-col items-center justify-center gap-0 w-full">

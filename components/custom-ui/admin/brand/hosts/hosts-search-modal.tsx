@@ -2,8 +2,8 @@ import ky from "ky";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { NBButton } from "@/components/custom-ui/nb-button";
-import { NBModal } from "@/components/custom-ui/nb-modal";
+import { CTSButton } from "@/components/custom-ui/cts-button";
+import { CTSModal } from "@/components/custom-ui/cts-modal";
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -55,7 +55,9 @@ export const HostsSearchModal = ({
           // Filter out farcaster users that are already added as hosts
           const cleanedFarcasterUsers = response.users.filter(
             (farcasterUser) =>
-              !addedHosts.some((host) => host.farcasterFid === farcasterUser.fid),
+              !addedHosts.some(
+                (host) => host.farcasterFid === farcasterUser.fid,
+              ),
           );
           setFetchedFarcasterUsers(cleanedFarcasterUsers);
         }
@@ -83,16 +85,16 @@ export const HostsSearchModal = ({
   };
 
   return (
-    <NBModal
+    <CTSModal
       trigger={
-        <NBButton className="bg-accent w-[200px]" disabled={disabled}>
-          <div className="flex justify-center items-center w-full gap-1.5 text-white">
+        <CTSButton className="bg-accent w-[200px]" disabled={disabled}>
+          <div className="flex justify-center items-center w-full gap-1.5 text-foreground">
             <Plus className="size-4.5" />
             <p className="text-base font-extrabold text-nowrap">
               Add more hosts
             </p>
           </div>
-        </NBButton>
+        </CTSButton>
       }
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
@@ -219,6 +221,6 @@ export const HostsSearchModal = ({
           Cancel
         </button>
       </div>
-    </NBModal>
+    </CTSModal>
   );
 };

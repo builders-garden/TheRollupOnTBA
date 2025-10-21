@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { OverlayTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
-import { NBButton } from "../../nb-button";
+import { CTSButton } from "../../cts-button";
 import { PopupsContent } from "./popups/popups-content";
 import { SentimentResultsContent } from "./sentiment-results/sentiment-results-content";
 
@@ -26,7 +26,7 @@ export const OverlayContent = () => {
       {/* Tabs Buttons */}
       <div className="flex justify-between items-center w-full px-2.5 border-b-[1px] border-border">
         <div className="flex justify-start items-center w-full py-5 gap-5">
-          <NBButton
+          <CTSButton
             className={cn("rounded-full w-fit", isPopupsTab && "bg-accent")}
             variant={isPopupsTab ? "default" : "outline"}
             showShadow={isPopupsTab}
@@ -34,12 +34,12 @@ export const OverlayContent = () => {
             <div
               className={cn(
                 "flex justify-start items-center w-full gap-2",
-                isPopupsTab && "text-white",
+                isPopupsTab && "text-foreground",
               )}>
               <Sparkle className="size-6" />
               <p className="text-xl font-bold">Popups</p>
             </div>
-          </NBButton>
+          </CTSButton>
         </div>
       </div>
 

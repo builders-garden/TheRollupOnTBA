@@ -1,8 +1,17 @@
+import crypto from "crypto";
 import ky from "ky";
 import { NextRequest, NextResponse } from "next/server";
 import { parseStringPromise } from "xml2js";
-import { getBrandBySlug, updateBrand } from "@/lib/database/queries";
+import {
+  getAllSubscribedUsersToBrand,
+  getBrandBySlug,
+  updateBrand,
+} from "@/lib/database/queries";
 import { YoutubeContent } from "@/lib/types/youtube-content.type";
+import {
+  getAllPlatformsFormattedUsers,
+  sendNotificationToUsers,
+} from "@/lib/utils/notifications";
 import { env } from "@/lib/zod";
 
 const FOUR_MINUTES_MILLISECONDS = 1000 * 60 * 4;
@@ -135,9 +144,49 @@ export const GET = async (
       await updateBrand(brandSlug, {
         youtubeLiveUrl,
         liveUrlExpiration: newExpirationDate,
-        isLive: isLive,
+        isLive,
         streamTitle: title,
       });
+
+      // If the brand was not live and now is live, or if the live url is different from the previous one
+      // send a notification to the users subscribed to the brand notifications
+      if (
+        (!brand.isLive && isLive) ||
+        (brand.youtubeLiveUrl !== youtubeLiveUrl && isLive)
+      ) {
+        const subscribedUsers = await getAllSubscribedUsersToBrand(brand.id);
+        const { farcasterUsers, baseUsers } =
+          await getAllPlatformsFormattedUsers(subscribedUsers);
+
+        const notificationInfo = {
+          title: `${brand.name} is live! 📺`,
+          body: `Click to watch the live stream now`,
+          targetUrl: `${env.NEXT_PUBLIC_URL}/${brand.slug}`,
+        };
+
+        // Generate a notification id hashing the brand id, the stream title and the youtube live url
+        // day (YYYY-MM-DD) and hour (HH) of the current date
+        const formattedDate =
+          new Date().toISOString().split("T")[0] + "-" + new Date().getHours();
+        const notificationId = crypto
+          .createHash("sha256")
+          .update(`${brand.id}-${title}-${youtubeLiveUrl}-${formattedDate}`)
+          .digest("hex");
+
+        // Send the notification to the users on the Farcaster client
+        await sendNotificationToUsers({
+          ...notificationInfo,
+          users: farcasterUsers,
+          notificationId,
+        });
+
+        // Send the notification to the users on the Base client
+        await sendNotificationToUsers({
+          ...notificationInfo,
+          users: baseUsers,
+          notificationId,
+        });
+      }
 
       return NextResponse.json(
         { success: true, data: { url: youtubeLiveUrl, title } },

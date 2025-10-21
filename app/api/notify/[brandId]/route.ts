@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getAdminsByBrandId } from "@/lib/database/queries/admins.query";
 import { getAllSubscribedUsersToBrand } from "@/lib/database/queries/user.query";
-import { sendNotificationToUsers } from "@/lib/utils/farcaster-notification";
+import {
+  getAllPlatformsFormattedUsers,
+  sendNotificationToUsers,
+} from "@/lib/utils/notifications";
 
 const schema = z.object({
   title: z.string().min(1),
@@ -46,25 +49,10 @@ export async function POST(
       );
     }
 
-    // Get all the subscribed users (fid and farcaster notification details)
-    // to the brand that have a Farcaster ID and farcaster notification details
-    const farcasterUsers = (await getAllSubscribedUsersToBrand(brandId))
-      .filter(
-        (user) => !!user.farcasterFid && !!user.farcasterNotificationDetails,
-      )
-      .map((user) => ({
-        fid: user.farcasterFid!,
-        notificationDetails: user.farcasterNotificationDetails!,
-      }));
-
-    // Get all the subscribed users (fid and base notification details)
-    // to the brand that have a Farcaster ID and base notification details
-    const baseUsers = (await getAllSubscribedUsersToBrand(brandId))
-      .filter((user) => !!user.farcasterFid && !!user.baseNotificationDetails)
-      .map((user) => ({
-        fid: user.farcasterFid!,
-        notificationDetails: user.baseNotificationDetails!,
-      }));
+    // Get all the users subscribed to the brand notifications
+    const subscribedUsers = await getAllSubscribedUsersToBrand(brandId);
+    const { farcasterUsers, baseUsers } =
+      await getAllPlatformsFormattedUsers(subscribedUsers);
 
     // Send the notification to the users on the Farcaster client
     const farcasterResult = await sendNotificationToUsers({

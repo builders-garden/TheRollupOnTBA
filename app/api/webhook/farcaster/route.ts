@@ -13,7 +13,7 @@ import {
   setUserBaseNotificationDetails,
   setUserFarcasterNotificationDetails,
 } from "@/lib/database/queries";
-import { sendNotification } from "@/lib/utils/farcaster-notification";
+import { sendNotification } from "@/lib/utils/notifications";
 
 /**
  * A function to delete the notification details for a user given the Farcaster FID and the app FID

@@ -6,6 +6,7 @@ import {
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "@/lib/zod";
+import { User } from "../database/db.schema";
 import { SendFarcasterNotificationResult } from "../types/farcaster.type";
 
 /**
@@ -102,14 +103,16 @@ export async function sendNotificationToUsers({
   body,
   targetUrl,
   users,
+  notificationId,
 }: {
   title: string;
   body: string;
   targetUrl?: string;
-  users?: {
+  users: {
     fid: number;
     notificationDetails: MiniAppNotificationDetails;
   }[];
+  notificationId?: string;
 }) {
   if (!users)
     return {
@@ -135,7 +138,7 @@ export async function sendNotificationToUsers({
   // For each chunk, send the notification
   for (const chunk of chunkedUsers) {
     const requestBody = {
-      notificationId: uuidv4(),
+      notificationId: notificationId ?? uuidv4(), // Fallback to a random UUID if no notification ID is provided
       title,
       body,
       targetUrl: targetUrl ?? env.NEXT_PUBLIC_URL,
@@ -199,3 +202,31 @@ export async function sendNotificationToUsers({
     errorFids,
   };
 }
+
+/**
+ * Utility function to filter and map the users to the correct format for both Farcaster and Base platforms.
+ * @param users - The users to get the notification details for
+ * @returns The formatted users for both Farcaster and Base platforms
+ */
+export const getAllPlatformsFormattedUsers = async (users: User[]) => {
+  const farcasterUsers = users
+    .filter(
+      (user) => !!user.farcasterFid && !!user.farcasterNotificationDetails,
+    )
+    .map((user) => ({
+      fid: user.farcasterFid!,
+      notificationDetails: user.farcasterNotificationDetails!,
+    }));
+
+  const baseUsers = users
+    .filter((user) => !!user.farcasterFid && !!user.baseNotificationDetails)
+    .map((user) => ({
+      fid: user.farcasterFid!,
+      notificationDetails: user.baseNotificationDetails!,
+    }));
+
+  return {
+    farcasterUsers,
+    baseUsers,
+  };
+};

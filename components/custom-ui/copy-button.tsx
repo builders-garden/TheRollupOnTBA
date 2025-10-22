@@ -23,6 +23,14 @@ export const CopyButton = ({ stringToCopy, size = "md" }: CopyButtonProps) => {
         setHasCopied(false);
       }, 1000);
     }, 1000);
+    setTimeout(() => {
+      copyToClipboard(stringToCopy);
+      setIsCopying(false);
+      setHasCopied(true);
+      setTimeout(() => {
+        setHasCopied(false);
+      }, 1000);
+    }, 1000);
   };
 
   return (

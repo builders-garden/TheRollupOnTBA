@@ -57,6 +57,7 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
         layout: { duration: 0.185, ease: "easeOut" },
       }}>
       <CTSCard key={host.farcasterFid} className="gap-3">
+      <CTSCard key={host.farcasterFid} className="gap-3">
         <Image
           src={host.farcasterAvatarUrl || ""}
           alt={host.farcasterUsername || ""}

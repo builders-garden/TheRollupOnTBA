@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PluginsTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { CTSButton } from "../../cts-button";
+import { KalshiContent } from "./kalshi/kalshi-content";
 import { SentimentContent } from "./sentiment/sentiment-content";
 import { TipsContent } from "./tips/tips-content";
 import { TokensContent } from "./tokens/tokens-content";
@@ -11,10 +12,11 @@ import { TokensContent } from "./tokens/tokens-content";
 export const PluginsContent = ({ brandId }: { brandId: string }) => {
   const [selectedTab, setSelectedTab] = useState<PluginsTabs>(PluginsTabs.TIPS);
 
-  // Whether the tab is tips, tokens, or sentiments
+  // Whether the tab is tips, tokens, sentiments or kalshi
   const isTipsTab = selectedTab === PluginsTabs.TIPS;
   const isTokensTab = selectedTab === PluginsTabs.TOKENS;
   const isSentimentTab = selectedTab === PluginsTabs.SENTIMENT;
+  const isKalshiTab = selectedTab === PluginsTabs.KALSHI;
 
   return (
     <motion.div
@@ -28,7 +30,6 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
         <CTSButton
           className={cn("rounded-full w-fit", isTipsTab && "bg-accent")}
           variant={isTipsTab ? "default" : "outline"}
-          showShadow={isTipsTab}
           onClick={() => setSelectedTab(PluginsTabs.TIPS)}>
           <div
             className={cn(
@@ -42,7 +43,6 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
         <CTSButton
           className={cn("rounded-full w-fit", isSentimentTab && "bg-accent")}
           variant={isSentimentTab ? "default" : "outline"}
-          showShadow={isSentimentTab}
           onClick={() => setSelectedTab(PluginsTabs.SENTIMENT)}>
           <div
             className={cn(
@@ -56,7 +56,6 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
         <CTSButton
           className={cn("rounded-full w-fit", isTokensTab && "bg-accent")}
           variant={isTokensTab ? "default" : "outline"}
-          showShadow={isTokensTab}
           onClick={() => setSelectedTab(PluginsTabs.TOKENS)}>
           <div
             className={cn(
@@ -65,6 +64,19 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
             )}>
             <Sparkle className="size-6" />
             <p className="text-xl font-bold">Tokens</p>
+          </div>
+        </CTSButton>
+        <CTSButton
+          className={cn("rounded-full w-fit", isKalshiTab && "bg-accent")}
+          variant={isKalshiTab ? "default" : "outline"}
+          onClick={() => setSelectedTab(PluginsTabs.KALSHI)}>
+          <div
+            className={cn(
+              "flex justify-start items-center w-full gap-2",
+              isKalshiTab && "text-foreground",
+            )}>
+            <Sparkle className="size-6" />
+            <p className="text-xl font-bold">Kalshi</p>
           </div>
         </CTSButton>
       </div>
@@ -76,6 +88,7 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
           <SentimentContent key="sentiment" brandId={brandId} />
         )}
         {isTokensTab && <TokensContent key="tokens" />}
+        {isKalshiTab && <KalshiContent key="kalshi" />}
       </AnimatePresence>
     </motion.div>
   );

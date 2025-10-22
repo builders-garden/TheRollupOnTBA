@@ -36,6 +36,7 @@ export enum PluginsTabs {
   TIPS = "tips",
   TOKENS = "tokens",
   SENTIMENT = "sentiment",
+  KALSHI = "kalshi",
 }
 
 // Overlay Tabs

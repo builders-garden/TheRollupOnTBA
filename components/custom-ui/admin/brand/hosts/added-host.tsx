@@ -56,7 +56,7 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
         ease: "easeInOut",
         layout: { duration: 0.185, ease: "easeOut" },
       }}>
-      <CTSCard key={host.farcasterFid} className="gap-3 bg-white">
+      <CTSCard key={host.farcasterFid} className="gap-3">
         <Image
           src={host.farcasterAvatarUrl || ""}
           alt={host.farcasterUsername || ""}
@@ -72,7 +72,7 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
           </p>
         </div>
         <CTSButton
-          className="w-full bg-destructive h-[42px]"
+          className="w-full bg-destructive hover:bg-destructive/80 h-[42px]"
           onClick={handleDeleteHost}>
           <AnimatePresence mode="wait">
             {isDeleting ? (

@@ -141,12 +141,18 @@ export const PayoutAddressInput = () => {
   return (
     <div className="flex flex-col justify-start items-start gap-5 w-fit">
       <div className="flex justify-start items-center gap-2.5">
-        <Wallet className="size-5" />
-        <p className="text-base font-bold">Payout Address</p>
+        <Wallet className="size-5 text-muted-foreground" />
+        <p className="text-base font-bold text-muted-foreground">
+          Payout Address
+        </p>
       </div>
       <div className="flex w-fit justify-start items-center gap-5">
         {/* Input field */}
-        <div className="flex w-[630px] justify-start items-center gap-2.5 rounded-full border-accent border-[1px] px-5 py-2.5 bg-white">
+        <div
+          className={cn(
+            "flex w-[630px] justify-start items-center gap-2.5 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
+            isEditing && "ring-[2px] border-muted-foreground/40",
+          )}>
           <input
             type="text"
             className="w-full h-full outline-none focus:ring-none focus:ring-0 focus:border-none text-xl font-bold"
@@ -184,7 +190,7 @@ export const PayoutAddressInput = () => {
                     isUpdating && "animate-pulse cursor-default",
                   )}
                   onClick={handleActivateEditing}>
-                  <SquarePen className="size-6 text-success" />
+                  <SquarePen className="size-6 text-muted-foreground" />
                 </motion.button>
               </motion.div>
             )}
@@ -205,7 +211,7 @@ export const PayoutAddressInput = () => {
                     isUpdating && "animate-pulse cursor-default",
                   )}
                   onClick={handleCancel}>
-                  <X className="size-6 text-black" />
+                  <X className="size-6 text-foreground" />
                 </motion.button>
                 <motion.button
                   disabled={isUpdating}
@@ -233,10 +239,10 @@ export const PayoutAddressInput = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}>
               <CTSButton
-                className="bg-success w-fit shrink-0"
+                className="w-fit shrink-0"
                 disabled={isUpdating}
                 onClick={() => setEditingTextFieldValue(admin.baseName || "")}>
-                <p className="text-base font-extrabold text-foreground">
+                <p className="text-base font-extrabold text-background">
                   Set to connected account ({admin.baseName})
                 </p>
               </CTSButton>

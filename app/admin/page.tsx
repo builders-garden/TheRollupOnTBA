@@ -81,7 +81,7 @@ export default function AdminPage() {
               <Image
                 src="/images/cts_logo.svg"
                 alt="The Control The Stream logo"
-                width={560}
+                width={100}
                 height={100}
                 priority
               />

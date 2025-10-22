@@ -62,7 +62,7 @@ export const HostsSearchModal = ({
           setFetchedFarcasterUsers(cleanedFarcasterUsers);
         }
       } catch (error) {
-        console.error("Error fetching farcaster users", error);
+        console.log("Error fetching farcaster users", error);
         setFetchingError(error as Error);
       } finally {
         setIsFetchingFarcasterUsers(false);
@@ -87,8 +87,8 @@ export const HostsSearchModal = ({
   return (
     <CTSModal
       trigger={
-        <CTSButton className="bg-accent w-[200px]" disabled={disabled}>
-          <div className="flex justify-center items-center w-full gap-1.5 text-foreground">
+        <CTSButton className="w-[200px]" disabled={disabled}>
+          <div className="flex justify-center items-center w-full gap-1.5">
             <Plus className="size-4.5" />
             <p className="text-base font-extrabold text-nowrap">
               Add more hosts
@@ -105,7 +105,7 @@ export const HostsSearchModal = ({
       <div className="flex justify-between items-center w-full gap-2.5">
         <div
           className={cn(
-            "flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300",
+            "flex w-full justify-start items-center gap-2.5 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
             isEditing && "ring-[2px]",
           )}>
           <Search className="size-5 shrink-0" />
@@ -153,7 +153,7 @@ export const HostsSearchModal = ({
               transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
               <p className="text-lg font-bold text-destructive">
-                An error occurred, please try again later.
+                User not found, please try again.
               </p>
             </motion.div>
           ) : isFetchingFarcasterUsers ? (
@@ -164,7 +164,7 @@ export const HostsSearchModal = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
-              <Loader2 className="size-8 text-black animate-spin" />
+              <Loader2 className="size-8 text-foreground animate-spin" />
             </motion.div>
           ) : fetchedFarcasterUsers.length > 0 ? (
             <motion.div
@@ -215,11 +215,13 @@ export const HostsSearchModal = ({
 
       {/* Bottom modal buttons */}
       <div className="flex flex-col justify-center items-center w-full gap-5">
-        <button
-          className="text-base font-bold text-black cursor-pointer"
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.97 }}
+          className="text-base font-bold text-foreground bg-card hover:bg-card/80 rounded-[12px] px-5 py-2.5 cursor-pointer w-full trasnition-colors duration-200"
           onClick={() => setIsModalOpen(false)}>
           Cancel
-        </button>
+        </motion.button>
       </div>
     </CTSModal>
   );

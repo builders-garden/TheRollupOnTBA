@@ -18,6 +18,7 @@ import {
   PollNotificationEvent,
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket/server-to-client.type";
+import { cn } from "@/lib/utils";
 import { FormDurationSelection } from "./form-duration-selection";
 import { FormTextInput } from "./form-text-input";
 import { GuestPayout } from "./guest-payout";
@@ -433,7 +434,10 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
           </div>
           <div className="flex justify-between items-center w-full gap-2.5">
             <CTSButton
-              className="w-full h-[42px]"
+              className={cn(
+                "bg-muted-foreground/15 hover:bg-muted-foreground/20 w-full h-[42px]",
+                isLive && "bg-primary/15 hover:bg-primary/20",
+              )}
               disabled={isExtendingPoll || isTerminatingPoll || isCreatingPoll}
               onClick={isLive ? handleExtendLivePoll : handleReset}>
               <AnimatePresence mode="wait">
@@ -444,7 +448,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}>
-                    <Loader2 className="size-5 text-black animate-spin" />
+                    <Loader2 className="size-5 text-foreground animate-spin" />
                   </motion.div>
                 ) : isLive ? (
                   <motion.p
@@ -453,7 +457,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}
-                    className="text-base font-extrabold text-success">
+                    className="text-base font-extrabold text-primary">
                     Extend
                   </motion.p>
                 ) : (
@@ -463,14 +467,14 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}
                     key="not-live-left-text"
-                    className="text-base font-extrabold text-destructive">
+                    className="text-base font-extrabold text-foreground">
                     Reset
                   </motion.p>
                 )}
               </AnimatePresence>
             </CTSButton>
             <CTSButton
-              className="w-full bg-accent h-[42px]"
+              className="w-full h-[42px]"
               disabled={
                 isConfirmButtonDisabled || isTerminatingPoll || isCreatingPoll
               }
@@ -483,7 +487,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}>
-                    <Loader2 className="size-5 text-foreground animate-spin" />
+                    <Loader2 className="size-5 text-background animate-spin" />
                   </motion.div>
                 ) : isLive ? (
                   <motion.p
@@ -492,7 +496,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}
-                    className="text-base font-extrabold text-foreground">
+                    className="text-base font-extrabold text-background">
                     End voting
                   </motion.p>
                 ) : (
@@ -502,7 +506,7 @@ export const SentimentContent = ({ brandId }: { brandId: string }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: "easeInOut" }}
-                    className="text-base font-extrabold text-foreground">
+                    className="text-base font-extrabold text-background">
                     Confirm
                   </motion.p>
                 )}

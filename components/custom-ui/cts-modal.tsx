@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +27,9 @@ export const CTSModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className={contentClassName} showCloseButton={false}>
+      <DialogContent
+        className={cn("border-foreground/20", contentClassName)}
+        showCloseButton={false}>
         <DialogHeader className="hidden">
           <DialogTitle />
           <DialogDescription />

@@ -139,7 +139,7 @@ export const FileUpload = ({
               transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-start items-center w-full">
               <CTSButton onClick={handleFileUploadTrigger} className="w-full">
-                <p className="text-base font-bold">Upload</p>
+                <p className="text-base font-extrabold">Upload</p>
               </CTSButton>
             </motion.div>
           ) : (

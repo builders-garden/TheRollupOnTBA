@@ -36,7 +36,7 @@ export const HostsContent = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, ease: "easeInOut" }}
             className="flex justify-center items-center w-full h-[256px]">
-            <Loader2 className="size-10 text-black animate-spin" />
+            <Loader2 className="size-10 text-foreground animate-spin" />
           </motion.div>
         ) : (
           <motion.div

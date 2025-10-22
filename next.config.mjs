@@ -16,7 +16,6 @@ const nextConfig = {
       },
     ],
   },
-  devIndicators: true,
   async redirects() {
     return [
       {

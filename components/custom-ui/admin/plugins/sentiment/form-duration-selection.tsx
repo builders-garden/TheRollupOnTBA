@@ -20,7 +20,7 @@ export const FormDurationSelection = ({
       {/* Label */}
       {label && (
         <div className="flex justify-start items-center gap-2.5">
-          <p className="text-base font-bold">{label}</p>
+          <p className="text-base font-bold text-muted-foreground">{label}</p>
         </div>
       )}
 
@@ -31,14 +31,14 @@ export const FormDurationSelection = ({
             onClick={() => setSelectedDuration(duration)}
             className={cn(
               "w-full rounded-full py-1",
-              selectedDuration === duration && "bg-success",
+              selectedDuration === duration &&
+                "bg-foreground hover:bg-foreground",
             )}
-            showShadow={selectedDuration === duration}
             variant={selectedDuration === duration ? "default" : "outline"}>
             <p
               className={cn(
                 "text-base font-bold",
-                selectedDuration === duration && "text-foreground",
+                selectedDuration === duration && "text-background",
               )}>
               {duration.label}
             </p>

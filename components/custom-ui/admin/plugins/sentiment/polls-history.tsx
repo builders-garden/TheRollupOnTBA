@@ -181,12 +181,32 @@ export const PollsHistory = ({
             </CTSCard>
           )}
           <CTSButton
-            className="bg-warning hover:bg-warning/90 shrink-0"
+            className="bg-warning hover:bg-warning/90 shrink-0 h-[42px]"
             disabled={isClaiming}
             onClick={handleClaimAll}>
-            <p className="font-extrabold text-foreground">
-              {isClaiming ? "Claiming..." : "Claim All"}
-            </p>
+            <AnimatePresence mode="wait">
+              {isClaiming ? (
+                <motion.div
+                  key="claiming-loader"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <Loader2 className="size-5 text-foreground animate-spin" />
+                </motion.div>
+              ) : (
+                <motion.p
+                  key="claiming-text"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "easeInOut" }}>
+                  <p className="text-sm font-extrabold text-foreground">
+                    Claim All
+                  </p>
+                </motion.p>
+              )}
+            </AnimatePresence>
           </CTSButton>
         </div>
       </div>
@@ -238,10 +258,12 @@ export const PollsHistory = ({
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-4 mt-4">
                 <CTSButton
-                  className="px-4 py-2 text-sm font-semibold"
+                  className="px-4 py-2 text-sm font-semibold bg-muted-foreground/15 hover:bg-muted-foreground/20"
                   disabled={currentPage === 1}
                   onClick={handlePreviousPage}>
-                  Previous
+                  <p className="text-sm font-semibold text-foreground">
+                    Previous
+                  </p>
                 </CTSButton>
 
                 <p className="text-sm font-semibold">
@@ -249,10 +271,10 @@ export const PollsHistory = ({
                 </p>
 
                 <CTSButton
-                  className="px-4 py-2 text-sm font-semibold"
+                  className="px-4 py-2 text-sm font-semibold bg-muted-foreground/15 hover:bg-muted-foreground/20"
                   disabled={currentPage === totalPages}
                   onClick={handleNextPage}>
-                  Next
+                  <p className="text-sm font-semibold text-foreground">Next</p>
                 </CTSButton>
               </div>
             )}

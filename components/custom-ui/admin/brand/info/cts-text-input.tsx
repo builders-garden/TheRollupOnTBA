@@ -128,7 +128,7 @@ export const CTSTextInput = ({
 
       <div
         className={cn(
-          "flex w-full justify-start items-center gap-2.5 rounded-full border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
+          "flex w-full justify-start items-center gap-2.5 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
           isEditing && "ring-[2px] border-muted-foreground/40",
           isDestructive && "border-destructive ring-destructive/40",
         )}>

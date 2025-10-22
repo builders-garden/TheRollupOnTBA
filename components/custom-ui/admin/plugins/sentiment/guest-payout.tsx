@@ -87,8 +87,8 @@ export const GuestPayout = ({
       <div className="flex justify-between items-center gap-2.5 w-full">
         <div className="flex justify-start items-center gap-2.5 w-full">
           <div className="flex flex-col justify-start items-start">
-            <p className="text-base font-bold">{label}</p>
-            <p className="text-xs opacity-50 font-bold">
+            <p className="text-base font-bold text-muted-foreground">{label}</p>
+            <p className="text-xs opacity-50 font-bold text-muted">
               Split vote earnings with guests.
             </p>
           </div>
@@ -96,8 +96,8 @@ export const GuestPayout = ({
             disabled={disabled}
             checked={isActive}
             onCheckedChange={setIsActive}
-            className="data-[state=checked]:bg-accent h-[25px] w-[44px] cursor-pointer"
-            toggleClassName="size-[21px] data-[state=checked]:translate-x-[calc(100%-1px)]"
+            className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted h-[25px] w-[44px] cursor-pointer"
+            toggleClassName="size-[21px] data-[state=checked]:bg-background data-[state=unchecked]:bg-foreground data-[state=checked]:translate-x-[calc(100%-1px)]"
           />
         </div>
         <AnimatePresence mode="wait">
@@ -109,8 +109,9 @@ export const GuestPayout = ({
               transition={{ duration: 0.2, ease: "easeInOut" }}>
               <CTSButton
                 onClick={handleAddGuest}
-                disabled={isGuestCountAtLimit || disabled}>
-                <p className="text-sm font-extrabold">Add guest</p>
+                disabled={isGuestCountAtLimit || disabled}
+                className="bg-primary/15 hover:bg-primary/20">
+                <p className="text-sm font-extrabold text-primary">Add guest</p>
               </CTSButton>
             </motion.div>
           )}
@@ -125,7 +126,7 @@ export const GuestPayout = ({
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="flex flex-col justify-start items-start gap-2.5">
             <div className="flex justify-between items-center gap-2.5 mr-[34px]">
-              <div className="flex w-[250px] shrink-0 justify-start items-center gap-2.5 rounded-full border-accent border-[1px] px-5 py-2.5 bg-white">
+              <div className="flex w-[250px] shrink-0 justify-start items-center gap-2.5 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300">
                 <p className="text-sm font-medium">
                   (You){" "}
                   <span className="font-bold h-[21px]">

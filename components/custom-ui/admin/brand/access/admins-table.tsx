@@ -27,7 +27,7 @@ export const AdminsTable = ({
       <h1 className="font-bold text-xl mt-6">Current Admins</h1>
       <Table className="text-base">
         <TableHeader>
-          <TableRow>
+          <TableRow className="border-foreground/40 hover:bg-transparent">
             <TableHead>#</TableHead>
             <TableHead>Address</TableHead>
             <TableHead>Base Name</TableHead>

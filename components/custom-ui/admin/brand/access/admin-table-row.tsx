@@ -84,7 +84,9 @@ export const AdminTableRow = ({
   };
 
   return (
-    <TableRow key={admin.address}>
+    <TableRow
+      key={admin.address}
+      className="border-foreground/40 hover:bg-muted/10">
       <TableCell>{index + 1}</TableCell>
       <TableCell>{admin.address}</TableCell>
       <TableCell>{admin.baseName}</TableCell>
@@ -96,7 +98,7 @@ export const AdminTableRow = ({
             if (isCopying || hasCopied) return;
             handleCopy(admin.address);
           }}
-          className="bg-accent w-fit h-[42px]">
+          className="w-fit h-[42px]">
           <AnimatePresence mode="wait">
             {isCopying && (
               <motion.div
@@ -108,7 +110,7 @@ export const AdminTableRow = ({
                   duration: 0.15,
                   ease: "easeInOut",
                 }}>
-                <Loader2 className="size-5 text-foreground animate-spin" />
+                <Loader2 className="size-5 text-background animate-spin" />
               </motion.div>
             )}
             {hasCopied && (
@@ -121,7 +123,7 @@ export const AdminTableRow = ({
                   duration: 0.15,
                   ease: "easeInOut",
                 }}>
-                <Check className="size-5 text-foreground" />
+                <Check className="size-5 text-background" />
               </motion.div>
             )}
             {!isCopying && !hasCopied && (
@@ -134,7 +136,7 @@ export const AdminTableRow = ({
                   duration: 0.15,
                   ease: "easeInOut",
                 }}>
-                <Copy className="size-5 text-foreground" />
+                <Copy className="size-5 text-background" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -146,7 +148,7 @@ export const AdminTableRow = ({
             disabled={
               isDeletingAdmin || isCreatingAdmin || isCopying || hasCopied
             }
-            className="bg-destructive h-[42px] w-[100px]">
+            className="bg-destructive hover:bg-destructive/80 h-[42px] w-[100px]">
             <AnimatePresence mode="wait">
               {isDeletingAdmin ? (
                 <motion.div

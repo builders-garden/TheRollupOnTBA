@@ -14,12 +14,14 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
   // Handles the copy button
   const handleCopy = () => {
     setIsCopying(true);
-    copyToClipboard(stringToCopy);
-    setIsCopying(false);
-    setHasCopied(true);
     setTimeout(() => {
-      setHasCopied(false);
-    }, 450);
+      copyToClipboard(stringToCopy);
+      setIsCopying(false);
+      setHasCopied(true);
+      setTimeout(() => {
+        setHasCopied(false);
+      }, 1000);
+    }, 1000);
   };
 
   return (
@@ -32,7 +34,7 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, ease: "easeInOut" }}>
-            <Loader2 className="size-6 text-black animate-spin" />
+            <Loader2 className="size-6 text-foreground animate-spin" />
           </motion.div>
         )}
         {hasCopied && (
@@ -56,7 +58,7 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
             transition={{ duration: 0.15, ease: "easeInOut" }}
             className="cursor-pointer shrink-0"
             onClick={handleCopy}>
-            <Copy className="size-6 text-accent" />
+            <Copy className="size-6 text-muted-foreground" />
           </motion.button>
         )}
       </AnimatePresence>

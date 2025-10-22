@@ -83,7 +83,7 @@ export const InfoContent = () => {
       key: "xUrl",
       label: "",
       icon: (
-        <Image src="/socials/x_logo_black.svg" alt="X" width={18} height={18} />
+        <Image src="/socials/x_logo_white.svg" alt="X" width={18} height={18} />
       ),
       placeholder: "https://x.com/username",
       value: xUrl,

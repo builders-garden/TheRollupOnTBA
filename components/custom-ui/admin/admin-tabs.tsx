@@ -15,8 +15,9 @@ export const AdminTabs = ({ tabButtons }: AdminTabsProps) => {
     <div className="flex justify-start items-center w-full py-5 px-2.5 gap-5 border-b-[1px] border-foreground/40">
       {tabButtons.map((tabButton) => (
         <CTSButton
+          key={tabButton.label}
           className={cn(
-            "rounded-full w-fit",
+            "rounded-full w-fit hover:bg-secondary/20",
             tabButton.isSelected && "bg-secondary/20 border border-secondary",
           )}
           variant={tabButton.isSelected ? "default" : "outline"}

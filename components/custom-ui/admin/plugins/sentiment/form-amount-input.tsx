@@ -40,23 +40,24 @@ export const FormAmountInput = ({
       {/* Label */}
       {label && (
         <div className="flex justify-start items-center gap-2.5 w-full">
-          <p className="text-base font-bold shrink-0 w-fit">{label}</p>
+          <p className="text-base font-bold shrink-0 w-fit text-muted-foreground">
+            {label}
+          </p>
           <CTSButton
             variant="outline"
             disabled={disabled}
             onClick={() => {
               setValue("0.01");
             }}
-            showShadow={false}
             className="w-fit px-2.5 py-0.5 rounded-full">
-            <p className="text-xs font-extrabold">Default $0.01</p>
+            <p className="text-xs font-extrabold text-muted">Default $0.01</p>
           </CTSButton>
         </div>
       )}
 
       <div
         className={cn(
-          "flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300",
+          "flex w-full justify-start items-center gap-2.5 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
           isEditing && "ring-[2px]",
         )}>
         <input

@@ -3,7 +3,6 @@ import {
   sendNotificationResponseSchema,
   type SendNotificationRequest,
 } from "@farcaster/miniapp-sdk";
-import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "@/lib/zod";
 import { User } from "../database/db.schema";
@@ -44,9 +43,12 @@ export async function sendNotification({
     tokens,
   } satisfies SendNotificationRequest;
 
-  const response = await ky.post(url, {
-    json: requestBody,
-    timeout: false,
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
   });
 
   const responseJson = await response.json();
@@ -86,7 +88,9 @@ export async function sendNotification({
     return { state: "success" };
   }
 
-  console.error(`Error sending notification to ${fid}: ${response.status}`);
+  console.error(
+    `Error sending notification to ${fid}. Status: ${response.status} with error: ${JSON.stringify(responseJson, null, 2)}`,
+  );
   return { state: "error", error: responseJson };
 }
 

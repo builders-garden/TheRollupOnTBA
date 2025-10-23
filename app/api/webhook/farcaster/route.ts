@@ -95,11 +95,14 @@ export async function POST(request: NextRequest) {
     case "miniapp_added":
       if (event.notificationDetails) {
         await setNotificationDetails(fid, appFid, event.notificationDetails);
-        await sendNotification({
-          fid,
-          title: `Welcome to Control the Stream!`,
-          body: `Enjoy your favourite streams and interact with them in real time!`,
-          notificationDetails: event.notificationDetails,
+        // Defer notification sending to after response is returned
+        setImmediate(async () => {
+          await sendNotification({
+            fid,
+            title: `Welcome to Control the Stream!`,
+            body: `Enjoy your favourite streams and interact with them in real time!`,
+            notificationDetails: event.notificationDetails,
+          });
         });
       } else {
         await deleteNotificationDetails(fid, appFid);
@@ -116,11 +119,14 @@ export async function POST(request: NextRequest) {
       console.log("[webhook/farcaster] notifications_enabled", event);
       await setNotificationDetails(fid, appFid, event.notificationDetails);
 
-      await sendNotification({
-        fid,
-        title: `Ding ding dong`,
-        body: `Thank you for enabling notifications for Control the Stream!`,
-        notificationDetails: event.notificationDetails,
+      // Defer notification sending to after response is returned
+      setImmediate(async () => {
+        await sendNotification({
+          fid,
+          title: `Ding ding dong`,
+          body: `Thank you for enabling notifications for Control the Stream!`,
+          notificationDetails: event.notificationDetails,
+        });
       });
       break;
     }

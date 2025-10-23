@@ -90,7 +90,7 @@ export async function sendNotification({
   }
 
   console.error(
-    `Error sending notification to ${fid}. Status: ${response.status} with error: ${responseJson}`,
+    `Error sending notification to ${fid}. Status: ${response.status} with error: ${JSON.stringify(responseJson, null, 2)}`,
   );
   return { state: "error", error: responseJson };
 }

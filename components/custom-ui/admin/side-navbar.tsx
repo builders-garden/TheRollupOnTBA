@@ -7,11 +7,9 @@ import {
   ShieldUser,
 } from "lucide-react";
 import Image from "next/image";
-import { CTSButton } from "@/components/custom-ui/cts-button";
 import { CTSCard } from "@/components/custom-ui/cts-card";
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
-import { cn } from "@/lib/utils";
 import { LogoutButton } from "../logout-button";
 import { NavbarButton } from "./navbar-button";
 

@@ -147,7 +147,6 @@ export const WebAppTips = ({
         {tips.map((tip) => (
           <CTSButton
             key={tip.amount}
-            buttonColor={tip.buttonColor}
             onClick={() => handleTipPayment(tip.amount)}
             disabled={isProcessing || isTransferLoading}
             className={cn("w-full", tip.buttonClassName)}>

@@ -103,7 +103,6 @@ export const WebAppCustomTipModal = ({
     <CTSModal
       trigger={
         <CTSButton
-          buttonColor={customTipButton.color}
           disabled={isProcessing || isTransferLoading}
           className={cn("w-full", customTipButton.buttonClassName)}>
           <p

@@ -1,9 +1,6 @@
-import { Sparkle } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { NotificationsTabs } from "@/lib/enums";
-import { cn } from "@/lib/utils";
-import { CTSButton } from "../../cts-button";
 import { AdminTabs } from "../admin-tabs";
 import { HistoryContent } from "./history/history-content";
 import { SendContent } from "./send/send-content";

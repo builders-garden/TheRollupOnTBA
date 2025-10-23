@@ -2,7 +2,6 @@ import { formatDistanceToNow } from "date-fns";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { CTSButton } from "@/components/custom-ui/cts-button";
 import {
   Table,
   TableBody,

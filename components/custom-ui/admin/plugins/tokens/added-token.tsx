@@ -13,7 +13,7 @@ import {
 } from "@/hooks/use-featured-tokens";
 import { FeaturedToken } from "@/lib/database/db.schema";
 import { AuthTokenType } from "@/lib/enums";
-import { cn, formatWalletAddress, getChainName } from "@/lib/utils";
+import { formatWalletAddress, getChainName } from "@/lib/utils";
 
 interface AddedTokenProps {
   token: FeaturedToken;

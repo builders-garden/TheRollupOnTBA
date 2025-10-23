@@ -89,7 +89,9 @@ export async function sendNotification({
     return { state: "success" };
   }
 
-  console.error(`Error sending notification to ${fid}: ${response.status}`);
+  console.error(
+    `Error sending notification to ${fid}. Status: ${response.status} with error: ${responseJson}`,
+  );
   return { state: "error", error: responseJson };
 }
 

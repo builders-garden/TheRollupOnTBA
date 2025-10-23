@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 interface CTSButtonProps {
   onClick?: () => void;
-  variant?: "ghost" | "default" | "outline";
+  variant?: "ghost" | "default" | "outline" | "destructive";
   disabled?: boolean;
   className?: string;
   children: React.ReactNode;
@@ -29,17 +29,18 @@ export const CTSButton = ({
   // Whether the variant is ghost, default, or outline
   const isGhost = variant === "ghost";
   const isOutline = variant === "outline";
+  const isDestructive = variant === "destructive";
 
   return (
     <motion.button
       initial={
         initial || {
-          opacity: disabled ? 0.5 : 1,
+          opacity: disabled ? 0.4 : 1,
         }
       }
       animate={
         animate || {
-          opacity: disabled ? 0.5 : 1,
+          opacity: disabled ? 0.4 : 1,
         }
       }
       exit={exit}
@@ -59,13 +60,21 @@ export const CTSButton = ({
       }
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className={cn(
-        "flex justify-center items-center w-[100px] py-2 px-3 rounded-[12px] bg-primary text-background transition-colors duration-300 cursor-pointer hover:bg-primary/80",
+        "flex justify-center items-center w-[100px] py-2 px-3 rounded-[12px] bg-primary text-background text-base font-extrabold transition-colors duration-300 cursor-pointer hover:bg-primary/80 ",
         className,
         isGhost ? "bg-transparent text-muted" : undefined,
         isOutline
           ? "border border-muted bg-transparent hover:bg-muted/10 text-muted"
           : undefined,
-        disabled && "cursor-default",
+        isDestructive &&
+          "bg-destructive hover:bg-destructive/80 text-foreground",
+        disabled &&
+          "cursor-default" +
+            (isGhost || isOutline
+              ? " hover:bg-transparent"
+              : isDestructive
+                ? " hover:bg-destructive"
+                : " hover:bg-primary"),
       )}
       onClick={onClick}
       disabled={disabled}>

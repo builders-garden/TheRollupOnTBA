@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
+import { CancelButton } from "@/components/custom-ui/cancel-button";
 import { CTSButton } from "@/components/custom-ui/cts-button";
 import { CTSModal } from "@/components/custom-ui/cts-modal";
 import { useCreateBrandNotification } from "@/hooks/use-brand-notifications";
@@ -94,11 +95,9 @@ export const SendNotificationModal = ({
     <CTSModal
       trigger={
         <CTSButton
-          className="w-fit px-5 bg-accent h-[42px]"
+          className="w-fit px-5 h-[42px]"
           disabled={isSendingNotification}>
-          <p className="text-base font-extrabold text-foreground">
-            Send Notifications
-          </p>
+          Send Notifications
         </CTSButton>
       }
       isOpen={isModalOpen}
@@ -132,12 +131,12 @@ export const SendNotificationModal = ({
         </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center w-full gap-5">
+      <div className="flex flex-col justify-center items-center w-full gap-2">
         <CTSButton
           key="confirm"
           onClick={handleSendNotifications}
           disabled={isSendingNotification}
-          className="w-full bg-accent h-[42px]">
+          className="w-full h-[42px]">
           <AnimatePresence mode="wait">
             {isSendingNotification ? (
               <motion.div
@@ -146,7 +145,7 @@ export const SendNotificationModal = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <Loader2 className="size-5 text-foreground animate-spin" />
+                <Loader2 className="size-5 text-background animate-spin" />
               </motion.div>
             ) : (
               <motion.p
@@ -154,19 +153,14 @@ export const SendNotificationModal = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.15, ease: "easeInOut" }}
-                className="text-base font-extrabold text-foreground">
+                transition={{ duration: 0.15, ease: "easeInOut" }}>
                 Send Notification
               </motion.p>
             )}
           </AnimatePresence>
         </CTSButton>
 
-        <button
-          className="text-base font-bold text-black cursor-pointer"
-          onClick={() => setIsModalOpen(false)}>
-          Cancel
-        </button>
+        <CancelButton onClick={() => setIsModalOpen(false)} />
       </div>
     </CTSModal>
   );

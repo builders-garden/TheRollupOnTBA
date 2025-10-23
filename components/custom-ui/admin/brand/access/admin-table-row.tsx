@@ -84,9 +84,7 @@ export const AdminTableRow = ({
   };
 
   return (
-    <TableRow
-      key={admin.address}
-      className="border-foreground/40 hover:bg-muted/10">
+    <TableRow key={admin.address} className="border-border hover:bg-muted/10">
       <TableCell>{index + 1}</TableCell>
       <TableCell>{admin.address}</TableCell>
       <TableCell>{admin.baseName}</TableCell>
@@ -148,7 +146,8 @@ export const AdminTableRow = ({
             disabled={
               isDeletingAdmin || isCreatingAdmin || isCopying || hasCopied
             }
-            className="bg-destructive hover:bg-destructive/80 h-[42px] w-[100px]">
+            className="h-[42px] w-[100px]"
+            variant="destructive">
             <AnimatePresence mode="wait">
               {isDeletingAdmin ? (
                 <motion.div

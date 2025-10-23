@@ -2,6 +2,7 @@ import ky from "ky";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { CancelButton } from "@/components/custom-ui/cancel-button";
 import { CTSButton } from "@/components/custom-ui/cts-button";
 import { CTSModal } from "@/components/custom-ui/cts-modal";
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area";
@@ -106,9 +107,9 @@ export const HostsSearchModal = ({
         <div
           className={cn(
             "flex w-full justify-start items-center gap-2.5 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
-            isEditing && "ring-[2px]",
+            isEditing && "ring-[2px] border-muted-foreground/40",
           )}>
-          <Search className="size-5 shrink-0" />
+          <Search className="size-5 shrink-0 text-muted-foreground" />
           <input
             type="text"
             onFocus={() => setIsEditing(true)}
@@ -214,15 +215,7 @@ export const HostsSearchModal = ({
       </ScrollArea>
 
       {/* Bottom modal buttons */}
-      <div className="flex flex-col justify-center items-center w-full gap-5">
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.97 }}
-          className="text-base font-bold text-foreground bg-card hover:bg-card/80 rounded-[12px] px-5 py-2.5 cursor-pointer w-full trasnition-colors duration-200"
-          onClick={() => setIsModalOpen(false)}>
-          Cancel
-        </motion.button>
-      </div>
+      <CancelButton onClick={() => setIsModalOpen(false)} />
     </CTSModal>
   );
 };

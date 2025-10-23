@@ -1,13 +1,14 @@
 import { Check, Copy, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { copyToClipboard } from "@/lib/utils";
+import { cn, copyToClipboard } from "@/lib/utils";
 
 interface CopyButtonProps {
   stringToCopy: string;
+  size?: "sm" | "md" | "lg";
 }
 
-export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
+export const CopyButton = ({ stringToCopy, size = "md" }: CopyButtonProps) => {
   const [isCopying, setIsCopying] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
 
@@ -34,7 +35,12 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, ease: "easeInOut" }}>
-            <Loader2 className="size-6 text-foreground animate-spin" />
+            <Loader2
+              className={cn(
+                "size-6 text-foreground animate-spin",
+                size === "sm" ? "size-5" : size === "lg" ? "size-7" : "size-6",
+              )}
+            />
           </motion.div>
         )}
         {hasCopied && (
@@ -44,7 +50,12 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, ease: "easeInOut" }}>
-            <Check className="size-6 text-success" />
+            <Check
+              className={cn(
+                "size-6 text-success",
+                size === "sm" ? "size-5" : size === "lg" ? "size-7" : "size-6",
+              )}
+            />
           </motion.div>
         )}
         {!isCopying && !hasCopied && (
@@ -58,7 +69,12 @@ export const CopyButton = ({ stringToCopy }: CopyButtonProps) => {
             transition={{ duration: 0.15, ease: "easeInOut" }}
             className="cursor-pointer shrink-0"
             onClick={handleCopy}>
-            <Copy className="size-6 text-muted-foreground" />
+            <Copy
+              className={cn(
+                "size-6 text-muted-foreground",
+                size === "sm" ? "size-5" : size === "lg" ? "size-7" : "size-6",
+              )}
+            />
           </motion.button>
         )}
       </AnimatePresence>

@@ -41,7 +41,6 @@ export enum PluginsTabs {
 // Overlay Tabs
 export enum OverlayTabs {
   POPUPS = "popups",
-  SENTIMENT_RESULTS = "sentiment_results",
 }
 
 // Notifications Tabs

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { isAddress } from "viem/utils";
+import { CancelButton } from "@/components/custom-ui/cancel-button";
 import { CTSButton } from "@/components/custom-ui/cts-button";
 import { CTSModal } from "@/components/custom-ui/cts-modal";
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area";
@@ -160,8 +161,8 @@ export const TokensSearchModal = ({
   return (
     <CTSModal
       trigger={
-        <CTSButton className="bg-accent w-[200px]" disabled={disabled}>
-          <div className="flex justify-center items-center w-full gap-1.5 text-foreground">
+        <CTSButton className="w-[200px]" disabled={disabled}>
+          <div className="flex justify-center items-center w-full gap-1.5 text-background">
             <Plus className="size-4.5" />
             <p className="text-base font-extrabold text-nowrap">
               Add more tokens
@@ -178,10 +179,10 @@ export const TokensSearchModal = ({
       <div className="flex justify-between items-center w-full gap-2.5">
         <div
           className={cn(
-            "flex w-full justify-start items-center gap-2.5 rounded-full border-accent border-[1px] ring-accent/40 px-5 py-2.5 bg-white transition-all duration-300",
-            isEditing && "ring-[2px]",
+            "flex w-full justify-start items-center gap-2.5 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 px-5 py-2.5 transition-all duration-300",
+            isEditing && "ring-[2px] border-muted-foreground/40",
           )}>
-          <Search className="size-5 shrink-0" />
+          <Search className="size-5 shrink-0 text-muted-foreground" />
           <input
             type="text"
             onFocus={() => setIsEditing(true)}
@@ -219,7 +220,9 @@ export const TokensSearchModal = ({
       </div>
 
       {/* Found tokens list */}
-      <ScrollArea className="w-full h-[392px] mt-[18px]">
+      <ScrollArea
+        className="w-full h-[392px] mt-[18px]"
+        scrollBarThumbClassName="bg-muted/40">
         <AnimatePresence mode="wait" initial={false}>
           {fetchingError ? (
             <motion.div
@@ -241,7 +244,7 @@ export const TokensSearchModal = ({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center w-full h-[392px]">
-              <Loader2 className="size-8 text-black animate-spin" />
+              <Loader2 className="size-8 text-foreground animate-spin" />
             </motion.div>
           ) : fetchedTokens.length > 0 ? (
             <motion.div
@@ -250,7 +253,7 @@ export const TokensSearchModal = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="flex flex-col justify-start items-center w-full gap-2">
+              className="flex flex-col justify-start items-center w-full pr-4 gap-2">
               {fetchedTokens.map((token, index) => (
                 <NewfoundToken
                   key={index}
@@ -296,10 +299,10 @@ export const TokensSearchModal = ({
       </div>
 
       {/* Bottom modal buttons */}
-      <div className="flex flex-col justify-center items-center w-full gap-5">
+      <div className="flex flex-col justify-center items-center w-full gap-2">
         <CTSButton
           key="confirm"
-          className="w-full bg-accent h-[42px]"
+          className="w-full h-[42px]"
           disabled={selectedTokens.length === 0 || isCreatingFeaturedTokens}
           onClick={handleConfirm}>
           <AnimatePresence mode="wait">
@@ -310,7 +313,7 @@ export const TokensSearchModal = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <Loader2 className="size-5 text-foreground animate-spin" />
+                <Loader2 className="size-5 text-background animate-spin" />
               </motion.div>
             ) : (
               <motion.div
@@ -319,18 +322,14 @@ export const TokensSearchModal = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeInOut" }}>
-                <p className="text-base text-foreground font-extrabold">
+                <p className="text-base text-background font-extrabold">
                   Confirm
                 </p>
               </motion.div>
             )}
           </AnimatePresence>
         </CTSButton>
-        <button
-          className="text-base font-bold text-black cursor-pointer"
-          onClick={() => setIsModalOpen(false)}>
-          Cancel
-        </button>
+        <CancelButton onClick={() => setIsModalOpen(false)} />
       </div>
     </CTSModal>
   );

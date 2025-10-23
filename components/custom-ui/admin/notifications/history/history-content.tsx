@@ -2,7 +2,6 @@ import { formatDistanceToNow } from "date-fns";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { CTSButton } from "@/components/custom-ui/cts-button";
 import {
   Table,
   TableBody,
@@ -14,6 +13,7 @@ import {
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useBrandNotificationsByBrandId } from "@/hooks/use-brand-notifications";
 import { AuthTokenType } from "@/lib/enums";
+import { PaginationButton } from "../../pagination-button";
 
 // Max items per page for tips analytics
 const MAX_ITEMS_PER_PAGE = 10;
@@ -84,7 +84,7 @@ export const HistoryContent = () => {
             </AnimatePresence>
             <Table className="table-fixed">
               <TableHeader>
-                <TableRow>
+                <TableRow className="border-border hover:bg-transparent">
                   <TableHead className="w-[30%]">Title</TableHead>
                   <TableHead className="w-full">Message</TableHead>
                   <TableHead className="w-[20%]">Reached Users</TableHead>
@@ -93,7 +93,9 @@ export const HistoryContent = () => {
               </TableHeader>
               <TableBody>
                 {notificationsHistoryData?.data.map((notification) => (
-                  <TableRow key={notification.id}>
+                  <TableRow
+                    key={notification.id}
+                    className="border-border hover:bg-muted/10">
                     <TableCell className="text-base font-medium break-words whitespace-normal max-w-0">
                       {notification.title}
                     </TableCell>
@@ -124,26 +126,22 @@ export const HistoryContent = () => {
           {notificationsHistoryData?.pagination?.totalPages &&
           notificationsHistoryData.pagination.totalPages > 0 ? (
             <div className="flex justify-center items-center gap-4 pt-4">
-              <CTSButton
-                variant="outline"
-                className="p-2"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}>
-                <ChevronLeft className="size-4" />
-              </CTSButton>
+              <PaginationButton
+                disabled={page === 1}
+                handleChangePage={() => setPage((p) => Math.max(1, p - 1))}
+                icon={<ChevronLeft className="size-4" />}
+              />
 
               <span className="text-sm">
                 Page {notificationsHistoryData?.pagination.page} of{" "}
                 {notificationsHistoryData?.pagination.totalPages}
               </span>
 
-              <CTSButton
-                variant="outline"
-                className="p-2"
-                onClick={() => setPage((p) => p + 1)}
-                disabled={!notificationsHistoryData?.pagination.hasMore}>
-                <ChevronRight className="size-4" />
-              </CTSButton>
+              <PaginationButton
+                disabled={!notificationsHistoryData?.pagination.hasMore}
+                handleChangePage={() => setPage((p) => p + 1)}
+                icon={<ChevronRight className="size-4" />}
+              />
             </div>
           ) : null}
         </motion.div>

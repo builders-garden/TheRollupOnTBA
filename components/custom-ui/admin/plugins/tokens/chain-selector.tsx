@@ -27,7 +27,7 @@ export const ChainSelector = ({
 
   return (
     <Select onValueChange={(value) => setSelectedChainName(value)}>
-      <SelectTrigger className="w-[190px] shrink-0 min-h-full bg-white cursor-pointer border-accent border-[1px] focus-visible:ring-accent/40 focus-visible:ring-[2px] rounded-full">
+      <SelectTrigger className="w-[190px] shrink-0 min-h-full bg-background cursor-pointer border-muted border-[1px] ring-muted-foreground/40 focus-visible:ring-muted-foreground/40 focus-visible:ring-[2px] rounded-[12px]">
         <div className="flex justify-start items-center w-full h-full">
           <AnimatePresence mode="wait" initial={false}>
             {selectedChain ? (
@@ -60,12 +60,12 @@ export const ChainSelector = ({
           </AnimatePresence>
         </div>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-background border-muted">
         {BASE_APP_SUPPORTED_CHAINS.map((chain) => (
           <SelectItem
             key={chain.chainId}
             value={chain.zerionName}
-            className="flex items-center gap-2.5">
+            className="flex items-center gap-2.5 focus:bg-muted/20 focus:text-foreground cursor-pointer">
             <img
               src={chain.logoUrl}
               alt={chain.name}

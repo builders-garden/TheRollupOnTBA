@@ -3,7 +3,6 @@ import {
   sendNotificationResponseSchema,
   type SendNotificationRequest,
 } from "@farcaster/miniapp-sdk";
-import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "@/lib/zod";
 import { User } from "../database/db.schema";

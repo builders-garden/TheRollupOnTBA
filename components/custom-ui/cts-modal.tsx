@@ -28,7 +28,7 @@ export const CTSModal = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
-        className={cn("border-foreground/20", contentClassName)}
+        className={cn("border-border/50", contentClassName)}
         showCloseButton={false}>
         <DialogHeader className="hidden">
           <DialogTitle />

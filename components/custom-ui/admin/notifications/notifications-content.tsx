@@ -4,6 +4,7 @@ import { useState } from "react";
 import { NotificationsTabs } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { CTSButton } from "../../cts-button";
+import { AdminTabs } from "../admin-tabs";
 import { HistoryContent } from "./history/history-content";
 import { SendContent } from "./send/send-content";
 
@@ -25,36 +26,20 @@ export const NotificationsContent = () => {
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="flex flex-col justify-start items-center w-full">
       {/* Tabs Buttons */}
-      <div className="flex justify-start items-center w-full py-5 px-2.5 gap-5 border-b-[1px] border-border">
-        <CTSButton
-          className={cn("rounded-full w-fit", isSendTab && "bg-accent")}
-          variant={isSendTab ? "default" : "outline"}
-          showShadow={isSendTab}
-          onClick={() => setSelectedTab(NotificationsTabs.SEND)}>
-          <div
-            className={cn(
-              "flex justify-start items-center w-full gap-2",
-              isSendTab && "text-foreground",
-            )}>
-            <Sparkle className="size-6" />
-            <p className="text-xl font-bold">Send</p>
-          </div>
-        </CTSButton>
-        <CTSButton
-          className={cn("rounded-full w-fit", isHistoryTab && "bg-accent")}
-          variant={isHistoryTab ? "default" : "outline"}
-          showShadow={isHistoryTab}
-          onClick={() => setSelectedTab(NotificationsTabs.HISTORY)}>
-          <div
-            className={cn(
-              "flex justify-start items-center w-full gap-2",
-              isHistoryTab && "text-foreground",
-            )}>
-            <Sparkle className="size-6" />
-            <p className="text-xl font-bold">History</p>
-          </div>
-        </CTSButton>
-      </div>
+      <AdminTabs
+        tabButtons={[
+          {
+            label: "Send",
+            onClick: () => setSelectedTab(NotificationsTabs.SEND),
+            isSelected: isSendTab,
+          },
+          {
+            label: "History",
+            onClick: () => setSelectedTab(NotificationsTabs.HISTORY),
+            isSelected: isHistoryTab,
+          },
+        ]}
+      />
 
       {/* Brand Content */}
       <AnimatePresence mode="wait">

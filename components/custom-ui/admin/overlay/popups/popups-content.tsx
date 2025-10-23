@@ -177,38 +177,34 @@ export const PopupsContent = () => {
           {/* Buttons */}
           <div className="flex flex-col md:flex-row justify-start items-start w-full gap-10">
             <div className="flex flex-col justify-center items-start w-[70%] gap-2.5">
-              <p className="text-base font-medium opacity-50">
+              <p className="text-base font-bold text-muted-foreground">
                 Test popups by clicking the buttons below
               </p>
               <div className="grid grid-cols-5 gap-2.5 w-full">
                 <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("tip")}>
-                  <p className="text-base font-extrabold text-accent">Tip</p>
+                  Tip
                 </CTSButton>
                 <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("tip-message")}>
-                  <p className="text-base font-extrabold text-accent">
-                    Tip with message
-                  </p>
+                  Tip with message
                 </CTSButton>
                 <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("trade")}>
-                  <p className="text-base font-extrabold text-accent">Trade</p>
+                  Trade
                 </CTSButton>
                 <CTSButton
                   className="w-full shrink-0"
                   onClick={() => handleTestNotification("vote")}>
-                  <p className="text-base font-extrabold text-accent">Vote</p>
+                  Vote
                 </CTSButton>
                 <CTSButton
                   className="w-full shrink-0"
                   onClick={handleTestPollNotification}>
-                  <p className="text-base font-extrabold text-accent">
-                    Bull-Meter Poll
-                  </p>
+                  Bull-Meter Poll
                 </CTSButton>
               </div>
             </div>
@@ -220,57 +216,62 @@ export const PopupsContent = () => {
         <h1 className="font-bold text-2xl">
           How to setup the Overlay on your stream?
         </h1>
-        <div className="flex flex-col justify-start items-start gap-1">
-          <p className="text-black font-medium">
-            <span className="font-bold">1.</span> Copy the URLs below and add
-            two Browser Sources to your setup
-          </p>
-          <div className="flex flex-row justify-start items-start w-full gap-2.5">
-            <div className="flex flex-col gap-1">
-              <p className="font-medium opacity-50 text-sm">Popups URL</p>
-              <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/popups`}
-                <CopyButton
-                  key="copy-button"
-                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/popups`}
-                />
+        <div className="flex flex-col justify-start items-start w-full h-full gap-8">
+          <div className="flex flex-col justify-start items-start gap-1">
+            <p className="text-muted-foreground font-bold">
+              <span className="font-bold">1.</span> Copy the URLs below and add
+              two Browser Sources to your setup
+            </p>
+            <div className="flex justify-start items-start w-full gap-2.5">
+              <div className="flex flex-col gap-1">
+                <p className="font-bold text-muted/70 text-sm">Popups URL</p>
+                <div className="flex justify-between items-center w-full gap-2.5 border border-muted rounded-md p-2">
+                  {`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/popups`}
+                  <CopyButton
+                    key="copy-button"
+                    size="sm"
+                    stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/popups`}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <p className="font-medium opacity-50 text-sm">
-                Bull-meter Poll URL
-              </p>
-              <div className="flex flex-row justify-start items-start w-full gap-2.5 border-2 rounded-md p-2">
-                {`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/sentiment`}
-                <CopyButton
-                  key="copy-button"
-                  stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/sentiment`}
-                />
+              <div className="flex flex-col gap-1">
+                <p className="font-bold text-muted/70 text-sm">
+                  Bull-meter Poll URL
+                </p>
+                <div className="flex justify-between items-center w-full gap-2.5 border border-muted rounded-md p-2">
+                  {`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/sentiment`}
+                  <CopyButton
+                    key="copy-button"
+                    size="sm"
+                    stringToCopy={`${env.NEXT_PUBLIC_URL}/${brand.data?.slug}/overlay/sentiment`}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col justify-start items-start gap-1">
-          <p className="text-black font-medium">
-            <span className="font-bold">2.</span> Set width and height to
-            600x150 for popups and 1100x250 for bull-meter poll
-          </p>
-          <p className="text-sm opacity-50">
-            These are suggested sizes, feel free to adjust them to your liking.
-          </p>
-        </div>
-        <div className="flex flex-col justify-start items-start gap-1">
-          <p className="text-black font-medium">
-            <span className="font-bold">3.</span> Position the source at the top
-            of your Sources list
-          </p>
-        </div>
-        <div className="flex flex-col justify-start items-start gap-1">
-          <p className="text-black font-medium">
-            <span className="font-bold">4.</span> For testing purposes, click
-            the test buttons above and check the popups appear correctly on your
-            stream
-          </p>
+          <div className="flex flex-col justify-start items-start gap-1">
+            <p className="text-muted-foreground font-bold">
+              <span className="font-bold">2.</span> Set width and height to
+              600x150 for popups and 1100x250 for bull-meter poll
+            </p>
+            <p className="text-sm text-muted/70">
+              These are suggested sizes, feel free to adjust them to your
+              liking.
+            </p>
+          </div>
+          <div className="flex flex-col justify-start items-start gap-1">
+            <p className="text-muted-foreground font-bold">
+              <span className="font-bold">3.</span> Position the source at the
+              top of your Sources list
+            </p>
+          </div>
+          <div className="flex flex-col justify-start items-start gap-1">
+            <p className="text-muted-foreground font-bold">
+              <span className="font-bold">4.</span> For testing purposes, click
+              the test buttons above and check the popups appear correctly on
+              your stream
+            </p>
+          </div>
         </div>
       </div>
     </motion.div>

@@ -85,18 +85,33 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
       <CTSCard className="p-5 gap-2.5 flex-1 min-w-[300px]">
         {/* Visibility indicator */}
         <div className="flex justify-start items-center w-full gap-1">
-          {isVisible ? (
-            <Eye className="size-3.5 text-accent" />
-          ) : (
-            <EyeOff className="size-3.5 opacity-50" />
-          )}
-          <p
-            className={cn(
-              "text-sm opacity-50 font-bold",
-              isVisible && "text-accent opacity-100",
-            )}>
-            {isVisible ? "Visible" : "Hidden"}
-          </p>
+          <AnimatePresence mode="wait">
+            {isVisible ? (
+              <motion.div
+                key="visible"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="flex justify-start items-center gap-1">
+                <Eye className="size-3.5 text-primary" />
+                <p className="text-sm text-primary font-bold">Visible</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: "easeInOut" }}
+                className="flex justify-start items-center gap-1">
+                <EyeOff className="size-3.5 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground font-bold">
+                  Hidden
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Token information */}
@@ -146,7 +161,8 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
         {/* Delete and show/hide buttons */}
         <div className="flex justify-between items-center w-full gap-2.5">
           <CTSButton
-            className="w-full bg-destructive h-[42px]"
+            className="w-full h-[42px]"
+            variant="destructive"
             onClick={handleDeleteToken}>
             <AnimatePresence mode="wait">
               {isDeleting ? (
@@ -173,7 +189,8 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
             </AnimatePresence>
           </CTSButton>
           <CTSButton
-            className="w-full bg-accent h-[42px]"
+            className="w-full h-[42px]"
+            disabled={isUpdating}
             onClick={handleShowHideToken}>
             <AnimatePresence mode="wait">
               {isUpdating ? (
@@ -183,7 +200,7 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-foreground animate-spin" />
+                  <Loader2 className="size-5 text-background animate-spin" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -192,7 +209,7 @@ export const AddedToken = ({ token, index }: AddedTokenProps) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-base font-extrabold text-foreground">
+                  <p className="text-base font-extrabold text-background">
                     {isVisible ? "Hide" : "Show"}
                   </p>
                 </motion.div>

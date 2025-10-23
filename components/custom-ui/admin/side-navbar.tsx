@@ -13,6 +13,7 @@ import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { AdminPageContent } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { LogoutButton } from "../logout-button";
+import { NavbarButton } from "./navbar-button";
 
 interface SideNavbarProps {
   selectedPageContent: AdminPageContent;
@@ -33,6 +34,40 @@ export const SideNavbar = ({
   const isContentNotifications =
     selectedPageContent === AdminPageContent.NOTIFICATIONS;
 
+  // All the buttons appearing in the side navbar
+  const navbarButtons = [
+    {
+      label: "Brand",
+      icon: <Palette className="size-5" />,
+      isSelected: isContentBrand,
+      onClick: () => setSelectedPageContent(AdminPageContent.BRAND),
+    },
+    {
+      label: "Plugins",
+      icon: <Blocks className="size-5" />,
+      isSelected: isContentPlugins,
+      onClick: () => setSelectedPageContent(AdminPageContent.PLUGINS),
+    },
+    {
+      label: "Overlay",
+      icon: <Images className="size-5" />,
+      isSelected: isContentOverlay,
+      onClick: () => setSelectedPageContent(AdminPageContent.OVERLAY),
+    },
+    {
+      label: "Analytics",
+      icon: <ChartBar className="size-5" />,
+      isSelected: isContentAnalytics,
+      onClick: () => setSelectedPageContent(AdminPageContent.ANALYTICS),
+    },
+    {
+      label: "Notifications",
+      icon: <Bell className="size-5" />,
+      isSelected: isContentNotifications,
+      onClick: () => setSelectedPageContent(AdminPageContent.NOTIFICATIONS),
+    },
+  ];
+
   return (
     <CTSCard className="flex flex-col justify-between items-center h-full w-[264px] bg-card p-5">
       {/* Top section */}
@@ -52,73 +87,9 @@ export const SideNavbar = ({
 
         {/* Admin buttons */}
         <div className="flex flex-col justify-center items-center w-full gap-2.5">
-          <CTSButton
-            className="w-full bg-foreground"
-            variant={isContentBrand ? "default" : "ghost"}
-            onClick={() => setSelectedPageContent(AdminPageContent.BRAND)}>
-            <div
-              className={cn(
-                "flex justify-start items-center w-full gap-2",
-                !isContentBrand && "text-foreground",
-              )}>
-              <Palette className="size-5" />
-              <p className="text-xl font-bold">Brand</p>
-            </div>
-          </CTSButton>
-          <CTSButton
-            className="w-full bg-foreground"
-            variant={isContentPlugins ? "default" : "ghost"}
-            onClick={() => setSelectedPageContent(AdminPageContent.PLUGINS)}>
-            <div
-              className={cn(
-                "flex justify-start items-center w-full gap-2",
-                !isContentPlugins && "text-foreground",
-              )}>
-              <Blocks className="size-5" />
-              <p className="text-xl font-bold">Plugins</p>
-            </div>
-          </CTSButton>
-          <CTSButton
-            className="w-full bg-foreground"
-            variant={isContentOverlay ? "default" : "ghost"}
-            onClick={() => setSelectedPageContent(AdminPageContent.OVERLAY)}>
-            <div
-              className={cn(
-                "flex justify-start items-center w-full gap-2",
-                !isContentOverlay && "text-foreground",
-              )}>
-              <Images className="size-5" />
-              <p className="text-xl font-bold">Overlay</p>
-            </div>
-          </CTSButton>
-          <CTSButton
-            className="w-full bg-foreground"
-            variant={isContentAnalytics ? "default" : "ghost"}
-            onClick={() => setSelectedPageContent(AdminPageContent.ANALYTICS)}>
-            <div
-              className={cn(
-                "flex justify-start items-center w-full gap-2",
-                !isContentAnalytics && "text-foreground",
-              )}>
-              <ChartBar className="size-5" />
-              <p className="text-xl font-bold">Analytics</p>
-            </div>
-          </CTSButton>
-          <CTSButton
-            className="w-full bg-foreground"
-            variant={isContentNotifications ? "default" : "ghost"}
-            onClick={() =>
-              setSelectedPageContent(AdminPageContent.NOTIFICATIONS)
-            }>
-            <div
-              className={cn(
-                "flex justify-start items-center w-full gap-2",
-                !isContentNotifications && "text-foreground",
-              )}>
-              <Bell className="size-5" />
-              <p className="text-xl font-bold">Notifications</p>
-            </div>
-          </CTSButton>
+          {navbarButtons.map((button) => (
+            <NavbarButton key={button.label} {...button} />
+          ))}
         </div>
       </div>
 

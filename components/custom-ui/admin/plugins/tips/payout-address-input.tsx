@@ -139,7 +139,7 @@ export const PayoutAddressInput = () => {
   };
 
   return (
-    <div className="flex flex-col justify-start items-start gap-5 w-fit">
+    <div className="flex flex-col justify-start items-start gap-3.5 w-fit">
       <div className="flex justify-start items-center gap-2.5">
         <Wallet className="size-5 text-muted-foreground" />
         <p className="text-base font-bold text-muted-foreground">

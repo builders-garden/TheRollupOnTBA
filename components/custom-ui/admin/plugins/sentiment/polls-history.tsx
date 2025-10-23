@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useBullmeterClaim } from "@/hooks/use-bullmeter-claim";
 import { useBullmeterPlugin } from "@/hooks/use-bullmeter-plugin";
 import { ReadPollData } from "@/lib/types/bullmeter.type";
+import { PaginationButton } from "../../pagination-button";
 import { HistoryItem } from "./history-item";
 
 const ITEMS_PER_PAGE = 3;
@@ -195,7 +196,7 @@ export const PollsHistory = ({
                   <Loader2 className="size-5 text-foreground animate-spin" />
                 </motion.div>
               ) : (
-                <motion.p
+                <motion.div
                   key="claiming-text"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -204,7 +205,7 @@ export const PollsHistory = ({
                   <p className="text-sm font-extrabold text-foreground">
                     Claim All
                   </p>
-                </motion.p>
+                </motion.div>
               )}
             </AnimatePresence>
           </CTSButton>
@@ -257,25 +258,21 @@ export const PollsHistory = ({
             {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-4 mt-4">
-                <CTSButton
-                  className="px-4 py-2 text-sm font-semibold bg-muted-foreground/15 hover:bg-muted-foreground/20"
+                <PaginationButton
                   disabled={currentPage === 1}
-                  onClick={handlePreviousPage}>
-                  <p className="text-sm font-semibold text-foreground">
-                    Previous
-                  </p>
-                </CTSButton>
+                  handleChangePage={handlePreviousPage}
+                  icon={<ChevronLeft className="size-4" />}
+                />
 
                 <p className="text-sm font-semibold">
                   {currentPage} of {totalPages}
                 </p>
 
-                <CTSButton
-                  className="px-4 py-2 text-sm font-semibold bg-muted-foreground/15 hover:bg-muted-foreground/20"
+                <PaginationButton
                   disabled={currentPage === totalPages}
-                  onClick={handleNextPage}>
-                  <p className="text-sm font-semibold text-foreground">Next</p>
-                </CTSButton>
+                  handleChangePage={handleNextPage}
+                  icon={<ChevronRight className="size-4" />}
+                />
               </div>
             )}
           </motion.div>

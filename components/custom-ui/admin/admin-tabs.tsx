@@ -12,7 +12,7 @@ interface AdminTabsProps {
 
 export const AdminTabs = ({ tabButtons }: AdminTabsProps) => {
   return (
-    <div className="flex justify-start items-center w-full py-5 px-2.5 gap-5 border-b-[1px] border-foreground/40">
+    <div className="flex justify-start items-center w-full py-5 px-2.5 gap-5 border-b-[1px] border-border">
       {tabButtons.map((tabButton) => (
         <CTSButton
           key={tabButton.label}

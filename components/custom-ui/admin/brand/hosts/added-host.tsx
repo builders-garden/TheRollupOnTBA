@@ -72,7 +72,8 @@ export const AddedHost = ({ host, index, brandId }: AddedHostProps) => {
           </p>
         </div>
         <CTSButton
-          className="w-full bg-destructive hover:bg-destructive/80 h-[42px]"
+          className="w-full h-[42px]"
+          variant="destructive"
           onClick={handleDeleteHost}>
           <AnimatePresence mode="wait">
             {isDeleting ? (

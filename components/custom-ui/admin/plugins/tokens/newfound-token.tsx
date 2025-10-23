@@ -62,7 +62,7 @@ export const NewfoundToken = ({
       transition={{ duration: 0.2, delay: 0.1 * index, ease: "easeInOut" }}
       className={cn(
         "flex justify-between items-center w-full rounded-[12px] p-2.5 border-[1px] border-transparent",
-        isSelected && "border-accent",
+        isSelected && "border-primary/80",
         isNotSelectable && "opacity-50",
       )}>
       <div className="flex justify-start items-center gap-2.5">
@@ -72,7 +72,7 @@ export const NewfoundToken = ({
           onCheckedChange={(checked) =>
             checked ? handleAddToken() : handleRemoveToken()
           }
-          className="size-6 data-[state=checked]:bg-accent data-[state=checked]:border-accent mx-1.5"
+          className="size-6 data-[state=checked]:bg-primary data-[state=checked]:border-primary border-muted mx-1.5"
         />
         <Image
           src={token.iconUrl || "/images/coin.svg"}

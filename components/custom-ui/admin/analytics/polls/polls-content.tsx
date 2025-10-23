@@ -1,11 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsUpDown,
-  ChevronUp,
-  Loader2,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { CTSButton } from "@/components/custom-ui/cts-button";
@@ -21,79 +15,10 @@ import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { usePollsAnalytics } from "@/hooks/use-brand-analytics";
 import { usePollsAnalyticsMetrics } from "@/hooks/use-brand-analytics-metrics";
 import { AuthTokenType } from "@/lib/enums";
-import { cn } from "@/lib/utils";
+import { SortableTableHeader } from "../sortable-table-header";
+import { StatsCard } from "../stats-card";
 
 type SortField = "totalVotes" | "totalAmount" | "firstVote" | "lastVote";
-
-interface SortableTableHeaderProps {
-  field: SortField;
-  label: string;
-  currentSortField: SortField;
-  currentSortDir: "asc" | "desc";
-  onSort: (field: SortField) => void;
-}
-
-const SortableTableHeader = ({
-  field,
-  label,
-  currentSortField,
-  currentSortDir,
-  onSort,
-}: SortableTableHeaderProps) => {
-  const isCurrentSort = field === currentSortField;
-
-  return (
-    <TableHead className="w-[18.75%]">
-      <button
-        onClick={() => onSort(field)}
-        className={cn(
-          "flex items-center gap-1 hover:text-accent-foreground cursor-pointer w-full",
-          isCurrentSort && "text-accent-foreground",
-        )}>
-        {label}
-        <AnimatePresence mode="wait">
-          {isCurrentSort ? (
-            <motion.div
-              key="current-sort"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15, ease: "easeInOut" }}>
-              <ChevronUp
-                className={cn(
-                  "size-4 text-accent transition-all duration-200",
-                  currentSortDir === "desc" && "rotate-180",
-                )}
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="not-sorted"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15, ease: "easeInOut" }}>
-              <ChevronsUpDown className="size-4 text-accent" />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </button>
-    </TableHead>
-  );
-};
-
-const StatsCard = ({
-  title,
-  value,
-}: {
-  title: string;
-  value: string | number;
-}) => (
-  <div className="flex flex-col items-center justify-center p-4 rounded-lg border bg-card text-card-foreground shadow">
-    <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-    <p className="text-2xl font-bold">{value}</p>
-  </div>
-);
 
 // Max items per page for votes analytics
 const MAX_ITEMS_PER_PAGE = 10;
@@ -148,7 +73,7 @@ export const PollsContent = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15, ease: "easeInOut" }}
           className="flex justify-center items-center w-full h-[256px]">
-          <Loader2 className="size-10 text-black animate-spin" />
+          <Loader2 className="size-10 text-foreground animate-spin" />
         </motion.div>
       ) : error ? (
         <motion.div
@@ -216,7 +141,7 @@ export const PollsContent = () => {
             </AnimatePresence>
             <Table className="table-fixed">
               <TableHeader>
-                <TableRow>
+                <TableRow className="border-border hover:bg-transparent">
                   <TableHead className="w-[25%]">User</TableHead>
                   <SortableTableHeader
                     field="totalVotes"
@@ -250,7 +175,9 @@ export const PollsContent = () => {
               </TableHeader>
               <TableBody>
                 {data?.data.map((user) => (
-                  <TableRow key={user.userId}>
+                  <TableRow
+                    key={user.userId}
+                    className="border-border hover:bg-muted/10">
                     <TableCell className="flex items-center gap-2">
                       {user.farcasterAvatarUrl && (
                         <img

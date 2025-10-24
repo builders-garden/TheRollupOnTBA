@@ -115,11 +115,8 @@ export const POST = async (req: NextRequest) => {
       method: "GET",
       headers: {
         accept: "application/json",
-        // Note: Kalshi API typically requires authentication
-        // "Authorization": `Bearer ${process.env.KALSHI_API_KEY}`,
       },
     });
-    console.log("Kalshi API response:", JSON.stringify(response, null, 2));
 
     if (!response.ok) {
       console.error(
@@ -133,7 +130,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const data: KalshiApiResponse = await response.json();
-    console.log("Kalshi API data:", JSON.stringify(data, null, 2));
+    //console.log("Kalshi API data:", JSON.stringify(data, null, 2));
 
     // TEMPORARY: Use mock data instead of real API call
     // TODO: Replace with real API call when ready
@@ -142,6 +139,7 @@ export const POST = async (req: NextRequest) => {
 
     // Extract market data for display, sorted by highest yes price first
     const marketData = data.markets
+      .filter((market) => market.status === "active") // Filter out finalized markets
       .map((market) => ({
         title: market.title,
         yesPrice: market.yes_bid_dollars,
@@ -151,8 +149,8 @@ export const POST = async (req: NextRequest) => {
         noSubTitle: market.no_sub_title, // Add no_sub_title for candidate names
         closeTime: market.close_time,
       }))
-      .sort((a, b) => parseFloat(b.yesPrice) - parseFloat(a.yesPrice)) // Sort by highest yes price first
-      //.slice(0, 3); // Limit to max 3 markets
+      .sort((a, b) => parseFloat(b.yesPrice) - parseFloat(a.yesPrice)); // Sort by highest yes price first
+    //.slice(0, 3); // Limit to max 3 markets
 
     const successResponse: KalshiApiSuccess = {
       success: true,
@@ -160,6 +158,7 @@ export const POST = async (req: NextRequest) => {
         eventTitle: data.event.title,
         markets: marketData,
         totalMarkets: data.markets.length, // Include total count for "X more" calculation
+        kalshiUrl: url, // Include the original Kalshi URL
       },
     };
 

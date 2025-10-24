@@ -96,6 +96,7 @@ export interface KalshiApiSuccess {
     eventTitle: string;
     markets: KalshiMarketDisplay[];
     totalMarkets: number; // Total number of markets available
+    kalshiUrl: string; // Original Kalshi URL
   };
 }
 

@@ -8,7 +8,7 @@ interface KalshiStoreApiResponse {
   success: boolean;
   data: {
     eventId: string;
-    marketsCount: number;
+    totalMarkets: number;
     message: string;
   };
 }
@@ -22,14 +22,6 @@ interface KalshiStoreRequest {
   brandId: string;
   kalshiData: {
     eventTitle: string;
-    markets: Array<{
-      title: string;
-      yesPrice: string;
-      noPrice: string;
-      status: string;
-      ticker: string;
-      noSubTitle: string;
-    }>;
     totalMarkets: number;
   };
   kalshiUrl: string;

@@ -32,7 +32,7 @@ export const KalshiConfirmation = ({
     <div className="w-full mt-6">
       {/* Market Preview Section */}
       <div className="mb-6">
-        <h2 className="font-semibold text-lg mb-4 text-gray-700">
+        <h2 className="font-semibold text-white text-2xl mb-4 text-center">
           Market Preview
         </h2>
         {/* Conditional rendering based on market count */}
@@ -42,6 +42,7 @@ export const KalshiConfirmation = ({
             <KalshiMarketCard
               market={result.data.markets[0]}
               eventTitle={result.data.eventTitle}
+              kalshiUrl={result.data.kalshiUrl}
             />
           </div>
         ) : (
@@ -51,6 +52,7 @@ export const KalshiConfirmation = ({
               markets={result.data.markets}
               eventTitle={result.data.eventTitle}
               totalMarkets={result.data.totalMarkets}
+              kalshiUrl={result.data.kalshiUrl}
             />
           </div>
         )}

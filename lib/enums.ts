@@ -84,6 +84,7 @@ export enum ServerToClientSocketEvents {
   END_SENTIMENT_POLL = "end_sentiment_poll",
   EXTEND_SENTIMENT_POLL = "extend_sentiment_poll",
   UPDATE_SENTIMENT_POLL = "update_sentiment_poll",
+  KALSHI_MARKET_STARTED = "kalshi_market_started",
   ERROR = "error",
 }
 

@@ -46,51 +46,31 @@ export const KalshiContent = () => {
       // Store the market in the database
       const storeResponse = await kalshiStoreMutation.mutateAsync({
         brandId: brand.data.id,
-        kalshiData: result.data,
+        kalshiData: {
+          eventTitle: result.data.eventTitle,
+          totalMarkets: result.data.totalMarkets,
+        },
         kalshiUrl: url,
       });
 
+      // Extract kalshiEventId from URL
+      const urlParts = url.split("/");
+      const kalshiEventId = urlParts[urlParts.length - 1]?.toUpperCase();
+      console.log("data socket start kalshi market", {
+        id: storeResponse.data.eventId || "1",
+        brandId: brand.data.id,
+        kalshiUrl: url,
+        kalshiEventId: kalshiEventId || "",
+        position: PopupPositions.TOP_RIGHT,
+      });
       // Start the Kalshi market in the overlay via socket
-      if (result.data.markets.length === 1) {
-        // Single binary market
-        const market = result.data.markets[0];
-        console.log("market", market);
-        adminStartKalshiMarket({
-          id: storeResponse.data.eventId,
-          brandId: brand.data.id,
-          position: PopupPositions.TOP_RIGHT,
-          marketTitle: result.data.eventTitle,
-          marketType: "binary",
-          closeTime: market.closeTime.toString(),
-          yesPrice: market.yesPrice,
-          noPrice: market.noPrice,
-          ticker: market.ticker,
-        });
-        console.log("adminStartKalshiMarket-binary");
-      } else {
-        // Multiple markets - aggregated
-        const options = result.data.markets.map((market, index) => {
-          // Extract candidate name from noSubTitle (similar to multi-market-card)
-          const candidateName = market.noSubTitle || "Unknown";
-
-          return {
-            optionId: `${storeResponse.data.eventId}-${index}`,
-            optionName: candidateName,
-            price: market.yesPrice,
-            ticker: market.ticker,
-          };
-        });
-        adminStartKalshiMarket({
-          id: storeResponse.data.eventId,
-          brandId: brand.data.id,
-          position: PopupPositions.TOP_RIGHT,
-          marketTitle: result.data.eventTitle,
-          marketType: "aggregated",
-          closeTime: result.data.markets[0].closeTime.toString(),
-          options,
-        });
-        console.log("adminStartKalshiMarket-aggregated");
-      }
+      adminStartKalshiMarket({
+        id: storeResponse.data.eventId || "1",
+        brandId: brand.data.id,
+        kalshiUrl: url,
+        kalshiEventId: kalshiEventId || "",
+        position: PopupPositions.TOP_RIGHT,
+      });
 
       setIsConfirmed(true);
       console.log("Market added to overlay successfully:", storeResponse);

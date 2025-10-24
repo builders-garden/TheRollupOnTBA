@@ -4,11 +4,13 @@ import { KalshiMarketDisplay } from "@/lib/types/kalshi.type";
 interface KalshiMarketCardProps {
   market: KalshiMarketDisplay;
   eventTitle?: string; // Add optional event title
+  kalshiUrl?: string; // Add optional Kalshi URL
 }
 
 export const KalshiMarketCard = ({
   market,
   eventTitle,
+  kalshiUrl,
 }: KalshiMarketCardProps) => {
   // Calculate percentages from prices
   const yesPercentage = Math.round(parseFloat(market.yesPrice) * 100);
@@ -26,6 +28,17 @@ export const KalshiMarketCard = ({
           <h3 className="font-bold text-lg text-gray-800 leading-tight mb-2">
             {eventTitle || market.title}
           </h3>
+          {kalshiUrl && (
+            <div className="mb-3">
+              <a
+                href={kalshiUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-green-600 hover:text-green-700 underline hover:no-underline transition-colors duration-200">
+                View this market on Kalshi
+              </a>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded-full font-medium">
               {market.status}

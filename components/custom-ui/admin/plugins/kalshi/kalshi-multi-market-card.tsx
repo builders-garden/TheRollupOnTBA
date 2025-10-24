@@ -5,12 +5,14 @@ interface KalshiMultiMarketCardProps {
   markets: KalshiMarketDisplay[];
   eventTitle: string;
   totalMarkets: number; // Add total markets count
+  kalshiUrl?: string; // Add optional Kalshi URL
 }
 
 export const KalshiMultiMarketCard = ({
   markets,
   eventTitle,
   totalMarkets,
+  kalshiUrl,
 }: KalshiMultiMarketCardProps) => {
   // Limit to max 3 markets
   const displayMarkets = markets.slice(0, 3);
@@ -27,6 +29,17 @@ export const KalshiMultiMarketCard = ({
         <h3 className="font-bold text-xl text-gray-800 leading-tight mb-2">
           {eventTitle}
         </h3>
+        {kalshiUrl && (
+          <div className="mb-3">
+            <a
+              href={kalshiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-green-600 hover:text-green-700 underline hover:no-underline transition-colors duration-200">
+              View this market on Kalshi
+            </a>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded-full font-medium">
             active

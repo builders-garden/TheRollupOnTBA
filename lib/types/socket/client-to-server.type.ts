@@ -78,18 +78,11 @@ export type KalshiMarketOption = {
 };
 
 export type StartKalshiMarketEvent = {
-  id: string;
+  id: string; // ID stored in the database
   brandId: string;
+  kalshiUrl: string;
+  kalshiEventId: string;
   position: PopupPositions;
-  marketTitle: string;
-  marketType: "binary" | "aggregated";
-  closeTime: string;
-  // For binary markets (yes/no)
-  yesPrice?: string;
-  noPrice?: string;
-  ticker?: string;
-  // For aggregated option markets
-  options?: KalshiMarketOption[];
 };
 
 export type UpdateKalshiMarketEvent = {

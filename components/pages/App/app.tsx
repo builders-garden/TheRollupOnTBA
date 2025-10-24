@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useMiniApp } from "@/contexts/mini-app-context";
+import { useTheme } from "@/hooks/use-theme";
 import WebAppContent from "./web-app-content";
 
 const MiniAppContent = dynamic(
@@ -14,6 +15,9 @@ const MiniAppContent = dynamic(
 
 export default function App({ brandSlug }: { brandSlug: string }) {
   const { isInMiniApp } = useMiniApp();
+
+  // Apply theme based on brandSlug
+  useTheme(brandSlug);
 
   // If we are in the miniapp, show the miniapp content
   if (isInMiniApp) {

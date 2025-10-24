@@ -23,6 +23,7 @@ interface LinksProps {
   websiteUrl?: string;
   telegramUrl?: string;
   className?: string;
+  brandSlug?: string;
 }
 
 // A component that displays the links to the social media platforms
@@ -33,6 +34,7 @@ const Links = ({
   websiteUrl,
   telegramUrl,
   className,
+  brandSlug,
 }: LinksProps) => {
   return (
     <div
@@ -68,7 +70,11 @@ const Links = ({
             e.stopPropagation();
           }}>
           <Image
-            src="/socials/x_logo_black.svg"
+            src={
+              brandSlug === THE_ROLLUP_BRAND_SLUG
+                ? "/socials/x_logo_black.svg"
+                : "/socials/x_logo_white.svg"
+            }
             alt="X"
             width={20}
             height={20}

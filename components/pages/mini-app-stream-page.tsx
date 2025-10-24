@@ -206,6 +206,7 @@ export const MiniAppStreamPage = () => {
         {/* About Section */}
         <MiniAppAboutSection
           label="About"
+          brandSlug={brand.data?.slug}
           text={brand.data?.description || "No description provided"}
           coverUrl={brand.data?.coverUrl || ""}
           youtubeUrl={

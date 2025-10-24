@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 
 interface MiniAppAboutSectionProps {
   label: string;
@@ -19,6 +20,7 @@ interface MiniAppAboutSectionProps {
   twitterUrl?: string;
   websiteUrl?: string;
   telegramUrl?: string;
+  brandSlug?: string;
 }
 
 export const MiniAppAboutSection = ({
@@ -30,6 +32,7 @@ export const MiniAppAboutSection = ({
   twitterUrl,
   websiteUrl,
   telegramUrl,
+  brandSlug,
 }: MiniAppAboutSectionProps) => {
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     undefined,
@@ -83,7 +86,11 @@ export const MiniAppAboutSection = ({
                     e.stopPropagation();
                   }}>
                   <Image
-                    src="/socials/x_logo_black.svg"
+                    src={
+                      brandSlug === THE_ROLLUP_BRAND_SLUG
+                        ? "/socials/x_logo_black.svg"
+                        : "/socials/x_logo_white.svg"
+                    }
                     alt="X"
                     width={15}
                     height={15}

@@ -200,7 +200,7 @@ export const WebAppStreamPage = () => {
 
                 <WebAppAboutSection
                   label="About"
-                  brandSlug={brand.data?.slug || ""}
+                  brandSlug={brand.data?.slug}
                   text={brand.data?.description || ""}
                   coverUrl={brand.data?.coverUrl || ""}
                   youtubeUrl={

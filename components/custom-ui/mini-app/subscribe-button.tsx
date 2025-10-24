@@ -8,6 +8,7 @@ import {
   useCreateNotificationSubscription,
   useDeleteNotificationSubscription,
 } from "@/hooks/use-notification-subscriptions";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 
@@ -143,7 +144,8 @@ export const SubscribeButton = () => {
           onClick={handleToggleSubscribe}>
           <Bell
             className={cn(
-              "size-6 cursor-pointer text-black transition-all duration-300",
+              "size-6 cursor-pointer text-foreground transition-all duration-300",
+              brand.data?.slug === THE_ROLLUP_BRAND_SLUG && "text-black",
               isToggling && "animate-pulse",
             )}
           />

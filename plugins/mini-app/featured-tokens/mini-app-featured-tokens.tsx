@@ -4,27 +4,31 @@ import Image from "next/image";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { CTSButton } from "@/components/custom-ui/cts-button";
+import { TheRollupButton } from "@/components/custom-ui/tr-button";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import {
   BASE_USDC_ADDRESS,
   BASE_USDC_LOGO_URL,
   FARCASTER_CLIENT_FID,
+  THE_ROLLUP_BRAND_SLUG,
   ZERO_ADDRESS,
 } from "@/lib/constants";
 import { FeaturedToken } from "@/lib/database/db.schema";
 import { PopupPositions } from "@/lib/enums";
 import { User } from "@/lib/types/user.type";
-import { formatWalletAddress } from "@/lib/utils";
+import { cn, formatWalletAddress } from "@/lib/utils";
 import { formatSingleToken } from "@/lib/utils/farcaster-tokens";
 
 interface MiniAppFeaturedTokensProps {
   tokens: FeaturedToken[];
   user?: User;
+  brandSlug?: string;
 }
 
 export const MiniAppFeaturedTokens = ({
   tokens,
   user,
+  brandSlug,
 }: MiniAppFeaturedTokensProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { tokenTraded } = useSocketUtils();
@@ -130,7 +134,11 @@ export const MiniAppFeaturedTokens = ({
         {tokens.map((token, index) => (
           <div
             key={index}
-            className="flex justify-between items-center w-full py-2.5 px-2.5 rounded-[8px] border-[1px] border-black">
+            className={cn(
+              "flex justify-between items-center w-full py-2.5 px-2.5 rounded-[8px] bg-card",
+              brandSlug === THE_ROLLUP_BRAND_SLUG &&
+                "border-black border-[1px]",
+            )}>
             <div className="flex justify-start items-center w-full max-w-[50%] gap-[3px]">
               <Image
                 src={token.logoUrl || "/images/coin.svg"}
@@ -143,21 +151,49 @@ export const MiniAppFeaturedTokens = ({
               </p>
             </div>
             <div className="flex justify-end items-center w-full gap-2">
-              <CTSButton
-                onClick={() => handleSwapToken(token)}
-                className="bg-accent size-[24px] p-0 rounded-[4px]"
-                disabled={isProcessing}>
-                <ArrowDownUp
-                  className="size-4 shrink-0 text-foreground"
-                  strokeWidth={1.5}
-                />
-              </CTSButton>
-              <CTSButton
-                onClick={() => handleShowChart(token)}
-                className="size-[24px] p-0 rounded-[4px]"
-                disabled={isProcessing}>
-                <ChartColumn className="size-4 shrink-0" strokeWidth={1.5} />
-              </CTSButton>
+              {brandSlug === THE_ROLLUP_BRAND_SLUG ? (
+                <div className="flex justify-end items-center w-full gap-2">
+                  <TheRollupButton
+                    onClick={() => handleSwapToken(token)}
+                    className="bg-accent size-[24px] p-0 rounded-[4px]"
+                    disabled={isProcessing}>
+                    <ArrowDownUp
+                      className="size-4 shrink-0 text-white"
+                      strokeWidth={1.5}
+                    />
+                  </TheRollupButton>
+                  <TheRollupButton
+                    onClick={() => handleShowChart(token)}
+                    className="size-[24px] p-0 rounded-[4px]"
+                    disabled={isProcessing}>
+                    <ChartColumn
+                      className="size-4 shrink-0"
+                      strokeWidth={1.5}
+                    />
+                  </TheRollupButton>
+                </div>
+              ) : (
+                <div className="flex justify-end items-center w-full gap-2">
+                  <CTSButton
+                    onClick={() => handleSwapToken(token)}
+                    className="size-[24px] p-0 rounded-[4px]"
+                    disabled={isProcessing}>
+                    <ArrowDownUp
+                      className="size-4 shrink-0 text-background"
+                      strokeWidth={1.5}
+                    />
+                  </CTSButton>
+                  <CTSButton
+                    onClick={() => handleShowChart(token)}
+                    className="bg-primary/30 hover:bg-primary/30 size-[24px] p-0 rounded-[4px]"
+                    disabled={isProcessing}>
+                    <ChartColumn
+                      className="size-4 shrink-0 text-primary"
+                      strokeWidth={1.5}
+                    />
+                  </CTSButton>
+                </div>
+              )}
             </div>
           </div>
         ))}

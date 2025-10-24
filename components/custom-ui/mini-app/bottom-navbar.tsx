@@ -1,16 +1,20 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
+import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useUsdcBalance } from "@/hooks/use-usdc-balance";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { User } from "@/lib/types/user.type";
 import { cn, formatWalletAddress } from "@/lib/utils";
 import { CTSButton } from "../cts-button";
+import { TheRollupButton } from "../tr-button";
 
 interface BottomNavbarProps {
   user: User;
 }
 
 export const BottomNavbar = ({ user }: BottomNavbarProps) => {
+  const { brand } = useMiniAppAuth();
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const { address } = useAccount();
   const { balance: usdcBalance } = useUsdcBalance({ address });
@@ -30,24 +34,46 @@ export const BottomNavbar = ({ user }: BottomNavbarProps) => {
         isNavbarOpen && "bg-background/90",
       )}>
       <div className="flex justify-between items-center w-full">
-        <CTSButton
-          className="rounded-full py-1 w-[106px] shrink-0"
-          onClick={handleNavbarOpen}>
-          <div className="flex justify-center items-center w-full gap-1.5">
-            {user.avatarUrl ? (
-              <img
-                src={user.avatarUrl}
-                alt="User profile picture"
-                className="size-[24px] bg-warning rounded-full border border-black"
-              />
-            ) : (
-              <div className="size-[24px] bg-warning rounded-full border border-black" />
-            )}
-            <p className="text-xl font-bold">
-              ${Number(usdcBalance?.formatted).toFixed(1)}
-            </p>
-          </div>
-        </CTSButton>
+        {brand.data?.slug === THE_ROLLUP_BRAND_SLUG ? (
+          <TheRollupButton
+            className="rounded-full py-1 w-[116px] shrink-0"
+            onClick={handleNavbarOpen}>
+            <div className="flex justify-center items-center w-full gap-1.5">
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt="User profile picture"
+                  className="size-[24px] bg-warning rounded-full border border-black"
+                />
+              ) : (
+                <div className="size-[24px] bg-warning rounded-full border border-black" />
+              )}
+              <p className="text-xl font-bold">
+                ${Number(usdcBalance?.formatted).toFixed(1)}
+              </p>
+            </div>
+          </TheRollupButton>
+        ) : (
+          <CTSButton
+            className="rounded-full py-1 w-[116px] shrink-0 border-foreground "
+            variant="outline"
+            onClick={handleNavbarOpen}>
+            <div className="flex justify-center items-center w-full gap-1.5">
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt="User profile picture"
+                  className="size-[24px] bg-warning rounded-full border border-black"
+                />
+              ) : (
+                <div className="size-[24px] bg-warning rounded-full border border-black" />
+              )}
+              <p className="text-xl font-bold text-foreground">
+                ${Number(usdcBalance?.formatted).toFixed(1)}
+              </p>
+            </div>
+          </CTSButton>
+        )}
         <div className="flex justify-center items-center w-full gap-1.5 flex-shrink-1">
           <motion.div
             animate={{ scale: isNavbarOpen ? 1 : 0 }}

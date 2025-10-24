@@ -1,20 +1,24 @@
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSubscribeNewsletter } from "@/hooks/use-subscribe-newsletter";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
 import { CTSButton } from "./cts-button";
+import { TheRollupButton } from "./tr-button";
 
 interface NewsletterCTAProps {
   label: string;
   labelClassName?: string;
   className?: string;
+  brandSlug?: string;
 }
 
 export const NewsletterCTA = ({
   label,
   labelClassName,
   className,
+  brandSlug,
 }: NewsletterCTAProps) => {
   const { mutate: subscribe, isPending } = useSubscribeNewsletter(
     AuthTokenType.MINI_APP_AUTH_TOKEN,
@@ -68,14 +72,25 @@ export const NewsletterCTA = ({
             }}
           />
         </div>
-        <CTSButton
-          className="bg-accent w-fit"
-          disabled={editingValue === "" || isPending}
-          onClick={handleSubscribe}>
-          <p className="text-base font-extrabold text-foreground">
-            {isPending ? "Subscribing..." : "Subscribe"}
-          </p>
-        </CTSButton>
+        {brandSlug === THE_ROLLUP_BRAND_SLUG ? (
+          <TheRollupButton
+            className="bg-accent w-fit"
+            disabled={editingValue === "" || isPending}
+            onClick={handleSubscribe}>
+            <p className="text-base font-extrabold text-white">
+              {isPending ? "Subscribing..." : "Subscribe"}
+            </p>
+          </TheRollupButton>
+        ) : (
+          <CTSButton
+            className="bg-accent w-fit"
+            disabled={editingValue === "" || isPending}
+            onClick={handleSubscribe}>
+            <p className="text-base font-extrabold text-foreground">
+              {isPending ? "Subscribing..." : "Subscribe"}
+            </p>
+          </CTSButton>
+        )}
       </div>
     </div>
   );

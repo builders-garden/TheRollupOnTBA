@@ -7,6 +7,7 @@ import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useHostsByBrandId } from "@/hooks/use-hosts";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
 import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { env } from "@/lib/zod";
 import { MiniAppFeaturedTokens } from "@/plugins/mini-app/featured-tokens/mini-app-featured-tokens";
 import { MiniAppTips } from "@/plugins/mini-app/tips/mini-app-tips";
@@ -50,7 +51,12 @@ export const MiniAppStreamPage = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
               className="flex justify-center items-center size-full">
-              <Loader2 className="size-7 text-black animate-spin" />
+              <Loader2
+                className={cn(
+                  "size-7 text-foreground animate-spin",
+                  brand.data?.slug === THE_ROLLUP_BRAND_SLUG && "text-black",
+                )}
+              />
             </motion.div>
           ) : lastYoutubeContent?.data?.url ? (
             <motion.div
@@ -193,6 +199,7 @@ export const MiniAppStreamPage = () => {
           <MiniAppFeaturedTokens
             tokens={brand.featuredTokens.data}
             user={user.data}
+            brandSlug={brand.data?.slug}
           />
         )}
 
@@ -223,15 +230,18 @@ export const MiniAppStreamPage = () => {
               transition={{ duration: 0.2, ease: "easeInOut" }}>
               <Skeleton className="w-full bg-black/10 h-[30px]" />
             </motion.div>
-          ) : (
+          ) : hosts?.data && hosts?.data.length > 0 ? (
             <HostsSection hosts={hosts?.data || []} label="Hosts" />
-          )}
+          ) : null}
         </AnimatePresence>
 
         {/* Newsletter CTA */}
         {/* TODO: Make this dynamic */}
         {brand.data?.slug === THE_ROLLUP_BRAND_SLUG && (
-          <NewsletterCTA label="Subscribe to newsletter" />
+          <NewsletterCTA
+            label="Subscribe to newsletter"
+            brandSlug={brand.data?.slug}
+          />
         )}
       </div>
       {/* Floating Bottom Navbar */}

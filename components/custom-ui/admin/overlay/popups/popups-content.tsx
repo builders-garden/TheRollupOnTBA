@@ -9,6 +9,7 @@ import { ToastPollNotification } from "@/components/custom-ui/toast/toast-poll-n
 import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { PopupPositions } from "@/lib/enums";
 import { env } from "@/lib/zod";
 
@@ -39,7 +40,9 @@ export const PopupsContent = () => {
           ? "sent a $5 tip"
           : type === "trade"
             ? "bought some $HIGHER"
-            : "is bullish",
+            : Math.random() > 0.5
+              ? "is bullish"
+              : "is bearish",
       customMessage:
         type === "tip-message"
           ? "This is a custom message of 41 characters"
@@ -51,7 +54,13 @@ export const PopupsContent = () => {
     const slideOffset = isRightSide ? 100 : -100;
 
     toast.custom(
-      () => <ToastNotification data={testData} slideOffset={slideOffset} />,
+      () => (
+        <ToastNotification
+          data={testData}
+          slideOffset={slideOffset}
+          brandSlug={brand.data?.slug ?? THE_ROLLUP_BRAND_SLUG}
+        />
+      ),
       {
         duration: type === "tip-message" ? 7500 : 2000,
         position: selectedPopupPosition,
@@ -137,20 +146,28 @@ export const PopupsContent = () => {
       },
     });
 
-    toast.custom(() => <ToastPollNotification data={data} />, {
-      duration: 10000,
-      position: selectedPopupPosition,
-      onDismiss: () => {
-        if (!brand.data?.id) return;
-        adminEndSentimentPoll({
-          id: "1",
-          brandId: brand.data.id,
-          votes: 0,
-          voters: 0,
-          results: { bullPercent: 0, bearPercent: 0 },
-        });
+    toast.custom(
+      () => (
+        <ToastPollNotification
+          data={data}
+          brandSlug={brand.data?.slug ?? THE_ROLLUP_BRAND_SLUG}
+        />
+      ),
+      {
+        duration: 10000,
+        position: selectedPopupPosition,
+        onDismiss: () => {
+          if (!brand.data?.id) return;
+          adminEndSentimentPoll({
+            id: "1",
+            brandId: brand.data.id,
+            votes: 0,
+            voters: 0,
+            results: { bullPercent: 0, bearPercent: 0 },
+          });
+        },
       },
-    });
+    );
   };
 
   useEffect(() => {

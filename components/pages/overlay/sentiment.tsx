@@ -38,6 +38,7 @@ export const OverlaySentiment = ({ brand }: { brand: Brand }) => {
       toast.custom(
         () => (
           <ToastPollNotification
+            brandSlug={brand.slug}
             data={{
               id: poll.id,
               brandId: brand.id,

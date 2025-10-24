@@ -231,7 +231,7 @@ export const PollsHistory = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, ease: "easeInOut" }}
             className="flex flex-col justify-center items-center w-full gap-3">
-            <div className="flex flex-col justify-center items-center w-full gap-3 overflow-hidden">
+            <div className="flex flex-col justify-center items-center w-full gap-7 overflow-hidden">
               <AnimatePresence
                 mode="wait"
                 custom={{ currentPage, previousPage }}>

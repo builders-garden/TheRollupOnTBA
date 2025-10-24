@@ -9,6 +9,7 @@ import { NumberTicker } from "@/components/shadcn-ui/number-ticker";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useTimer } from "@/hooks/use-timer";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { UpdatePollNotificationEvent } from "@/lib/types/socket";
 import { cn } from "@/lib/utils";
@@ -42,10 +43,15 @@ const formatSecondsToClock = (totalSeconds: number): string => {
 const ResultsBar = ({
   bearPercent,
   bullPercent,
+  brandSlug,
 }: {
   bearPercent: number;
   bullPercent: number;
+  brandSlug: string;
 }) => {
+  // Whether the brand is the Rollup
+  const isBrandTheRollup = brandSlug === THE_ROLLUP_BRAND_SLUG;
+
   const clampedBear = Math.max(0, Math.min(100, bearPercent));
   const clampedBull = Math.max(0, Math.min(100, bullPercent));
   const total = clampedBear + clampedBull;
@@ -54,7 +60,10 @@ const ResultsBar = ({
 
   return (
     <motion.div
-      className="flex items-center w-full min-w-[1000px] rounded-xl overflow-hidden border-4 border-[#E6B45E]"
+      className={cn(
+        "flex items-center w-full min-w-[1000px] rounded-xl overflow-hidden border-4",
+        isBrandTheRollup ? "border-[#E6B45E]" : "border-white",
+      )}
       initial={{ opacity: 0, scale: 0, rotate: -6 }}
       animate={{ opacity: 1, scale: 1, rotate: 0 }}
       transition={{
@@ -76,7 +85,7 @@ const ResultsBar = ({
           damping: 60,
           delay: 0.45,
         }}>
-        <span className="flex items-center gap-1 text-foreground font-overused-grotesk font-black text-2xl">
+        <span className="flex items-center gap-2 text-foreground font-overused-grotesk font-black text-2xl">
           <BearIcon className="w-8 h-8" />{" "}
           <NumberTicker
             value={normalizedBear}
@@ -101,7 +110,7 @@ const ResultsBar = ({
           damping: 60,
           delay: 0.45,
         }}>
-        <span className="flex items-center gap-1 text-foreground font-overused-grotesk font-black text-2xl">
+        <span className="flex items-center gap-2 text-foreground font-overused-grotesk font-black text-2xl">
           <BullIcon className="w-8 h-8 fill-white" />{" "}
           <NumberTicker
             value={normalizedBull}
@@ -118,8 +127,10 @@ const ResultsBar = ({
 
 export const ToastPollNotification = ({
   data,
+  brandSlug,
 }: {
   data: PollNotificationData;
+  brandSlug: string;
 }) => {
   const { subscribe, unsubscribe } = useSocket();
   const { joinStream } = useSocketUtils();
@@ -129,6 +140,9 @@ export const ToastPollNotification = ({
     bullPercent: number;
     bearPercent: number;
   }>(data.results || { bullPercent: 0, bearPercent: 0 });
+
+  // Whether the brand is the Rollup
+  const isBrandTheRollup = brandSlug === THE_ROLLUP_BRAND_SLUG;
 
   // Create event handlers
   const handleUpdateSentimentPoll = (data: UpdatePollNotificationEvent) => {
@@ -239,10 +253,17 @@ export const ToastPollNotification = ({
           <ResultsBar
             bearPercent={results.bearPercent}
             bullPercent={results.bullPercent}
+            brandSlug={brandSlug}
           />
         ) : null}
 
-        <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 flex items-center justify-between gap-6 min-w-[1000px] min-h-[100px] border-4 border-[#E6B45E] font-grotesk text-foreground">
+        <div
+          className={cn(
+            "rounded-xl shadow-lg px-6 flex items-center justify-between gap-6 min-w-[1000px] min-h-[100px] border-4 font-grotesk text-foreground",
+            isBrandTheRollup
+              ? "bg-gradient-to-b bg-[#1B2541] border-[#E6B45E]"
+              : "border-primary bg-background",
+          )}>
           <div className="flex items-center gap-2 text-xl shrink-0">
             <BullIcon className="w-[34px] h-[34px] fill-[#4CAF50]" />
             <p className="shrink-0">or</p>
@@ -265,10 +286,20 @@ export const ToastPollNotification = ({
                 </motion.div>
               ) : (
                 <motion.div className="flex flex-col items-center justify-center gap-0 w-full">
-                  <span className="text-[#E6B45E] font-bold text-[22px] text-center">
+                  <span
+                    className={cn(
+                      "font-bold text-[22px] text-center",
+                      isBrandTheRollup ? "text-[#E6B45E]" : "text-primary",
+                    )}>
                     {timeLabel}
                   </span>
-                  <span className="text-gray-400 text-base">
+                  <span
+                    className={cn(
+                      "text-base",
+                      isBrandTheRollup
+                        ? "text-gray-400"
+                        : "text-muted-foreground",
+                    )}>
                     {votes.toString()} votes
                   </span>
                 </motion.div>

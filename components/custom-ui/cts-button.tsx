@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 interface CTSButtonProps {
   onClick?: () => void;
-  variant?: "ghost" | "default" | "outline" | "destructive";
+  variant?: "ghost" | "default" | "outline" | "destructive" | "success";
   disabled?: boolean;
   className?: string;
   children: React.ReactNode;
@@ -26,10 +26,11 @@ export const CTSButton = ({
   whileTap,
   whileHover,
 }: CTSButtonProps) => {
-  // Whether the variant is ghost, default, or outline
+  // Whether the variant is ghost, default, outline, destructive, or success
   const isGhost = variant === "ghost";
   const isOutline = variant === "outline";
   const isDestructive = variant === "destructive";
+  const isSuccess = variant === "success";
 
   return (
     <motion.button
@@ -68,13 +69,16 @@ export const CTSButton = ({
           : undefined,
         isDestructive &&
           "bg-destructive hover:bg-destructive/80 text-foreground",
+        isSuccess && "bg-success hover:bg-success/80 text-foreground",
         disabled &&
           "cursor-default" +
             (isGhost || isOutline
               ? " hover:bg-transparent"
-              : isDestructive
-                ? " hover:bg-destructive"
-                : " hover:bg-primary"),
+              : isSuccess
+                ? " hover:bg-success"
+                : isDestructive
+                  ? " hover:bg-destructive"
+                  : " hover:bg-primary"),
       )}
       onClick={onClick}
       disabled={disabled}>

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import App from "@/components/pages/App/app";
 import { env } from "@/lib/zod";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 
 const appUrl = env.NEXT_PUBLIC_URL;
 
@@ -51,5 +52,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Home() {
-  return <App brandSlug="the_rollup" />;
+  return <App brandSlug={THE_ROLLUP_BRAND_SLUG} />;
 }

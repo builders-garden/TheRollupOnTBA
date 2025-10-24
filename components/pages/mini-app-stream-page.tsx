@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useHostsByBrandId } from "@/hooks/use-hosts";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { env } from "@/lib/zod";
 import { MiniAppFeaturedTokens } from "@/plugins/mini-app/featured-tokens/mini-app-featured-tokens";
 import { MiniAppTips } from "@/plugins/mini-app/tips/mini-app-tips";
@@ -229,7 +230,7 @@ export const MiniAppStreamPage = () => {
 
         {/* Newsletter CTA */}
         {/* TODO: Make this dynamic */}
-        {brand.data?.slug === "the_rollup" && (
+        {brand.data?.slug === THE_ROLLUP_BRAND_SLUG && (
           <NewsletterCTA label="Subscribe to newsletter" />
         )}
       </div>

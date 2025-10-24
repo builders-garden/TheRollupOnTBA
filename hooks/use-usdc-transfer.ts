@@ -43,12 +43,6 @@ export const useUsdcTransfer = ({
 
       // Parse the amount to USDC decimals (6 decimals for USDC)
       const parsedAmount = parseUnits(finalAmount, 6);
-
-      console.log("address", address);
-      console.log("finalReceiver", finalReceiver);
-      console.log("parsedAmount", parsedAmount);
-      console.log("BASE_USDC_ADDRESS", BASE_USDC_ADDRESS);
-
       // Send the call
       const result = await writeContract(wagmiConfig, {
         abi: erc20Abi,

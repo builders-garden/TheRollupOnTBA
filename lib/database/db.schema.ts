@@ -359,3 +359,32 @@ export type BrandNotification = typeof brandNotificationsTable.$inferSelect;
 export type CreateBrandNotification =
   typeof brandNotificationsTable.$inferInsert;
 export type UpdateBrandNotification = Partial<CreateBrandNotification>;
+
+/**
+ * Kalshi Events table
+ */
+export const kalshiEventsTable = sqliteTable(
+  "kalshi_events",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    brandId: text("brand_id")
+      .notNull()
+      .references(() => brandsTable.id, { onDelete: "cascade" }),
+    kalshiEventId: text("kalshi_event_id").notNull(), // e.g., "KXMAYORNYCPARTY-25"
+    kalshiUrl: text("kalshi_url").notNull(), // The original URL provided by the admin
+    eventTitle: text("event_title").notNull(), // e.g., "New York City Mayor Election"
+    totalMarkets: integer("total_markets").notNull(), // e.g., 5
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("idx_kalshi_events_brand_id").on(t.brandId),
+    index("idx_kalshi_events_kalshi_event_id").on(t.kalshiEventId),
+  ],
+);
+
+export type KalshiEvent = typeof kalshiEventsTable.$inferSelect;
+export type CreateKalshiEvent = typeof kalshiEventsTable.$inferInsert;
+export type UpdateKalshiEvent = Partial<CreateKalshiEvent>;

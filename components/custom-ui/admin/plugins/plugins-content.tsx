@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { PluginsTabs } from "@/lib/enums";
 import { AdminTabs } from "../admin-tabs";
+import { KalshiContent } from "./kalshi/kalshi-content";
 import { SentimentContent } from "./sentiment/sentiment-content";
 import { TipsContent } from "./tips/tips-content";
 import { TokensContent } from "./tokens/tokens-content";
@@ -9,10 +10,11 @@ import { TokensContent } from "./tokens/tokens-content";
 export const PluginsContent = ({ brandId }: { brandId: string }) => {
   const [selectedTab, setSelectedTab] = useState<PluginsTabs>(PluginsTabs.TIPS);
 
-  // Whether the tab is tips, tokens, or sentiments
+  // Whether the tab is tips, tokens, sentiments or kalshi
   const isTipsTab = selectedTab === PluginsTabs.TIPS;
   const isTokensTab = selectedTab === PluginsTabs.TOKENS;
   const isSentimentTab = selectedTab === PluginsTabs.SENTIMENT;
+  const isKalshiTab = selectedTab === PluginsTabs.KALSHI;
 
   return (
     <motion.div
@@ -39,6 +41,11 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
             onClick: () => setSelectedTab(PluginsTabs.TOKENS),
             isSelected: isTokensTab,
           },
+          {
+            label: "Kalshi",
+            onClick: () => setSelectedTab(PluginsTabs.KALSHI),
+            isSelected: isKalshiTab,
+          },
         ]}
       />
 
@@ -49,6 +56,7 @@ export const PluginsContent = ({ brandId }: { brandId: string }) => {
           <SentimentContent key="sentiment" brandId={brandId} />
         )}
         {isTokensTab && <TokensContent key="tokens" />}
+        {isKalshiTab && <KalshiContent key="kalshi" />}
       </AnimatePresence>
     </motion.div>
   );

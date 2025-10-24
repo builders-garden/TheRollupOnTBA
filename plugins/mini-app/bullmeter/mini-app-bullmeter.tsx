@@ -1,10 +1,14 @@
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useAccount } from "wagmi";
 import { CTSButton } from "@/components/custom-ui/cts-button";
 import { CTSCard } from "@/components/custom-ui/cts-card";
+import { TheRollupButton } from "@/components/custom-ui/tr-button";
 import { useMiniAppAuth } from "@/contexts/auth/mini-app-auth-context";
 import { useDebounce } from "@/hooks/use-debounce";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface MiniAppBullmeterProps {
@@ -54,6 +58,7 @@ export const MiniAppBullmeter = ({
 
   // Get the brand slug
   const { brand } = useMiniAppAuth();
+  const { address: connectedAddress } = useAccount();
 
   // The maximum number of votes
   const MAX_VOTES = 100;
@@ -88,6 +93,74 @@ export const MiniAppBullmeter = ({
     sendVote();
   }, [debouncedButton1VotesNumber, debouncedButton2VotesNumber]);
 
+  // Handle button1 click
+  const handleButton1Click = () => {
+    if (!connectedAddress) {
+      toast.info("Please connect your wallet to tip");
+      return;
+    }
+
+    if (
+      button1VotesNumber >= MAX_VOTES - totalVotes ||
+      isExpired ||
+      disabled ||
+      loading ||
+      button1Loading
+    )
+      return;
+
+    if (button2VotesNumber > 0) {
+      // Reset the button2 votes number
+      setButton2VotesNumber(0);
+    }
+
+    // Increment the button1 votes number
+    setButton1VotesNumber(button1VotesNumber + 1);
+  };
+
+  // Handle button2 click
+  const handleButton2Click = () => {
+    if (!connectedAddress) {
+      toast.info("Please connect your wallet to tip");
+      return;
+    }
+
+    if (
+      button2VotesNumber >= MAX_VOTES - totalVotes ||
+      isExpired ||
+      disabled ||
+      loading ||
+      button2Loading
+    )
+      return;
+
+    if (button1VotesNumber > 0) {
+      // Reset the button1 votes number
+      setButton1VotesNumber(0);
+    }
+
+    // Increment the button2 votes number
+    setButton2VotesNumber(button2VotesNumber + 1);
+  };
+
+  // Button 1 disabled
+  const button1Disabled =
+    disabled ||
+    loading ||
+    button1Loading ||
+    isExpired ||
+    button1VotesNumber >= MAX_VOTES - totalVotes ||
+    button2VotesNumber >= MAX_VOTES - totalVotes;
+
+  // Button 2 disabled
+  const button2Disabled =
+    disabled ||
+    loading ||
+    button2Loading ||
+    isExpired ||
+    button2VotesNumber >= MAX_VOTES - totalVotes ||
+    button1VotesNumber >= MAX_VOTES - totalVotes;
+
   return (
     <div
       className={cn(
@@ -118,111 +191,127 @@ export const MiniAppBullmeter = ({
 
         <div className="flex justify-between items-center w-full gap-2.5">
           {/* Button 1 */}
-          <CTSButton
-            onClick={() => {
-              if (
-                button1VotesNumber >= MAX_VOTES - totalVotes ||
-                isExpired ||
-                disabled ||
-                loading ||
-                button1Loading
-              )
-                return;
-
-              if (button2VotesNumber > 0) {
-                // Reset the button2 votes number
-                setButton2VotesNumber(0);
-              }
-
-              // Increment the button1 votes number
-              setButton1VotesNumber(button1VotesNumber + 1);
-            }}
-            disabled={
-              disabled ||
-              loading ||
-              button1Loading ||
-              isExpired ||
-              button1VotesNumber >= MAX_VOTES - totalVotes ||
-              button2VotesNumber >= MAX_VOTES - totalVotes
-            }
-            className={`bg-${button1Color} w-full h-[50px]`}>
-            <AnimatePresence mode="wait">
-              {button1Loading ? (
-                <motion.div
-                  key="button1-loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-foreground animate-spin" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="button1-text"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-foreground text-2xl font-extrabold">
-                    {button1text}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </CTSButton>
+          {brand.data?.slug === THE_ROLLUP_BRAND_SLUG ? (
+            <TheRollupButton
+              onClick={handleButton1Click}
+              disabled={button1Disabled}
+              className={`bg-${button1Color} w-full h-[50px]`}>
+              <AnimatePresence mode="wait">
+                {button1Loading ? (
+                  <motion.div
+                    key="button1-loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <Loader2 className="size-5 text-white animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="button1-text"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <p className="text-white text-2xl font-extrabold">
+                      {button1text}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </TheRollupButton>
+          ) : (
+            <CTSButton
+              onClick={handleButton1Click}
+              disabled={button1Disabled}
+              variant="destructive"
+              className={`w-full h-[50px]`}>
+              <AnimatePresence mode="wait">
+                {button1Loading ? (
+                  <motion.div
+                    key="button1-loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <Loader2 className="size-5 text-foreground animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="button1-text"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <p className="text-foreground text-2xl font-extrabold">
+                      {button1text}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </CTSButton>
+          )}
           {/* Button 2 */}
-          <CTSButton
-            onClick={() => {
-              if (
-                button2VotesNumber >= MAX_VOTES - totalVotes ||
-                isExpired ||
-                disabled ||
-                loading ||
-                button2Loading
-              )
-                return;
-
-              if (button1VotesNumber > 0) {
-                // Reset the button1 votes number
-                setButton1VotesNumber(0);
-              }
-
-              // Increment the button2 votes number
-              setButton2VotesNumber(button2VotesNumber + 1);
-            }}
-            disabled={
-              disabled ||
-              loading ||
-              button2Loading ||
-              isExpired ||
-              button2VotesNumber >= MAX_VOTES - totalVotes ||
-              button1VotesNumber >= MAX_VOTES - totalVotes
-            }
-            className={`bg-${button2Color} w-full h-[50px]`}>
-            <AnimatePresence mode="wait">
-              {button2Loading ? (
-                <motion.div
-                  key="button2-loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-foreground animate-spin" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="button2-text"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <p className="text-foreground text-2xl font-extrabold">
-                    {button2text}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </CTSButton>
+          {brand.data?.slug === THE_ROLLUP_BRAND_SLUG ? (
+            <TheRollupButton
+              onClick={handleButton2Click}
+              disabled={button2Disabled}
+              className={`bg-${button2Color} w-full h-[50px]`}>
+              <AnimatePresence mode="wait">
+                {button2Loading ? (
+                  <motion.div
+                    key="button2-loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <Loader2 className="size-5 text-white animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="button2-text"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <p className="text-white text-2xl font-extrabold">
+                      {button2text}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </TheRollupButton>
+          ) : (
+            <CTSButton
+              onClick={handleButton2Click}
+              disabled={button2Disabled}
+              variant="success"
+              className={`w-full h-[50px]`}>
+              <AnimatePresence mode="wait">
+                {button2Loading ? (
+                  <motion.div
+                    key="button2-loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <Loader2 className="size-5 text-foreground animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="button2-text"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <p className="text-foreground text-2xl font-extrabold">
+                      {button2text}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </CTSButton>
+          )}
         </div>
       </CTSCard>
     </div>

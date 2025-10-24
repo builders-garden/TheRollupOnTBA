@@ -1,5 +1,5 @@
 import { useAppKit } from "@reown/appkit/react";
-import { Loader2, LogOut, Sparkles } from "lucide-react";
+import { Loader2, LogOut, Sparkles, User } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -88,9 +88,9 @@ export const WebAppStreamPage = () => {
                   className="flex justify-center items-center w-full h-full">
                   <Loader2
                     className={cn(
-                      "size-10 text-black animate-spin",
+                      "size-10 text-foreground animate-spin",
                       brand.data?.slug === THE_ROLLUP_BRAND_SLUG &&
-                        "text-foreground",
+                        "text-black",
                     )}
                   />
                 </motion.div>
@@ -159,7 +159,7 @@ export const WebAppStreamPage = () => {
                           alt={brand.data?.name || ""}
                           width={86}
                           height={86}
-                          className="rounded-full object-cover"
+                          className="rounded-full object-cover shrink-0"
                         />
                       ) : (
                         <div className="flex justify-center items-center size-[86px] bg-black/10 rounded-full">
@@ -169,7 +169,7 @@ export const WebAppStreamPage = () => {
                         </div>
                       )}
                       {lastYoutubeContent?.data?.isLive && (
-                        <div className="absolute inset-0 size-[86px] border-3 border-destructive rounded-full" />
+                        <div className="absolute bottom-0 left-0 right-0 top-0 size-[86px] border-3 border-destructive rounded-full" />
                       )}
                       {lastYoutubeContent?.data?.isLive && (
                         <div className="absolute flex justify-center items-center -bottom-1 left-1/2 transform -translate-x-1/2 bg-destructive rounded-sm w-fit px-2 py-[1px]">
@@ -254,9 +254,9 @@ export const WebAppStreamPage = () => {
                   className="flex justify-center items-center w-full h-full">
                   <Loader2
                     className={cn(
-                      "size-8 text-black animate-spin",
+                      "size-8 text-foreground animate-spin",
                       brand.data?.slug === THE_ROLLUP_BRAND_SLUG &&
-                        "text-foreground",
+                        "text-black",
                     )}
                   />
                 </motion.div>
@@ -313,7 +313,7 @@ export const WebAppStreamPage = () => {
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-between items-center w-full">
                 <div className="flex justify-start items-center gap-2.5 w-full">
-                  {user.data?.avatarUrl && (
+                  {user.data?.avatarUrl ? (
                     <Image
                       src={user.data.avatarUrl}
                       alt="user avatar"
@@ -321,6 +321,15 @@ export const WebAppStreamPage = () => {
                       height={32}
                       className="rounded-full object-cover"
                     />
+                  ) : (
+                    <div
+                      className={cn(
+                        "size-8 rounded-full bg-muted flex justify-center items-center",
+                        brand.data?.slug === THE_ROLLUP_BRAND_SLUG &&
+                          "bg-gray-200",
+                      )}>
+                      <User className="size-6 text-foreground" />
+                    </div>
                   )}
                   <h1 className="text-[21px] font-bold">
                     {user.data?.username ||
@@ -328,38 +337,37 @@ export const WebAppStreamPage = () => {
                   </h1>
                 </div>
                 <LogoutButton
+                  key="logout-button"
                   brandSlug={brand.data?.slug || ""}
                   disabled={isLoggingOut}
                   executeLogout={handleLogout}
-                  className="min-w-1/3 w-1/3 h-[42px]">
-                  <div className="flex justify-start items-center w-full gap-2">
-                    <AnimatePresence mode="wait">
-                      {isLoggingOut ? (
-                        <motion.div
-                          key="logout-loading"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2, ease: "easeInOut" }}
-                          className="flex justify-center items-center w-full gap-2">
-                          <Loader2 className="size-5 text-destructive animate-spin" />
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key="logout-button"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2, ease: "easeInOut" }}
-                          className="flex justify-start items-center w-full gap-2">
-                          <LogOut className="size-5 text-destructive" />
-                          <p className="text-xl font-bold text-destructive">
-                            Logout
-                          </p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                  className="h-[42px]">
+                  <AnimatePresence mode="wait">
+                    {isLoggingOut ? (
+                      <motion.div
+                        key="logout-loading"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="flex justify-center items-center w-full gap-2">
+                        <Loader2 className="size-5 text-destructive animate-spin" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="logout-button"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="flex justify-start items-center w-full gap-2">
+                        <LogOut className="size-5 text-destructive" />
+                        <p className="text-xl font-bold text-destructive">
+                          Logout
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </LogoutButton>
               </motion.div>
             ) : connectedAddress && !wasNotConnected ? (

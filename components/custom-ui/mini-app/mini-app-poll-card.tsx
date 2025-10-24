@@ -11,7 +11,7 @@ import { useConsumeBullmeterApprove } from "@/hooks/use-bullmeter-approve";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
-import { FARCASTER_CLIENT_FID } from "@/lib/constants";
+import { FARCASTER_CLIENT_FID, THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { Brand } from "@/lib/database/db.schema";
 import {
   AuthTokenType,
@@ -26,12 +26,14 @@ import {
   UpdatePollNotificationEvent,
 } from "@/lib/types/socket";
 import { User } from "@/lib/types/user.type";
-import { calculateTimeLeft, formatWalletAddress } from "@/lib/utils";
+import { calculateTimeLeft, cn, formatWalletAddress } from "@/lib/utils";
 import { createFarcasterIntentUrl } from "@/lib/utils/farcaster";
 import { env } from "@/lib/zod";
 import { MiniAppBullmeter } from "@/plugins/mini-app/bullmeter/mini-app-bullmeter";
+import { CancelButton } from "../cancel-button";
 import { CTSButton } from "../cts-button";
 import { CTSModal } from "../cts-modal";
+import { TheRollupButton } from "../tr-button";
 
 interface MiniAppPollCardProps {
   brand: Brand;
@@ -397,52 +399,98 @@ export const MiniAppPollCard = ({ brand, user }: MiniAppPollCardProps) => {
                 localStorage.removeItem("dontShowApproveModal");
               }
             }}
-            className="size-6 data-[state=checked]:bg-accent data-[state=checked]:border-accent mx-1.5"
+            className={cn(
+              "size-6 data-[state=checked]:bg-primary data-[state=checked]:border-primary mx-1.5",
+              brand.slug === THE_ROLLUP_BRAND_SLUG &&
+                "data-[state=checked]:bg-accent data-[state=checked]:border-accent",
+            )}
           />
           <p className="text-sm">Don&apos;t show this again</p>
         </div>
 
-        <div className="flex flex-col justify-center items-center w-full mt-2 gap-5">
-          <CTSButton
-            className="w-full bg-accent h-[42px]"
-            disabled={isApproving || isVoting || !showPoll}
-            onClick={async () => {
-              if (!showPoll) {
-                return;
-              }
-              const isBull = loadingButton === "bull";
-              await handleVote(isBull, currentVotesNumber, true);
-            }}>
-            <AnimatePresence mode="wait">
-              {!showPoll ? (
-                <motion.p
-                  key="approve-and-vote-text"
-                  className="text-base font-extrabold text-foreground">
-                  Poll is closed
-                </motion.p>
-              ) : isApproving || isVoting ? (
-                <motion.div
-                  key="approve-and-vote-loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: "easeInOut" }}>
-                  <Loader2 className="size-5 text-foreground animate-spin" />
-                </motion.div>
-              ) : (
-                <motion.p
-                  key="approve-and-vote-text"
-                  className="text-base font-extrabold text-foreground">
-                  Approve and Vote
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </CTSButton>
-          <button
-            className="text-base font-bold text-black cursor-pointer"
-            onClick={() => setIsApproveModalOpen(false)}>
-            Cancel
-          </button>
+        <div className="flex flex-col justify-center items-center w-full mt-2 gap-2">
+          {brand.slug === THE_ROLLUP_BRAND_SLUG ? (
+            <TheRollupButton
+              className="w-full bg-accent h-[42px]"
+              disabled={isApproving || isVoting || !showPoll}
+              onClick={async () => {
+                if (!showPoll) {
+                  return;
+                }
+                const isBull = loadingButton === "bull";
+                await handleVote(isBull, currentVotesNumber, true);
+              }}>
+              <AnimatePresence mode="wait">
+                {!showPoll ? (
+                  <motion.p
+                    key="approve-and-vote-text"
+                    className="text-base font-extrabold text-foreground">
+                    Poll is closed
+                  </motion.p>
+                ) : isApproving || isVoting ? (
+                  <motion.div
+                    key="approve-and-vote-loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <Loader2 className="size-5 text-foreground animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.p
+                    key="approve-and-vote-text"
+                    className="text-base font-extrabold text-foreground">
+                    Approve and Vote
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </TheRollupButton>
+          ) : (
+            <CTSButton
+              className="w-full h-[42px]"
+              disabled={isApproving || isVoting || !showPoll}
+              onClick={async () => {
+                if (!showPoll) {
+                  return;
+                }
+                const isBull = loadingButton === "bull";
+                await handleVote(isBull, currentVotesNumber, true);
+              }}>
+              <AnimatePresence mode="wait">
+                {!showPoll ? (
+                  <motion.p
+                    key="approve-and-vote-text"
+                    className="text-base font-extrabold text-background">
+                    Poll is closed
+                  </motion.p>
+                ) : isApproving || isVoting ? (
+                  <motion.div
+                    key="approve-and-vote-loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}>
+                    <Loader2 className="size-5 text-background animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.p
+                    key="approve-and-vote-text"
+                    className="text-base font-extrabold text-background">
+                    Approve and Vote
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </CTSButton>
+          )}
+          {brand.slug === THE_ROLLUP_BRAND_SLUG ? (
+            <button
+              className="text-base font-bold text-black cursor-pointer mt-3"
+              onClick={() => setIsApproveModalOpen(false)}>
+              Cancel
+            </button>
+          ) : (
+            <CancelButton onClick={() => setIsApproveModalOpen(false)} />
+          )}
         </div>
       </CTSModal>
     </div>

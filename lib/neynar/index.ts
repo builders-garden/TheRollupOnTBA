@@ -80,19 +80,21 @@ export const searchUsersByUsername = async (
 export const fetchUserByAddress = async (
   address: string,
 ): Promise<NeynarUser | undefined> => {
-  const response = await ky.get<{ [key: string]: NeynarUser[] }>(
-    `https://api.neynar.com/v2/farcaster/user/bulk-by-address?addresses=${address}`,
-    {
-      headers: {
-        "x-api-key": env.NEYNAR_API_KEY,
+  try {
+    const response = await ky.get<{ [key: string]: NeynarUser[] }>(
+      `https://api.neynar.com/v2/farcaster/user/bulk-by-address?addresses=${address}`,
+      {
+        headers: {
+          "x-api-key": env.NEYNAR_API_KEY,
+        },
+        timeout: false,
       },
-      timeout: false,
-    },
-  );
-  if (!response.ok) {
+    );
+    const data = await response.json();
+    const userArray = data[address.toLowerCase()];
+    return userArray && userArray.length > 0 ? userArray[0] : undefined;
+  } catch (error) {
+    console.log("Error fetching user by address", error);
     return undefined;
   }
-  const data = await response.json();
-  const userArray = data[address.toLowerCase()];
-  return userArray && userArray.length > 0 ? userArray[0] : undefined;
 };

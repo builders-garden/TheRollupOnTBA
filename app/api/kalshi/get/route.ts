@@ -129,13 +129,13 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json(errorResponse, { status: response.status });
     }
 
-    const data: KalshiApiResponse = await response.json();
-    //console.log("Kalshi API data:", JSON.stringify(data, null, 2));
-
-    // TEMPORARY: Use mock data instead of real API call
+    // TEMPORARY: Use mock data instead of real API call for testing
     // TODO: Replace with real API call when ready
-    // console.log("Using mock data for Kalshi API - URL:", url);
-    // const data = MOCK_DATA as unknown as KalshiApiResponse;
+    console.log("Using mock data for Kalshi API - URL:", url);
+    const data = MOCK_DATA as unknown as KalshiApiResponse;
+
+    // const data: KalshiApiResponse = await response.json();
+    // console.log("Kalshi API data:", JSON.stringify(data, null, 2));
 
     // Extract market data for display, sorted by highest yes price first
     const marketData = data.markets

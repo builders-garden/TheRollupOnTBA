@@ -28,10 +28,19 @@ export const OverlayPopups = ({ brand }: { brand: Brand }) => {
       },
       duration?: number,
     ) => {
-      toast.custom(() => <ToastNotification data={data} slideOffset={100} />, {
-        duration: duration || 2000,
-        position: PopupPositions.TOP_CENTER,
-      });
+      toast.custom(
+        () => (
+          <ToastNotification
+            data={data}
+            slideOffset={100}
+            brandSlug={brand.slug}
+          />
+        ),
+        {
+          duration: duration || 2000,
+          position: PopupPositions.TOP_CENTER,
+        },
+      );
     },
     [],
   );

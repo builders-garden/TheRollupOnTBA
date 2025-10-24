@@ -11,6 +11,7 @@ import {
 } from "@/components/shadcn-ui/accordion";
 import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { useHostsByBrandId } from "@/hooks/use-hosts";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { HostsSection } from "../mini-app/hosts-section";
 import { NewsletterCTA } from "../newsletter-cta";
@@ -223,7 +224,7 @@ export const WebAppAboutSection = ({
                 </AnimatePresence>
 
                 {/* Newsletter CTA */}
-                {brandSlug === "the_rollup" && (
+                {brandSlug === THE_ROLLUP_BRAND_SLUG && (
                   <NewsletterCTA
                     label="Subscribe to newsletter"
                     labelClassName="text-lg"

@@ -1,6 +1,8 @@
 "use client";
 
 import { AnimatePresence, easeIn, easeOut, motion } from "motion/react";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 export interface NotificationData {
   id?: string;
@@ -13,10 +15,19 @@ export interface NotificationData {
 export const ToastNotification = ({
   data,
   slideOffset = 0,
+  brandSlug,
 }: {
   data: NotificationData;
   slideOffset?: number;
+  brandSlug: string;
 }) => {
+  // Whether the brand is the Rollup
+  const isBrandTheRollup = brandSlug === THE_ROLLUP_BRAND_SLUG;
+
+  // Whether the text contains "bullish" or "bearish"
+  const textContainsBullish = data.text?.includes("bullish");
+  const textContainsBearish = data.text?.includes("bearish");
+
   const motionProps = {
     initial: { opacity: 0, x: slideOffset, scale: 0.95 },
     animate: {
@@ -49,7 +60,12 @@ export const ToastNotification = ({
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           {...motionProps}
-          className="bg-[#1B2541] rounded-3xl shadow-lg p-4 flex flex-col justify-center items-center gap-3 min-w-[500px] border-8 border-[#E6B45E] font-overused-grotesk cursor-default">
+          className={cn(
+            "rounded-3xl shadow-lg p-4 flex flex-col justify-center items-center gap-3 min-w-[500px] border-8 font-overused-grotesk cursor-default",
+            isBrandTheRollup
+              ? "border-[#E6B45E] bg-[#1B2541]"
+              : "border-primary bg-background",
+          )}>
           <div className="flex justify-start items-center gap-3 w-full">
             <img
               src={data.profilePicture}
@@ -83,7 +99,12 @@ export const ToastNotification = ({
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           {...motionProps}
-          className="bg-[#1B2541] rounded-3xl shadow-lg p-4 flex justify-start items-center gap-3 min-w-[500px] border-8 border-[#E6B45E] font-overused-grotesk cursor-default">
+          className={cn(
+            "rounded-3xl shadow-lg p-4 flex justify-start items-center gap-3 min-w-[500px] border-8 font-overused-grotesk cursor-default",
+            isBrandTheRollup
+              ? "border-[#E6B45E] bg-[#1B2541]"
+              : "border-primary bg-background",
+          )}>
           <img
             src={data.profilePicture}
             alt={data.username}
@@ -92,9 +113,18 @@ export const ToastNotification = ({
           <div className="flex-1 flex items-center gap-2 text-foreground overflow-hidden">
             <p className="w-full flex gap-1 text-2xl font-medium">
               <span className="truncate">{data.username}</span>
-              {data.text && (
-                <span className="shrink-0 text-2xl font-bold">{data.text}</span>
-              )}
+              {data.text &&
+                (textContainsBullish ? (
+                  <p className="shrink-0 font-bold">
+                    is <span className="text-success">bullish</span>
+                  </p>
+                ) : textContainsBearish ? (
+                  <p className="shrink-0 font-bold">
+                    is <span className="text-destructive">bearish</span>
+                  </p>
+                ) : (
+                  <p className="shrink-0 font-bold">{data.text}</p>
+                ))}
             </p>
           </div>
         </motion.div>

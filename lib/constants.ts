@@ -1,6 +1,9 @@
 import { Duration } from "@/lib/types/poll.type";
 import { ChainImages, PopupPositions } from "./enums";
 
+// The Rollup brand slug
+export const THE_ROLLUP_BRAND_SLUG = "the_rollup";
+
 // Message expiration time for JWT token
 export const MESSAGE_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30; // 30 day
 

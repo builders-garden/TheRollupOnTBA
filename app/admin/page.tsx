@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AdminBanner } from "@/components/custom-ui/admin/admin-banner";
 import { AnalyticsContent } from "@/components/custom-ui/admin/analytics/analytics-content";
 import { BrandContent } from "@/components/custom-ui/admin/brand/brand-content";
+import { LandingContent } from "@/components/custom-ui/admin/landing-content";
 import { NotificationsContent } from "@/components/custom-ui/admin/notifications/notifications-content";
 import { OverlayContent } from "@/components/custom-ui/admin/overlay/overlay-content";
 import { PluginsContent } from "@/components/custom-ui/admin/plugins/plugins-content";
@@ -69,40 +70,7 @@ export default function AdminPage() {
       ) : brand.brandNotFound ? (
         <SignUpContent key="sign-up" />
       ) : (
-        <motion.div
-          key="sign-in-with-base"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="flex justify-center items-center w-full min-h-screen">
-          <div className="flex flex-col items-center justify-center w-full px-10 gap-7">
-            <div className="flex flex-col items-center justify-center w-full gap-4">
-              <Image
-                src="/images/cts_logo.svg"
-                alt="The Control The Stream logo"
-                width={100}
-                height={100}
-                priority
-              />
-              <p className="text-4xl font-bold text-center">
-                Mini-app Administration Page
-                <br />
-                <span className="text-lg opacity-50 -mt-2">
-                  Connect your Base account to access the admin functions
-                </span>
-              </p>
-            </div>
-            <div className="w-fit mt-3">
-              <SignInWithBaseButton
-                align="center"
-                variant="solid"
-                colorScheme="light"
-                onClick={signInWithBase}
-              />
-            </div>
-          </div>
-        </motion.div>
+        <LandingContent key="landing" signInWithBase={signInWithBase} />
       )}
     </AnimatePresence>
   );

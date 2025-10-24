@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { CreateKalshiEvent } from "@/lib/database/db.schema";
-import { getAdminsByBrandId } from "@/lib/database/queries/admins.query";
 import { getBrandById } from "@/lib/database/queries/brand.query";
 import {
   createKalshiEvent,

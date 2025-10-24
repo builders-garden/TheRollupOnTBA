@@ -6,8 +6,6 @@ import {
   type KalshiEvent,
 } from "@/lib/database/db.schema";
 
-type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
-
 /**
  * Create a new Kalshi event
  */

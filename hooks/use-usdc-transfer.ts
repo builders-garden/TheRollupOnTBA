@@ -1,7 +1,6 @@
 import { Config, writeContract } from "@wagmi/core";
 import { useState } from "react";
 import { erc20Abi, parseUnits } from "viem";
-import { useAccount } from "wagmi";
 import { BASE_USDC_ADDRESS } from "@/lib/constants";
 
 interface UseUsdcTransferProps {
@@ -15,8 +14,6 @@ export const useUsdcTransfer = ({
   receiver,
   wagmiConfig,
 }: UseUsdcTransferProps) => {
-  const { address } = useAccount();
-
   // State for tracking the call
   const [txHash, setTxHash] = useState<string | undefined>();
   const [isPending, setIsPending] = useState(false);

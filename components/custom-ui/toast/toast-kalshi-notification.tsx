@@ -2,12 +2,11 @@
 
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useKalshiGet } from "@/hooks/use-kalshi-get";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { ServerToClientSocketEvents } from "@/lib/enums";
-import { KalshiApiResult } from "@/lib/types/kalshi.type";
 import { KalshiMarketStartedEvent } from "@/lib/types/socket/server-to-client.type";
 
 export interface KalshiNotificationData {

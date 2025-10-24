@@ -1,12 +1,15 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { CancelButton } from "@/components/custom-ui/cancel-button";
 import { CTSButton } from "@/components/custom-ui/cts-button";
 import { CTSModal } from "@/components/custom-ui/cts-modal";
+import { TheRollupButton } from "@/components/custom-ui/tr-button";
 import { useAiTextCensor } from "@/hooks/use-ai-text-censor";
 import { censorTextLocally } from "@/lib/ai-censor";
 import {
   MAX_TIP_CUSTOM_MESSAGE_LENGTH,
   MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE,
+  THE_ROLLUP_BRAND_SLUG,
 } from "@/lib/constants";
 import { AuthTokenType } from "@/lib/enums";
 import { cn } from "@/lib/utils";
@@ -21,6 +24,7 @@ interface MiniAppCustomTipModalProps {
   isProcessing: boolean;
   isTransferLoading: boolean;
   handleTipPayment: (amount: number, customText?: string) => Promise<void>;
+  brandSlug?: string;
 }
 
 export const MiniAppCustomTipModal = ({
@@ -28,6 +32,7 @@ export const MiniAppCustomTipModal = ({
   isProcessing,
   isTransferLoading,
   handleTipPayment,
+  brandSlug,
 }: MiniAppCustomTipModalProps) => {
   const [isCustomTipModalOpen, setIsCustomTipModalOpen] = useState(false);
 
@@ -94,17 +99,35 @@ export const MiniAppCustomTipModal = ({
   return (
     <CTSModal
       trigger={
-        <CTSButton
-          disabled={isProcessing || isTransferLoading}
-          className={cn("w-full", customTipButton.buttonClassName)}>
-          <p
+        brandSlug === THE_ROLLUP_BRAND_SLUG ? (
+          <TheRollupButton
+            buttonColor={customTipButton.color}
+            disabled={isProcessing || isTransferLoading}
+            className={cn("w-full", customTipButton.buttonClassName)}>
+            <p
+              className={cn(
+                "text-base font-extrabold",
+                customTipButton.textClassName,
+              )}>
+              {customTipButton.text}
+            </p>
+          </TheRollupButton>
+        ) : (
+          <CTSButton
+            disabled={isProcessing || isTransferLoading}
             className={cn(
-              "text-base font-extrabold",
-              customTipButton.textClassName,
+              "w-full bg-secondary/20 border-secondary hover:bg-secondary/30 border-2",
+              customTipButton.buttonClassName,
             )}>
-            {customTipButton.text}
-          </p>
-        </CTSButton>
+            <p
+              className={cn(
+                "text-base font-extrabold text-foreground",
+                customTipButton.textClassName,
+              )}>
+              {customTipButton.text}
+            </p>
+          </CTSButton>
+        )
       }
       isOpen={isCustomTipModalOpen}
       setIsOpen={handleCustomTipModalOpen}
@@ -121,7 +144,9 @@ export const MiniAppCustomTipModal = ({
         {/* Amount */}
         <div
           className={cn(
-            "flex justify-center items-center w-full gap-1 h-[44px] rounded-[12px] pl-2 border-accent border-[1px] ring-accent/40 transition-all duration-300",
+            "flex justify-center items-center w-full gap-1 rounded-[12px] border-muted border-[1px] ring-muted-foreground/40 pl-2 transition-all duration-300",
+            brandSlug === THE_ROLLUP_BRAND_SLUG &&
+              "border-accent ring-accent/40",
             isEditingAmount && "ring-[2px]",
           )}>
           <p>$</p>
@@ -173,7 +198,9 @@ export const MiniAppCustomTipModal = ({
             className="flex justify-center items-center w-full">
             <div
               className={cn(
-                "flex justify-center items-center w-full gap-1 rounded-[12px] pl-2 border-accent border-[1px] ring-accent/40 transition-all duration-300",
+                "flex justify-center items-center w-full gap-1 rounded-[12px] pl-2 border-muted border-[1px] ring-muted-foreground/40 transition-all duration-300",
+                brandSlug === THE_ROLLUP_BRAND_SLUG &&
+                  "border-accent ring-accent/40",
                 isEditingCustomText && "ring-[2px]",
               )}>
               <input
@@ -205,27 +232,46 @@ export const MiniAppCustomTipModal = ({
         </AnimatePresence>
       </div>
 
-      <div className="flex flex-col justify-center items-center w-full gap-5">
-        <CTSButton
-          key="confirm"
-          className="w-full bg-accent"
-          onClick={handleCustomTipPayment}
-          disabled={
-            isProcessing ||
-            isTransferLoading ||
-            !customAmount ||
-            parseFloat(customAmount) <= 0
-          }>
-          <p className="text-base font-extrabold text-foreground">
-            {isProcessing || isTransferLoading ? "Processing..." : "Confirm"}
-          </p>
-        </CTSButton>
+      <div className="flex flex-col justify-center items-center w-full gap-2">
+        {brandSlug === THE_ROLLUP_BRAND_SLUG ? (
+          <TheRollupButton
+            className="w-full bg-accent"
+            onClick={handleCustomTipPayment}
+            disabled={
+              isProcessing ||
+              isTransferLoading ||
+              !customAmount ||
+              parseFloat(customAmount) <= 0
+            }>
+            <p className="text-base font-extrabold text-white">
+              {isProcessing || isTransferLoading ? "Processing..." : "Confirm"}
+            </p>
+          </TheRollupButton>
+        ) : (
+          <CTSButton
+            className="w-full"
+            onClick={handleCustomTipPayment}
+            disabled={
+              isProcessing ||
+              isTransferLoading ||
+              !customAmount ||
+              parseFloat(customAmount) <= 0
+            }>
+            <p className="text-base font-extrabold text-background">
+              {isProcessing || isTransferLoading ? "Processing..." : "Confirm"}
+            </p>
+          </CTSButton>
+        )}
 
-        <button
-          className="text-base font-bold text-black cursor-pointer"
-          onClick={handleCustomTipModalOpen}>
-          Cancel
-        </button>
+        {brandSlug === THE_ROLLUP_BRAND_SLUG ? (
+          <button
+            className="text-base font-bold text-black cursor-pointer mt-3"
+            onClick={handleCustomTipModalOpen}>
+            Cancel
+          </button>
+        ) : (
+          <CancelButton onClick={handleCustomTipModalOpen} />
+        )}
       </div>
     </CTSModal>
   );

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAccount } from "wagmi";
 import { CTSButton } from "@/components/custom-ui/cts-button";
+import { TheRollupButton } from "@/components/custom-ui/tr-button";
 import { useConfetti } from "@/hooks/use-confetti";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
 import { useCreateTip } from "@/hooks/use-tips";
@@ -13,6 +14,7 @@ import {
   FARCASTER_CLIENT_FID,
   MAX_TIP_CUSTOM_MESSAGE_LENGTH,
   MIN_TIP_AMOUNT_FOR_CUSTOM_MESSAGE,
+  THE_ROLLUP_BRAND_SLUG,
 } from "@/lib/constants";
 import { TipSettings } from "@/lib/database/db.schema";
 import { AuthTokenType, PopupPositions } from "@/lib/enums";
@@ -226,17 +228,37 @@ export const MiniAppTips = ({
     <div className="flex flex-col justify-center items-start w-full gap-2.5">
       {showLabel && <h1 className="text-sm font-bold">{label}</h1>}
       <div className="grid grid-cols-4 w-full gap-2.5">
-        {tips.map((tip) => (
-          <CTSButton
-            key={tip.amount}
-            onClick={() => handleTipPayment(tip.amount)}
-            disabled={isProcessing || isTransferLoading}
-            className={cn("w-full", tip.buttonClassName)}>
-            <p className={cn("text-base font-extrabold", tip.textClassName)}>
-              ${tip.amount}
-            </p>
-          </CTSButton>
-        ))}
+        {tips.map((tip) => {
+          return brandSlug === THE_ROLLUP_BRAND_SLUG ? (
+            <TheRollupButton
+              key={tip.amount}
+              buttonColor={tip.buttonColor}
+              onClick={() => handleTipPayment(tip.amount)}
+              disabled={isProcessing || isTransferLoading}
+              className={cn("w-full", tip.buttonClassName)}>
+              <p className={cn("text-base font-extrabold", tip.textClassName)}>
+                ${tip.amount}
+              </p>
+            </TheRollupButton>
+          ) : (
+            <CTSButton
+              key={tip.amount}
+              onClick={() => handleTipPayment(tip.amount)}
+              disabled={isProcessing || isTransferLoading}
+              className={cn(
+                "w-full bg-secondary/20 border-secondary hover:bg-secondary/30 border-2",
+                tip.buttonClassName,
+              )}>
+              <p
+                className={cn(
+                  "text-base font-extrabold text-foreground",
+                  tip.textClassName,
+                )}>
+                ${tip.amount}
+              </p>
+            </CTSButton>
+          );
+        })}
 
         {!!customTipButton && (
           <MiniAppCustomTipModal
@@ -244,6 +266,7 @@ export const MiniAppTips = ({
             isProcessing={isProcessing}
             isTransferLoading={isTransferLoading}
             handleTipPayment={handleTipPayment}
+            brandSlug={brandSlug}
           />
         )}
       </div>

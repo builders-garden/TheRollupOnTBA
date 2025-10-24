@@ -204,7 +204,7 @@ export const WebAppAboutSection = ({
                       className="w-full">
                       <Skeleton className="w-full bg-black/10 h-[122px]" />
                     </motion.div>
-                  ) : (
+                  ) : hosts?.data && hosts?.data.length > 0 ? (
                     <motion.div
                       key="hosts-section"
                       initial={{ opacity: 0 }}
@@ -220,7 +220,7 @@ export const WebAppAboutSection = ({
                         fromWebApp
                       />
                     </motion.div>
-                  )}
+                  ) : null}
                 </AnimatePresence>
 
                 {/* Newsletter CTA */}
@@ -229,6 +229,7 @@ export const WebAppAboutSection = ({
                     label="Subscribe to newsletter"
                     labelClassName="text-lg"
                     className="w-[50%]"
+                    brandSlug={brandSlug}
                   />
                 )}
               </div>

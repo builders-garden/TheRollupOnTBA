@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { CTSButton } from "@/components/custom-ui/cts-button";
 import { CTSCard } from "@/components/custom-ui/cts-card";
+import { useWebAppAuth } from "@/contexts/auth/web-app-auth-context";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,9 @@ export const WebAppBullmeter = ({
   button1Loading = false,
   button2Loading = false,
 }: WebAppBullmeterProps) => {
+  // Get the brand slug
+  const { brand } = useWebAppAuth();
+
   const [button1VotesNumber, setButton1VotesNumber] = useState<number>(0);
   const [button2VotesNumber, setButton2VotesNumber] = useState<number>(0);
   const [totalVotes, setTotalVotes] = useState<number>(0);
@@ -95,7 +99,9 @@ export const WebAppBullmeter = ({
         className,
       )}>
       {showLabel && <h1 className="text-2xl font-bold">{label}</h1>}
-      <CTSCard className={cn("w-full items-start gap-2.5", cardClassName)}>
+      <CTSCard
+        brandSlug={brand.data?.slug || ""}
+        className={cn("w-full items-start gap-2.5", cardClassName)}>
         <div className="flex flex-col justify-center items-start gap-1.5">
           <h1 className="text-2xl font-bold leading-7">{title}</h1>
           <div className="flex justify-start items-center gap-1.5">

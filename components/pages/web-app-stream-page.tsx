@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useWebAppAuth } from "@/contexts/auth/web-app-auth-context";
 import { useLastYoutubeContent } from "@/hooks/use-last-youtube-content";
-import { formatWalletAddress } from "@/lib/utils";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
+import { cn, formatWalletAddress } from "@/lib/utils";
 import { env } from "@/lib/zod";
 import { WebAppFeaturedTokens } from "@/plugins/web-app/featured-tokens/web-app-featured-tokens";
 import { WebAppTips } from "@/plugins/web-app/tips/web-app-tips";
@@ -14,6 +15,7 @@ import { CTSButton } from "../custom-ui/cts-button";
 import { CTSCard } from "../custom-ui/cts-card";
 import { LogoutButton } from "../custom-ui/logout-button";
 import { ShareButton } from "../custom-ui/share-button";
+import { TheRollupButton } from "../custom-ui/tr-button";
 import { WebAppAboutSection } from "../custom-ui/web-app/web-app-about-section";
 import { WebAppPollCard } from "../custom-ui/web-app/web-app-poll-card";
 import { ScrollArea } from "../shadcn-ui/scroll-area";
@@ -84,7 +86,13 @@ export const WebAppStreamPage = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex justify-center items-center w-full h-full">
-                  <Loader2 className="size-10 text-black animate-spin" />
+                  <Loader2
+                    className={cn(
+                      "size-10 text-black animate-spin",
+                      brand.data?.slug === THE_ROLLUP_BRAND_SLUG &&
+                        "text-foreground",
+                    )}
+                  />
                 </motion.div>
               ) : lastYoutubeContent?.data?.url ? (
                 <motion.div
@@ -214,10 +222,20 @@ export const WebAppStreamPage = () => {
 
       {/* Sidebar - fixed width and no scroll */}
       <div className="flex flex-col justify-center items-center min-h-screen h-screen w-[31%] pr-6 py-6">
-        <CTSCard className="flex flex-col justify-between items-center h-full w-full bg-white p-5">
+        <CTSCard
+          brandSlug={brand.data?.slug || ""}
+          className={cn(
+            "flex flex-col justify-between items-center h-full w-full bg-card p-5",
+            brand.data?.slug === THE_ROLLUP_BRAND_SLUG && "bg-white",
+          )}>
           <div className="flex flex-col justify-start items-start w-full h-full gap-5">
             <div className="flex justify-start items-center w-full gap-2.5">
-              <Sparkles className="size-8 text-black" />
+              <Sparkles
+                className={cn(
+                  "size-8 text-foreground",
+                  brand.data?.slug === THE_ROLLUP_BRAND_SLUG && "text-black",
+                )}
+              />
               <h1 className="text-3xl font-bold w-full text-start">
                 Interact with the stream
               </h1>
@@ -234,7 +252,13 @@ export const WebAppStreamPage = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   className="flex justify-center items-center w-full h-full">
-                  <Loader2 className="size-8 text-black animate-spin" />
+                  <Loader2
+                    className={cn(
+                      "size-8 text-black animate-spin",
+                      brand.data?.slug === THE_ROLLUP_BRAND_SLUG &&
+                        "text-foreground",
+                    )}
+                  />
                 </motion.div>
               ) : (
                 <motion.div
@@ -304,6 +328,7 @@ export const WebAppStreamPage = () => {
                   </h1>
                 </div>
                 <LogoutButton
+                  brandSlug={brand.data?.slug || ""}
                   disabled={isLoggingOut}
                   executeLogout={handleLogout}
                   className="min-w-1/3 w-1/3 h-[42px]">
@@ -345,36 +370,69 @@ export const WebAppStreamPage = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
-                <CTSButton
-                  onClick={() => signInWithWebApp()}
-                  disabled={isSigningIn}
-                  className="bg-accent w-full h-[42px]">
-                  <AnimatePresence mode="wait">
-                    {isSigningIn ? (
-                      <motion.div
-                        key="signing-in"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
-                        className="flex justify-center items-center w-full gap-2">
-                        <Loader2 className="size-5 text-foreground animate-spin" />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="connect-wallet-button"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
-                        className="flex justify-center items-center w-full gap-2">
-                        <p className="text-base font-extrabold text-foreground">
-                          Sign message
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </CTSButton>
+                {brand.data?.slug === THE_ROLLUP_BRAND_SLUG ? (
+                  <TheRollupButton
+                    onClick={() => signInWithWebApp()}
+                    disabled={isSigningIn}
+                    className="bg-accent w-full h-[42px]">
+                    <AnimatePresence mode="wait">
+                      {isSigningIn ? (
+                        <motion.div
+                          key="signing-in"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <Loader2 className="size-5 text-white animate-spin" />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="connect-wallet-button"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <p className="text-base font-extrabold text-white">
+                            Sign message
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </TheRollupButton>
+                ) : (
+                  <CTSButton
+                    onClick={() => signInWithWebApp()}
+                    disabled={isSigningIn}
+                    className="w-full h-[42px]">
+                    <AnimatePresence mode="wait">
+                      {isSigningIn ? (
+                        <motion.div
+                          key="signing-in"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <Loader2 className="size-5 animate-spin" />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="connect-wallet-button"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <p className="text-base font-extrabold">
+                            Sign message
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </CTSButton>
+                )}
               </motion.div>
             ) : (
               <motion.div
@@ -384,39 +442,75 @@ export const WebAppStreamPage = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 className="flex justify-center items-center w-full">
-                <CTSButton
-                  disabled={isSigningIn}
-                  onClick={async () => {
-                    setWasNotConnected(true);
-                    open({ view: "Connect", namespace: "eip155" });
-                  }}
-                  className="bg-accent w-full h-[42px]">
-                  <AnimatePresence mode="wait">
-                    {isSigningIn ? (
-                      <motion.div
-                        key="signing-in"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
-                        className="flex justify-center items-center w-full gap-2">
-                        <Loader2 className="size-5 text-foreground animate-spin" />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="connect-wallet-button"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
-                        className="flex justify-center items-center w-full gap-2">
-                        <p className="text-base font-extrabold text-foreground">
-                          Connect Wallet
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </CTSButton>
+                {brand.data?.slug === THE_ROLLUP_BRAND_SLUG ? (
+                  <TheRollupButton
+                    disabled={isSigningIn}
+                    onClick={async () => {
+                      setWasNotConnected(true);
+                      open({ view: "Connect", namespace: "eip155" });
+                    }}
+                    className="bg-accent w-full h-[42px]">
+                    <AnimatePresence mode="wait">
+                      {isSigningIn ? (
+                        <motion.div
+                          key="signing-in"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <Loader2 className="size-5 text-white animate-spin" />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="connect-wallet-button"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <p className="text-base font-extrabold text-white">
+                            Connect Wallet
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </TheRollupButton>
+                ) : (
+                  <CTSButton
+                    disabled={isSigningIn}
+                    onClick={async () => {
+                      setWasNotConnected(true);
+                      open({ view: "Connect", namespace: "eip155" });
+                    }}
+                    className="w-full h-[42px]">
+                    <AnimatePresence mode="wait">
+                      {isSigningIn ? (
+                        <motion.div
+                          key="signing-in"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <Loader2 className="size-5 animate-spin" />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="connect-wallet-button"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="flex justify-center items-center w-full gap-2">
+                          <p className="text-base font-extrabold">
+                            Connect Wallet
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </CTSButton>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

@@ -51,6 +51,8 @@ export const MiniAppFeaturedTokens = ({
       const result = await sdk.actions.swapToken({
         sellToken,
         buyToken,
+        sellAmount: "30000",
+
       });
       // await 5 seconds
       await new Promise((resolve) => setTimeout(resolve, 5000));

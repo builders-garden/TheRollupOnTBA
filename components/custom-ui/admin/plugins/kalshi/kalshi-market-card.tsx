@@ -3,9 +3,17 @@ import { KalshiMarketDisplay } from "@/lib/types/kalshi.type";
 
 interface KalshiMarketCardProps {
   market: KalshiMarketDisplay;
+  eventTitle?: string; // Add optional event title
 }
 
-export const KalshiMarketCard = ({ market }: KalshiMarketCardProps) => {
+export const KalshiMarketCard = ({
+  market,
+  eventTitle,
+}: KalshiMarketCardProps) => {
+  // Calculate percentages from prices
+  const yesPercentage = Math.round(parseFloat(market.yesPrice) * 100);
+  const noPercentage = 100 - yesPercentage;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -16,7 +24,7 @@ export const KalshiMarketCard = ({ market }: KalshiMarketCardProps) => {
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <h3 className="font-bold text-lg text-gray-800 leading-tight mb-2">
-            {market.title}
+            {eventTitle || market.title}
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded-full font-medium">
@@ -38,7 +46,7 @@ export const KalshiMarketCard = ({ market }: KalshiMarketCardProps) => {
           className="bg-white border-2 border-blue-200 rounded-lg p-4 text-center cursor-pointer hover:border-blue-300 transition-colors duration-200">
           <div className="text-blue-600 font-bold text-lg mb-1">Yes</div>
           <div className="text-2xl font-bold text-blue-700">
-            ${market.yesPrice}
+            {yesPercentage}%
           </div>
         </motion.div>
 
@@ -49,7 +57,7 @@ export const KalshiMarketCard = ({ market }: KalshiMarketCardProps) => {
           className="bg-white border-2 border-purple-200 rounded-lg p-4 text-center cursor-pointer hover:border-purple-300 transition-colors duration-200">
           <div className="text-purple-600 font-bold text-lg mb-1">No</div>
           <div className="text-2xl font-bold text-purple-700">
-            ${market.noPrice}
+            {noPercentage}%
           </div>
         </motion.div>
       </div>
@@ -58,7 +66,10 @@ export const KalshiMarketCard = ({ market }: KalshiMarketCardProps) => {
       <div className="mt-4 pt-3 border-t border-green-200">
         <div className="flex justify-between items-center">
           <div className="text-right">
-            <div className="text-xs"><span className="text-gray-500">powered by </span><span className="text-green-600 font-bold">Kalshi</span></div>
+            <div className="text-xs">
+              <span className="text-gray-500">powered by </span>
+              <span className="text-green-600 font-bold">Kalshi</span>
+            </div>
           </div>
         </div>
       </div>

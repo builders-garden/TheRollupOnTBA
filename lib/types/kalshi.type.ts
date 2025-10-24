@@ -81,11 +81,13 @@ export interface KalshiApiError {
 }
 
 export interface KalshiMarketDisplay {
+  closeTime: string;
   title: string;
   yesPrice: string;
   noPrice: string;
   status: string;
   ticker: string;
+  noSubTitle: string; // Add no_sub_title for candidate names
 }
 
 export interface KalshiApiSuccess {
@@ -93,6 +95,7 @@ export interface KalshiApiSuccess {
   data: {
     eventTitle: string;
     markets: KalshiMarketDisplay[];
+    totalMarkets: number; // Total number of markets available
   };
 }
 

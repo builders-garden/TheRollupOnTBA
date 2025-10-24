@@ -359,3 +359,79 @@ export type BrandNotification = typeof brandNotificationsTable.$inferSelect;
 export type CreateBrandNotification =
   typeof brandNotificationsTable.$inferInsert;
 export type UpdateBrandNotification = Partial<CreateBrandNotification>;
+
+/**
+ * Kalshi Events table
+ */
+export const kalshiEventsTable = sqliteTable(
+  "kalshi_events",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    brandId: text("brand_id")
+      .notNull()
+      .references(() => brandsTable.id, { onDelete: "cascade" }),
+    kalshiEventId: text("kalshi_event_id").notNull(), // e.g., "KXMAYORNYCPARTY-25"
+    kalshiUrl: text("kalshi_url").notNull(), // The original URL provided by the admin
+    eventTitle: text("event_title").notNull(), // e.g., "New York City Mayor Election"
+    eventStatus: text("event_status").notNull(), // e.g., "active"
+    totalMarkets: integer("total_markets").notNull(), // e.g., 5
+    category: text("category"), // e.g., "Politics"
+    subTitle: text("sub_title"), // e.g., "In 2025"
+    strikeDate: text("strike_date"), // e.g., "2026-11-04T15:00:00Z"
+    mutuallyExclusive: integer("mutually_exclusive", {
+      mode: "boolean",
+    }).default(false),
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("idx_kalshi_events_brand_id").on(t.brandId),
+    index("idx_kalshi_events_kalshi_event_id").on(t.kalshiEventId),
+  ],
+);
+
+export type KalshiEvent = typeof kalshiEventsTable.$inferSelect;
+export type CreateKalshiEvent = typeof kalshiEventsTable.$inferInsert;
+export type UpdateKalshiEvent = Partial<CreateKalshiEvent>;
+
+/**
+ * Kalshi Markets table
+ */
+export const kalshiMarketsTable = sqliteTable(
+  "kalshi_markets",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => ulid()),
+    eventId: text("event_id")
+      .notNull()
+      .references(() => kalshiEventsTable.id, { onDelete: "cascade" }),
+    kalshiMarketTicker: text("kalshi_market_ticker").notNull(), // e.g., "KXMAYORNYCPARTY-25-D"
+    kalshiMarketTitle: text("kalshi_market_title").notNull(), // Full market title
+    candidateName: text("candidate_name").notNull(), // e.g., "Zohran Mamdani" (from no_sub_title)
+    affiliation: text("affiliation").notNull(), // e.g., "Democratic Nominee"
+    yesPercentage: integer("yes_percentage").notNull(), // e.g., 90
+    noPercentage: integer("no_percentage").notNull(), // e.g., 10
+    yesPrice: text("yes_price").notNull(), // Original price from API, e.g., "0.9000"
+    noPrice: text("no_price").notNull(), // Original price from API, e.g., "0.1000"
+    marketStatus: text("market_status").notNull(), // e.g., "active"
+    marketType: text("market_type").notNull(), // e.g., "binary"
+    closeTime: text("close_time"), // e.g., "2026-11-04T15:00:00Z"
+    expirationTime: text("expiration_time"), // e.g., "2026-11-04T15:00:00Z"
+    volume: integer("volume"), // e.g., 14824124
+    liquidity: integer("liquidity"), // e.g., 715346711
+    openInterest: integer("open_interest"), // e.g., 7607233
+    createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("idx_kalshi_markets_event_id").on(t.eventId),
+    index("idx_kalshi_markets_ticker").on(t.kalshiMarketTicker),
+  ],
+);
+
+export type KalshiMarket = typeof kalshiMarketsTable.$inferSelect;
+export type CreateKalshiMarket = typeof kalshiMarketsTable.$inferInsert;
+export type UpdateKalshiMarket = Partial<CreateKalshiMarket>;

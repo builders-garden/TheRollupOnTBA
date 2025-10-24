@@ -91,26 +91,75 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
+    // Extract the event ID from the URL
+    // URL format: https://kalshi.com/markets/kxfeddecision/fed-meeting/kxfeddecision-25oct
+    // We need the last part after the final slash
+    const urlParts = url.split("/");
+    const eventId = urlParts[urlParts.length - 1];
+
+    if (!eventId) {
+      const errorResponse: KalshiApiError = {
+        success: false,
+        error: "Invalid Kalshi URL format",
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
+    }
+
+    // Convert to uppercase if not already
+    const eventIdUpper = eventId.toUpperCase();
+
+    // Call the Kalshi API
+    const kalshiApiUrl = `https://api.elections.kalshi.com/trade-api/v2/events/${eventIdUpper}`;
+
+    const response = await fetch(kalshiApiUrl, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        // Note: Kalshi API typically requires authentication
+        // "Authorization": `Bearer ${process.env.KALSHI_API_KEY}`,
+      },
+    });
+    console.log("Kalshi API response:", JSON.stringify(response, null, 2));
+
+    if (!response.ok) {
+      console.error(
+        `Kalshi API error: ${response.status} ${response.statusText}`,
+      );
+      const errorResponse: KalshiApiError = {
+        success: false,
+        error: `Kalshi API request failed: ${response.statusText}`,
+      };
+      return NextResponse.json(errorResponse, { status: response.status });
+    }
+
+    const data: KalshiApiResponse = await response.json();
+    console.log("Kalshi API data:", JSON.stringify(data, null, 2));
+
     // TEMPORARY: Use mock data instead of real API call
     // TODO: Replace with real API call when ready
-    console.log("Using mock data for Kalshi API - URL:", url);
+    // console.log("Using mock data for Kalshi API - URL:", url);
+    // const data = MOCK_DATA as unknown as KalshiApiResponse;
 
-    const data = MOCK_DATA as unknown as KalshiApiResponse;
-
-    // Extract market data for display
-    const marketData = data.markets.map((market) => ({
-      title: market.title,
-      yesPrice: market.yes_bid_dollars,
-      noPrice: market.no_bid_dollars,
-      status: market.status,
-      ticker: market.ticker,
-    }));
+    // Extract market data for display, sorted by highest yes price first
+    const marketData = data.markets
+      .map((market) => ({
+        title: market.title,
+        yesPrice: market.yes_bid_dollars,
+        noPrice: market.no_bid_dollars,
+        status: market.status,
+        ticker: market.ticker,
+        noSubTitle: market.no_sub_title, // Add no_sub_title for candidate names
+        closeTime: market.close_time,
+      }))
+      .sort((a, b) => parseFloat(b.yesPrice) - parseFloat(a.yesPrice)) // Sort by highest yes price first
+      //.slice(0, 3); // Limit to max 3 markets
 
     const successResponse: KalshiApiSuccess = {
       success: true,
       data: {
         eventTitle: data.event.title,
         markets: marketData,
+        totalMarkets: data.markets.length, // Include total count for "X more" calculation
       },
     };
 

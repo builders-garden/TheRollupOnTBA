@@ -69,6 +69,51 @@ export type UpdateSentimentPollEvent = {
   votes: number;
   results: { bullPercent: number; bearPercent: number };
 };
+
+export type KalshiMarketOption = {
+  optionId: string;
+  optionName: string;
+  price: string;
+  ticker: string;
+};
+
+export type StartKalshiMarketEvent = {
+  id: string;
+  brandId: string;
+  position: PopupPositions;
+  marketTitle: string;
+  marketType: "binary" | "aggregated";
+  closeTime: string;
+  // For binary markets (yes/no)
+  yesPrice?: string;
+  noPrice?: string;
+  ticker?: string;
+  // For aggregated option markets
+  options?: KalshiMarketOption[];
+};
+
+export type UpdateKalshiMarketEvent = {
+  id: string;
+  brandId: string;
+  position: PopupPositions;
+  closeTime: string;
+  // For binary markets (yes/no)
+  yesPrice?: string;
+  noPrice?: string;
+  // For aggregated option markets
+  options?: KalshiMarketOption[];
+};
+
+export type EndKalshiMarketEvent = {
+  id: string;
+  brandId: string;
+  result: string;
+  // For binary markets
+  finalPrice?: string;
+  // For aggregated option markets
+  winningOptionId?: string;
+  winningOptionName?: string;
+};
 export type ClientToServerEvents = {
   [ClientToServerSocketEvents.JOIN_STREAM]: JoinStreamEvent;
   [ClientToServerSocketEvents.TIP_SENT]: TipSentEvent;
@@ -77,4 +122,7 @@ export type ClientToServerEvents = {
   [ClientToServerSocketEvents.START_SENTIMENT_POLL]: StartSentimentPollEvent;
   [ClientToServerSocketEvents.END_SENTIMENT_POLL]: EndSentimentPollEvent;
   [ClientToServerSocketEvents.UPDATE_SENTIMENT_POLL]: UpdateSentimentPollEvent;
+  [ClientToServerSocketEvents.START_KALSHI_MARKET]: StartKalshiMarketEvent;
+  [ClientToServerSocketEvents.UPDATE_KALSHI_MARKET]: UpdateKalshiMarketEvent;
+  [ClientToServerSocketEvents.END_KALSHI_MARKET]: EndKalshiMarketEvent;
 };

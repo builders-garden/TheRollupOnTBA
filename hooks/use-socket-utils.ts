@@ -2,11 +2,14 @@ import { useCallback } from "react";
 import { useSocket } from "@/hooks/use-socket";
 import { ClientToServerSocketEvents } from "@/lib/enums";
 import {
+  EndKalshiMarketEvent,
   EndSentimentPollEvent,
   JoinStreamEvent,
+  StartKalshiMarketEvent,
   StartSentimentPollEvent,
   TipSentEvent,
   TokenTradedEvent,
+  UpdateKalshiMarketEvent,
   UpdateSentimentPollEvent,
   VoteCastedEvent,
 } from "@/lib/types/socket/client-to-server.type";
@@ -31,6 +34,27 @@ export function useSocketUtils() {
   const adminUpdateSentimentPoll = useCallback(
     (data: UpdateSentimentPollEvent) => {
       emit(ClientToServerSocketEvents.UPDATE_SENTIMENT_POLL, data);
+    },
+    [emit],
+  );
+
+  const adminStartKalshiMarket = useCallback(
+    (data: StartKalshiMarketEvent) => {
+      emit(ClientToServerSocketEvents.START_KALSHI_MARKET, data);
+    },
+    [emit],
+  );
+
+  const adminUpdateKalshiMarket = useCallback(
+    (data: UpdateKalshiMarketEvent) => {
+      emit(ClientToServerSocketEvents.UPDATE_KALSHI_MARKET, data);
+    },
+    [emit],
+  );
+
+  const adminEndKalshiMarket = useCallback(
+    (data: EndKalshiMarketEvent) => {
+      emit(ClientToServerSocketEvents.END_KALSHI_MARKET, data);
     },
     [emit],
   );
@@ -62,6 +86,9 @@ export function useSocketUtils() {
     adminStartBullmeter,
     adminEndBullmeter,
     adminUpdateSentimentPoll,
+    adminStartKalshiMarket,
+    adminUpdateKalshiMarket,
+    adminEndKalshiMarket,
     disconnect,
   };
 }

@@ -1,7 +1,5 @@
-import { SignInWithBaseButton } from "@base-org/account-ui/react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { useAdminAuth } from "@/contexts/auth/admin-auth-context";
 
 interface LandingContentProps {
   signInWithBase: () => void;

@@ -1,8 +1,6 @@
 "use client";
 
-import { SignInWithBaseButton } from "@base-org/account-ui/react";
 import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
 import { useState } from "react";
 import { AdminBanner } from "@/components/custom-ui/admin/admin-banner";
 import { AnalyticsContent } from "@/components/custom-ui/admin/analytics/analytics-content";

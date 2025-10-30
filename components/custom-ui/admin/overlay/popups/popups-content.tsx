@@ -189,7 +189,7 @@ export const PopupsContent = () => {
         />
       ),
       {
-        duration: 10000,
+        duration: 15000,
         position: selectedPopupPosition,
       },
     );
@@ -214,7 +214,7 @@ export const PopupsContent = () => {
         />
       ),
       {
-        duration: 10000,
+        duration: 15000,
         position: selectedPopupPosition,
       },
     );

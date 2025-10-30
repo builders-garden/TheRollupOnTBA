@@ -2,12 +2,15 @@
 
 import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { QRCodeSVG } from "qrcode.react";
 import { useEffect } from "react";
 import { useKalshiGet } from "@/hooks/use-kalshi-get";
 import { useSocket } from "@/hooks/use-socket";
 import { useSocketUtils } from "@/hooks/use-socket-utils";
+import { THE_ROLLUP_BRAND_SLUG } from "@/lib/constants";
 import { ServerToClientSocketEvents } from "@/lib/enums";
 import { KalshiMarketStartedEvent } from "@/lib/types/socket/server-to-client.type";
+import { cn } from "@/lib/utils";
 
 export interface KalshiNotificationData {
   id: string; // ID stored in the database
@@ -19,10 +22,16 @@ export interface KalshiNotificationData {
 
 export const ToastKalshiNotification = ({
   data,
+  brandSlug,
 }: {
   data: KalshiNotificationData;
+  brandSlug: string;
 }) => {
   console.log("ToastKalshiNotification mounted with data:", data);
+
+  // Whether the brand is the Rollup
+  const isBrandTheRollup = brandSlug === THE_ROLLUP_BRAND_SLUG;
+  console.log("brandSlug", brandSlug);
 
   const { subscribe, unsubscribe } = useSocket();
   const { joinStream } = useSocketUtils();
@@ -93,33 +102,43 @@ export const ToastKalshiNotification = ({
     const noPercentage = 100 - yesPercentage;
 
     return (
-      <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 py-4 min-w-[800px] border-4 border-[#E6B45E]">
+      <div
+        className={cn(
+          "rounded-xl shadow-lg px-6 py-4 min-w-[1000px] min-h-[100px] border-4",
+          isBrandTheRollup
+            ? "bg-[#1B2541] border-[#E6B45E]"
+            : "bg-background border-primary",
+        )}>
         <div className="flex items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <div className="text-green-500 font-bold text-2xl">YES</div>
-              <div className="text-white font-black text-3xl">
-                {yesPercentage}%
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-red-500 font-bold text-2xl">NO</div>
-              <div className="text-white font-black text-3xl">
-                {noPercentage}%
-              </div>
-            </div>
-          </div>
-
           <div className="flex-1 text-center">
-            <h3 className="text-white font-bold text-xl mb-2">
+            <h3 className="text-white font-black text-[27px] leading-8 mb-4">
               {kalshiData?.success ? kalshiData.data.eventTitle : "Market"}
             </h3>
-            <p className="text-gray-300 text-sm">{market.title}</p>
+            <div className="flex items-center justify-center gap-8">
+              <div className="text-center">
+                <div className="text-green-500 font-bold text-2xl">YES</div>
+                <div className="text-white font-black text-3xl">
+                  {yesPercentage}%
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-red-500 font-bold text-2xl">NO</div>
+                <div className="text-white font-black text-3xl">
+                  {noPercentage}%
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-center">
-            <div className="text-[#E6B45E] font-bold text-lg">Kalshi</div>
-            <div className="text-gray-400 text-sm">Market</div>
+          <div className="flex flex-col items-center justify-center gap-2 shrink-0">
+            <div className="bg-white p-1">
+              <QRCodeSVG value={data.kalshiUrl} size={66} level="M" />
+            </div>
+            <div className="text-center">
+              <div className="text-[#00d296] font-bold text-lg">
+                Powered by Kalshi
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -130,61 +149,83 @@ export const ToastKalshiNotification = ({
   const renderMultipleMarkets = () => {
     if (!kalshiData?.success || !kalshiData.data.markets) return null;
 
+    const colors = [
+      "text-blue-400", // First option - blue
+      "text-purple-400", // Second option - purple
+      "text-orange-400", // Third option - orange
+    ];
+
     return (
-      <div className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 py-4 min-w-[900px] border-4 border-[#E6B45E]">
-        <div className="text-center mb-4">
-          <h3 className="text-white font-bold text-xl mb-2">
-            {kalshiData.data.eventTitle}
-          </h3>
-          <p className="text-gray-300 text-sm">
-            {kalshiData.data.totalMarkets} markets available
-          </p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          {kalshiData.data.markets.slice(0, 3).map(
-            (
-              market: {
-                title: string;
-                yesPrice: string;
-                noSubTitle: string;
-                ticker: string;
-              },
-              index: number,
-            ) => {
-              const yesPercentage = Math.round(
-                parseFloat(market.yesPrice) * 100,
-              );
-              const candidateName = market.noSubTitle || `Option ${index + 1}`;
-
-              return (
-                <div
-                  key={market.ticker}
-                  className="bg-gray-800 rounded-lg p-3 text-center">
-                  <div className="text-white font-bold text-sm mb-1">
-                    {candidateName}
-                  </div>
-                  <div className="text-green-500 font-black text-xl">
-                    {yesPercentage}%
-                  </div>
-                  <div className="text-gray-400 text-xs">Yes</div>
-                </div>
-              );
-            },
-          )}
-        </div>
-
-        {kalshiData.data.totalMarkets > 3 && (
-          <div className="text-center mt-3">
-            <span className="text-gray-400 text-sm">
-              +{kalshiData.data.totalMarkets - 3} more markets
-            </span>
+      <div
+        className={cn(
+          "rounded-xl shadow-lg px-6 py-4 min-w-[1000px] min-h-[100px] border-4",
+          isBrandTheRollup
+            ? "bg-[#1B2541] border-[#E6B45E]"
+            : "bg-background border-primary",
+        )}>
+        <div className="flex flex-col gap-4">
+          <div className="text-center">
+            <h3 className="text-white font-black text-[27px] leading-8">
+              {kalshiData.data.eventTitle}
+            </h3>
           </div>
-        )}
 
-        <div className="text-center mt-4">
-          <div className="text-[#E6B45E] font-bold text-lg">Kalshi</div>
-          <div className="text-gray-400 text-sm">Prediction Markets</div>
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex-1">
+              <div className="grid grid-cols-3 gap-4">
+                {kalshiData.data.markets.slice(0, 3).map(
+                  (
+                    market: {
+                      title: string;
+                      yesPrice: string;
+                      noSubTitle: string;
+                      ticker: string;
+                    },
+                    index: number,
+                  ) => {
+                    const yesPercentage = Math.round(
+                      parseFloat(market.yesPrice) * 100,
+                    );
+                    const candidateName =
+                      market.noSubTitle || `Option ${index + 1}`;
+                    const colorClass = colors[index] || "text-green-500";
+
+                    return (
+                      <div
+                        key={market.ticker}
+                        className="bg-gray-600 rounded-lg p-3 text-center border border-white">
+                        <div className="text-white font-bold text-base mb-1">
+                          {candidateName}
+                        </div>
+                        <div className="text-white font-black text-xl">
+                          {yesPercentage}%
+                        </div>
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+
+              {kalshiData.data.totalMarkets > 3 && (
+                <div className="text-center mt-3">
+                  <span className="text-white text-sm">
+                    +{kalshiData.data.totalMarkets - 3} more markets
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col items-center justify-center gap-2 shrink-0">
+              <div className="bg-white p-1">
+                <QRCodeSVG value={data.kalshiUrl} size={66} level="M" />
+              </div>
+              <div className="text-center">
+                <div className="text-[#00d296] font-bold text-lg">
+                  Powered by Kalshi
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -228,7 +269,12 @@ export const ToastKalshiNotification = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15, ease: "easeInOut" }}
-              className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 py-8 min-w-[600px] border-4 border-[#E6B45E] flex justify-center items-center">
+              className={cn(
+                "rounded-xl shadow-lg px-6 py-8 min-w-[1000px] min-h-[100px] border-4 flex justify-center items-center",
+                isBrandTheRollup
+                  ? "bg-[#1B2541] border-[#E6B45E]"
+                  : "bg-background border-primary",
+              )}>
               <div className="flex flex-col items-center gap-4">
                 <Loader2 className="size-8 text-[#E6B45E] animate-spin" />
                 <div className="text-white font-bold text-lg">
@@ -243,7 +289,12 @@ export const ToastKalshiNotification = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-gradient-to-b bg-[#1B2541] rounded-xl shadow-lg px-6 py-8 min-w-[600px] border-4 border-red-500 flex justify-center items-center">
+              className={cn(
+                "rounded-xl shadow-lg px-6 py-8 min-w-[1000px] min-h-[100px] border-4 flex justify-center items-center",
+                isBrandTheRollup
+                  ? "bg-[#1B2541] border-red-500"
+                  : "bg-background border-red-500",
+              )}>
               <div className="text-center">
                 <div className="text-red-500 font-bold text-lg mb-2">Error</div>
                 <div className="text-white text-sm">{error}</div>
